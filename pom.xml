@@ -6,11 +6,19 @@
 
     <groupId>org.burrow-studios</groupId>
     <artifactId>obelisk</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-alpha.1</version>
+    <packaging>pom</packaging>
 
     <name>Obelisk</name>
     <description>Burrow Studios monolithic API backend</description>
     <url>https://github.com/BurrowStudios/Obelisk</url>
+
+
+    <modules>
+        <module>obelisk-api</module>
+        <module>obelisk-common</module>
+        <module>obelisk-server</module>
+    </modules>
 
 
     <licenses>
