@@ -3,5 +3,7 @@
 *.md linguist-generated=false
 *.md linguist-documentation=false
 *.md linguist-detectable=true
+docs/* linguist-documentation=false
+
 # Include maven files as detectable language
 *.xml linguist-detectable
