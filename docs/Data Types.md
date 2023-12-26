@@ -12,6 +12,7 @@ are mentioned in these descriptions:
 | float32    | 32-bit floating-point number                                                                                  |
 | float64    | 64-bit floating-point number                                                                                  |
 | timestamp  | [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp                                                  |
+| numDate    | NumericDate, as identified by [RFC7519](https://datatracker.ietf.org/doc/html/rfc7519#section-2)              |
 | snowflake  | A unique discord entity id (see [Discord API docs](https://discord.com/developers/docs/reference#snowflakes)) |
 | UUID       | A [universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier)                |
 | array of X | Zero or more (unless specified otherwise in the field description) elements of X                              |
