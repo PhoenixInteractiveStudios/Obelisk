@@ -31,5 +31,7 @@ public class Main {
         if (VERSION == null)
             throw new AssertionError("Unknown version");
         System.out.printf(" version %s...%n", VERSION);
+
+        ObeliskServer server = new ObeliskServer();
     }
 }
