@@ -1,0 +1,7 @@
+# Include markdown as detectable language
+*.md linguist-detectable
+# Include maven files as detectable language
+*.xml linguist-detectable
+
+# Include documentation in language stats
+docs/* -linguist-documentation
