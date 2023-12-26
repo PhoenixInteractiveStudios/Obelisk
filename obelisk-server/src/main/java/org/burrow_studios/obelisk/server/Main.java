@@ -33,5 +33,13 @@ public class Main {
         System.out.printf(" version %s...%n", VERSION);
 
         ObeliskServer server = new ObeliskServer();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                server.stop();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }));
     }
 }
