@@ -7,7 +7,7 @@
 # User resource
 
 This resource represents an individual that is part of the team or community of BurrowStudios. Users can be part of
-Groups, Tickets and Projects, and they have Permissions.
+[Groups](Group.md), Tickets and Projects, and they have Permissions.
 
 ## User object
 
