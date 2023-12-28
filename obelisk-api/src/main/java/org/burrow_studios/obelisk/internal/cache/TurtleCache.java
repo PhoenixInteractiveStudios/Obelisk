@@ -42,7 +42,11 @@ public class TurtleCache<T extends Turtle> implements Set<T> {
     public boolean contains(Object o) {
         if (o == null) return false;
         if (!(o instanceof Turtle turtle)) return false;
-        return this.data.containsKey(turtle.getId());
+        return this.containsId(turtle.getId());
+    }
+
+    public boolean containsId(long id) {
+        return this.data.containsKey(id);
     }
 
     @Override
