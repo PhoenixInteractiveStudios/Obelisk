@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 public class TicketImpl extends TurtleImpl implements Ticket {
-    private final @Nullable String title;
-    private final @NotNull State state;
+    private @Nullable String title;
+    private @NotNull State state;
     private final @NotNull List<String> tags;
     private final @NotNull Set<Long> userIds;
 
@@ -34,9 +34,17 @@ public class TicketImpl extends TurtleImpl implements Ticket {
         return this.title;
     }
 
+    public void setTitle(@Nullable String title) {
+        this.title = title;
+    }
+
     @Override
     public @NotNull State getState() {
         return this.state;
+    }
+
+    public void setState(@NotNull State state) {
+        this.state = state;
     }
 
     @Override
@@ -44,13 +52,26 @@ public class TicketImpl extends TurtleImpl implements Ticket {
         return List.copyOf(this.tags);
     }
 
+    public @NotNull List<String> getTagsMutable() {
+        return this.tags;
+    }
+
     @Override
     public @NotNull Set<Long> getUserIds() {
         return Set.copyOf(this.userIds);
     }
 
+    public @NotNull Set<Long> getUserIdsMutable() {
+        return this.userIds;
+    }
+
     @Override
     public @NotNull Set<UserImpl> getUsers() {
+        // TODO
+        return Set.of();
+    }
+
+    public @NotNull Set<UserImpl> getUsersMutable() {
         // TODO
         return Set.of();
     }

@@ -7,22 +7,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 public class GroupImpl extends TurtleImpl implements Group {
-    private final @NotNull String name;
-    private final int size;
+    private @NotNull String name;
     private final @NotNull Set<Long> memberIds;
-    private final int position;
+    private int position;
 
     public GroupImpl(
             @NotNull ObeliskImpl api,
             long id,
             @NotNull String name,
-            int size,
             @NotNull Set<Long> memberIds,
             int position
     ) {
         super(api, id);
         this.name = name;
-        this.size = size;
         this.memberIds = memberIds;
         this.position = position;
     }
@@ -32,13 +29,22 @@ public class GroupImpl extends TurtleImpl implements Group {
         return this.name;
     }
 
+    public void setName(@NotNull String name) {
+        this.name = name;
+    }
+
     @Override
     public int getSize() {
-        return this.size;
+        return this.memberIds.size();
     }
 
     @Override
     public @NotNull Set<UserImpl> getMembers() {
+        // TODO
+        return Set.of();
+    }
+
+    public @NotNull Set<UserImpl> getMembersMutable() {
         // TODO
         return Set.of();
     }
@@ -48,8 +54,16 @@ public class GroupImpl extends TurtleImpl implements Group {
         return Set.copyOf(this.memberIds);
     }
 
+    public @NotNull Set<Long> getMemberIdsMutable() {
+        return this.memberIds;
+    }
+
     @Override
     public int getPosition() {
         return this.position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

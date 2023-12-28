@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class TagImpl extends TurtleImpl implements Tag {
     private final long boardId;
-    private final @NotNull String name;
+    private @NotNull String name;
 
     public TagImpl(
             @NotNull ObeliskImpl api,
@@ -35,5 +35,9 @@ public class TagImpl extends TurtleImpl implements Tag {
     @Override
     public @NotNull String getName() {
         return this.name;
+    }
+
+    public void setName(@NotNull String name) {
+        this.name = name;
     }
 }

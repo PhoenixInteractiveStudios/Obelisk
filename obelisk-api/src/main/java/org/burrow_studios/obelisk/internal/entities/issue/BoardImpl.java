@@ -9,8 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 public class BoardImpl extends TurtleImpl implements Board {
-    private final @NotNull String title;
-    private final long groupId;
+    private @NotNull String title;
+    private long groupId;
     private final @NotNull Set<Long> availableTagIds;
     private final @NotNull Set<Long> issueIds;
 
@@ -34,9 +34,17 @@ public class BoardImpl extends TurtleImpl implements Board {
         return this.title;
     }
 
+    public void setTitle(@NotNull String title) {
+        this.title = title;
+    }
+
     @Override
     public long getGroupId() {
         return this.groupId;
+    }
+
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
     }
 
     @Override
@@ -45,13 +53,26 @@ public class BoardImpl extends TurtleImpl implements Board {
         return null;
     }
 
+    public void setGroup(@NotNull Group group) {
+        this.setGroupId(group.getId());
+    }
+
     @Override
     public @NotNull Set<Long> getAvailableTagIds() {
         return Set.copyOf(this.availableTagIds);
     }
 
+    public @NotNull Set<Long> getAvailableTagIdsMutable() {
+        return this.availableTagIds;
+    }
+
     @Override
     public @NotNull Set<TagImpl> getAvailableTags() {
+        // TODO
+        return Set.of();
+    }
+
+    public @NotNull Set<TagImpl> getAvailableTagsMutable() {
         // TODO
         return Set.of();
     }
@@ -61,8 +82,17 @@ public class BoardImpl extends TurtleImpl implements Board {
         return Set.copyOf(this.issueIds);
     }
 
+    public @NotNull Set<Long> getIssueIdsMutable() {
+        return this.issueIds;
+    }
+
     @Override
     public @NotNull Set<IssueImpl> getIssues() {
+        // TODO
+        return Set.of();
+    }
+
+    public @NotNull Set<IssueImpl> getIssuesMutable() {
         // TODO
         return Set.of();
     }

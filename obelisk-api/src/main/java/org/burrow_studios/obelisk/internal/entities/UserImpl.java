@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class UserImpl extends TurtleImpl implements User {
-    private final @NotNull String name;
+    private @NotNull String name;
     private final @NotNull List<Long> discordIds;
     private final @NotNull List<UUID> minecraftIds;
 
@@ -30,13 +30,25 @@ public class UserImpl extends TurtleImpl implements User {
         return this.name;
     }
 
+    public void setName(@NotNull String name) {
+        this.name = name;
+    }
+
     @Override
     public @NotNull List<Long> getDiscordIds() {
         return List.copyOf(this.discordIds);
     }
 
+    public @NotNull List<Long> getDiscordIdsMutable() {
+        return this.discordIds;
+    }
+
     @Override
     public @NotNull List<UUID> getMinecraftIds() {
         return List.copyOf(this.minecraftIds);
+    }
+
+    public @NotNull List<UUID> getMinecraftIdsMutable() {
+        return this.minecraftIds;
     }
 }

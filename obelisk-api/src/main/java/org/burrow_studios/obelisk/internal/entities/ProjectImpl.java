@@ -7,9 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 public class ProjectImpl extends TurtleImpl implements Project {
-    private final @NotNull String title;
-    private final @NotNull Timings timings;
-    private final @NotNull State state;
+    private @NotNull String title;
+    private @NotNull Timings timings;
+    private @NotNull State state;
     private final @NotNull Set<Long> userIds;
 
     public ProjectImpl(
@@ -32,9 +32,17 @@ public class ProjectImpl extends TurtleImpl implements Project {
         return this.title;
     }
 
+    public void setTitle(@NotNull String title) {
+        this.title = title;
+    }
+
     @Override
     public @NotNull Timings getTimings() {
         return this.timings;
+    }
+
+    public void setTimings(@NotNull Timings timings) {
+        this.timings = timings;
     }
 
     @Override
@@ -42,13 +50,26 @@ public class ProjectImpl extends TurtleImpl implements Project {
         return this.state;
     }
 
+    public void setState(@NotNull State state) {
+        this.state = state;
+    }
+
     @Override
     public @NotNull Set<Long> getUserIds() {
         return Set.copyOf(this.userIds);
     }
 
+    public @NotNull Set<Long> getUserIdsMutable() {
+        return this.userIds;
+    }
+
     @Override
     public @NotNull Set<UserImpl> getUsers() {
+        // TODO
+        return Set.of();
+    }
+
+    public @NotNull Set<UserImpl> getUsersMutable() {
         // TODO
         return Set.of();
     }

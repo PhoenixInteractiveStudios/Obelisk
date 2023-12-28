@@ -14,8 +14,8 @@ public class IssueImpl extends TurtleImpl implements Issue {
     private final long boardId;
     private final long authorId;
     private final @NotNull Set<Long> assigneeIds;
-    private final @NotNull String title;
-    private final @NotNull State state;
+    private @NotNull String title;
+    private @NotNull State state;
     private final @NotNull Set<Long> tagIds;
 
     public IssueImpl(
@@ -64,8 +64,17 @@ public class IssueImpl extends TurtleImpl implements Issue {
         return Set.copyOf(this.assigneeIds);
     }
 
+    public @NotNull Set<Long> getAssigneeIdsMutable() {
+        return this.assigneeIds;
+    }
+
     @Override
     public @NotNull Set<UserImpl> getAssignees() {
+        // TODO
+        return null;
+    }
+
+    public @NotNull Set<UserImpl> getAssigneesMutable() {
         // TODO
         return null;
     }
@@ -75,9 +84,17 @@ public class IssueImpl extends TurtleImpl implements Issue {
         return this.title;
     }
 
+    public void setTitle(@NotNull String title) {
+        this.title = title;
+    }
+
     @Override
     public @NotNull State getState() {
         return this.state;
+    }
+
+    public void setState(@NotNull State state) {
+        this.state = state;
     }
 
     @Override
@@ -85,8 +102,17 @@ public class IssueImpl extends TurtleImpl implements Issue {
         return Set.copyOf(this.tagIds);
     }
 
+    public @NotNull Set<Long> getTagIdsMutable() {
+        return this.tagIds;
+    }
+
     @Override
     public @NotNull Set<TagImpl> getTags() {
+        // TODO
+        return null;
+    }
+
+    public @NotNull Set<TagImpl> getTagsMutable() {
         // TODO
         return null;
     }
