@@ -1,7 +1,6 @@
 package org.burrow_studios.obelisk.internal.entities;
 
 import org.burrow_studios.obelisk.api.entities.Project;
-import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,7 +48,7 @@ public class ProjectImpl extends TurtleImpl implements Project {
     }
 
     @Override
-    public @NotNull Set<User> getUsers() {
+    public @NotNull Set<UserImpl> getUsers() {
         // TODO
         return Set.of();
     }

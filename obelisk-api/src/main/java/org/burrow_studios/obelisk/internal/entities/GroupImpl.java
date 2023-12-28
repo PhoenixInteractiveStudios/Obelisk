@@ -1,7 +1,6 @@
 package org.burrow_studios.obelisk.internal.entities;
 
 import org.burrow_studios.obelisk.api.entities.Group;
-import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +38,7 @@ public class GroupImpl extends TurtleImpl implements Group {
     }
 
     @Override
-    public @NotNull Set<User> getMembers() {
+    public @NotNull Set<UserImpl> getMembers() {
         // TODO
         return Set.of();
     }

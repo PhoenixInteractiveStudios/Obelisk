@@ -11,7 +11,7 @@ public interface Group extends Turtle {
 
     @NotNull Set<Long> getMemberIds();
 
-    @NotNull Set<User> getMembers();
+    @NotNull Set<? extends User> getMembers();
 
     int getPosition();
 }

@@ -15,7 +15,7 @@ public interface Project extends Turtle {
 
     @NotNull Set<Long> getUserIds();
 
-    @NotNull Set<User> getUsers();
+    @NotNull Set<? extends User> getUsers();
 
     record Timings(
             @Nullable Instant release,

@@ -15,7 +15,7 @@ public interface Ticket extends Turtle {
 
     @NotNull Set<Long> getUserIds();
 
-    @NotNull Set<User> getUsers();
+    @NotNull Set<? extends User> getUsers();
 
     enum State {
         OPEN,

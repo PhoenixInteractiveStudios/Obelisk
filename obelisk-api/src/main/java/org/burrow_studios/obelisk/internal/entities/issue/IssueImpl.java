@@ -3,9 +3,9 @@ package org.burrow_studios.obelisk.internal.entities.issue;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.api.entities.issue.Issue;
-import org.burrow_studios.obelisk.api.entities.issue.Tag;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
+import org.burrow_studios.obelisk.internal.entities.UserImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -65,7 +65,7 @@ public class IssueImpl extends TurtleImpl implements Issue {
     }
 
     @Override
-    public @NotNull Set<User> getAssignees() {
+    public @NotNull Set<UserImpl> getAssignees() {
         // TODO
         return null;
     }
@@ -86,7 +86,7 @@ public class IssueImpl extends TurtleImpl implements Issue {
     }
 
     @Override
-    public @NotNull Set<Tag> getTags() {
+    public @NotNull Set<TagImpl> getTags() {
         // TODO
         return null;
     }

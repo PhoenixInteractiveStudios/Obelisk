@@ -17,7 +17,7 @@ public interface Issue extends Turtle {
 
     @NotNull Set<Long> getAssigneeIds();
 
-    @NotNull Set<User> getAssignees();
+    @NotNull Set<? extends User> getAssignees();
 
     @NotNull String getTitle();
 
@@ -25,7 +25,7 @@ public interface Issue extends Turtle {
 
     @NotNull Set<Long> getTagIds();
 
-    @NotNull Set<Tag> getTags();
+    @NotNull Set<? extends Tag> getTags();
 
     enum State {
         OPEN,

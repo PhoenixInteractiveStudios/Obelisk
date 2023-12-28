@@ -15,9 +15,9 @@ public interface Board extends Turtle {
 
     @NotNull Set<Long> getAvailableTagIds();
 
-    @NotNull Set<Tag> getAvailableTags();
+    @NotNull Set<? extends Tag> getAvailableTags();
 
     @NotNull Set<Long> getIssueIds();
 
-    @NotNull Set<Issue> getIssues();
+    @NotNull Set<? extends Issue> getIssues();
 }

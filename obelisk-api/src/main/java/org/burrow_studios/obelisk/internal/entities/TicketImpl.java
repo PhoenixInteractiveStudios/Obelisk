@@ -1,7 +1,6 @@
 package org.burrow_studios.obelisk.internal.entities;
 
 import org.burrow_studios.obelisk.api.entities.Ticket;
-import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +50,7 @@ public class TicketImpl extends TurtleImpl implements Ticket {
     }
 
     @Override
-    public @NotNull Set<User> getUsers() {
+    public @NotNull Set<UserImpl> getUsers() {
         // TODO
         return Set.of();
     }
