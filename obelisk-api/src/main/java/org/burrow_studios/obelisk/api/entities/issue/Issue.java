@@ -9,7 +9,7 @@ import java.util.Set;
 public interface Issue extends Turtle {
     long getBoardId();
 
-    @NotNull IssueBoard getBoard();
+    @NotNull Board getBoard();
 
     long getAuthorId();
 

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public interface IssueBoard extends Turtle {
+public interface Board extends Turtle {
     @NotNull String getTitle();
 
     long getGroupId();

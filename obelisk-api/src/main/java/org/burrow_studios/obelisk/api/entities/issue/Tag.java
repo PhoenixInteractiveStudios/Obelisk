@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 public interface Tag extends Turtle {
     long getBoardId();
 
-    @NotNull IssueBoard getBoard();
+    @NotNull Board getBoard();
 
     @NotNull String getName();
 }
