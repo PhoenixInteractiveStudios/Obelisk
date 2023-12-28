@@ -22,4 +22,11 @@ public abstract class TurtleImpl implements Turtle {
     public final @NotNull ObeliskImpl getAPI() {
         return this.api;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (!(obj instanceof Turtle turtle)) return false;
+        return turtle.getId() == this.getId();
+    }
 }
