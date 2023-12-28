@@ -17,15 +17,12 @@ public interface Project extends Turtle {
 
     @NotNull Set<User> getUsers();
 
-    interface Timings {
-        @Nullable Instant getRelease();
-
-        @Nullable Instant getApply();
-
-        @Nullable Instant getStart();
-
-        @Nullable Instant getEnd();
-    }
+    record Timings(
+            @Nullable Instant release,
+            @Nullable Instant apply,
+            @Nullable Instant start,
+            @Nullable Instant end
+    ) { }
 
     enum State {
         CONCEPT,
