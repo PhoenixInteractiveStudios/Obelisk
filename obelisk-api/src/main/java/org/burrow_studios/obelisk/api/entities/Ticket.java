@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 public interface Ticket extends Turtle {
@@ -14,7 +13,7 @@ public interface Ticket extends Turtle {
 
     @NotNull List<String> getTags();
 
-    @NotNull Set<Locale> getUserIds();
+    @NotNull Set<Long> getUserIds();
 
     @NotNull Set<User> getUsers();
 
