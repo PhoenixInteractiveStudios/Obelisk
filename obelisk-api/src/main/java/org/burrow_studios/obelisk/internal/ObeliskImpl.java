@@ -1,29 +1,35 @@
 package org.burrow_studios.obelisk.internal;
 
 import org.burrow_studios.obelisk.api.Obelisk;
-import org.burrow_studios.obelisk.api.entities.*;
-import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.internal.cache.TurtleCache;
-import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
+import org.burrow_studios.obelisk.internal.entities.*;
+import org.burrow_studios.obelisk.internal.entities.issue.BoardImpl;
 import org.burrow_studios.obelisk.internal.event.EventHandlerImpl;
 import org.burrow_studios.obelisk.internal.net.NetworkHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ObeliskImpl implements Obelisk {
     private final EventHandlerImpl eventHandler;
     private final NetworkHandler   networkHandler;
 
-    private final TurtleCache<TurtleImpl> entityCache;
+    private final TurtleCache<GroupImpl>     groupCache;
+    private final TurtleCache<ProjectImpl> projectCache;
+    private final TurtleCache<TicketImpl>   ticketCache;
+    private final TurtleCache<UserImpl>       userCache;
+    private final TurtleCache<BoardImpl>     boardCache;
 
     public ObeliskImpl() {
         this.eventHandler   = new EventHandlerImpl(this);
         this.networkHandler = new NetworkHandler(this);
 
-        this.entityCache = new TurtleCache<>();
+        this.groupCache   = new TurtleCache<>();
+        this.projectCache = new TurtleCache<>();
+        this.ticketCache  = new TurtleCache<>();
+        this.userCache    = new TurtleCache<>();
+        this.boardCache   = new TurtleCache<>();
     }
 
     public @NotNull EventHandlerImpl getEventHandler() {
@@ -37,77 +43,79 @@ public class ObeliskImpl implements Obelisk {
     /* - ENTITIES - */
 
     @Override
-    public @NotNull Set<? extends Turtle> getEntities() {
-        return Set.copyOf(this.entityCache);
+    public @NotNull Set<TurtleImpl> getEntities() {
+        final TurtleCache<TurtleImpl> entities = new TurtleCache<>();
+        entities.addAll(this.groupCache);
+        entities.addAll(this.projectCache);
+        entities.addAll(this.ticketCache);
+        entities.addAll(this.userCache);
+        entities.addAll(this.boardCache);
+        // TODO: add issues & tags?
+        return Set.copyOf(entities);
     }
 
     @Override
-    public @Nullable Turtle getEntity(long id) {
-        return this.entityCache.get(id);
+    public @Nullable TurtleImpl getEntity(long id) {
+        TurtleImpl turtle;
+        turtle = this.groupCache.get(id);
+        if (turtle != null) return turtle;
+        turtle = this.projectCache.get(id);
+        if (turtle != null) return turtle;
+        turtle = this.ticketCache.get(id);
+        if (turtle != null) return turtle;
+        turtle = this.userCache.get(id);
+        if (turtle != null) return turtle;
+        turtle = this.boardCache.get(id);
+        return turtle;
     }
 
     @Override
-    public @NotNull Set<? extends Group> getGroups() {
-        return this.entityCache.stream()
-                .filter(Group.class::isInstance)
-                .map(Group.class::cast)
-                .collect(Collectors.toUnmodifiableSet());
+    public @NotNull Set<GroupImpl> getGroups() {
+        return Set.copyOf(this.groupCache);
     }
 
     @Override
-    public @Nullable Group getGroup(long id) {
-        return this.entityCache.get(id, Group.class);
+    public @Nullable GroupImpl getGroup(long id) {
+        return this.groupCache.get(id);
     }
 
     @Override
-    public @NotNull Set<? extends Project> getProjects() {
-        return this.entityCache.stream()
-                .filter(Project.class::isInstance)
-                .map(Project.class::cast)
-                .collect(Collectors.toUnmodifiableSet());
+    public @NotNull Set<ProjectImpl> getProjects() {
+        return Set.copyOf(this.projectCache);
     }
 
     @Override
-    public @Nullable Project getProject(long id) {
-        return this.entityCache.get(id, Project.class);
+    public @Nullable ProjectImpl getProject(long id) {
+        return this.projectCache.get(id);
     }
 
     @Override
-    public @NotNull Set<? extends Ticket> getTickets() {
-        return this.entityCache.stream()
-                .filter(Ticket.class::isInstance)
-                .map(Ticket.class::cast)
-                .collect(Collectors.toUnmodifiableSet());
+    public @NotNull Set<TicketImpl> getTickets() {
+        return Set.copyOf(ticketCache);
     }
 
     @Override
-    public @Nullable Ticket getTicket(long id) {
-        return this.entityCache.get(id, Ticket.class);
+    public @Nullable TicketImpl getTicket(long id) {
+        return this.ticketCache.get(id);
     }
 
     @Override
-    public @NotNull Set<? extends User> getUsers() {
-        return this.entityCache.stream()
-                .filter(User.class::isInstance)
-                .map(User.class::cast)
-                .collect(Collectors.toUnmodifiableSet());
+    public @NotNull Set<UserImpl> getUsers() {
+        return Set.copyOf(this.userCache);
     }
 
     @Override
-    public @Nullable User getUser(long id) {
-        return this.entityCache.get(id, User.class);
+    public @Nullable UserImpl getUser(long id) {
+        return this.userCache.get(id);
     }
 
     @Override
-    public @NotNull Set<? extends Board> getBoards() {
-        return this.entityCache.stream()
-                .filter(Board.class::isInstance)
-                .map(Board.class::cast)
-                .collect(Collectors.toUnmodifiableSet());
+    public @NotNull Set<BoardImpl> getBoards() {
+        return Set.copyOf(this.boardCache);
     }
 
     @Override
-    public @Nullable Board getBoard(long id) {
-        return this.entityCache.get(id, Board.class);
+    public @Nullable BoardImpl getBoard(long id) {
+        return this.boardCache.get(id);
     }
 }
