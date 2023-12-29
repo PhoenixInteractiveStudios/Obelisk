@@ -3,11 +3,12 @@ package org.burrow_studios.obelisk.api;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.*;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
+import org.burrow_studios.obelisk.api.event.EventHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface Obelisk {
-    /* - GENERAL - */
+    @NotNull EventHandler getEventHandler();
 
     @NotNull TurtleSetView<? extends Group> getGroups();
 
