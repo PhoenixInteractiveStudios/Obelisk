@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.internal.entities.issue;
 
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.api.entities.issue.Tag;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
@@ -19,6 +20,14 @@ public final class TagImpl extends TurtleImpl implements Tag {
         super(api, id);
         this.boardId = boardId;
         this.name = name;
+    }
+
+    @Override
+    public @NotNull JsonObject toJson() {
+        JsonObject json = super.toJson();
+        json.addProperty("board", boardId);
+        json.addProperty("name", name);
+        return json;
     }
 
     @Override

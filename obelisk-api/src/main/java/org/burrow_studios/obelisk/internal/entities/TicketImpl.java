@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.internal.entities;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
@@ -29,6 +31,25 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
         this.state = state;
         this.tags = tags;
         this.users = users;
+    }
+
+    @Override
+    public @NotNull JsonObject toJson() {
+        JsonObject json = super.toJson();
+        json.addProperty("title", title);
+        json.addProperty("state", state.name());
+
+        JsonArray tagJson = new JsonArray();
+        for (String tag : this.tags)
+            tagJson.add(tag);
+        json.add("tags", tagJson);
+
+        JsonArray userIds = new JsonArray();
+        for (long userId : this.users.getIdsAsImmutaleSet())
+            userIds.add(userId);
+        json.add("users", userIds);
+
+        return json;
     }
 
     @Override

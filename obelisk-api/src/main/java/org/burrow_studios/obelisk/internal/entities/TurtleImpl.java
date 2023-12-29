@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.internal.entities;
 
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.entities.issue.BoardImpl;
@@ -31,5 +32,11 @@ public abstract sealed class TurtleImpl implements Turtle permits GroupImpl, Pro
         if (obj == null) return false;
         if (!(obj instanceof Turtle turtle)) return false;
         return turtle.getId() == this.getId();
+    }
+
+    public @NotNull JsonObject toJson() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", id);
+        return json;
     }
 }

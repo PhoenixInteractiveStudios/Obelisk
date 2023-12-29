@@ -15,9 +15,9 @@ public sealed interface Project extends Turtle permits ProjectImpl {
 
     @NotNull State getState();
 
-    @NotNull Set<Long> getUserIds();
+    @NotNull Set<Long> getMemberIds();
 
-    @NotNull TurtleSetView<? extends User> getUsers();
+    @NotNull TurtleSetView<? extends User> getMembers();
 
     record Timings(
             @Nullable Instant release,

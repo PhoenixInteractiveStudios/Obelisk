@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.internal.entities.issue;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
@@ -28,6 +30,25 @@ public final class BoardImpl extends TurtleImpl implements Board {
         this.groupId = groupId;
         this.availableTags = availableTags;
         this.issues = issues;
+    }
+
+    @Override
+    public @NotNull JsonObject toJson() {
+        JsonObject json = super.toJson();
+        json.addProperty("title", title);
+        json.addProperty("group", groupId);
+
+        JsonArray tagIds = new JsonArray();
+        for (long tagId : this.availableTags.getIdsAsImmutaleSet())
+            tagIds.add(tagId);
+        json.add("tags", tagIds);
+
+        JsonArray issueIds = new JsonArray();
+        for (long issueId : this.issues.getIdsAsImmutaleSet())
+            issueIds.add(issueId);
+        json.add("issues", issueIds);
+
+        return json;
     }
 
     @Override

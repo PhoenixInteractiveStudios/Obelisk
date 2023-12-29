@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.internal.entities;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
@@ -12,7 +14,7 @@ public final class ProjectImpl extends TurtleImpl implements Project {
     private @NotNull String title;
     private @NotNull Timings timings;
     private @NotNull State state;
-    private final @NotNull DelegatingTurtleCacheView<UserImpl> users;
+    private final @NotNull DelegatingTurtleCacheView<UserImpl> members;
 
     public ProjectImpl(
             @NotNull ObeliskImpl api,
@@ -20,13 +22,39 @@ public final class ProjectImpl extends TurtleImpl implements Project {
             @NotNull String title,
             @NotNull Timings timings,
             @NotNull State state,
-            @NotNull DelegatingTurtleCacheView<UserImpl> users
+            @NotNull DelegatingTurtleCacheView<UserImpl> members
     ) {
         super(api, id);
         this.title = title;
         this.timings = timings;
         this.state = state;
-        this.users = users;
+        this.members = members;
+    }
+
+    @Override
+    public @NotNull JsonObject toJson() {
+        JsonObject json = super.toJson();
+        json.addProperty("title", title);
+
+        JsonObject timingJson = new JsonObject();
+        if (timings.release() != null)
+            timingJson.addProperty("release", timings.release().toString());
+        if (timings.apply() != null)
+            timingJson.addProperty("apply", timings.apply().toString());
+        if (timings.start() != null)
+            timingJson.addProperty("start", timings.start().toString());
+        if (timings.end() != null)
+            timingJson.addProperty("end", timings.end().toString());
+        json.add("timings", timingJson);
+
+        json.addProperty("state", state.name());
+
+        JsonArray memberIds = new JsonArray();
+        for (long memberId : this.members.getIdsAsImmutaleSet())
+            memberIds.add(memberId);
+        json.add("members", memberIds);
+
+        return json;
     }
 
     @Override
@@ -57,12 +85,12 @@ public final class ProjectImpl extends TurtleImpl implements Project {
     }
 
     @Override
-    public @NotNull Set<Long> getUserIds() {
-        return this.users.getIdsAsImmutaleSet();
+    public @NotNull Set<Long> getMemberIds() {
+        return this.members.getIdsAsImmutaleSet();
     }
 
     @Override
-    public @NotNull TurtleSetView<UserImpl> getUsers() {
-        return this.users;
+    public @NotNull TurtleSetView<UserImpl> getMembers() {
+        return this.members;
     }
 }

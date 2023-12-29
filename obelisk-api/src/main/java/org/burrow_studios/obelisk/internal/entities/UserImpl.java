@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.internal.entities;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,24 @@ public final class UserImpl extends TurtleImpl implements User {
         this.name = name;
         this.discordIds = discordIds;
         this.minecraftIds = minecraftIds;
+    }
+
+    @Override
+    public @NotNull JsonObject toJson() {
+        JsonObject json = super.toJson();
+        json.addProperty("name", name);
+
+        JsonArray discordJson = new JsonArray();
+        for (long discordId : this.discordIds)
+            discordJson.add(discordId);
+        json.add("discord", discordJson);
+
+        JsonArray minecraftJson = new JsonArray();
+        for (UUID minecraftId : this.minecraftIds)
+            minecraftJson.add(minecraftId.toString());
+        json.add("minecraft", minecraftJson);
+
+        return json;
     }
 
     @Override
