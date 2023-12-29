@@ -1,6 +1,5 @@
 package org.burrow_studios.obelisk.internal.entities.issue;
 
-import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
@@ -65,7 +64,7 @@ public final class BoardImpl extends TurtleImpl implements Board {
     }
 
     @Override
-    public @NotNull TurtleSetView<TagImpl> getAvailableTags() {
+    public @NotNull TurtleCache<TagImpl> getAvailableTags() {
         return this.availableTags;
     }
 
@@ -75,7 +74,7 @@ public final class BoardImpl extends TurtleImpl implements Board {
     }
 
     @Override
-    public @NotNull TurtleSetView<IssueImpl> getIssues() {
+    public @NotNull TurtleCache<IssueImpl> getIssues() {
         return this.issues;
     }
 }
