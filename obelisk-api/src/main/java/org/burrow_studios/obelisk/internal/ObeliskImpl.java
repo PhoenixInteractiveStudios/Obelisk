@@ -2,14 +2,15 @@ package org.burrow_studios.obelisk.internal;
 
 import org.burrow_studios.obelisk.api.Obelisk;
 import org.burrow_studios.obelisk.internal.cache.TurtleCache;
-import org.burrow_studios.obelisk.internal.entities.*;
+import org.burrow_studios.obelisk.internal.entities.GroupImpl;
+import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
+import org.burrow_studios.obelisk.internal.entities.TicketImpl;
+import org.burrow_studios.obelisk.internal.entities.UserImpl;
 import org.burrow_studios.obelisk.internal.entities.issue.BoardImpl;
 import org.burrow_studios.obelisk.internal.event.EventHandlerImpl;
 import org.burrow_studios.obelisk.internal.net.NetworkHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 public class ObeliskImpl implements Obelisk {
     private final EventHandlerImpl eventHandler;
@@ -25,11 +26,11 @@ public class ObeliskImpl implements Obelisk {
         this.eventHandler   = new EventHandlerImpl(this);
         this.networkHandler = new NetworkHandler(this);
 
-        this.groupCache   = new TurtleCache<>();
-        this.projectCache = new TurtleCache<>();
-        this.ticketCache  = new TurtleCache<>();
-        this.userCache    = new TurtleCache<>();
-        this.boardCache   = new TurtleCache<>();
+        this.groupCache   = new TurtleCache<>(this);
+        this.projectCache = new TurtleCache<>(this);
+        this.ticketCache  = new TurtleCache<>(this);
+        this.userCache    = new TurtleCache<>(this);
+        this.boardCache   = new TurtleCache<>(this);
     }
 
     public @NotNull EventHandlerImpl getEventHandler() {
@@ -43,35 +44,8 @@ public class ObeliskImpl implements Obelisk {
     /* - ENTITIES - */
 
     @Override
-    public @NotNull Set<TurtleImpl> getEntities() {
-        final TurtleCache<TurtleImpl> entities = new TurtleCache<>();
-        entities.addAll(this.groupCache);
-        entities.addAll(this.projectCache);
-        entities.addAll(this.ticketCache);
-        entities.addAll(this.userCache);
-        entities.addAll(this.boardCache);
-        // TODO: add issues & tags?
-        return Set.copyOf(entities);
-    }
-
-    @Override
-    public @Nullable TurtleImpl getEntity(long id) {
-        TurtleImpl turtle;
-        turtle = this.groupCache.get(id);
-        if (turtle != null) return turtle;
-        turtle = this.projectCache.get(id);
-        if (turtle != null) return turtle;
-        turtle = this.ticketCache.get(id);
-        if (turtle != null) return turtle;
-        turtle = this.userCache.get(id);
-        if (turtle != null) return turtle;
-        turtle = this.boardCache.get(id);
-        return turtle;
-    }
-
-    @Override
-    public @NotNull Set<GroupImpl> getGroups() {
-        return Set.copyOf(this.groupCache);
+    public @NotNull TurtleCache<GroupImpl> getGroups() {
+        return this.groupCache;
     }
 
     @Override
@@ -80,8 +54,8 @@ public class ObeliskImpl implements Obelisk {
     }
 
     @Override
-    public @NotNull Set<ProjectImpl> getProjects() {
-        return Set.copyOf(this.projectCache);
+    public @NotNull TurtleCache<ProjectImpl> getProjects() {
+        return this.projectCache;
     }
 
     @Override
@@ -90,8 +64,8 @@ public class ObeliskImpl implements Obelisk {
     }
 
     @Override
-    public @NotNull Set<TicketImpl> getTickets() {
-        return Set.copyOf(ticketCache);
+    public @NotNull TurtleCache<TicketImpl> getTickets() {
+        return ticketCache;
     }
 
     @Override
@@ -100,8 +74,8 @@ public class ObeliskImpl implements Obelisk {
     }
 
     @Override
-    public @NotNull Set<UserImpl> getUsers() {
-        return Set.copyOf(this.userCache);
+    public @NotNull TurtleCache<UserImpl> getUsers() {
+        return this.userCache;
     }
 
     @Override
@@ -110,8 +84,8 @@ public class ObeliskImpl implements Obelisk {
     }
 
     @Override
-    public @NotNull Set<BoardImpl> getBoards() {
-        return Set.copyOf(this.boardCache);
+    public @NotNull TurtleCache<BoardImpl> getBoards() {
+        return this.boardCache;
     }
 
     @Override
