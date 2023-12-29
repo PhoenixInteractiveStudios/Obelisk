@@ -39,6 +39,10 @@ public class TurtleCache<T extends Turtle> implements TurtleSetView<T> {
         return this.api;
     }
 
+    public @NotNull Set<Long> getIdsAsImmutaleSet() {
+        return Set.copyOf(this.data.keySet());
+    }
+
     @Override
     public @Nullable T get(long id) {
         synchronized (lock) {

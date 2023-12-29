@@ -4,7 +4,7 @@ import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
-import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
+import org.burrow_studios.obelisk.internal.cache.TurtleCache;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,16 +13,16 @@ import java.util.Set;
 public final class BoardImpl extends TurtleImpl implements Board {
     private @NotNull String title;
     private long groupId;
-    private final @NotNull DelegatingTurtleCacheView<TagImpl> availableTags;
-    private final @NotNull DelegatingTurtleCacheView<IssueImpl> issues;
+    private final @NotNull TurtleCache<TagImpl> availableTags;
+    private final @NotNull TurtleCache<IssueImpl> issues;
 
     public BoardImpl(
             @NotNull ObeliskImpl api,
             long id,
             @NotNull String title,
             long groupId,
-            @NotNull DelegatingTurtleCacheView<TagImpl> availableTags,
-            @NotNull DelegatingTurtleCacheView<IssueImpl> issues
+            @NotNull TurtleCache<TagImpl> availableTags,
+            @NotNull TurtleCache<IssueImpl> issues
     ) {
         super(api, id);
         this.title = title;
