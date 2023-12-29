@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.Ticket;
+import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.api.entities.issue.Issue;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.internal.cache.TurtleCache;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class EntityBuilder {
     private final ObeliskImpl api;
@@ -33,10 +35,7 @@ public class EntityBuilder {
         final String name     = json.get("name").getAsString();
         final int    position = json.get("position").getAsInt();
 
-        final JsonArray memberIds = json.getAsJsonArray("members");
-        final DelegatingTurtleCacheView<UserImpl> members = new DelegatingTurtleCacheView<>(api.getUsers(), UserImpl.class);
-        for (JsonElement memberId : memberIds)
-            members.add(api.getUser(memberId.getAsLong()));
+        final DelegatingTurtleCacheView<UserImpl> members = getDelegatingCacheView(json, "members", api.getUsers(), UserImpl.class);
 
         final GroupImpl group = new GroupImpl(api, id, name, members, position);
 
@@ -53,10 +52,7 @@ public class EntityBuilder {
 
         final Project.State state = Project.State.valueOf(stateStr);
 
-        final JsonArray memberIds = json.getAsJsonArray("members");
-        final DelegatingTurtleCacheView<UserImpl> members = new DelegatingTurtleCacheView<>(api.getUsers(), UserImpl.class);
-        for (JsonElement memberId : memberIds)
-            members.add(api.getUser(memberId.getAsLong()));
+        final DelegatingTurtleCacheView<UserImpl> members = getDelegatingCacheView(json, "members", api.getUsers(), UserImpl.class);
 
         final ProjectImpl project = new ProjectImpl(api, id, title, timings, state, members);
 
@@ -85,15 +81,9 @@ public class EntityBuilder {
 
         final Ticket.State state = Ticket.State.valueOf(stateStr);
 
-        final JsonArray tagArray = json.getAsJsonArray("tags");
-        final ArrayList<String> tags = new ArrayList<>(tagArray.size());
-        for (JsonElement idElement : tagArray)
-            tags.add(idElement.getAsString());
+        final ArrayList<String> tags = getList(json, "tags", JsonElement::getAsString);
 
-        final JsonArray userIds = json.getAsJsonArray("users");
-        final DelegatingTurtleCacheView<UserImpl> users = new DelegatingTurtleCacheView<>(api.getUsers(), UserImpl.class);
-        for (JsonElement userId : userIds)
-            users.add(api.getUser(userId.getAsLong()));
+        final DelegatingTurtleCacheView<UserImpl> users = getDelegatingCacheView(json, "users", api.getUsers(), UserImpl.class);
 
         final TicketImpl ticket = new TicketImpl(api, id, title, state, tags, users);
 
@@ -105,15 +95,8 @@ public class EntityBuilder {
         final long   id   = json.get("id").getAsLong();
         final String name = json.get("name").getAsString();
 
-        final JsonArray discordIdArray = json.getAsJsonArray("discord");
-        final ArrayList<Long> discordIds = new ArrayList<>(discordIdArray.size());
-        for (JsonElement idElement : discordIdArray)
-            discordIds.add(idElement.getAsLong());
-
-        final JsonArray minecraftIdArray = json.getAsJsonArray("minecraft");
-        final ArrayList<UUID> minecraftIds = new ArrayList<>(minecraftIdArray.size());
-        for (JsonElement idElement : minecraftIdArray)
-            minecraftIds.add(UUID.fromString(idElement.getAsString()));
+        final ArrayList<Long>   discordIds = getList(json, "discord", JsonElement::getAsLong);
+        final ArrayList<UUID> minecraftIds = getList(json, "minecraft", e -> UUID.fromString(e.getAsString()));
 
         final UserImpl user = new UserImpl(api, id, name, discordIds, minecraftIds);
 
@@ -143,22 +126,14 @@ public class EntityBuilder {
         final String title    = json.get("title").getAsString();
         final String stateStr = json.get("state").getAsString();
 
-        final JsonArray assigneeIds = json.getAsJsonArray("assignees");
-        final DelegatingTurtleCacheView<UserImpl> assignees = new DelegatingTurtleCacheView<>(api.getUsers(), UserImpl.class);
-        for (JsonElement assigneeId : assigneeIds)
-            assignees.add(api.getUser(assigneeId.getAsLong()));
-
+        final DelegatingTurtleCacheView<UserImpl> assignees = getDelegatingCacheView(json, "assignees", api.getUsers(), UserImpl.class);
         final Issue.State state = Issue.State.valueOf(stateStr);
 
         final BoardImpl board = this.api.getBoard(boardId);
         assert board != null;
 
         final TurtleCache<TagImpl> availableTags = board.getAvailableTags();
-
-        final JsonArray tagArray = json.getAsJsonArray("tags");
-        final DelegatingTurtleCacheView<TagImpl> tags = new DelegatingTurtleCacheView<>(availableTags, TagImpl.class);
-        for (JsonElement tag : tagArray)
-            tags.add(availableTags.get(tag.getAsLong()));
+        final DelegatingTurtleCacheView<TagImpl> tags = getDelegatingCacheView(json, "tags", availableTags, TagImpl.class);
 
         final IssueImpl issue = new IssueImpl(api, id, boardId, authorId, assignees, title, state, tags);
 
@@ -178,5 +153,27 @@ public class EntityBuilder {
 
         board.getAvailableTags().add(tag);
         return tag;
+    }
+
+    private static <T extends Turtle> @NotNull DelegatingTurtleCacheView<T> getDelegatingCacheView(@NotNull JsonObject json, @NotNull String path, @NotNull TurtleCache<? super T> cache, @NotNull Class<T> type) {
+        return getDelegatingCacheView(json.getAsJsonArray(path), cache, type);
+    }
+
+    private static <T extends Turtle> @NotNull DelegatingTurtleCacheView<T> getDelegatingCacheView(@NotNull JsonArray ids, @NotNull TurtleCache<? super T> cache, @NotNull Class<T> type) {
+        final DelegatingTurtleCacheView<T> entities = new DelegatingTurtleCacheView<>(cache, type);
+        for (JsonElement idElement : ids)
+            entities.add(cache.get(idElement.getAsLong(), type));
+        return entities;
+    }
+
+    private static <T> @NotNull ArrayList<T> getList(@NotNull JsonObject json, @NotNull String path, @NotNull Function<JsonElement, T> mappingFunction) {
+        return getList(json.getAsJsonArray(path), mappingFunction);
+    }
+
+    private static <T> @NotNull ArrayList<T> getList(@NotNull JsonArray elements, @NotNull Function<JsonElement, T> mappingFunction) {
+        ArrayList<T> list = new ArrayList<>();
+        for (JsonElement element : elements)
+            list.add(mappingFunction.apply(element));
+        return list;
     }
 }
