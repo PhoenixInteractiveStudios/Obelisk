@@ -1,7 +1,9 @@
 package org.burrow_studios.obelisk.internal.entities;
 
+import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +14,7 @@ public class TicketImpl extends TurtleImpl implements Ticket {
     private @Nullable String title;
     private @NotNull State state;
     private final @NotNull List<String> tags;
-    private final @NotNull Set<Long> userIds;
+    private final @NotNull DelegatingTurtleCacheView<UserImpl> users;
 
     public TicketImpl(
             @NotNull ObeliskImpl api,
@@ -20,13 +22,13 @@ public class TicketImpl extends TurtleImpl implements Ticket {
             @Nullable String title,
             @NotNull State state,
             @NotNull List<String> tags,
-            @NotNull Set<Long> userIds
+            @NotNull DelegatingTurtleCacheView<UserImpl> users
     ) {
         super(api, id);
         this.title = title;
         this.state = state;
         this.tags = tags;
-        this.userIds = userIds;
+        this.users = users;
     }
 
     @Override
@@ -58,21 +60,11 @@ public class TicketImpl extends TurtleImpl implements Ticket {
 
     @Override
     public @NotNull Set<Long> getUserIds() {
-        return Set.copyOf(this.userIds);
-    }
-
-    public @NotNull Set<Long> getUserIdsMutable() {
-        return this.userIds;
+        return this.users.getIdsAsImmutaleSet();
     }
 
     @Override
-    public @NotNull Set<UserImpl> getUsers() {
-        // TODO
-        return Set.of();
-    }
-
-    public @NotNull Set<UserImpl> getUsersMutable() {
-        // TODO
-        return Set.of();
+    public @NotNull TurtleSetView<UserImpl> getUsers() {
+        return this.users;
     }
 }

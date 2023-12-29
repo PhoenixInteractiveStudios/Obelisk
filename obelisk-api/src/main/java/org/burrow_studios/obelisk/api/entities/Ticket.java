@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.api.entities;
 
+import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +16,7 @@ public interface Ticket extends Turtle {
 
     @NotNull Set<Long> getUserIds();
 
-    @NotNull Set<? extends User> getUsers();
+    @NotNull TurtleSetView<? extends User> getUsers();
 
     enum State {
         OPEN,

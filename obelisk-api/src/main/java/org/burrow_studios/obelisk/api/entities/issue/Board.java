@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.api.entities.issue;
 
+import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.jetbrains.annotations.NotNull;
@@ -15,9 +16,9 @@ public interface Board extends Turtle {
 
     @NotNull Set<Long> getAvailableTagIds();
 
-    @NotNull Set<? extends Tag> getAvailableTags();
+    @NotNull TurtleSetView<? extends Tag> getAvailableTags();
 
     @NotNull Set<Long> getIssueIds();
 
-    @NotNull Set<? extends Issue> getIssues();
+    @NotNull TurtleSetView<? extends Issue> getIssues();
 }

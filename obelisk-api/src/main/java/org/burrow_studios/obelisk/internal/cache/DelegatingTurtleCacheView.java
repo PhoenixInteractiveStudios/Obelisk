@@ -30,7 +30,7 @@ public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetVie
         return this.cache.getAPI();
     }
 
-    public @NotNull Set<Long> getIds() {
+    public @NotNull Set<Long> getIdsAsImmutaleSet() {
         return Set.copyOf(this.ids);
     }
 

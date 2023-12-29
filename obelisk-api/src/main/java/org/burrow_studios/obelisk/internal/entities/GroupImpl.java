@@ -1,26 +1,28 @@
 package org.burrow_studios.obelisk.internal.entities;
 
+import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 public class GroupImpl extends TurtleImpl implements Group {
     private @NotNull String name;
-    private final @NotNull Set<Long> memberIds;
+    private final @NotNull DelegatingTurtleCacheView<UserImpl> members;
     private int position;
 
     public GroupImpl(
             @NotNull ObeliskImpl api,
             long id,
             @NotNull String name,
-            @NotNull Set<Long> memberIds,
+            @NotNull DelegatingTurtleCacheView<UserImpl> members,
             int position
     ) {
         super(api, id);
         this.name = name;
-        this.memberIds = memberIds;
+        this.members = members;
         this.position = position;
     }
 
@@ -35,27 +37,17 @@ public class GroupImpl extends TurtleImpl implements Group {
 
     @Override
     public int getSize() {
-        return this.memberIds.size();
+        return this.members.size();
     }
 
     @Override
-    public @NotNull Set<UserImpl> getMembers() {
-        // TODO
-        return Set.of();
-    }
-
-    public @NotNull Set<UserImpl> getMembersMutable() {
-        // TODO
-        return Set.of();
+    public @NotNull TurtleSetView<UserImpl> getMembers() {
+        return this.members;
     }
 
     @Override
     public @NotNull Set<Long> getMemberIds() {
-        return Set.copyOf(this.memberIds);
-    }
-
-    public @NotNull Set<Long> getMemberIdsMutable() {
-        return this.memberIds;
+        return this.members.getIdsAsImmutaleSet();
     }
 
     @Override

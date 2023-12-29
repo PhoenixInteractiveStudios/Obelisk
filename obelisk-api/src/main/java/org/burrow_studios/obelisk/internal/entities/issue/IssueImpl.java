@@ -1,9 +1,11 @@
 package org.burrow_studios.obelisk.internal.entities.issue;
 
+import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.api.entities.issue.Issue;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.burrow_studios.obelisk.internal.entities.UserImpl;
 import org.jetbrains.annotations.NotNull;
@@ -13,28 +15,28 @@ import java.util.Set;
 public class IssueImpl extends TurtleImpl implements Issue {
     private final long boardId;
     private final long authorId;
-    private final @NotNull Set<Long> assigneeIds;
+    private final @NotNull DelegatingTurtleCacheView<UserImpl> assignees;
     private @NotNull String title;
     private @NotNull State state;
-    private final @NotNull Set<Long> tagIds;
+    private final @NotNull DelegatingTurtleCacheView<TagImpl> tags;
 
     public IssueImpl(
             @NotNull ObeliskImpl api,
             long id,
             long boardId,
             long authorId,
-            @NotNull Set<Long> assigneeIds,
+            @NotNull DelegatingTurtleCacheView<UserImpl> assignees,
             @NotNull String title,
             @NotNull State state,
-            @NotNull Set<Long> tagIds
+            @NotNull DelegatingTurtleCacheView<TagImpl> tags
     ) {
         super(api, id);
         this.boardId = boardId;
         this.authorId = authorId;
-        this.assigneeIds = assigneeIds;
+        this.assignees = assignees;
         this.title = title;
         this.state = state;
-        this.tagIds = tagIds;
+        this.tags = tags;
     }
 
     @Override
@@ -61,22 +63,12 @@ public class IssueImpl extends TurtleImpl implements Issue {
 
     @Override
     public @NotNull Set<Long> getAssigneeIds() {
-        return Set.copyOf(this.assigneeIds);
-    }
-
-    public @NotNull Set<Long> getAssigneeIdsMutable() {
-        return this.assigneeIds;
+        return this.assignees.getIdsAsImmutaleSet();
     }
 
     @Override
-    public @NotNull Set<UserImpl> getAssignees() {
-        // TODO
-        return null;
-    }
-
-    public @NotNull Set<UserImpl> getAssigneesMutable() {
-        // TODO
-        return null;
+    public @NotNull TurtleSetView<UserImpl> getAssignees() {
+        return this.assignees;
     }
 
     @Override
@@ -99,21 +91,11 @@ public class IssueImpl extends TurtleImpl implements Issue {
 
     @Override
     public @NotNull Set<Long> getTagIds() {
-        return Set.copyOf(this.tagIds);
-    }
-
-    public @NotNull Set<Long> getTagIdsMutable() {
-        return this.tagIds;
+        return this.tags.getIdsAsImmutaleSet();
     }
 
     @Override
-    public @NotNull Set<TagImpl> getTags() {
-        // TODO
-        return null;
-    }
-
-    public @NotNull Set<TagImpl> getTagsMutable() {
-        // TODO
-        return null;
+    public @NotNull TurtleSetView<TagImpl> getTags() {
+        return this.tags;
     }
 }

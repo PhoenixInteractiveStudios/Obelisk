@@ -1,7 +1,9 @@
 package org.burrow_studios.obelisk.internal.entities;
 
+import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -10,7 +12,7 @@ public class ProjectImpl extends TurtleImpl implements Project {
     private @NotNull String title;
     private @NotNull Timings timings;
     private @NotNull State state;
-    private final @NotNull Set<Long> userIds;
+    private final @NotNull DelegatingTurtleCacheView<UserImpl> users;
 
     public ProjectImpl(
             @NotNull ObeliskImpl api,
@@ -18,13 +20,13 @@ public class ProjectImpl extends TurtleImpl implements Project {
             @NotNull String title,
             @NotNull Timings timings,
             @NotNull State state,
-            @NotNull Set<Long> userIds
+            @NotNull DelegatingTurtleCacheView<UserImpl> users
     ) {
         super(api, id);
         this.title = title;
         this.timings = timings;
         this.state = state;
-        this.userIds = userIds;
+        this.users = users;
     }
 
     @Override
@@ -56,21 +58,11 @@ public class ProjectImpl extends TurtleImpl implements Project {
 
     @Override
     public @NotNull Set<Long> getUserIds() {
-        return Set.copyOf(this.userIds);
-    }
-
-    public @NotNull Set<Long> getUserIdsMutable() {
-        return this.userIds;
+        return this.users.getIdsAsImmutaleSet();
     }
 
     @Override
-    public @NotNull Set<UserImpl> getUsers() {
-        // TODO
-        return Set.of();
-    }
-
-    public @NotNull Set<UserImpl> getUsersMutable() {
-        // TODO
-        return Set.of();
+    public @NotNull TurtleSetView<UserImpl> getUsers() {
+        return this.users;
     }
 }

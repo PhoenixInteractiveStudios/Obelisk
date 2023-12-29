@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.api.entities.issue;
 
+import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +18,7 @@ public interface Issue extends Turtle {
 
     @NotNull Set<Long> getAssigneeIds();
 
-    @NotNull Set<? extends User> getAssignees();
+    @NotNull TurtleSetView<? extends User> getAssignees();
 
     @NotNull String getTitle();
 
@@ -25,7 +26,7 @@ public interface Issue extends Turtle {
 
     @NotNull Set<Long> getTagIds();
 
-    @NotNull Set<? extends Tag> getTags();
+    @NotNull TurtleSetView<? extends Tag> getTags();
 
     enum State {
         OPEN,
