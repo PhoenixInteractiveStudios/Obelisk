@@ -2,9 +2,12 @@ package org.burrow_studios.obelisk.internal.entities;
 
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.entities.issue.BoardImpl;
+import org.burrow_studios.obelisk.internal.entities.issue.IssueImpl;
+import org.burrow_studios.obelisk.internal.entities.issue.TagImpl;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class TurtleImpl implements Turtle {
+public abstract sealed class TurtleImpl implements Turtle permits GroupImpl, ProjectImpl, TicketImpl, UserImpl, BoardImpl, IssueImpl, TagImpl {
     protected final @NotNull ObeliskImpl api;
     protected final long id;
 

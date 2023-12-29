@@ -3,11 +3,12 @@ package org.burrow_studios.obelisk.api.entities.issue;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.internal.entities.issue.IssueImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public interface Issue extends Turtle {
+public sealed interface Issue extends Turtle permits IssueImpl {
     long getBoardId();
 
     @NotNull Board getBoard();

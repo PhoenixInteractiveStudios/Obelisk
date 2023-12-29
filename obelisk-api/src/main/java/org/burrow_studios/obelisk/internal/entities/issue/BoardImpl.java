@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class BoardImpl extends TurtleImpl implements Board {
+public final class BoardImpl extends TurtleImpl implements Board {
     private @NotNull String title;
     private long groupId;
     private final @NotNull DelegatingTurtleCacheView<TagImpl> availableTags;

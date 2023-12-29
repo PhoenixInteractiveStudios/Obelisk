@@ -6,7 +6,7 @@ import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.jetbrains.annotations.NotNull;
 
-public class TagImpl extends TurtleImpl implements Tag {
+public final class TagImpl extends TurtleImpl implements Tag {
     private final long boardId;
     private @NotNull String name;
 

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class ProjectImpl extends TurtleImpl implements Project {
+public final class ProjectImpl extends TurtleImpl implements Project {
     private @NotNull String title;
     private @NotNull Timings timings;
     private @NotNull State state;

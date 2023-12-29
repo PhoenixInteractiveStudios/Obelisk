@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class IssueImpl extends TurtleImpl implements Issue {
+public final class IssueImpl extends TurtleImpl implements Issue {
     private final long boardId;
     private final long authorId;
     private final @NotNull DelegatingTurtleCacheView<UserImpl> assignees;

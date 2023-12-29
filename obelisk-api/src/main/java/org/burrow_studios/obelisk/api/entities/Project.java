@@ -1,13 +1,14 @@
 package org.burrow_studios.obelisk.api.entities;
 
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
+import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.Set;
 
-public interface Project extends Turtle {
+public sealed interface Project extends Turtle permits ProjectImpl {
     @NotNull String getTitle();
 
     @NotNull Timings getTimings();
