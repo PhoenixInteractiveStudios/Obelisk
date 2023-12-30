@@ -1,6 +1,5 @@
 package org.burrow_studios.obelisk.internal.action;
 
-import org.burrow_studios.obelisk.api.Obelisk;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
@@ -8,20 +7,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public final class DeleteActionImpl<T extends Turtle> implements DeleteAction<T> {
-    private final @NotNull ObeliskImpl api;
+public final class DeleteActionImpl<T extends Turtle> extends ActionImpl<Void> implements DeleteAction<T> {
     private final @NotNull Class<T> type;
     private final long id;
 
     public DeleteActionImpl(@NotNull ObeliskImpl api, @NotNull Class<T> type, long id) {
-        this.api = api;
+        super(api);
         this.type = type;
         this.id = id;
-    }
-
-    @Override
-    public @NotNull Obelisk getAPI() {
-        return this.api;
     }
 
     @Override
@@ -35,13 +28,8 @@ public final class DeleteActionImpl<T extends Turtle> implements DeleteAction<T>
     }
 
     @Override
-    public void queue() {
-        // TODO
-    }
-
-    @Override
     public @NotNull CompletableFuture<Void> submit() {
         // TODO
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 }
