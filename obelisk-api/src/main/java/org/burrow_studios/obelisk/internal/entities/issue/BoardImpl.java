@@ -10,6 +10,7 @@ import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.internal.action.entity.issue.BoardModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.TurtleCache;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -61,7 +62,14 @@ public final class BoardImpl extends TurtleImpl implements Board {
 
     @Override
     public @NotNull DeleteAction<Board> delete() {
-        return new DeleteActionImpl<>(this.getAPI(), Board.class, this.getId());
+        return new DeleteActionImpl<>(
+                this.getAPI(),
+                Board.class,
+                this.getId(),
+                Route.Board.DELETE.builder()
+                        .withArg(getId())
+                        .compile()
+        );
     }
 
     @Override

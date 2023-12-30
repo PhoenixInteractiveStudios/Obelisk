@@ -1,18 +1,30 @@
 package org.burrow_studios.obelisk.internal.action;
 
+import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.api.action.Action;
+import org.burrow_studios.obelisk.common.function.ExceptionalBiFunction;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.net.NetworkHandler;
+import org.burrow_studios.obelisk.internal.net.Request;
+import org.burrow_studios.obelisk.internal.net.Response;
+import org.burrow_studios.obelisk.internal.net.http.CompiledRoute;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public abstract class ActionImpl<T> implements Action<T> {
     protected final @NotNull ObeliskImpl api;
+    private final @NotNull CompiledRoute route;
+    private final @NotNull ExceptionalBiFunction<Request, Response, T, ? extends Exception> mapper;
 
-    protected ActionImpl(@NotNull ObeliskImpl api) {
+    protected ActionImpl(@NotNull ObeliskImpl api, @NotNull CompiledRoute route, @NotNull ExceptionalBiFunction<Request, Response, T, ? extends Exception> mapper) {
         this.api = api;
+        this.route = route;
+        this.mapper = mapper;
     }
 
     @Override
@@ -20,9 +32,30 @@ public abstract class ActionImpl<T> implements Action<T> {
         return this.api;
     }
 
+    public final @NotNull CompiledRoute getRoute() {
+        return route;
+    }
+
+    public abstract @Nullable JsonElement getContent();
+
     @Override
     public final void queue() {
         this.submit();
+    }
+
+    @Override
+    public final @NotNull CompletableFuture<T> submit() {
+        final NetworkHandler networkHandler = this.api.getNetworkHandler();
+        final Request        request        = networkHandler.submitRequest(this);
+
+        return request.getFuture().handle((response, throwable) -> {
+            try {
+                return this.mapper.apply(request, response);
+            } catch (Exception e) {
+                // TODO: handle
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     @Override

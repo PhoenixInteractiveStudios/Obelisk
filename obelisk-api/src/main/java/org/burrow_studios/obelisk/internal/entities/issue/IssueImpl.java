@@ -13,6 +13,7 @@ import org.burrow_studios.obelisk.internal.action.entity.issue.IssueModifierImpl
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.burrow_studios.obelisk.internal.entities.UserImpl;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -73,7 +74,15 @@ public final class IssueImpl extends TurtleImpl implements Issue {
 
     @Override
     public @NotNull DeleteAction<Issue> delete() {
-        return new DeleteActionImpl<>(this.getAPI(), Issue.class, this.getId());
+        return new DeleteActionImpl<>(
+                this.getAPI(),
+                Issue.class,
+                this.getId(),
+                Route.Board.Issue.DELETE.builder()
+                        .withArg(getBoardId())
+                        .withArg(getId())
+                        .compile()
+        );
     }
 
     @Override

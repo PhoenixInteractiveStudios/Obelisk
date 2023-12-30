@@ -9,6 +9,7 @@ import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.internal.action.entity.TicketModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,7 +63,14 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
 
     @Override
     public @NotNull DeleteAction<Ticket> delete() {
-        return new DeleteActionImpl<>(this.getAPI(), Ticket.class, this.getId());
+        return new DeleteActionImpl<>(
+                this.getAPI(),
+                Ticket.class,
+                this.getId(),
+                Route.Ticket.DELETE.builder()
+                        .withArg(getId())
+                        .compile()
+        );
     }
 
     @Override

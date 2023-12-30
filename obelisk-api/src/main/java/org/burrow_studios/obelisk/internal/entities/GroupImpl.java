@@ -9,6 +9,7 @@ import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.internal.action.entity.GroupModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -52,7 +53,14 @@ public final class GroupImpl extends TurtleImpl implements Group {
 
     @Override
     public @NotNull DeleteAction<Group> delete() {
-        return new DeleteActionImpl<>(this.getAPI(), Group.class, this.getId());
+        return new DeleteActionImpl<>(
+                this.getAPI(),
+                Group.class,
+                this.getId(),
+                Route.Group.DELETE.builder()
+                        .withArg(getId())
+                        .compile()
+        );
     }
 
     @Override

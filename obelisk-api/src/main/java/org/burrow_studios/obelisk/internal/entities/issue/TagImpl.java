@@ -8,6 +8,7 @@ import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.internal.action.entity.issue.TagModifierImpl;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 public final class TagImpl extends TurtleImpl implements Tag {
@@ -40,7 +41,15 @@ public final class TagImpl extends TurtleImpl implements Tag {
 
     @Override
     public @NotNull DeleteAction<Tag> delete() {
-        return new DeleteActionImpl<>(this.getAPI(), Tag.class, this.getId());
+        return new DeleteActionImpl<>(
+                this.getAPI(),
+                Tag.class,
+                this.getId(),
+                Route.Board.Tag.DELETE.builder()
+                        .withArg(getBoardId())
+                        .withArg(getId())
+                        .compile()
+        );
     }
 
     @Override

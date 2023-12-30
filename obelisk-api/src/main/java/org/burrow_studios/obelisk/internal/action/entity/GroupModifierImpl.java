@@ -5,13 +5,21 @@ import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.api.action.entity.GroupModifier;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.internal.EntityUpdater;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
 import org.burrow_studios.obelisk.internal.entities.GroupImpl;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 public class GroupModifierImpl extends ModifierImpl<Group> implements GroupModifier {
     public GroupModifierImpl(@NotNull GroupImpl group) {
-        super(group);
+        super(
+                group,
+                Route.Group.EDIT.builder()
+                        .withArg(group.getId())
+                        .compile(),
+                json -> EntityUpdater.updateGroup(group, json)
+        );
     }
 
     @Override

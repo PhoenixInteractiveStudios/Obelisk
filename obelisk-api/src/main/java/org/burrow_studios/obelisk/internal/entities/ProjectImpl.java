@@ -9,6 +9,7 @@ import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.internal.action.entity.ProjectModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -67,7 +68,14 @@ public final class ProjectImpl extends TurtleImpl implements Project {
 
     @Override
     public @NotNull DeleteAction<Project> delete() {
-        return new DeleteActionImpl<>(this.getAPI(), Project.class, this.getId());
+        return new DeleteActionImpl<>(
+                this.getAPI(),
+                Project.class,
+                this.getId(),
+                Route.Project.DELETE.builder()
+                        .withArg(getId())
+                        .compile()
+        );
     }
 
     @Override

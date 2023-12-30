@@ -13,7 +13,7 @@ public final class CreateActionImpl<T extends Turtle> extends ActionImpl<T> impl
     private final @NotNull JsonObject json;
 
     public CreateActionImpl(@NotNull ObeliskImpl api, @NotNull Class<T> type, @NotNull JsonObject json) {
-        super(api);
+        super(api, route, mapper);
         this.type = type;
         this.json = json;
     }
