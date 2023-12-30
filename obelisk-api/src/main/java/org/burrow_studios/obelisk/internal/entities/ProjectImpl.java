@@ -2,9 +2,12 @@ package org.burrow_studios.obelisk.internal.entities;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.internal.action.entity.ProjectModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,6 +58,16 @@ public final class ProjectImpl extends TurtleImpl implements Project {
         json.add("members", memberIds);
 
         return json;
+    }
+
+    @Override
+    public @NotNull ProjectModifierImpl modify() {
+        return new ProjectModifierImpl(this);
+    }
+
+    @Override
+    public @NotNull DeleteAction<Project> delete() {
+        return new DeleteActionImpl<>(this.getAPI(), Project.class, this.getId());
     }
 
     @Override

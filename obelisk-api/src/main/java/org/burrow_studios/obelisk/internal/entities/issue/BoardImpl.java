@@ -2,9 +2,12 @@ package org.burrow_studios.obelisk.internal.entities.issue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.internal.action.entity.issue.BoardModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.TurtleCache;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +52,16 @@ public final class BoardImpl extends TurtleImpl implements Board {
         json.add("issues", issueIds);
 
         return json;
+    }
+
+    @Override
+    public @NotNull BoardModifierImpl modify() {
+        return new BoardModifierImpl(this);
+    }
+
+    @Override
+    public @NotNull DeleteAction<Board> delete() {
+        return new DeleteActionImpl<>(this.getAPI(), Board.class, this.getId());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.api.entities;
 
+import org.burrow_studios.obelisk.api.action.DeleteAction;
+import org.burrow_studios.obelisk.api.action.entity.TicketModifier;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.internal.entities.TicketImpl;
 import org.jetbrains.annotations.NotNull;
@@ -9,6 +11,12 @@ import java.util.List;
 import java.util.Set;
 
 public sealed interface Ticket extends Turtle permits TicketImpl {
+    @Override
+    @NotNull TicketModifier modify();
+
+    @Override
+    @NotNull DeleteAction<Ticket> delete();
+
     @Nullable String getTitle();
 
     @NotNull State getState();

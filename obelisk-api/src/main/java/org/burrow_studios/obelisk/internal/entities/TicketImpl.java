@@ -2,9 +2,12 @@ package org.burrow_studios.obelisk.internal.entities;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.internal.action.entity.TicketModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +53,16 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
         json.add("users", userIds);
 
         return json;
+    }
+
+    @Override
+    public @NotNull TicketModifierImpl modify() {
+        return new TicketModifierImpl(this);
+    }
+
+    @Override
+    public @NotNull DeleteAction<Ticket> delete() {
+        return new DeleteActionImpl<>(this.getAPI(), Ticket.class, this.getId());
     }
 
     @Override

@@ -1,6 +1,8 @@
 package org.burrow_studios.obelisk.api.entities;
 
 import org.burrow_studios.obelisk.api.Obelisk;
+import org.burrow_studios.obelisk.api.action.DeleteAction;
+import org.burrow_studios.obelisk.api.action.Modifier;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.api.entities.issue.Issue;
 import org.burrow_studios.obelisk.api.entities.issue.Tag;
@@ -24,4 +26,8 @@ public sealed interface Turtle permits Group, Project, Ticket, User, Board, Issu
      * @return Responsible TurtleClient
      */
     @NotNull Obelisk getAPI();
+
+    @NotNull Modifier<? extends Turtle> modify();
+
+    @NotNull DeleteAction<? extends Turtle> delete();
 }

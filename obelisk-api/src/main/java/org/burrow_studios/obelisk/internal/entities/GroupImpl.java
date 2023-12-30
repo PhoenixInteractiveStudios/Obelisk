@@ -2,9 +2,12 @@ package org.burrow_studios.obelisk.internal.entities;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.internal.action.entity.GroupModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,6 +43,16 @@ public final class GroupImpl extends TurtleImpl implements Group {
 
         json.addProperty("position", position);
         return json;
+    }
+
+    @Override
+    public @NotNull GroupModifierImpl modify() {
+        return new GroupModifierImpl(this);
+    }
+
+    @Override
+    public @NotNull DeleteAction<Group> delete() {
+        return new DeleteActionImpl<>(this.getAPI(), Group.class, this.getId());
     }
 
     @Override

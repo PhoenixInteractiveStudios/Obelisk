@@ -1,9 +1,12 @@
 package org.burrow_studios.obelisk.internal.entities.issue;
 
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.api.entities.issue.Tag;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.internal.action.entity.issue.TagModifierImpl;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +31,16 @@ public final class TagImpl extends TurtleImpl implements Tag {
         json.addProperty("board", boardId);
         json.addProperty("name", name);
         return json;
+    }
+
+    @Override
+    public @NotNull TagModifierImpl modify() {
+        return new TagModifierImpl(this);
+    }
+
+    @Override
+    public @NotNull DeleteAction<Tag> delete() {
+        return new DeleteActionImpl<>(this.getAPI(), Tag.class, this.getId());
     }
 
     @Override

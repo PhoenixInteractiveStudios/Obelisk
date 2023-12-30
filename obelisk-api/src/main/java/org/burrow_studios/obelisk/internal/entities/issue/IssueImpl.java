@@ -2,11 +2,14 @@ package org.burrow_studios.obelisk.internal.entities.issue;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.api.entities.issue.Issue;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.internal.action.entity.issue.IssueModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.burrow_studios.obelisk.internal.entities.UserImpl;
@@ -61,6 +64,16 @@ public final class IssueImpl extends TurtleImpl implements Issue {
         json.add("tags", tagIds);
 
         return json;
+    }
+
+    @Override
+    public @NotNull IssueModifierImpl modify() {
+        return new IssueModifierImpl(this);
+    }
+
+    @Override
+    public @NotNull DeleteAction<Issue> delete() {
+        return new DeleteActionImpl<>(this.getAPI(), Issue.class, this.getId());
     }
 
     @Override

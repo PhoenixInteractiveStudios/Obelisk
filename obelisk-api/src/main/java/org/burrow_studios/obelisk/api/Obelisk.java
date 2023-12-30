@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.api;
 
+import org.burrow_studios.obelisk.api.action.CreateAction;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.*;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
@@ -7,8 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface Obelisk {
-    /* - GENERAL - */
-
     @NotNull TurtleSetView<? extends Group> getGroups();
 
     @Nullable Group getGroup(long id);
@@ -28,4 +27,14 @@ public interface Obelisk {
     @NotNull TurtleSetView<? extends Board> getBoards();
 
     @Nullable Board getBoard(long id);
+
+    @NotNull CreateAction<Group> createGroup();
+
+    @NotNull CreateAction<Project> createProject();
+
+    @NotNull CreateAction<Ticket> createTicket();
+
+    @NotNull CreateAction<User> createUser();
+
+    @NotNull CreateAction<Board> createBoard();
 }
