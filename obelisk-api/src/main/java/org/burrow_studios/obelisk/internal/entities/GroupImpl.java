@@ -3,7 +3,6 @@ package org.burrow_studios.obelisk.internal.entities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
-import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
@@ -78,7 +77,7 @@ public final class GroupImpl extends TurtleImpl implements Group {
     }
 
     @Override
-    public @NotNull TurtleSetView<UserImpl> getMembers() {
+    public @NotNull DelegatingTurtleCacheView<UserImpl> getMembers() {
         return this.members;
     }
 

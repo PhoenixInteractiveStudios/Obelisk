@@ -1,18 +1,36 @@
 package org.burrow_studios.obelisk.internal.data;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.internal.EntityBuilder;
+import org.burrow_studios.obelisk.internal.entities.GroupImpl;
 import org.jetbrains.annotations.NotNull;
 
-public final class GroupData extends Data<Group> {
+public final class GroupData extends Data<Group, GroupImpl> {
     public GroupData() {
         super();
     }
 
     public GroupData(long id) {
         super(id);
+    }
+
+    @Override
+    public @NotNull GroupImpl build(@NotNull EntityBuilder builder) {
+        return builder.buildGroup(toJson());
+    }
+
+    @Override
+    public void update(@NotNull GroupImpl group) {
+        final JsonObject json = toJson();
+
+        handleUpdate(json, "name", JsonElement::getAsString, group::setName);
+        handleUpdate(json, "position", JsonElement::getAsInt, group::setPosition);
+        handleUpdateTurtles(json, "members", group::getMembers);
     }
 
     public void setName(@NotNull String name) {

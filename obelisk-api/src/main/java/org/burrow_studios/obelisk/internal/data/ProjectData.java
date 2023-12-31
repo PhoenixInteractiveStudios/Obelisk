@@ -1,19 +1,37 @@
 package org.burrow_studios.obelisk.internal.data;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.internal.EntityBuilder;
+import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
 import org.jetbrains.annotations.NotNull;
 
-public final class ProjectData extends Data<Project> {
+public final class ProjectData extends Data<Project, ProjectImpl> {
     public ProjectData() {
         super();
     }
 
     public ProjectData(long id) {
         super(id);
+    }
+
+    @Override
+    public @NotNull ProjectImpl build(@NotNull EntityBuilder builder) {
+        return builder.buildProject(toJson());
+    }
+
+    @Override
+    public void update(@NotNull ProjectImpl project) {
+        final JsonObject json = toJson();
+
+        handleUpdate(json, "title", JsonElement::getAsString, project::setTitle);
+        handleUpdateObject(json, "timings", project.getAPI(), EntityBuilder::buildProjectTimings, project::setTimings);
+        handleUpdateEnum(json, "state", Project.State.class, project::setState);
+        handleUpdateTurtles(json, "members", project::getMembers);
     }
 
     public void setTitle(@NotNull String title) {

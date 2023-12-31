@@ -6,6 +6,7 @@ import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -82,6 +83,13 @@ public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetVie
         return this.ids.add(t.getId());
     }
 
+    public boolean add(long id) {
+        T val = this.cache.get(id, contentType);
+        if (val != null)
+            return this.ids.add(id);
+        return false;
+    }
+
     public boolean remove(Object o) {
         if (!(o instanceof Turtle turtle)) return false;
         return this.removeById(turtle.getId());
@@ -96,6 +104,18 @@ public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetVie
         for (T t : c)
             changed = this.add(t) | changed;
         return changed;
+    }
+
+    public boolean addAllIds(@NotNull Iterable<Long> c) {
+        boolean changed = false;
+        for (Long id : c)
+            if (id != null)
+                changed = this.add(id) | changed;
+        return changed;
+    }
+
+    public boolean retainIds(@NotNull Collection<Long> c) {
+        return ids.retainAll(c);
     }
 
     public boolean removeAll(@NotNull Iterable<?> c) {

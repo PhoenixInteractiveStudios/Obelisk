@@ -1,20 +1,35 @@
 package org.burrow_studios.obelisk.internal.data;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.internal.EntityBuilder;
+import org.burrow_studios.obelisk.internal.entities.TicketImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class TicketData extends Data<Ticket> {
+public final class TicketData extends Data<Ticket, TicketImpl> {
     public TicketData() {
         super();
     }
 
     public TicketData(long id) {
         super(id);
+    }
+
+    @Override
+    public @NotNull TicketImpl build(@NotNull EntityBuilder builder) {
+        return builder.buildTicket(toJson());
+    }
+
+    @Override
+    public void update(@NotNull TicketImpl ticket) {
+        final JsonObject json = toJson();
+
+        handleUpdate(json, "title", JsonElement::getAsString, ticket::setTitle);
+        handleUpdateEnum(json, "state", Ticket.State.class, ticket::setState);
+        handleUpdateArray(json, "tags", JsonElement::getAsString, ticket.getTagsMutable());
+        handleUpdateTurtles(json, "users", ticket::getUsers);
     }
 
     public void setTitle(@Nullable String title) {

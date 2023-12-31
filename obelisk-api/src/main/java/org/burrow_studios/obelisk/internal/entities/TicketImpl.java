@@ -3,7 +3,6 @@ package org.burrow_studios.obelisk.internal.entities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
-import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
@@ -106,7 +105,7 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
     }
 
     @Override
-    public @NotNull TurtleSetView<UserImpl> getUsers() {
+    public @NotNull DelegatingTurtleCacheView<UserImpl> getUsers() {
         return this.users;
     }
 }

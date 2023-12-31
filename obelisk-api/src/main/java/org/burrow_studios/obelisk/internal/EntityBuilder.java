@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.function.Function;
 
+// TODO: integrate with entity data classes
 public class EntityBuilder {
     private final ObeliskImpl api;
 

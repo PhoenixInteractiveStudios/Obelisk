@@ -3,7 +3,6 @@ package org.burrow_studios.obelisk.internal.entities.board;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
-import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.api.entities.board.Board;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
@@ -113,7 +112,7 @@ public final class IssueImpl extends TurtleImpl implements Issue {
     }
 
     @Override
-    public @NotNull TurtleSetView<UserImpl> getAssignees() {
+    public @NotNull DelegatingTurtleCacheView<UserImpl> getAssignees() {
         return this.assignees;
     }
 
@@ -141,7 +140,7 @@ public final class IssueImpl extends TurtleImpl implements Issue {
     }
 
     @Override
-    public @NotNull TurtleSetView<TagImpl> getTags() {
+    public @NotNull DelegatingTurtleCacheView<TagImpl> getTags() {
         return this.tags;
     }
 }
