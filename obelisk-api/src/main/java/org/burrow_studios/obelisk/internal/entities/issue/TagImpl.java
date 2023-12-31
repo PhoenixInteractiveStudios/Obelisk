@@ -6,7 +6,7 @@ import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.api.entities.issue.Tag;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
-import org.burrow_studios.obelisk.internal.action.entity.issue.TagModifierImpl;
+import org.burrow_studios.obelisk.internal.action.entity.board.tag.TagModifierImpl;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;

@@ -9,7 +9,7 @@ import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.api.entities.issue.Issue;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
-import org.burrow_studios.obelisk.internal.action.entity.issue.IssueModifierImpl;
+import org.burrow_studios.obelisk.internal.action.entity.board.issue.IssueModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.burrow_studios.obelisk.internal.entities.UserImpl;

@@ -1,7 +1,7 @@
 package org.burrow_studios.obelisk.api.entities;
 
 import org.burrow_studios.obelisk.api.action.DeleteAction;
-import org.burrow_studios.obelisk.api.action.entity.UserModifier;
+import org.burrow_studios.obelisk.api.action.entity.user.UserModifier;
 import org.burrow_studios.obelisk.internal.entities.UserImpl;
 import org.jetbrains.annotations.NotNull;
 

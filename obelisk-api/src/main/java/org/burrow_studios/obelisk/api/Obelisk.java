@@ -1,8 +1,15 @@
 package org.burrow_studios.obelisk.api;
 
-import org.burrow_studios.obelisk.api.action.CreateAction;
+import org.burrow_studios.obelisk.api.action.entity.board.BoardBuilder;
+import org.burrow_studios.obelisk.api.action.entity.group.GroupBuilder;
+import org.burrow_studios.obelisk.api.action.entity.project.ProjectBuilder;
+import org.burrow_studios.obelisk.api.action.entity.ticket.TicketBuilder;
+import org.burrow_studios.obelisk.api.action.entity.user.UserBuilder;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
-import org.burrow_studios.obelisk.api.entities.*;
+import org.burrow_studios.obelisk.api.entities.Group;
+import org.burrow_studios.obelisk.api.entities.Project;
+import org.burrow_studios.obelisk.api.entities.Ticket;
+import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,13 +35,13 @@ public interface Obelisk {
 
     @Nullable Board getBoard(long id);
 
-    @NotNull CreateAction<Group> createGroup();
+    @NotNull GroupBuilder createGroup();
 
-    @NotNull CreateAction<Project> createProject();
+    @NotNull ProjectBuilder createProject();
 
-    @NotNull CreateAction<Ticket> createTicket();
+    @NotNull TicketBuilder createTicket();
 
-    @NotNull CreateAction<User> createUser();
+    @NotNull UserBuilder createUser();
 
-    @NotNull CreateAction<Board> createBoard();
+    @NotNull BoardBuilder createBoard();
 }

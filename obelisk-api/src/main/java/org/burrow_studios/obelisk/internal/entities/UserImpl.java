@@ -6,7 +6,7 @@ import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
-import org.burrow_studios.obelisk.internal.action.entity.UserModifierImpl;
+import org.burrow_studios.obelisk.internal.action.entity.user.UserModifierImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 

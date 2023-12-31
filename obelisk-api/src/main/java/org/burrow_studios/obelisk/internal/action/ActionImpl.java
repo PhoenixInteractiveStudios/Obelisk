@@ -21,7 +21,11 @@ public abstract class ActionImpl<T> implements Action<T> {
     private final @NotNull CompiledRoute route;
     private final @NotNull ExceptionalBiFunction<Request, Response, T, ? extends Exception> mapper;
 
-    protected ActionImpl(@NotNull ObeliskImpl api, @NotNull CompiledRoute route, @NotNull ExceptionalBiFunction<Request, Response, T, ? extends Exception> mapper) {
+    protected ActionImpl(
+            @NotNull ObeliskImpl api,
+            @NotNull CompiledRoute route,
+            @NotNull ExceptionalBiFunction<Request, Response, T, ? extends Exception> mapper
+    ) {
         this.api = api;
         this.route = route;
         this.mapper = mapper;

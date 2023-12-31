@@ -1,7 +1,7 @@
 package org.burrow_studios.obelisk.api.entities;
 
 import org.burrow_studios.obelisk.api.action.DeleteAction;
-import org.burrow_studios.obelisk.api.action.entity.ProjectModifier;
+import org.burrow_studios.obelisk.api.action.entity.project.ProjectModifier;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
 import org.jetbrains.annotations.NotNull;

@@ -1,6 +1,11 @@
 package org.burrow_studios.obelisk.internal;
 
 import org.burrow_studios.obelisk.api.Obelisk;
+import org.burrow_studios.obelisk.internal.action.entity.board.BoardBuilderImpl;
+import org.burrow_studios.obelisk.internal.action.entity.group.GroupBuilderImpl;
+import org.burrow_studios.obelisk.internal.action.entity.project.ProjectBuilderImpl;
+import org.burrow_studios.obelisk.internal.action.entity.ticket.TicketBuilderImpl;
+import org.burrow_studios.obelisk.internal.action.entity.user.UserBuilderImpl;
 import org.burrow_studios.obelisk.internal.cache.TurtleCache;
 import org.burrow_studios.obelisk.internal.entities.GroupImpl;
 import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
@@ -99,5 +104,30 @@ public class ObeliskImpl implements Obelisk {
     @Override
     public @Nullable BoardImpl getBoard(long id) {
         return this.boardCache.get(id);
+    }
+
+    @Override
+    public @NotNull GroupBuilderImpl createGroup() {
+        return new GroupBuilderImpl(this);
+    }
+
+    @Override
+    public @NotNull ProjectBuilderImpl createProject() {
+        return new ProjectBuilderImpl(this);
+    }
+
+    @Override
+    public @NotNull TicketBuilderImpl createTicket() {
+        return new TicketBuilderImpl(this);
+    }
+
+    @Override
+    public @NotNull UserBuilderImpl createUser() {
+        return new UserBuilderImpl(this);
+    }
+
+    @Override
+    public @NotNull BoardBuilderImpl createBoard() {
+        return new BoardBuilderImpl(this);
     }
 }

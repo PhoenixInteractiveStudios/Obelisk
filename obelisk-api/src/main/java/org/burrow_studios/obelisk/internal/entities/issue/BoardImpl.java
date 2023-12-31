@@ -7,7 +7,7 @@ import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
-import org.burrow_studios.obelisk.internal.action.entity.issue.BoardModifierImpl;
+import org.burrow_studios.obelisk.internal.action.entity.board.BoardModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.TurtleCache;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;

@@ -1,28 +1,35 @@
-package org.burrow_studios.obelisk.internal.action.entity;
+package org.burrow_studios.obelisk.internal.action.entity.project;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.burrow_studios.obelisk.api.action.entity.ProjectModifier;
+import org.burrow_studios.obelisk.api.action.entity.project.ProjectBuilder;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.internal.action.ModifierImpl;
-import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
+import org.burrow_studios.obelisk.internal.EntityBuilder;
+import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.action.BuilderImpl;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public class ProjectModifierImpl extends ModifierImpl<Project> implements ProjectModifier {
-    public ProjectModifierImpl(@NotNull ProjectImpl group) {
-        super(group);
+public class ProjectBuilderImpl extends BuilderImpl<Project> implements ProjectBuilder {
+    public ProjectBuilderImpl(@NotNull ObeliskImpl api) {
+        super(
+                api,
+                Project.class,
+                Route.Project.CREATE.builder().compile(),
+                EntityBuilder::buildProject
+        );
     }
 
     @Override
-    public @NotNull ProjectModifierImpl setTitle(@NotNull String title) {
+    public @NotNull ProjectBuilderImpl setTitle(@NotNull String title) {
         this.set("title", new JsonPrimitive(title));
         return this;
     }
 
     @Override
-    public @NotNull ProjectModifierImpl setTimings(@NotNull Project.Timings timings) {
+    public @NotNull ProjectBuilderImpl setTimings(@NotNull Project.Timings timings) {
         JsonObject json = new JsonObject();
         if (timings.release() != null)
             json.addProperty("release", timings.release().toString());
@@ -37,26 +44,16 @@ public class ProjectModifierImpl extends ModifierImpl<Project> implements Projec
     }
 
     @Override
-    public @NotNull ProjectModifierImpl setState(@NotNull Project.State state) {
+    public @NotNull ProjectBuilderImpl setState(@NotNull Project.State state) {
         this.set("state", new JsonPrimitive(state.name()));
         return this;
     }
 
     @Override
-    public @NotNull ProjectModifierImpl addMembers(@NotNull User... users) {
+    public @NotNull ProjectBuilderImpl addMembers(@NotNull User... users) {
         JsonArray arr = new JsonArray();
         for (User user : users)
             arr.add(user.getId());
         this.add("members", arr);
         return this;
-    }
-
-    @Override
-    public @NotNull ProjectModifierImpl removeMembers(@NotNull User... users) {
-        JsonArray arr = new JsonArray();
-        for (User user : users)
-            arr.add(user.getId());
-        this.remove("members", arr);
-        return this;
-    }
-}
+    }}

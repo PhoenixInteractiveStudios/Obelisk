@@ -1,7 +1,7 @@
 package org.burrow_studios.obelisk.api.entities.issue;
 
 import org.burrow_studios.obelisk.api.action.DeleteAction;
-import org.burrow_studios.obelisk.api.action.entity.issue.IssueModifier;
+import org.burrow_studios.obelisk.api.action.entity.board.issue.IssueModifier;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.api.entities.User;

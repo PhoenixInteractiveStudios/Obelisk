@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.api.action.entity;
+package org.burrow_studios.obelisk.api.action.entity.group;
 
 import org.burrow_studios.obelisk.api.action.Modifier;
 import org.burrow_studios.obelisk.api.entities.Group;

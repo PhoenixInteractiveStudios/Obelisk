@@ -4,12 +4,9 @@ import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
-import org.burrow_studios.obelisk.internal.net.NetworkHandler;
 import org.burrow_studios.obelisk.internal.net.http.CompiledRoute;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.concurrent.CompletableFuture;
 
 public final class DeleteActionImpl<T extends Turtle> extends ActionImpl<Void> implements DeleteAction<T> {
     private final @NotNull Class<T> type;
@@ -37,15 +34,5 @@ public final class DeleteActionImpl<T extends Turtle> extends ActionImpl<Void> i
     @Override
     public @Nullable JsonElement getContent() {
         return null;
-    }
-
-    @Override
-    public @NotNull CompletableFuture<Void> submit() {
-        final NetworkHandler networkHandler = getAPI().getNetworkHandler();
-
-
-
-        // TODO
-        return CompletableFuture.completedFuture(null);
     }
 }

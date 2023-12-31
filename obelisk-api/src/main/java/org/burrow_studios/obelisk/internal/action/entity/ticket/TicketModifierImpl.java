@@ -1,9 +1,9 @@
-package org.burrow_studios.obelisk.internal.action.entity;
+package org.burrow_studios.obelisk.internal.action.entity.ticket;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
-import org.burrow_studios.obelisk.api.action.entity.TicketModifier;
+import org.burrow_studios.obelisk.api.action.entity.ticket.TicketModifier;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;

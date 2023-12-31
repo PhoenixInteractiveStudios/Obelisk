@@ -1,8 +1,8 @@
-package org.burrow_studios.obelisk.internal.action.entity.issue;
+package org.burrow_studios.obelisk.internal.action.entity.board;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
-import org.burrow_studios.obelisk.api.action.entity.issue.BoardModifier;
+import org.burrow_studios.obelisk.api.action.entity.board.BoardModifier;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.api.entities.issue.Issue;
