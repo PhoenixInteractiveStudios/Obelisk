@@ -10,7 +10,7 @@ import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.api.entities.issue.Board;
+import org.burrow_studios.obelisk.api.entities.board.Board;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

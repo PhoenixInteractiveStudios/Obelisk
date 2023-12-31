@@ -1,11 +1,11 @@
-package org.burrow_studios.obelisk.internal.data.issue;
+package org.burrow_studios.obelisk.internal.data.board;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.api.entities.Group;
-import org.burrow_studios.obelisk.api.entities.issue.Board;
-import org.burrow_studios.obelisk.api.entities.issue.Issue;
-import org.burrow_studios.obelisk.api.entities.issue.Tag;
+import org.burrow_studios.obelisk.api.entities.board.Board;
+import org.burrow_studios.obelisk.api.entities.board.Issue;
+import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.internal.data.Data;
 import org.jetbrains.annotations.NotNull;
 

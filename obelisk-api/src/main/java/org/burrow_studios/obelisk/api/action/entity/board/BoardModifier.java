@@ -2,9 +2,9 @@ package org.burrow_studios.obelisk.api.action.entity.board;
 
 import org.burrow_studios.obelisk.api.action.Modifier;
 import org.burrow_studios.obelisk.api.entities.Group;
-import org.burrow_studios.obelisk.api.entities.issue.Board;
-import org.burrow_studios.obelisk.api.entities.issue.Issue;
-import org.burrow_studios.obelisk.api.entities.issue.Tag;
+import org.burrow_studios.obelisk.api.entities.board.Board;
+import org.burrow_studios.obelisk.api.entities.board.Issue;
+import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.jetbrains.annotations.NotNull;
 
 public interface BoardModifier extends Modifier<Board> {

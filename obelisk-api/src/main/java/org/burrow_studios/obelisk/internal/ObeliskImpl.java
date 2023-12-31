@@ -11,7 +11,7 @@ import org.burrow_studios.obelisk.internal.entities.GroupImpl;
 import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
 import org.burrow_studios.obelisk.internal.entities.TicketImpl;
 import org.burrow_studios.obelisk.internal.entities.UserImpl;
-import org.burrow_studios.obelisk.internal.entities.issue.BoardImpl;
+import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
 import org.burrow_studios.obelisk.internal.event.EventHandlerImpl;
 import org.burrow_studios.obelisk.internal.net.NetworkHandler;
 import org.jetbrains.annotations.NotNull;

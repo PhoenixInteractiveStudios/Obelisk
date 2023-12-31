@@ -3,9 +3,9 @@ package org.burrow_studios.obelisk.api.entities;
 import org.burrow_studios.obelisk.api.Obelisk;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.action.Modifier;
-import org.burrow_studios.obelisk.api.entities.issue.Board;
-import org.burrow_studios.obelisk.api.entities.issue.Issue;
-import org.burrow_studios.obelisk.api.entities.issue.Tag;
+import org.burrow_studios.obelisk.api.entities.board.Board;
+import org.burrow_studios.obelisk.api.entities.board.Issue;
+import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.jetbrains.annotations.NotNull;
 

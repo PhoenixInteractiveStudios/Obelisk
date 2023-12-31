@@ -5,9 +5,9 @@ import org.burrow_studios.obelisk.internal.entities.GroupImpl;
 import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
 import org.burrow_studios.obelisk.internal.entities.TicketImpl;
 import org.burrow_studios.obelisk.internal.entities.UserImpl;
-import org.burrow_studios.obelisk.internal.entities.issue.BoardImpl;
-import org.burrow_studios.obelisk.internal.entities.issue.IssueImpl;
-import org.burrow_studios.obelisk.internal.entities.issue.TagImpl;
+import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
+import org.burrow_studios.obelisk.internal.entities.board.IssueImpl;
+import org.burrow_studios.obelisk.internal.entities.board.TagImpl;
 import org.jetbrains.annotations.NotNull;
 
 public class EntityUpdater {

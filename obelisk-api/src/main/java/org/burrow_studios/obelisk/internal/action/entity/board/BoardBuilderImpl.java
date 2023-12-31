@@ -2,13 +2,13 @@ package org.burrow_studios.obelisk.internal.action.entity.board;
 
 import org.burrow_studios.obelisk.api.action.entity.board.BoardBuilder;
 import org.burrow_studios.obelisk.api.entities.Group;
-import org.burrow_studios.obelisk.api.entities.issue.Board;
-import org.burrow_studios.obelisk.api.entities.issue.Issue;
-import org.burrow_studios.obelisk.api.entities.issue.Tag;
+import org.burrow_studios.obelisk.api.entities.board.Board;
+import org.burrow_studios.obelisk.api.entities.board.Issue;
+import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.BuilderImpl;
-import org.burrow_studios.obelisk.internal.data.issue.BoardData;
+import org.burrow_studios.obelisk.internal.data.board.BoardData;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 

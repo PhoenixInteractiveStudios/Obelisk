@@ -1,11 +1,11 @@
-package org.burrow_studios.obelisk.api.entities.issue;
+package org.burrow_studios.obelisk.api.entities.board;
 
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.action.entity.board.issue.IssueModifier;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.internal.entities.issue.IssueImpl;
+import org.burrow_studios.obelisk.internal.entities.board.IssueImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;

@@ -1,9 +1,9 @@
-package org.burrow_studios.obelisk.internal.entities.issue;
+package org.burrow_studios.obelisk.internal.entities.board;
 
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
-import org.burrow_studios.obelisk.api.entities.issue.Board;
-import org.burrow_studios.obelisk.api.entities.issue.Tag;
+import org.burrow_studios.obelisk.api.entities.board.Board;
+import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.internal.action.entity.board.tag.TagModifierImpl;

@@ -1,12 +1,12 @@
-package org.burrow_studios.obelisk.internal.entities.issue;
+package org.burrow_studios.obelisk.internal.entities.board;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.api.entities.issue.Board;
-import org.burrow_studios.obelisk.api.entities.issue.Issue;
+import org.burrow_studios.obelisk.api.entities.board.Board;
+import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.internal.action.entity.board.issue.IssueModifierImpl;

@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.api.entities.issue;
+package org.burrow_studios.obelisk.api.entities.board;
 
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.action.entity.board.BoardModifier;
@@ -7,7 +7,7 @@ import org.burrow_studios.obelisk.api.action.entity.board.tag.TagBuilder;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.Turtle;
-import org.burrow_studios.obelisk.internal.entities.issue.BoardImpl;
+import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
