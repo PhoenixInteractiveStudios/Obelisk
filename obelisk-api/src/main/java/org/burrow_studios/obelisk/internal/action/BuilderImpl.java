@@ -1,6 +1,5 @@
 package org.burrow_studios.obelisk.internal.action;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.Builder;
@@ -8,17 +7,19 @@ import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.common.function.ExceptionalBiFunction;
 import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.data.Data;
 import org.burrow_studios.obelisk.internal.net.http.CompiledRoute;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BuilderImpl<T extends Turtle> extends ActionImpl<T> implements Builder<T> {
+public abstract class BuilderImpl<T extends Turtle, D extends Data<T>> extends ActionImpl<T> implements Builder<T> {
     private final @NotNull Class<T> type;
-    private final @NotNull JsonObject json;
+    protected final @NotNull D data;
 
     public BuilderImpl(
             @NotNull ObeliskImpl api,
             @NotNull Class<T> type,
             @NotNull CompiledRoute route,
+            @NotNull D data,
             @NotNull ExceptionalBiFunction<EntityBuilder, JsonObject, T, ? extends Exception> builder
     ) {
         super(api, route, (request, response) -> {
@@ -28,35 +29,11 @@ public abstract class BuilderImpl<T extends Turtle> extends ActionImpl<T> implem
             return entity;
         });
         this.type = type;
-        this.json = new JsonObject();
+        this.data = data;
     }
 
     @Override
     public final @NotNull JsonElement getContent() {
-        return json.deepCopy();
-    }
-
-    /* - JSON - */
-
-    protected final void set(@NotNull String path, @NotNull JsonElement json) {
-        this.json.add(path, json);
-    }
-
-    protected final void add(@NotNull String path, @NotNull JsonArray json) {
-        JsonArray arr = this.json.getAsJsonArray(path);
-        if (arr == null)
-            arr = new JsonArray();
-        for (JsonElement element : json)
-            arr.add(element);
-        this.json.add(path, arr);
-    }
-
-    protected final void remove(@NotNull String path, @NotNull JsonArray json) {
-        JsonArray arr = this.json.getAsJsonArray(path);
-        if (arr == null)
-            arr = new JsonArray();
-        for (JsonElement element : json)
-            arr.remove(element);
-        this.json.add(path, arr);
+        return data.toJson();
     }
 }

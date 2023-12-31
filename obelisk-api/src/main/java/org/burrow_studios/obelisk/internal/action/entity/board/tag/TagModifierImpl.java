@@ -1,15 +1,15 @@
 package org.burrow_studios.obelisk.internal.action.entity.board.tag;
 
-import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.api.action.entity.board.tag.TagModifier;
 import org.burrow_studios.obelisk.api.entities.issue.Tag;
 import org.burrow_studios.obelisk.internal.EntityUpdater;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
+import org.burrow_studios.obelisk.internal.data.issue.TagData;
 import org.burrow_studios.obelisk.internal.entities.issue.TagImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public class TagModifierImpl extends ModifierImpl<Tag> implements TagModifier {
+public class TagModifierImpl extends ModifierImpl<Tag, TagData> implements TagModifier {
     public TagModifierImpl(@NotNull TagImpl tag) {
         super(
                 tag,
@@ -17,13 +17,14 @@ public class TagModifierImpl extends ModifierImpl<Tag> implements TagModifier {
                         .withArg(tag.getBoardId())
                         .withArg(tag.getId())
                         .compile(),
+                new TagData(tag.getId()),
                 json -> EntityUpdater.updateTag(tag, json)
         );
     }
 
     @Override
     public @NotNull TagModifier setName(@NotNull String name) {
-        this.set("name", new JsonPrimitive(name));
+        this.data.setName(name);
         return this;
     }
 }
