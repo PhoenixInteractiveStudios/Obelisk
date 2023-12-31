@@ -6,14 +6,22 @@ import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.api.action.entity.ticket.TicketModifier;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.internal.EntityUpdater;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
 import org.burrow_studios.obelisk.internal.entities.TicketImpl;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TicketModifierImpl extends ModifierImpl<Ticket> implements TicketModifier {
-    public TicketModifierImpl(@NotNull TicketImpl entity) {
-        super(entity);
+    public TicketModifierImpl(@NotNull TicketImpl ticket) {
+        super(
+                ticket,
+                Route.Ticket.EDIT.builder()
+                        .withArg(ticket.getId())
+                        .compile(),
+                json -> EntityUpdater.updateTicket(ticket, json)
+        );
     }
 
     @Override

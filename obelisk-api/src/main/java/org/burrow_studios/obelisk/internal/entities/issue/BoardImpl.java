@@ -8,6 +8,8 @@ import org.burrow_studios.obelisk.api.entities.issue.Board;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.internal.action.entity.board.BoardModifierImpl;
+import org.burrow_studios.obelisk.internal.action.entity.board.issue.IssueBuilderImpl;
+import org.burrow_studios.obelisk.internal.action.entity.board.tag.TagBuilderImpl;
 import org.burrow_studios.obelisk.internal.cache.TurtleCache;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
@@ -70,6 +72,16 @@ public final class BoardImpl extends TurtleImpl implements Board {
                         .withArg(getId())
                         .compile()
         );
+    }
+
+    @Override
+    public @NotNull TagBuilderImpl createTag() {
+        return new TagBuilderImpl(this);
+    }
+
+    @Override
+    public @NotNull IssueBuilderImpl createIssue() {
+        return new IssueBuilderImpl(this);
     }
 
     @Override

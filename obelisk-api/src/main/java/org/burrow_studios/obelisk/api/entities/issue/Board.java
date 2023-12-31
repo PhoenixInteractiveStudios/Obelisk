@@ -1,8 +1,9 @@
 package org.burrow_studios.obelisk.api.entities.issue;
 
-import org.burrow_studios.obelisk.api.action.Builder;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.action.entity.board.BoardModifier;
+import org.burrow_studios.obelisk.api.action.entity.board.issue.IssueBuilder;
+import org.burrow_studios.obelisk.api.action.entity.board.tag.TagBuilder;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.Turtle;
@@ -18,9 +19,9 @@ public sealed interface Board extends Turtle permits BoardImpl {
     @Override
     @NotNull DeleteAction<Board> delete();
 
-    @NotNull Builder<Tag> createTag();
+    @NotNull TagBuilder createTag();
 
-    @NotNull Builder<Issue> createIssue();
+    @NotNull IssueBuilder createIssue();
 
     @NotNull String getTitle();
 

@@ -4,15 +4,23 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.api.action.entity.user.UserModifier;
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.internal.EntityUpdater;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
 import org.burrow_studios.obelisk.internal.entities.UserImpl;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class UserModifierImpl extends ModifierImpl<User> implements UserModifier {
-    public UserModifierImpl(@NotNull UserImpl entity) {
-        super(entity);
+    public UserModifierImpl(@NotNull UserImpl user) {
+        super(
+                user,
+                Route.User.EDIT.builder()
+                        .withArg(user.getId())
+                        .compile(),
+                json -> EntityUpdater.updateUser(user, json)
+        );
     }
 
     @Override

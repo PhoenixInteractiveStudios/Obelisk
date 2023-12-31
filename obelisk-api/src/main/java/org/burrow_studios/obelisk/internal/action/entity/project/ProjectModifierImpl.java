@@ -6,13 +6,21 @@ import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.api.action.entity.project.ProjectModifier;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.internal.EntityUpdater;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
 import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 public class ProjectModifierImpl extends ModifierImpl<Project> implements ProjectModifier {
-    public ProjectModifierImpl(@NotNull ProjectImpl group) {
-        super(group);
+    public ProjectModifierImpl(@NotNull ProjectImpl project) {
+        super(
+                project,
+                Route.Project.EDIT.builder()
+                        .withArg(project.getId())
+                        .compile(),
+                json -> EntityUpdater.updateProject(project, json)
+        );
     }
 
     @Override

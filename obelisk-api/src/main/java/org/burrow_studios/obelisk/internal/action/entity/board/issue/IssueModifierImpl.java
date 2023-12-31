@@ -6,13 +6,22 @@ import org.burrow_studios.obelisk.api.action.entity.board.issue.IssueModifier;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.api.entities.issue.Issue;
 import org.burrow_studios.obelisk.api.entities.issue.Tag;
+import org.burrow_studios.obelisk.internal.EntityUpdater;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
 import org.burrow_studios.obelisk.internal.entities.issue.IssueImpl;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 public class IssueModifierImpl extends ModifierImpl<Issue> implements IssueModifier {
-    public IssueModifierImpl(@NotNull IssueImpl entity) {
-        super(entity);
+    public IssueModifierImpl(@NotNull IssueImpl issue) {
+        super(
+                issue,
+                Route.Board.Issue.EDIT.builder()
+                        .withArg(issue.getBoardId())
+                        .withArg(issue.getId())
+                        .compile(),
+                json -> EntityUpdater.updateIssue(issue, json)
+        );
     }
 
     @Override
