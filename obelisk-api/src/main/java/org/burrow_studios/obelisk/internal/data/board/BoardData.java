@@ -8,7 +8,7 @@ import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
-import org.burrow_studios.obelisk.internal.cache.TurtleCache;
+import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.internal.data.Data;
 import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
 import org.burrow_studios.obelisk.internal.entities.board.IssueImpl;
@@ -36,9 +36,8 @@ public final class BoardData extends Data<BoardImpl> {
         final String title   = json.get("title").getAsString();
         final long   groupId = json.get("group").getAsLong();
 
-        // TODO: figure out chronology of deserialization (resolve circular dependency)
-        final TurtleCache<TagImpl> availableTags = new TurtleCache<>(api);
-        final TurtleCache<IssueImpl> issues = new TurtleCache<>(api);
+        final DelegatingTurtleCacheView<TagImpl> availableTags = buildDelegatingCacheView(json, "tags", api.getTags(), TagImpl.class);
+        final DelegatingTurtleCacheView<IssueImpl> issues = buildDelegatingCacheView(json, "issues", api.getIssues(), IssueImpl.class);
 
         final BoardImpl board = new BoardImpl(api, id, title, groupId, availableTags, issues);
 

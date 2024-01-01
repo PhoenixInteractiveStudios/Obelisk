@@ -12,6 +12,8 @@ import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
 import org.burrow_studios.obelisk.internal.entities.TicketImpl;
 import org.burrow_studios.obelisk.internal.entities.UserImpl;
 import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
+import org.burrow_studios.obelisk.internal.entities.board.IssueImpl;
+import org.burrow_studios.obelisk.internal.entities.board.TagImpl;
 import org.burrow_studios.obelisk.internal.event.EventHandlerImpl;
 import org.burrow_studios.obelisk.internal.net.NetworkHandler;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,8 @@ public class ObeliskImpl implements Obelisk {
     private final TurtleCache<TicketImpl>   ticketCache;
     private final TurtleCache<UserImpl>       userCache;
     private final TurtleCache<BoardImpl>     boardCache;
+    private final TurtleCache<IssueImpl>     issueCache;
+    private final TurtleCache<TagImpl>         tagCache;
 
     public ObeliskImpl() {
         this.eventHandler   = new EventHandlerImpl(this);
@@ -36,6 +40,8 @@ public class ObeliskImpl implements Obelisk {
         this.ticketCache  = new TurtleCache<>(this);
         this.userCache    = new TurtleCache<>(this);
         this.boardCache   = new TurtleCache<>(this);
+        this.issueCache   = new TurtleCache<>(this);
+        this.tagCache     = new TurtleCache<>(this);
     }
 
     public @NotNull EventHandlerImpl getEventHandler() {
@@ -96,6 +102,26 @@ public class ObeliskImpl implements Obelisk {
     @Override
     public @Nullable BoardImpl getBoard(long id) {
         return this.boardCache.get(id);
+    }
+
+    @Override
+    public @NotNull TurtleCache<IssueImpl> getIssues() {
+        return this.issueCache;
+    }
+
+    @Override
+    public @Nullable IssueImpl getIssue(long id) {
+        return issueCache.get(id);
+    }
+
+    @Override
+    public @NotNull TurtleCache<TagImpl> getTags() {
+        return this.tagCache;
+    }
+
+    @Override
+    public @Nullable TagImpl getTag(long id) {
+        return this.tagCache.get(id);
     }
 
     @Override

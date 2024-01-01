@@ -10,7 +10,7 @@ import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.internal.action.entity.board.BoardModifierImpl;
 import org.burrow_studios.obelisk.internal.action.entity.board.issue.IssueBuilderImpl;
 import org.burrow_studios.obelisk.internal.action.entity.board.tag.TagBuilderImpl;
-import org.burrow_studios.obelisk.internal.cache.TurtleCache;
+import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
@@ -20,16 +20,16 @@ import java.util.Set;
 public final class BoardImpl extends TurtleImpl<Board> implements Board {
     private @NotNull String title;
     private long groupId;
-    private final @NotNull TurtleCache<TagImpl> availableTags;
-    private final @NotNull TurtleCache<IssueImpl> issues;
+    private final @NotNull DelegatingTurtleCacheView<TagImpl> availableTags;
+    private final @NotNull DelegatingTurtleCacheView<IssueImpl> issues;
 
     public BoardImpl(
             @NotNull ObeliskImpl api,
             long id,
             @NotNull String title,
             long groupId,
-            @NotNull TurtleCache<TagImpl> availableTags,
-            @NotNull TurtleCache<IssueImpl> issues
+            @NotNull DelegatingTurtleCacheView<TagImpl> availableTags,
+            @NotNull DelegatingTurtleCacheView<IssueImpl> issues
     ) {
         super(api, id);
         this.title = title;
@@ -118,7 +118,7 @@ public final class BoardImpl extends TurtleImpl<Board> implements Board {
     }
 
     @Override
-    public @NotNull TurtleCache<TagImpl> getAvailableTags() {
+    public @NotNull DelegatingTurtleCacheView<TagImpl> getAvailableTags() {
         return this.availableTags;
     }
 
@@ -128,7 +128,7 @@ public final class BoardImpl extends TurtleImpl<Board> implements Board {
     }
 
     @Override
-    public @NotNull TurtleCache<IssueImpl> getIssues() {
+    public @NotNull DelegatingTurtleCacheView<IssueImpl> getIssues() {
         return this.issues;
     }
 }

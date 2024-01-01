@@ -11,6 +11,8 @@ import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.api.entities.board.Board;
+import org.burrow_studios.obelisk.api.entities.board.Issue;
+import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +36,14 @@ public interface Obelisk {
     @NotNull TurtleSetView<? extends Board> getBoards();
 
     @Nullable Board getBoard(long id);
+
+    @NotNull TurtleSetView<? extends Issue> getIssues();
+
+    @Nullable Issue getIssue(long id);
+
+    @NotNull TurtleSetView<? extends Tag> getTags();
+
+    @Nullable Tag getTag(long id);
 
     @NotNull GroupBuilder createGroup();
 

@@ -46,7 +46,7 @@ public final class IssueData extends Data<IssueImpl> {
         final BoardImpl board = api.getBoard(boardId);
         assert board != null;
 
-        final TurtleCache<TagImpl> availableTags = board.getAvailableTags();
+        final TurtleCache<TagImpl> availableTags = api.getTags();
         final DelegatingTurtleCacheView<TagImpl> tags = buildDelegatingCacheView(json, "tags", availableTags, TagImpl.class);
 
         final IssueImpl issue = new IssueImpl(api, id, boardId, authorId, assignees, title, state, tags);
