@@ -4,10 +4,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.burrow_studios.obelisk.internal.EntityBuilder;
+import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.entities.UserImpl;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public final class UserData extends Data<UserImpl> {
@@ -24,8 +25,19 @@ public final class UserData extends Data<UserImpl> {
     }
 
     @Override
-    public @NotNull UserImpl build(@NotNull EntityBuilder builder) {
-        return builder.buildUser(toJson());
+    public @NotNull UserImpl build(@NotNull ObeliskImpl api) {
+        final JsonObject json = toJson();
+
+        final long   id   = json.get("id").getAsLong();
+        final String name = json.get("name").getAsString();
+
+        final ArrayList<Long>   discordIds = buildList(json, "discord", JsonElement::getAsLong);
+        final ArrayList<UUID> minecraftIds = buildList(json, "minecraft", e -> UUID.fromString(e.getAsString()));
+
+        final UserImpl user = new UserImpl(api, id, name, discordIds, minecraftIds);
+
+        api.getUsers().add(user);
+        return user;
     }
 
     @Override

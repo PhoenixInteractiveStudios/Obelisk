@@ -3,8 +3,9 @@ package org.burrow_studios.obelisk.internal.data.board;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.burrow_studios.obelisk.internal.EntityBuilder;
+import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.data.Data;
+import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
 import org.burrow_studios.obelisk.internal.entities.board.TagImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,8 +23,20 @@ public final class TagData extends Data<TagImpl> {
     }
 
     @Override
-    public @NotNull TagImpl build(@NotNull EntityBuilder builder) {
-        return builder.buildTag(toJson());
+    public @NotNull TagImpl build(@NotNull ObeliskImpl api) {
+        final JsonObject json = toJson();
+
+        final long   id      = json.get("id").getAsLong();
+        final String name    = json.get("name").getAsString();
+        final long   boardId = json.get("board").getAsLong();
+
+        final TagImpl tag = new TagImpl(api, id, boardId, name);
+
+        final BoardImpl board = api.getBoard(boardId);
+        assert board != null;
+
+        board.getAvailableTags().add(tag);
+        return tag;
     }
 
     @Override

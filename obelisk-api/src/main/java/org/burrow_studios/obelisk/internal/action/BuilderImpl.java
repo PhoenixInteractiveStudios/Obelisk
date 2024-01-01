@@ -28,7 +28,7 @@ public abstract class BuilderImpl<T extends Turtle, I extends TurtleImpl<T>, D e
             final JsonObject content = response.getContent().getAsJsonObject();
             final D responseData = responseBuilder.apply(content);
 
-            final @NotNull I entity = responseData.build(api.getEntityBuilder());
+            final @NotNull I entity = responseData.build(api);
             // TODO: fire events
             return (T) entity;
         });

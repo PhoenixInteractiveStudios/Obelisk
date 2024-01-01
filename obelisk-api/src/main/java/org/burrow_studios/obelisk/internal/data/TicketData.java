@@ -3,10 +3,14 @@ package org.burrow_studios.obelisk.internal.data;
 import com.google.gson.*;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.internal.EntityBuilder;
+import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.internal.entities.TicketImpl;
+import org.burrow_studios.obelisk.internal.entities.UserImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
 
 public final class TicketData extends Data<TicketImpl> {
     public TicketData() {
@@ -22,8 +26,23 @@ public final class TicketData extends Data<TicketImpl> {
     }
 
     @Override
-    public @NotNull TicketImpl build(@NotNull EntityBuilder builder) {
-        return builder.buildTicket(toJson());
+    public @NotNull TicketImpl build(@NotNull ObeliskImpl api) {
+        final JsonObject json = toJson();
+
+        final long   id       = json.get("id").getAsLong();
+        final String title    = json.get("title").getAsString();
+        final String stateStr = json.get("state").getAsString();
+
+        final Ticket.State state = Ticket.State.valueOf(stateStr);
+
+        final ArrayList<String> tags = buildList(json, "tags", JsonElement::getAsString);
+
+        final DelegatingTurtleCacheView<UserImpl> users = buildDelegatingCacheView(json, "users", api.getUsers(), UserImpl.class);
+
+        final TicketImpl ticket = new TicketImpl(api, id, title, state, tags, users);
+
+        api.getTickets().add(ticket);
+        return ticket;
     }
 
     @Override

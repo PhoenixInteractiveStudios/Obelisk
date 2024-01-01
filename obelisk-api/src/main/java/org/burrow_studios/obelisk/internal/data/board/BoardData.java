@@ -5,12 +5,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.api.entities.Group;
-import org.burrow_studios.obelisk.api.entities.board.Board;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.api.entities.board.Tag;
-import org.burrow_studios.obelisk.internal.EntityBuilder;
+import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.cache.TurtleCache;
 import org.burrow_studios.obelisk.internal.data.Data;
 import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
+import org.burrow_studios.obelisk.internal.entities.board.IssueImpl;
+import org.burrow_studios.obelisk.internal.entities.board.TagImpl;
 import org.jetbrains.annotations.NotNull;
 
 public final class BoardData extends Data<BoardImpl> {
@@ -27,8 +29,21 @@ public final class BoardData extends Data<BoardImpl> {
     }
 
     @Override
-    public @NotNull BoardImpl build(@NotNull EntityBuilder builder) {
-        return builder.buildBoard(toJson());
+    public @NotNull BoardImpl build(@NotNull ObeliskImpl api) {
+        final JsonObject json = toJson();
+
+        final long   id      = json.get("id").getAsLong();
+        final String title   = json.get("title").getAsString();
+        final long   groupId = json.get("group").getAsLong();
+
+        // TODO: figure out chronology of deserialization (resolve circular dependency)
+        final TurtleCache<TagImpl> availableTags = new TurtleCache<>(api);
+        final TurtleCache<IssueImpl> issues = new TurtleCache<>(api);
+
+        final BoardImpl board = new BoardImpl(api, id, title, groupId, availableTags, issues);
+
+        api.getBoards().add(board);
+        return board;
     }
 
     @Override

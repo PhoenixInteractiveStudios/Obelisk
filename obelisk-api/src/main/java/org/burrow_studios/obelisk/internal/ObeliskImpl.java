@@ -21,8 +21,6 @@ public class ObeliskImpl implements Obelisk {
     private final EventHandlerImpl eventHandler;
     private final NetworkHandler   networkHandler;
 
-    private final EntityBuilder entityBuilder;
-
     private final TurtleCache<GroupImpl>     groupCache;
     private final TurtleCache<ProjectImpl> projectCache;
     private final TurtleCache<TicketImpl>   ticketCache;
@@ -32,8 +30,6 @@ public class ObeliskImpl implements Obelisk {
     public ObeliskImpl() {
         this.eventHandler   = new EventHandlerImpl(this);
         this.networkHandler = new NetworkHandler(this);
-
-        this.entityBuilder = new EntityBuilder(this);
 
         this.groupCache   = new TurtleCache<>(this);
         this.projectCache = new TurtleCache<>(this);
@@ -48,10 +44,6 @@ public class ObeliskImpl implements Obelisk {
 
     public @NotNull NetworkHandler getNetworkHandler() {
         return networkHandler;
-    }
-
-    public @NotNull EntityBuilder getEntityBuilder() {
-        return entityBuilder;
     }
 
     /* - ENTITIES - */

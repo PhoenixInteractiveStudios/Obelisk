@@ -4,7 +4,6 @@ import org.burrow_studios.obelisk.api.action.entity.board.issue.IssueBuilder;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.api.entities.board.Tag;
-import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.action.BuilderImpl;
 import org.burrow_studios.obelisk.internal.data.board.IssueData;
 import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;

@@ -2,7 +2,6 @@ package org.burrow_studios.obelisk.internal.action.entity.user;
 
 import org.burrow_studios.obelisk.api.action.entity.user.UserBuilder;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.BuilderImpl;
 import org.burrow_studios.obelisk.internal.data.UserData;

@@ -4,15 +4,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.Turtle;
-import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
+import org.burrow_studios.obelisk.internal.cache.TurtleCache;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -38,7 +38,7 @@ public abstract class Data<T extends Turtle> {
         return this.json.deepCopy();
     }
 
-    public abstract @NotNull T build(@NotNull EntityBuilder builder);
+    public abstract @NotNull T build(@NotNull ObeliskImpl api);
 
     public abstract void update(@NotNull T entity);
 
@@ -72,7 +72,31 @@ public abstract class Data<T extends Turtle> {
         this.json.add(path, array);
     }
 
-    /* - - - */
+    /* - BUILD - */
+
+    protected static <T extends Turtle> @NotNull DelegatingTurtleCacheView<T> buildDelegatingCacheView(@NotNull JsonObject json, @NotNull String path, @NotNull TurtleCache<? super T> cache, @NotNull Class<T> type) {
+        return buildDelegatingCacheView(json.getAsJsonArray(path), cache, type);
+    }
+
+    protected static <T extends Turtle> @NotNull DelegatingTurtleCacheView<T> buildDelegatingCacheView(@NotNull JsonArray ids, @NotNull TurtleCache<? super T> cache, @NotNull Class<T> type) {
+        final DelegatingTurtleCacheView<T> entities = new DelegatingTurtleCacheView<>(cache, type);
+        for (JsonElement idElement : ids)
+            entities.add(cache.get(idElement.getAsLong(), type));
+        return entities;
+    }
+
+    protected static <T> @NotNull ArrayList<T> buildList(@NotNull JsonObject json, @NotNull String path, @NotNull Function<JsonElement, T> mappingFunction) {
+        return buildList(json.getAsJsonArray(path), mappingFunction);
+    }
+
+    protected static <T> @NotNull ArrayList<T> buildList(@NotNull JsonArray elements, @NotNull Function<JsonElement, T> mappingFunction) {
+        ArrayList<T> list = new ArrayList<>();
+        for (JsonElement element : elements)
+            list.add(mappingFunction.apply(element));
+        return list;
+    }
+
+    /* - UPDATE - */
 
     protected static <U> void handleUpdate(
             @NotNull JsonObject json,
@@ -104,13 +128,13 @@ public abstract class Data<T extends Turtle> {
             @NotNull JsonObject json,
             @NotNull String path,
             @NotNull ObeliskImpl api,
-            @NotNull BiFunction<EntityBuilder, JsonObject, U> map,
+            @NotNull Function<JsonObject, U> map,
             @NotNull Consumer<U> consumer
     ) {
         if (!json.has(path)) return;
 
         final JsonObject jsonObj = json.getAsJsonObject(path);
-        final U          obj     = map.apply(api.getEntityBuilder(), jsonObj);
+        final U          obj     = map.apply(jsonObj);
 
         consumer.accept(obj);
     }

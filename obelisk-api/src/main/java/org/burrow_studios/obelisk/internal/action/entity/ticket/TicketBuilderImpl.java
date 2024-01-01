@@ -3,7 +3,6 @@ package org.burrow_studios.obelisk.internal.action.entity.ticket;
 import org.burrow_studios.obelisk.api.action.entity.ticket.TicketBuilder;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.BuilderImpl;
 import org.burrow_studios.obelisk.internal.data.TicketData;
