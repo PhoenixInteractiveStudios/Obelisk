@@ -5,21 +5,21 @@ import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.board.Board;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.api.entities.board.Tag;
-import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.BuilderImpl;
 import org.burrow_studios.obelisk.internal.data.board.BoardData;
+import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public class BoardBuilderImpl extends BuilderImpl<Board, BoardData> implements BoardBuilder {
+public class BoardBuilderImpl extends BuilderImpl<Board, BoardImpl, BoardData> implements BoardBuilder {
     public BoardBuilderImpl(@NotNull ObeliskImpl api) {
         super(
                 api,
                 Board.class,
                 Route.Board.CREATE.builder().compile(),
                 new BoardData(),
-                EntityBuilder::buildBoard
+                BoardData::new
         );
     }
 

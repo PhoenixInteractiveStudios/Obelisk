@@ -5,14 +5,13 @@ import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.board.Board;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.api.entities.board.Tag;
-import org.burrow_studios.obelisk.internal.EntityUpdater;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
 import org.burrow_studios.obelisk.internal.data.board.BoardData;
 import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public class BoardModifierImpl extends ModifierImpl<Board, BoardData> implements BoardModifier {
+public class BoardModifierImpl extends ModifierImpl<Board, BoardImpl, BoardData> implements BoardModifier {
     public BoardModifierImpl(@NotNull BoardImpl board) {
         super(
                 board,
@@ -20,7 +19,7 @@ public class BoardModifierImpl extends ModifierImpl<Board, BoardData> implements
                         .withArg(board.getId())
                         .compile(),
                 new BoardData(board.getId()),
-                json -> EntityUpdater.updateBoard(board, json)
+                BoardData::new
         );
     }
 

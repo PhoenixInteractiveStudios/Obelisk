@@ -3,19 +3,22 @@ package org.burrow_studios.obelisk.internal.data.board;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.data.Data;
 import org.burrow_studios.obelisk.internal.entities.board.TagImpl;
 import org.jetbrains.annotations.NotNull;
 
-public final class TagData extends Data<Tag, TagImpl> {
+public final class TagData extends Data<TagImpl> {
     public TagData() {
         super();
     }
 
     public TagData(long id) {
         super(id);
+    }
+
+    public TagData(@NotNull JsonObject json) {
+        super(json);
     }
 
     @Override

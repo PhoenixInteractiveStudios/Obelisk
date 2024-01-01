@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public final class GroupImpl extends TurtleImpl implements Group {
+public final class GroupImpl extends TurtleImpl<Group> implements Group {
     private @NotNull String name;
     private final @NotNull DelegatingTurtleCacheView<UserImpl> members;
     private int position;

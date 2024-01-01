@@ -7,7 +7,6 @@ import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
-import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -19,7 +18,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public abstract class Data<T extends Turtle, I extends TurtleImpl> {
+public abstract class Data<T extends Turtle> {
     private final @NotNull JsonObject json;
 
     protected Data() {
@@ -31,13 +30,17 @@ public abstract class Data<T extends Turtle, I extends TurtleImpl> {
         this.json.addProperty("id", id);
     }
 
+    protected Data(@NotNull JsonObject json) {
+        this.json = json;
+    }
+
     public final @NotNull JsonObject toJson() {
         return this.json.deepCopy();
     }
 
-    public abstract @NotNull I build(@NotNull EntityBuilder builder);
+    public abstract @NotNull T build(@NotNull EntityBuilder builder);
 
-    public abstract void update(@NotNull I entity);
+    public abstract void update(@NotNull T entity);
 
     /* - - - */
 

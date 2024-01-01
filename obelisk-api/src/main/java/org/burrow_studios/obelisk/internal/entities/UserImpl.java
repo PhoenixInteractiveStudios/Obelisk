@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.UUID;
 
-public final class UserImpl extends TurtleImpl implements User {
+public final class UserImpl extends TurtleImpl<User> implements User {
     private @NotNull String name;
     private final @NotNull List<Long> discordIds;
     private final @NotNull List<UUID> minecraftIds;

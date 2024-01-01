@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public final class BoardImpl extends TurtleImpl implements Board {
+public final class BoardImpl extends TurtleImpl<Board> implements Board {
     private @NotNull String title;
     private long groupId;
     private final @NotNull TurtleCache<TagImpl> availableTags;

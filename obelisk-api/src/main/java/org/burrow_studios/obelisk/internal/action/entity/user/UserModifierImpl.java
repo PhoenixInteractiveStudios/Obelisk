@@ -2,7 +2,6 @@ package org.burrow_studios.obelisk.internal.action.entity.user;
 
 import org.burrow_studios.obelisk.api.action.entity.user.UserModifier;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.internal.EntityUpdater;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
 import org.burrow_studios.obelisk.internal.data.UserData;
 import org.burrow_studios.obelisk.internal.entities.UserImpl;
@@ -11,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class UserModifierImpl extends ModifierImpl<User, UserData> implements UserModifier {
+public class UserModifierImpl extends ModifierImpl<User, UserImpl, UserData> implements UserModifier {
     public UserModifierImpl(@NotNull UserImpl user) {
         super(
                 user,
@@ -19,7 +18,7 @@ public class UserModifierImpl extends ModifierImpl<User, UserData> implements Us
                         .withArg(user.getId())
                         .compile(),
                 new UserData(user.getId()),
-                json -> EntityUpdater.updateUser(user, json)
+                UserData::new
         );
     }
 

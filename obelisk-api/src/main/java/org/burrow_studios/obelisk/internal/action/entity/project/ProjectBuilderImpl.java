@@ -3,21 +3,21 @@ package org.burrow_studios.obelisk.internal.action.entity.project;
 import org.burrow_studios.obelisk.api.action.entity.project.ProjectBuilder;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.BuilderImpl;
 import org.burrow_studios.obelisk.internal.data.ProjectData;
+import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public class ProjectBuilderImpl extends BuilderImpl<Project, ProjectData> implements ProjectBuilder {
+public class ProjectBuilderImpl extends BuilderImpl<Project, ProjectImpl, ProjectData> implements ProjectBuilder {
     public ProjectBuilderImpl(@NotNull ObeliskImpl api) {
         super(
                 api,
                 Project.class,
                 Route.Project.CREATE.builder().compile(),
                 new ProjectData(),
-                EntityBuilder::buildProject
+                ProjectData::new
         );
     }
 

@@ -4,19 +4,22 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.entities.GroupImpl;
 import org.jetbrains.annotations.NotNull;
 
-public final class GroupData extends Data<Group, GroupImpl> {
+public final class GroupData extends Data<GroupImpl> {
     public GroupData() {
         super();
     }
 
     public GroupData(long id) {
         super(id);
+    }
+
+    public GroupData(@NotNull JsonObject json) {
+        super(json);
     }
 
     @Override

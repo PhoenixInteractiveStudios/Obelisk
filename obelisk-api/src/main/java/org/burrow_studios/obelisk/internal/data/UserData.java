@@ -4,20 +4,23 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.entities.UserImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public final class UserData extends Data<User, UserImpl> {
+public final class UserData extends Data<UserImpl> {
     public UserData() {
         super();
     }
 
     public UserData(long id) {
         super(id);
+    }
+
+    public UserData(@NotNull JsonObject json) {
+        super(json);
     }
 
     @Override

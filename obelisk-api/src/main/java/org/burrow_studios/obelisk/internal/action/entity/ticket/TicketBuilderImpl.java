@@ -7,18 +7,19 @@ import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.BuilderImpl;
 import org.burrow_studios.obelisk.internal.data.TicketData;
+import org.burrow_studios.obelisk.internal.entities.TicketImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TicketBuilderImpl extends BuilderImpl<Ticket, TicketData> implements TicketBuilder {
+public class TicketBuilderImpl extends BuilderImpl<Ticket, TicketImpl, TicketData> implements TicketBuilder {
     public TicketBuilderImpl(@NotNull ObeliskImpl api) {
         super(
                 api,
                 Ticket.class,
                 Route.Ticket.CREATE.builder().compile(),
                 new TicketData(),
-                EntityBuilder::buildTicket
+                TicketData::new
         );
     }
 

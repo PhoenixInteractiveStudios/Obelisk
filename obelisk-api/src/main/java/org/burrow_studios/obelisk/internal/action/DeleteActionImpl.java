@@ -12,7 +12,12 @@ public final class DeleteActionImpl<T extends Turtle> extends ActionImpl<Void> i
     private final @NotNull Class<T> type;
     private final long entityId;
 
-    public DeleteActionImpl(@NotNull ObeliskImpl api, @NotNull Class<T> type, long entityId, @NotNull CompiledRoute route) {
+    public DeleteActionImpl(
+            @NotNull ObeliskImpl api,
+            @NotNull Class<T> type,
+            long entityId,
+            @NotNull CompiledRoute route
+    ) {
         super(api, route, (request, response) -> {
             // TODO: throw exception if response is an error
             return null;

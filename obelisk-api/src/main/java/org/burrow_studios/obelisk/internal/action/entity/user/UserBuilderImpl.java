@@ -6,19 +6,20 @@ import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.BuilderImpl;
 import org.burrow_studios.obelisk.internal.data.UserData;
+import org.burrow_studios.obelisk.internal.entities.UserImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class UserBuilderImpl extends BuilderImpl<User, UserData> implements UserBuilder {
+public class UserBuilderImpl extends BuilderImpl<User, UserImpl, UserData> implements UserBuilder {
     public UserBuilderImpl(@NotNull ObeliskImpl api) {
         super(
                 api,
                 User.class,
                 Route.User.CREATE.builder().compile(),
                 new UserData(),
-                EntityBuilder::buildUser
+                UserData::new
         );
     }
 

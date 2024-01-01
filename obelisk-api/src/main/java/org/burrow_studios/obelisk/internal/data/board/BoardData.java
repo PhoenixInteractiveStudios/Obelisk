@@ -13,13 +13,17 @@ import org.burrow_studios.obelisk.internal.data.Data;
 import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
 import org.jetbrains.annotations.NotNull;
 
-public final class BoardData extends Data<Board, BoardImpl> {
+public final class BoardData extends Data<BoardImpl> {
     public BoardData() {
         super();
     }
 
     public BoardData(long id) {
         super(id);
+    }
+
+    public BoardData(@NotNull JsonObject json) {
+        super(json);
     }
 
     @Override

@@ -4,14 +4,15 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.Builder;
 import org.burrow_studios.obelisk.api.entities.Turtle;
-import org.burrow_studios.obelisk.common.function.ExceptionalBiFunction;
-import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.data.Data;
+import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.burrow_studios.obelisk.internal.net.http.CompiledRoute;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class BuilderImpl<T extends Turtle, D extends Data<T>> extends ActionImpl<T> implements Builder<T> {
+import java.util.function.Function;
+
+public abstract class BuilderImpl<T extends Turtle, I extends TurtleImpl<T>, D extends Data<I>> extends ActionImpl<T> implements Builder<T> {
     private final @NotNull Class<T> type;
     protected final @NotNull D data;
 
@@ -20,13 +21,16 @@ public abstract class BuilderImpl<T extends Turtle, D extends Data<T>> extends A
             @NotNull Class<T> type,
             @NotNull CompiledRoute route,
             @NotNull D data,
-            @NotNull ExceptionalBiFunction<EntityBuilder, JsonObject, T, ? extends Exception> builder
+            @NotNull Function<JsonObject, D> responseBuilder
     ) {
         super(api, route, (request, response) -> {
             // TODO: checks (error responses)
-            final T entity = builder.apply(api.getEntityBuilder(), response.getContent().getAsJsonObject());
+            final JsonObject content = response.getContent().getAsJsonObject();
+            final D responseData = responseBuilder.apply(content);
+
+            final @NotNull I entity = responseData.build(api.getEntityBuilder());
             // TODO: fire events
-            return entity;
+            return (T) entity;
         });
         this.type = type;
         this.data = data;

@@ -4,14 +4,13 @@ import org.burrow_studios.obelisk.api.action.entity.board.issue.IssueModifier;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.api.entities.board.Tag;
-import org.burrow_studios.obelisk.internal.EntityUpdater;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
 import org.burrow_studios.obelisk.internal.data.board.IssueData;
 import org.burrow_studios.obelisk.internal.entities.board.IssueImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public class IssueModifierImpl extends ModifierImpl<Issue, IssueData> implements IssueModifier {
+public class IssueModifierImpl extends ModifierImpl<Issue, IssueImpl, IssueData> implements IssueModifier {
     public IssueModifierImpl(@NotNull IssueImpl issue) {
         super(
                 issue,
@@ -20,7 +19,7 @@ public class IssueModifierImpl extends ModifierImpl<Issue, IssueData> implements
                         .withArg(issue.getId())
                         .compile(),
                 new IssueData(issue.getId()),
-                json -> EntityUpdater.updateIssue(issue, json)
+                IssueData::new
         );
     }
 

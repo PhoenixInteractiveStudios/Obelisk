@@ -3,14 +3,13 @@ package org.burrow_studios.obelisk.internal.action.entity.project;
 import org.burrow_studios.obelisk.api.action.entity.project.ProjectModifier;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.internal.EntityUpdater;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
 import org.burrow_studios.obelisk.internal.data.ProjectData;
 import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public class ProjectModifierImpl extends ModifierImpl<Project, ProjectData> implements ProjectModifier {
+public class ProjectModifierImpl extends ModifierImpl<Project, ProjectImpl, ProjectData> implements ProjectModifier {
     public ProjectModifierImpl(@NotNull ProjectImpl project) {
         super(
                 project,
@@ -18,7 +17,7 @@ public class ProjectModifierImpl extends ModifierImpl<Project, ProjectData> impl
                         .withArg(project.getId())
                         .compile(),
                 new ProjectData(project.getId()),
-                json -> EntityUpdater.updateProject(project, json)
+                ProjectData::new
         );
     }
 

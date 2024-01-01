@@ -11,7 +11,7 @@ import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public final class TagImpl extends TurtleImpl implements Tag {
+public final class TagImpl extends TurtleImpl<Tag> implements Tag {
     private final long boardId;
     private @NotNull String name;
 

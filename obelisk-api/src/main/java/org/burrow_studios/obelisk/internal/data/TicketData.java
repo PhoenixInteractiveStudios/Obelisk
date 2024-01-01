@@ -8,13 +8,17 @@ import org.burrow_studios.obelisk.internal.entities.TicketImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public final class TicketData extends Data<Ticket, TicketImpl> {
+public final class TicketData extends Data<TicketImpl> {
     public TicketData() {
         super();
     }
 
     public TicketData(long id) {
         super(id);
+    }
+
+    public TicketData(@NotNull JsonObject json) {
+        super(json);
     }
 
     @Override

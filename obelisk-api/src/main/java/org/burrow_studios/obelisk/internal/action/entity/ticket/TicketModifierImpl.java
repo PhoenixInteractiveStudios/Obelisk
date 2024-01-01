@@ -3,7 +3,6 @@ package org.burrow_studios.obelisk.internal.action.entity.ticket;
 import org.burrow_studios.obelisk.api.action.entity.ticket.TicketModifier;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.internal.EntityUpdater;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
 import org.burrow_studios.obelisk.internal.data.TicketData;
 import org.burrow_studios.obelisk.internal.entities.TicketImpl;
@@ -11,7 +10,7 @@ import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TicketModifierImpl extends ModifierImpl<Ticket, TicketData> implements TicketModifier {
+public class TicketModifierImpl extends ModifierImpl<Ticket, TicketImpl, TicketData> implements TicketModifier {
     public TicketModifierImpl(@NotNull TicketImpl ticket) {
         super(
                 ticket,
@@ -19,7 +18,7 @@ public class TicketModifierImpl extends ModifierImpl<Ticket, TicketData> impleme
                         .withArg(ticket.getId())
                         .compile(),
                 new TicketData(ticket.getId()),
-                json -> EntityUpdater.updateTicket(ticket, json)
+                TicketData::new
         );
     }
 

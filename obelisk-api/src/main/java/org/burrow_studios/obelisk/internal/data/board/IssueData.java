@@ -12,13 +12,17 @@ import org.burrow_studios.obelisk.internal.data.Data;
 import org.burrow_studios.obelisk.internal.entities.board.IssueImpl;
 import org.jetbrains.annotations.NotNull;
 
-public final class IssueData extends Data<Issue, IssueImpl> {
+public final class IssueData extends Data<IssueImpl> {
     public IssueData() {
         super();
     }
 
     public IssueData(long id) {
         super(id);
+    }
+
+    public IssueData(@NotNull JsonObject json) {
+        super(json);
     }
 
     @Override

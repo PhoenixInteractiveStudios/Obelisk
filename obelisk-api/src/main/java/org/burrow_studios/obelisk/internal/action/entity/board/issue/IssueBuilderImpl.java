@@ -8,17 +8,18 @@ import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.action.BuilderImpl;
 import org.burrow_studios.obelisk.internal.data.board.IssueData;
 import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
+import org.burrow_studios.obelisk.internal.entities.board.IssueImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public class IssueBuilderImpl extends BuilderImpl<Issue, IssueData> implements IssueBuilder {
+public class IssueBuilderImpl extends BuilderImpl<Issue, IssueImpl, IssueData> implements IssueBuilder {
     public IssueBuilderImpl(@NotNull BoardImpl board) {
         super(
                 board.getAPI(),
                 Issue.class,
                 Route.Board.Issue.CREATE.builder().withArg(board.getId()).compile(),
                 new IssueData(),
-                EntityBuilder::buildIssue
+                IssueData::new
         );
     }
 

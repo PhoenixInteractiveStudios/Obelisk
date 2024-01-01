@@ -4,23 +4,30 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.Modifier;
 import org.burrow_studios.obelisk.api.entities.Turtle;
-import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.data.Data;
+import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.burrow_studios.obelisk.internal.net.http.CompiledRoute;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
+import java.util.function.Function;
 
-public abstract class ModifierImpl<T extends Turtle, D extends Data<T>> extends ActionImpl<T> implements Modifier<T> {
-    protected final T entity;
+public abstract class ModifierImpl<T extends Turtle, I extends TurtleImpl<T>, D extends Data<I>> extends ActionImpl<T> implements Modifier<T> {
+    protected final I entity;
     protected final D data;
 
-    public ModifierImpl(@NotNull T entity, @NotNull CompiledRoute route, @NotNull D data, @NotNull Consumer<JsonObject> updater) {
-        super(((ObeliskImpl) entity.getAPI()), route, (request, response) -> {
+    public ModifierImpl(
+            @NotNull I entity,
+            @NotNull CompiledRoute route,
+            @NotNull D data,
+            @NotNull Function<JsonObject, D> responseBuilder
+    ) {
+        super(entity.getAPI(), route, (request, response) -> {
             // TODO: handle errors
-            JsonObject content = response.getContent().getAsJsonObject();
-            updater.accept(content);
-            return entity;
+            final JsonObject content = response.getContent().getAsJsonObject();
+            final D responseData = responseBuilder.apply(content);
+
+            responseData.update(entity);
+            return (T) entity;
         });
         this.entity = entity;
         this.data = data;
@@ -28,7 +35,7 @@ public abstract class ModifierImpl<T extends Turtle, D extends Data<T>> extends 
 
     @Override
     public final @NotNull T getEntity() {
-        return this.entity;
+        return (T) this.entity;
     }
 
     @Override

@@ -10,13 +10,17 @@ import org.burrow_studios.obelisk.internal.EntityBuilder;
 import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
 import org.jetbrains.annotations.NotNull;
 
-public final class ProjectData extends Data<Project, ProjectImpl> {
+public final class ProjectData extends Data<ProjectImpl> {
     public ProjectData() {
         super();
     }
 
     public ProjectData(long id) {
         super(id);
+    }
+
+    public ProjectData(@NotNull JsonObject json) {
+        super(json);
     }
 
     @Override
