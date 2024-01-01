@@ -63,11 +63,15 @@ public final class Route {
         }
 
         public static final class Issue {
-            public static final Route GET_ALL = new Route(Method.GET   , "/boards/%s/issues");
-            public static final Route GET     = new Route(Method.GET   , "/boards/%s/issues/%s");
-            public static final Route CREATE  = new Route(Method.POST  , "/boards/%s/issues");
-            public static final Route DELETE  = new Route(Method.DELETE, "/boards/%s/issues/%s");
-            public static final Route EDIT    = new Route(Method.PATCH , "/boards/%s/issues/%s");
+            public static final Route GET_ALL      = new Route(Method.GET   , "/boards/%s/issues");
+            public static final Route GET          = new Route(Method.GET   , "/boards/%s/issues/%s");
+            public static final Route CREATE       = new Route(Method.POST  , "/boards/%s/issues");
+            public static final Route ADD_ASSIGNEE = new Route(Method.PUT   , "/boards/%s/issues/%s/assignees/%s");
+            public static final Route DEL_ASSIGNEE = new Route(Method.DELETE, "/boards/%s/issues/%s/assignees/%s");
+            public static final Route ADD_TAG      = new Route(Method.PUT   , "/boards/%s/issues/%s/tags/%s");
+            public static final Route DEL_TAG      = new Route(Method.DELETE, "/boards/%s/issues/%s/tags/%s");
+            public static final Route DELETE       = new Route(Method.DELETE, "/boards/%s/issues/%s");
+            public static final Route EDIT         = new Route(Method.PATCH , "/boards/%s/issues/%s");
         }
     }
 

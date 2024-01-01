@@ -1,12 +1,10 @@
 package org.burrow_studios.obelisk.internal.action;
 
-import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.net.http.CompiledRoute;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class DeleteActionImpl<T extends Turtle> extends ActionImpl<Void> implements DeleteAction<T> {
     private final @NotNull Class<T> type;
@@ -34,10 +32,5 @@ public final class DeleteActionImpl<T extends Turtle> extends ActionImpl<Void> i
     @Override
     public @NotNull Class<T> getType() {
         return this.type;
-    }
-
-    @Override
-    public @Nullable JsonElement getContent() {
-        return null;
     }
 }

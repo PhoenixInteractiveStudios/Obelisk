@@ -4,7 +4,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Group;
+import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.action.ActionImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.internal.action.entity.group.GroupModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
@@ -77,6 +79,26 @@ public final class GroupImpl extends TurtleImpl<Group> implements Group {
     @Override
     public @NotNull DelegatingTurtleCacheView<UserImpl> getMembers() {
         return this.members;
+    }
+
+    @Override
+    public @NotNull ActionImpl<Group> addMember(@NotNull User user) {
+        return new ActionImpl<>(this.api, this,
+                Route.Group.ADD_MEMBER.builder()
+                        .withArg(getId())
+                        .withArg(user.getId())
+                        .compile()
+        );
+    }
+
+    @Override
+    public @NotNull ActionImpl<Group> removeMember(@NotNull User user) {
+        return new ActionImpl<>(this.api, this,
+                Route.Group.DEL_MEMBER.builder()
+                        .withArg(getId())
+                        .withArg(user.getId())
+                        .compile()
+        );
     }
 
     @Override

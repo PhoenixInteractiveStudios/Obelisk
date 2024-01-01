@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.api.entities;
 
+import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.action.entity.project.ProjectModifier;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
@@ -23,6 +24,10 @@ public sealed interface Project extends Turtle permits ProjectImpl {
     @NotNull State getState();
 
     @NotNull TurtleSetView<? extends User> getMembers();
+
+    @NotNull Action<Project> addMember(@NotNull User user);
+
+    @NotNull Action<Project> removeMember(@NotNull User user);
 
     record Timings(
             @Nullable Instant release,

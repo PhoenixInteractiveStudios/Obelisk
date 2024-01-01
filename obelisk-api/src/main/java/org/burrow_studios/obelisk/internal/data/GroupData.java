@@ -63,11 +63,4 @@ public final class GroupData extends Data<GroupImpl> {
             arr.add(user.getId());
         this.addToArray("members", arr);
     }
-
-    public void removeMembers(@NotNull User... users) {
-        JsonArray arr = new JsonArray();
-        for (User user : users)
-            arr.add(user.getId());
-        this.removeFromArray("members", arr);
-    }
 }

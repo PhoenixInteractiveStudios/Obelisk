@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.api.entities;
 
+import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.action.entity.ticket.TicketModifier;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
@@ -23,6 +24,10 @@ public sealed interface Ticket extends Turtle permits TicketImpl {
     @NotNull List<String> getTags();
 
     @NotNull TurtleSetView<? extends User> getUsers();
+
+    @NotNull Action<Ticket> addUser(@NotNull User user);
+
+    @NotNull Action<Ticket> removeUser(@NotNull User user);
 
     enum State {
         OPEN,

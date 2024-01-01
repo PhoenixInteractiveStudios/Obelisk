@@ -3,8 +3,11 @@ package org.burrow_studios.obelisk.internal.entities.board;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
+import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
+import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.action.ActionImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.internal.action.entity.board.issue.IssueModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
@@ -96,6 +99,28 @@ public final class IssueImpl extends TurtleImpl<Issue> implements Issue {
     }
 
     @Override
+    public @NotNull ActionImpl<Issue> addAssignee(@NotNull User user) {
+        return new ActionImpl<>(this.api, this,
+                Route.Board.Issue.ADD_ASSIGNEE.builder()
+                        .withArg(getBoard().getId())
+                        .withArg(getId())
+                        .withArg(user.getId())
+                        .compile()
+        );
+    }
+
+    @Override
+    public @NotNull ActionImpl<Issue> removeAssignee(@NotNull User user) {
+        return new ActionImpl<>(this.api, this,
+                Route.Board.Issue.DEL_ASSIGNEE.builder()
+                        .withArg(getBoard().getId())
+                        .withArg(getId())
+                        .withArg(user.getId())
+                        .compile()
+        );
+    }
+
+    @Override
     public @NotNull String getTitle() {
         return this.title;
     }
@@ -116,5 +141,27 @@ public final class IssueImpl extends TurtleImpl<Issue> implements Issue {
     @Override
     public @NotNull DelegatingTurtleCacheView<TagImpl> getTags() {
         return this.tags;
+    }
+
+    @Override
+    public @NotNull ActionImpl<Issue> addTag(@NotNull Tag tag) {
+        return new ActionImpl<>(this.api, this,
+                Route.Board.Issue.ADD_TAG.builder()
+                        .withArg(getBoard().getId())
+                        .withArg(getId())
+                        .withArg(tag.getId())
+                        .compile()
+        );
+    }
+
+    @Override
+    public @NotNull ActionImpl<Issue> removeTag(@NotNull Tag tag) {
+        return new ActionImpl<>(this.api, this,
+                Route.Board.Issue.DEL_TAG.builder()
+                        .withArg(getBoard().getId())
+                        .withArg(getId())
+                        .withArg(tag.getId())
+                        .compile()
+        );
     }
 }

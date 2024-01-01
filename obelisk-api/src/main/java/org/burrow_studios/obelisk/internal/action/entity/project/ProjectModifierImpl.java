@@ -2,7 +2,6 @@ package org.burrow_studios.obelisk.internal.action.entity.project;
 
 import org.burrow_studios.obelisk.api.action.entity.project.ProjectModifier;
 import org.burrow_studios.obelisk.api.entities.Project;
-import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
 import org.burrow_studios.obelisk.internal.data.ProjectData;
 import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
@@ -36,18 +35,6 @@ public class ProjectModifierImpl extends ModifierImpl<Project, ProjectImpl, Proj
     @Override
     public @NotNull ProjectModifierImpl setState(@NotNull Project.State state) {
         this.data.setState(state);
-        return this;
-    }
-
-    @Override
-    public @NotNull ProjectModifierImpl addMembers(@NotNull User... users) {
-        this.data.addMembers(users);
-        return this;
-    }
-
-    @Override
-    public @NotNull ProjectModifierImpl removeMembers(@NotNull User... users) {
-        this.data.removeMembers(users);
         return this;
     }
 }

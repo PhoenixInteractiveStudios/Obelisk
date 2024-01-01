@@ -95,6 +95,22 @@ Returns a single [issue object](#issue-object).
 Create a new issue.
 Returns the new [issue object](#issue-object) on success.
 
+## Assign user to an issue</br>![http-put] /boards/[{board.id}](#board-object)/issues/[{issue.id}](#issue-object)/assignees/[{user.id}](User.md#user-object)
+Adds an assignee to an issue.
+Returns `204 No Content` on success.
+
+## Remove an assigned user from an issue</br>![http-delete] /boards/[{board.id}](#board-object)/issues/[{issue.id}](#issue-object)/assignees/[{user.id}](User.md#user-object)
+Removes an assignee from an issue.
+Returns `204 No Content` on success.
+
+## Add tag to issue</br>![http-put] /boards/[{board.id}](#board-object)/issues/[{issue.id}](#issue-object)/tags/[{tag.id}](#tag-structure)
+Adds a tag to an issue.
+Returns `204 No Content` on success.
+
+## Remove tag from tag</br>![http-delete] /boards/[{board.id}](#board-object)/issues/[{issue.id}](#issue-object)/tags/[{tag.id}](#tag-structure)
+Removes a tag from an issue.
+Returns `204 No Content` on success.
+
 ## Delete issue</br>![http-delete] /boards/[{board.id}](#board-object)/issues/[{issue.id}](#issue-object)
 Permanently delete an issue, identified by its id.
 Returns `204 No Content` on success.

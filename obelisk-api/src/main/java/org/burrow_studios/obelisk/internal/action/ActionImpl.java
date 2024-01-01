@@ -16,12 +16,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public abstract class ActionImpl<T> implements Action<T> {
+public class ActionImpl<T> implements Action<T> {
     protected final @NotNull ObeliskImpl api;
     private final @NotNull CompiledRoute route;
     private final @NotNull ExceptionalBiFunction<Request, Response, T, ? extends Exception> mapper;
 
-    protected ActionImpl(
+    public ActionImpl(
             @NotNull ObeliskImpl api,
             @NotNull CompiledRoute route,
             @NotNull ExceptionalBiFunction<Request, Response, T, ? extends Exception> mapper
@@ -29,6 +29,14 @@ public abstract class ActionImpl<T> implements Action<T> {
         this.api = api;
         this.route = route;
         this.mapper = mapper;
+    }
+
+    public ActionImpl(
+            @NotNull ObeliskImpl api,
+            @NotNull T returnValue,
+            @NotNull CompiledRoute route
+    ) {
+        this(api, route, (request, response) -> returnValue);
     }
 
     @Override
@@ -40,7 +48,9 @@ public abstract class ActionImpl<T> implements Action<T> {
         return route;
     }
 
-    public abstract @Nullable JsonElement getContent();
+    public @Nullable JsonElement getContent() {
+        return null;
+    }
 
     @Override
     public final void queue() {

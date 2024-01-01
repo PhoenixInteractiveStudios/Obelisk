@@ -3,8 +3,6 @@ package org.burrow_studios.obelisk.internal.action.entity.board;
 import org.burrow_studios.obelisk.api.action.entity.board.BoardModifier;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.board.Board;
-import org.burrow_studios.obelisk.api.entities.board.Issue;
-import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.internal.action.ModifierImpl;
 import org.burrow_studios.obelisk.internal.data.board.BoardData;
 import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
@@ -32,30 +30,6 @@ public class BoardModifierImpl extends ModifierImpl<Board, BoardImpl, BoardData>
     @Override
     public @NotNull BoardModifier setGroup(@NotNull Group group) {
         this.data.setGroup(group);
-        return this;
-    }
-
-    @Override
-    public @NotNull BoardModifierImpl addTags(@NotNull Tag... tags) {
-        this.data.addTags(tags);
-        return this;
-    }
-
-    @Override
-    public @NotNull BoardModifierImpl removeTags(@NotNull Tag... tags) {
-        this.data.removeTags(tags);
-        return this;
-    }
-
-    @Override
-    public @NotNull BoardModifierImpl addIssues(@NotNull Issue... issues) {
-        this.data.addIssues(issues);
-        return this;
-    }
-
-    @Override
-    public @NotNull BoardModifierImpl removeIssues(@NotNull Issue... issues) {
-        this.data.removeIssues(issues);
         return this;
     }
 }

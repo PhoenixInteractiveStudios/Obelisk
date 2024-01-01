@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.api.entities.board;
 
+import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.action.entity.board.issue.IssueModifier;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
@@ -21,11 +22,19 @@ public sealed interface Issue extends Turtle permits IssueImpl {
 
     @NotNull TurtleSetView<? extends User> getAssignees();
 
+    @NotNull Action<Issue> addAssignee(@NotNull User user);
+
+    @NotNull Action<Issue> removeAssignee(@NotNull User user);
+
     @NotNull String getTitle();
 
     @NotNull State getState();
 
     @NotNull TurtleSetView<? extends Tag> getTags();
+
+    @NotNull Action<Issue> addTag(@NotNull Tag tag);
+
+    @NotNull Action<Issue> removeTag(@NotNull Tag tag);
 
     enum State {
         OPEN,

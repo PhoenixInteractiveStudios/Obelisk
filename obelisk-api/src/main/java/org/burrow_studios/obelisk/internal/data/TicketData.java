@@ -66,6 +66,13 @@ public final class TicketData extends Data<TicketImpl> {
         this.set("state", new JsonPrimitive(state.name()));
     }
 
+    public void setTags(@NotNull String... tags) {
+        JsonArray arr = new JsonArray();
+        for (String tag : tags)
+            arr.add(tag);
+        this.set("tags", arr);
+    }
+
     public void addTags(@NotNull String... tags) {
         JsonArray arr = new JsonArray();
         for (String tag : tags)
@@ -85,12 +92,5 @@ public final class TicketData extends Data<TicketImpl> {
         for (User user : users)
             arr.add(user.getId());
         this.addToArray("users", arr);
-    }
-
-    public void removeUsers(@NotNull User... users) {
-        JsonArray arr = new JsonArray();
-        for (User user : users)
-            arr.add(user.getId());
-        this.removeFromArray("users", arr);
     }
 }
