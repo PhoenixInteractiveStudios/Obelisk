@@ -6,6 +6,7 @@ import org.burrow_studios.obelisk.internal.action.ActionImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class NetworkHandler {
     private final ObeliskImpl api;
@@ -19,12 +20,15 @@ public class NetworkHandler {
     public @NotNull Request submitRequest(@NotNull ActionImpl<?> action) {
         final long id = this.requestIdGenerator.newId();
 
+        // this is a default for now | TODO: make this controllable on the API level
+        final long deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(8);
+
         final Request request = new Request(
                 this,
                 id,
                 action.getRoute(),
                 action.getContent(),
-                /* TODO */ 0
+                deadline
         );
 
         this.pendingRequests.put(id, request);
