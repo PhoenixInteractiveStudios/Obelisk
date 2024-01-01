@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetView<T> {
     private final TurtleCache<? super T> cache;
@@ -32,6 +33,13 @@ public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetVie
     }
 
     public @NotNull Set<Long> getIdsAsImmutaleSet() {
+        return ids.stream()
+                // remove 'ghost entities' as they would probably cause API errors
+                .filter(id -> cache.get(id, contentType) != null)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    public @NotNull Set<Long> getIdsAsImmutableSetRaw() {
         return Set.copyOf(this.ids);
     }
 
@@ -55,6 +63,7 @@ public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetVie
     public boolean contains(Object o) {
         if (o == null) return false;
         if (!(o instanceof Turtle turtle)) return false;
+        if (!contentType.isInstance(turtle)) return false;
         return this.containsId(turtle.getId());
     }
 
@@ -84,10 +93,8 @@ public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetVie
     }
 
     public boolean add(long id) {
-        T val = this.cache.get(id, contentType);
-        if (val != null)
-            return this.ids.add(id);
-        return false;
+        // no checks on the id to allow 'ghost entities' (usually entities that do not exist YET as they are still being built)
+        return this.ids.add(id);
     }
 
     public boolean remove(Object o) {

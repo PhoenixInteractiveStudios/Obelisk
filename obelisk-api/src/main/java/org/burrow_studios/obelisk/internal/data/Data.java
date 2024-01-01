@@ -83,7 +83,7 @@ public abstract class Data<T extends Turtle> {
     protected static <T extends Turtle> @NotNull DelegatingTurtleCacheView<T> buildDelegatingCacheView(@NotNull JsonArray ids, @NotNull TurtleCache<? super T> cache, @NotNull Class<T> type) {
         final DelegatingTurtleCacheView<T> entities = new DelegatingTurtleCacheView<>(cache, type);
         for (JsonElement idElement : ids)
-            entities.add(cache.get(idElement.getAsLong(), type));
+            entities.add(idElement.getAsLong());
         return entities;
     }
 
