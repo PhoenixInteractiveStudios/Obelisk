@@ -26,14 +26,15 @@ public final class TagData extends Data<TagImpl> {
     public @NotNull TagImpl build(@NotNull ObeliskImpl api) {
         final JsonObject json = toJson();
 
-        final long   id      = json.get("id").getAsLong();
-        final String name    = json.get("name").getAsString();
-        final long   boardId = json.get("board").getAsLong();
+        final long   id   = json.get("id").getAsLong();
+        final String name = json.get("name").getAsString();
 
-        final TagImpl tag = new TagImpl(api, id, boardId, name);
-
+        final long boardId = json.get("board").getAsLong();
         final BoardImpl board = api.getBoard(boardId);
-        assert board != null;
+        if (board == null)
+            throw new IllegalStateException("The board id could not be mapped to a cached board");
+
+        final TagImpl tag = new TagImpl(api, id, board, name);
 
         board.getAvailableTags().add(tag);
         return tag;

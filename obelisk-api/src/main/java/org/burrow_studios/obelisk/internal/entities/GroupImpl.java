@@ -11,8 +11,6 @@ import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
 public final class GroupImpl extends TurtleImpl<Group> implements Group {
     private @NotNull String name;
     private final @NotNull DelegatingTurtleCacheView<UserImpl> members;
@@ -79,11 +77,6 @@ public final class GroupImpl extends TurtleImpl<Group> implements Group {
     @Override
     public @NotNull DelegatingTurtleCacheView<UserImpl> getMembers() {
         return this.members;
-    }
-
-    @Override
-    public @NotNull Set<Long> getMemberIds() {
-        return this.members.getIdsAsImmutaleSet();
     }
 
     @Override

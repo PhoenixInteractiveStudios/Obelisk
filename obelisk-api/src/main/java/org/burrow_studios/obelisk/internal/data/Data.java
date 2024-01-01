@@ -7,12 +7,14 @@ import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.internal.cache.TurtleCache;
+import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -109,6 +111,25 @@ public abstract class Data<T extends Turtle> {
         final JsonElement element = json.get(path);
         final U obj = map.apply(element);
         consumer.accept(obj);
+    }
+
+    protected static <U extends TurtleImpl<?>> void handleUpdateTurtle(
+            @NotNull JsonObject json,
+            @NotNull String path,
+            @NotNull Function<Long, U> supplier,
+            @NotNull Consumer<U> consumer
+    ) {
+        handleUpdate(json, path, jsonElement -> supplier.apply(jsonElement.getAsLong()), consumer);
+    }
+
+    protected static <U extends TurtleImpl<?>> void handleUpdateTurtle(
+            @NotNull JsonObject json,
+            @NotNull String path,
+            @NotNull ObeliskImpl api,
+            @NotNull BiFunction<ObeliskImpl, Long, U> supplier,
+            @NotNull Consumer<U> consumer
+    )  {
+        handleUpdateTurtle(json, path, id -> supplier.apply(api, id), consumer);
     }
 
     protected static <U extends Enum<U>> void handleUpdateEnum(

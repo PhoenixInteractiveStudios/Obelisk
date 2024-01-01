@@ -13,8 +13,6 @@ public sealed interface Tag extends Turtle permits TagImpl {
     @Override
     @NotNull DeleteAction<Tag> delete();
 
-    long getBoardId();
-
     @NotNull Board getBoard();
 
     @NotNull String getName();

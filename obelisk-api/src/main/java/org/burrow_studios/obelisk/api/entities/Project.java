@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
-import java.util.Set;
 
 public sealed interface Project extends Turtle permits ProjectImpl {
     @Override
@@ -22,8 +21,6 @@ public sealed interface Project extends Turtle permits ProjectImpl {
     @NotNull Timings getTimings();
 
     @NotNull State getState();
-
-    @NotNull Set<Long> getMemberIds();
 
     @NotNull TurtleSetView<? extends User> getMembers();
 

@@ -12,24 +12,24 @@ import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 public final class TagImpl extends TurtleImpl<Tag> implements Tag {
-    private final long boardId;
+    private final @NotNull BoardImpl board;
     private @NotNull String name;
 
     public TagImpl(
             @NotNull ObeliskImpl api,
             long id,
-            long boardId,
+            @NotNull BoardImpl board,
             @NotNull String name
     ) {
         super(api, id);
-        this.boardId = boardId;
+        this.board = board;
         this.name = name;
     }
 
     @Override
     public @NotNull JsonObject toJson() {
         JsonObject json = super.toJson();
-        json.addProperty("board", boardId);
+        json.addProperty("board", board.getId());
         json.addProperty("name", name);
         return json;
     }
@@ -46,15 +46,10 @@ public final class TagImpl extends TurtleImpl<Tag> implements Tag {
                 Tag.class,
                 this.getId(),
                 Route.Board.Tag.DELETE.builder()
-                        .withArg(getBoardId())
+                        .withArg(getBoard().getId())
                         .withArg(getId())
                         .compile()
         );
-    }
-
-    @Override
-    public long getBoardId() {
-        return this.boardId;
     }
 
     @Override

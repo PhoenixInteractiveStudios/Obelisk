@@ -10,6 +10,7 @@ import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.internal.data.Data;
+import org.burrow_studios.obelisk.internal.entities.GroupImpl;
 import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
 import org.burrow_studios.obelisk.internal.entities.board.IssueImpl;
 import org.burrow_studios.obelisk.internal.entities.board.TagImpl;
@@ -34,12 +35,16 @@ public final class BoardData extends Data<BoardImpl> {
 
         final long   id      = json.get("id").getAsLong();
         final String title   = json.get("title").getAsString();
-        final long   groupId = json.get("group").getAsLong();
+
+        final long groupId = json.get("group").getAsLong();
+        final GroupImpl group = api.getGroup(groupId);
+        if (group == null)
+            throw new IllegalStateException("The group id could not be mapped to a cached group");
 
         final DelegatingTurtleCacheView<TagImpl> availableTags = buildDelegatingCacheView(json, "tags", api.getTags(), TagImpl.class);
         final DelegatingTurtleCacheView<IssueImpl> issues = buildDelegatingCacheView(json, "issues", api.getIssues(), IssueImpl.class);
 
-        final BoardImpl board = new BoardImpl(api, id, title, groupId, availableTags, issues);
+        final BoardImpl board = new BoardImpl(api, id, title, group, availableTags, issues);
 
         api.getBoards().add(board);
         return board;
@@ -50,7 +55,7 @@ public final class BoardData extends Data<BoardImpl> {
         final JsonObject json = toJson();
 
         handleUpdate(json, "title", JsonElement::getAsString, board::setTitle);
-        handleUpdate(json, "group", JsonElement::getAsLong, board::setGroupId);
+        handleUpdateTurtle(json, "group", board.getAPI(), ObeliskImpl::getGroup, board::setGroup);
         handleUpdateTurtles(json, "tags", board::getAvailableTags);
         handleUpdateTurtles(json, "issues", board::getIssues);
     }

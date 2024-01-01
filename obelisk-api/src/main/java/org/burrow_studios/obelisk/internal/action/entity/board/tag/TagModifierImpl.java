@@ -13,7 +13,7 @@ public class TagModifierImpl extends ModifierImpl<Tag, TagImpl, TagData> impleme
         super(
                 tag,
                 Route.Board.Tag.EDIT.builder()
-                        .withArg(tag.getBoardId())
+                        .withArg(tag.getBoard().getId())
                         .withArg(tag.getId())
                         .compile(),
                 new TagData(tag.getId()),

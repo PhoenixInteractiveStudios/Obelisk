@@ -15,7 +15,7 @@ public class IssueModifierImpl extends ModifierImpl<Issue, IssueImpl, IssueData>
         super(
                 issue,
                 Route.Board.Issue.EDIT.builder()
-                        .withArg(issue.getBoardId())
+                        .withArg(issue.getBoard().getId())
                         .withArg(issue.getId())
                         .compile(),
                 new IssueData(issue.getId()),

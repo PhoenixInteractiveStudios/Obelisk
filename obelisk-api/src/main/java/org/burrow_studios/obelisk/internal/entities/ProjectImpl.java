@@ -11,8 +11,6 @@ import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
 public final class ProjectImpl extends TurtleImpl<Project> implements Project {
     private @NotNull String title;
     private @NotNull Timings timings;
@@ -102,11 +100,6 @@ public final class ProjectImpl extends TurtleImpl<Project> implements Project {
 
     public void setState(@NotNull State state) {
         this.state = state;
-    }
-
-    @Override
-    public @NotNull Set<Long> getMemberIds() {
-        return this.members.getIdsAsImmutaleSet();
     }
 
     @Override

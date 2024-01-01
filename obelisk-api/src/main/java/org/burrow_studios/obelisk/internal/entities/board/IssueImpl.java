@@ -3,8 +3,6 @@ package org.burrow_studios.obelisk.internal.entities.board;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
-import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.api.entities.board.Board;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
@@ -15,11 +13,9 @@ import org.burrow_studios.obelisk.internal.entities.UserImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
 public final class IssueImpl extends TurtleImpl<Issue> implements Issue {
-    private final long boardId;
-    private final long authorId;
+    private final @NotNull BoardImpl board;
+    private final @NotNull UserImpl author;
     private final @NotNull DelegatingTurtleCacheView<UserImpl> assignees;
     private @NotNull String title;
     private @NotNull State state;
@@ -28,16 +24,16 @@ public final class IssueImpl extends TurtleImpl<Issue> implements Issue {
     public IssueImpl(
             @NotNull ObeliskImpl api,
             long id,
-            long boardId,
-            long authorId,
+            @NotNull BoardImpl board,
+            @NotNull UserImpl author,
             @NotNull DelegatingTurtleCacheView<UserImpl> assignees,
             @NotNull String title,
             @NotNull State state,
             @NotNull DelegatingTurtleCacheView<TagImpl> tags
     ) {
         super(api, id);
-        this.boardId = boardId;
-        this.authorId = authorId;
+        this.board = board;
+        this.author = author;
         this.assignees = assignees;
         this.title = title;
         this.state = state;
@@ -47,8 +43,8 @@ public final class IssueImpl extends TurtleImpl<Issue> implements Issue {
     @Override
     public @NotNull JsonObject toJson() {
         JsonObject json = super.toJson();
-        json.addProperty("board", boardId);
-        json.addProperty("author", authorId);
+        json.addProperty("board", board.getId());
+        json.addProperty("author", author.getId());
 
         JsonArray assigneeIds = new JsonArray();
         for (long tagId : this.assignees.getIdsAsImmutaleSet())
@@ -78,37 +74,20 @@ public final class IssueImpl extends TurtleImpl<Issue> implements Issue {
                 Issue.class,
                 this.getId(),
                 Route.Board.Issue.DELETE.builder()
-                        .withArg(getBoardId())
+                        .withArg(getBoard().getId())
                         .withArg(getId())
                         .compile()
         );
     }
 
     @Override
-    public long getBoardId() {
-        return this.boardId;
+    public @NotNull BoardImpl getBoard() {
+        return this.board;
     }
 
     @Override
-    public @NotNull Board getBoard() {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public long getAuthorId() {
-        return this.authorId;
-    }
-
-    @Override
-    public @NotNull User getAuthor() {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public @NotNull Set<Long> getAssigneeIds() {
-        return this.assignees.getIdsAsImmutaleSet();
+    public @NotNull UserImpl getAuthor() {
+        return this.author;
     }
 
     @Override
@@ -132,11 +111,6 @@ public final class IssueImpl extends TurtleImpl<Issue> implements Issue {
 
     public void setState(@NotNull State state) {
         this.state = state;
-    }
-
-    @Override
-    public @NotNull Set<Long> getTagIds() {
-        return this.tags.getIdsAsImmutaleSet();
     }
 
     @Override

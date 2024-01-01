@@ -34,22 +34,27 @@ public final class IssueData extends Data<IssueImpl> {
     public @NotNull IssueImpl build(@NotNull ObeliskImpl api) {
         final JsonObject json = toJson();
 
-        final long   id       = json.get("id").getAsLong();
-        final long   boardId  = json.get("board").getAsLong();
-        final long   authorId = json.get("author").getAsLong();
+        final long id = json.get("id").getAsLong();
+
+        final long boardId = json.get("board").getAsLong();
+        final BoardImpl board = api.getBoard(boardId);
+        if (board == null)
+            throw new IllegalStateException("The board id could not be mapped to a cached board");
+
+        final long authorId = json.get("author").getAsLong();
+        final UserImpl author = api.getUser(authorId);
+        if (author == null)
+            throw new IllegalStateException("The author id could not be mapped to a cached user");
+
         final String title    = json.get("title").getAsString();
         final String stateStr = json.get("state").getAsString();
 
         final DelegatingTurtleCacheView<UserImpl> assignees = buildDelegatingCacheView(json, "assignees", api.getUsers(), UserImpl.class);
         final Issue.State state = Issue.State.valueOf(stateStr);
-
-        final BoardImpl board = api.getBoard(boardId);
-        assert board != null;
-
         final TurtleCache<TagImpl> availableTags = api.getTags();
         final DelegatingTurtleCacheView<TagImpl> tags = buildDelegatingCacheView(json, "tags", availableTags, TagImpl.class);
 
-        final IssueImpl issue = new IssueImpl(api, id, boardId, authorId, assignees, title, state, tags);
+        final IssueImpl issue = new IssueImpl(api, id, board, author, assignees, title, state, tags);
 
         board.getIssues().add(issue);
         return issue;

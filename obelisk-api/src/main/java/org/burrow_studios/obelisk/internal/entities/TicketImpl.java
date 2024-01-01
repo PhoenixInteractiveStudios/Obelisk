@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 public final class TicketImpl extends TurtleImpl<Ticket> implements Ticket {
     private @Nullable String title;
@@ -97,11 +96,6 @@ public final class TicketImpl extends TurtleImpl<Ticket> implements Ticket {
 
     public @NotNull List<String> getTagsMutable() {
         return this.tags;
-    }
-
-    @Override
-    public @NotNull Set<Long> getUserIds() {
-        return this.users.getIdsAsImmutaleSet();
     }
 
     @Override

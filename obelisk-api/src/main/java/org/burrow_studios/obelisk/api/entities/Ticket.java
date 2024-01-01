@@ -8,7 +8,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 public sealed interface Ticket extends Turtle permits TicketImpl {
     @Override
@@ -22,8 +21,6 @@ public sealed interface Ticket extends Turtle permits TicketImpl {
     @NotNull State getState();
 
     @NotNull List<String> getTags();
-
-    @NotNull Set<Long> getUserIds();
 
     @NotNull TurtleSetView<? extends User> getUsers();
 

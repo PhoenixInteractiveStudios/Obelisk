@@ -10,8 +10,6 @@ import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
 public sealed interface Board extends Turtle permits BoardImpl {
     @Override
     @NotNull BoardModifier modify();
@@ -25,15 +23,9 @@ public sealed interface Board extends Turtle permits BoardImpl {
 
     @NotNull String getTitle();
 
-    long getGroupId();
-
     @NotNull Group getGroup();
 
-    @NotNull Set<Long> getAvailableTagIds();
-
     @NotNull TurtleSetView<? extends Tag> getAvailableTags();
-
-    @NotNull Set<Long> getIssueIds();
 
     @NotNull TurtleSetView<? extends Issue> getIssues();
 }

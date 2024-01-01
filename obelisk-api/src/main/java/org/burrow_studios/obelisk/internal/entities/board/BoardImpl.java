@@ -11,15 +11,14 @@ import org.burrow_studios.obelisk.internal.action.entity.board.BoardModifierImpl
 import org.burrow_studios.obelisk.internal.action.entity.board.issue.IssueBuilderImpl;
 import org.burrow_studios.obelisk.internal.action.entity.board.tag.TagBuilderImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
+import org.burrow_studios.obelisk.internal.entities.GroupImpl;
 import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
 public final class BoardImpl extends TurtleImpl<Board> implements Board {
     private @NotNull String title;
-    private long groupId;
+    private @NotNull GroupImpl group;
     private final @NotNull DelegatingTurtleCacheView<TagImpl> availableTags;
     private final @NotNull DelegatingTurtleCacheView<IssueImpl> issues;
 
@@ -27,13 +26,13 @@ public final class BoardImpl extends TurtleImpl<Board> implements Board {
             @NotNull ObeliskImpl api,
             long id,
             @NotNull String title,
-            long groupId,
+            @NotNull GroupImpl group,
             @NotNull DelegatingTurtleCacheView<TagImpl> availableTags,
             @NotNull DelegatingTurtleCacheView<IssueImpl> issues
     ) {
         super(api, id);
         this.title = title;
-        this.groupId = groupId;
+        this.group = group;
         this.availableTags = availableTags;
         this.issues = issues;
     }
@@ -42,7 +41,7 @@ public final class BoardImpl extends TurtleImpl<Board> implements Board {
     public @NotNull JsonObject toJson() {
         JsonObject json = super.toJson();
         json.addProperty("title", title);
-        json.addProperty("group", groupId);
+        json.addProperty("group", group.getId());
 
         JsonArray tagIds = new JsonArray();
         for (long tagId : this.availableTags.getIdsAsImmutaleSet())
@@ -94,37 +93,17 @@ public final class BoardImpl extends TurtleImpl<Board> implements Board {
     }
 
     @Override
-    public long getGroupId() {
-        return this.groupId;
-    }
-
-    public void setGroupId(long groupId) {
-        this.groupId = groupId;
-    }
-
-    @Override
     public @NotNull Group getGroup() {
-        // TODO
-        return null;
+        return this.group;
     }
 
-    public void setGroup(@NotNull Group group) {
-        this.setGroupId(group.getId());
-    }
-
-    @Override
-    public @NotNull Set<Long> getAvailableTagIds() {
-        return this.availableTags.getIdsAsImmutaleSet();
+    public void setGroup(@NotNull GroupImpl group) {
+        this.group = group;
     }
 
     @Override
     public @NotNull DelegatingTurtleCacheView<TagImpl> getAvailableTags() {
         return this.availableTags;
-    }
-
-    @Override
-    public @NotNull Set<Long> getIssueIds() {
-        return this.issues.getIdsAsImmutaleSet();
     }
 
     @Override
