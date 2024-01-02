@@ -31,6 +31,8 @@ public class ObeliskImpl implements Obelisk {
     private final TurtleCache<IssueImpl>     issueCache;
     private final TurtleCache<TagImpl>         tagCache;
 
+    private final String token;
+
     public ObeliskImpl() {
         this.eventHandler   = new EventHandlerImpl(this);
         this.networkHandler = new NetworkHandler(this);
@@ -42,6 +44,8 @@ public class ObeliskImpl implements Obelisk {
         this.boardCache   = new TurtleCache<>(this);
         this.issueCache   = new TurtleCache<>(this);
         this.tagCache     = new TurtleCache<>(this);
+
+        this.token = "null"; // TODO
     }
 
     public @NotNull EventHandlerImpl getEventHandler() {
@@ -50,6 +54,10 @@ public class ObeliskImpl implements Obelisk {
 
     public @NotNull NetworkHandler getNetworkHandler() {
         return networkHandler;
+    }
+
+    public @NotNull String getToken() {
+        return token;
     }
 
     /* - ENTITIES - */

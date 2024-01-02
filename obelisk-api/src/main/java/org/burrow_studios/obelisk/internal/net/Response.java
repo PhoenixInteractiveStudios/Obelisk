@@ -4,6 +4,8 @@ import com.google.gson.JsonElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.http.HttpResponse;
+
 public final class Response {
     private final @NotNull NetworkHandler networkHandler;
     private final long id;
@@ -22,6 +24,15 @@ public final class Response {
 
         this.code = code;
         this.content = content;
+    }
+
+    public static @NotNull Response ofHttpResponse(@NotNull HttpResponse<String> httpResponse, @NotNull Request request) {
+        final NetworkHandler networkHandler = request.getNetworkHandler();
+
+        final String bodyStr = httpResponse.body();
+        final JsonElement body = bodyStr == null ? null : networkHandler.gson.fromJson(bodyStr, JsonElement.class);
+
+        return new Response(networkHandler, request.getId(), httpResponse.statusCode(), body);
     }
 
     public @NotNull NetworkHandler getNetworkHandler() {
