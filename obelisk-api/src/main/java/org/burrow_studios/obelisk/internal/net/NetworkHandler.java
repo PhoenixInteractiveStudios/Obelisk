@@ -15,7 +15,6 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 public class NetworkHandler {
     private final ObeliskImpl api;
@@ -38,15 +37,12 @@ public class NetworkHandler {
     public @NotNull Request submitRequest(@NotNull ActionImpl<?> action) {
         final long id = this.requestIdGenerator.newId();
 
-        // this is a default for now | TODO: make this controllable on the API level
-        final long deadline = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(8);
-
         final Request request = new Request(
                 this,
                 id,
                 action.getRoute(),
                 action.getContent(),
-                deadline
+                TimeoutContext.DEFAULT
         );
 
         this.pendingRequests.put(id, request);
@@ -60,6 +56,10 @@ public class NetworkHandler {
         final long id = request.getId();
 
         final HttpRequest.Builder builder = HttpRequest.newBuilder();
+
+        builder.uri(request.getRoute().asURI());
+
+        builder.timeout(request.getTimeout().asDuration());
 
         builder.header("Authorization", "Bearer " + api.getToken());
 

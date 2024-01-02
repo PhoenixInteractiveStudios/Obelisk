@@ -13,7 +13,7 @@ public final class Request {
 
     private final @NotNull CompiledRoute route;
     private final @Nullable JsonElement content;
-    private final long deadline;
+    private final @NotNull TimeoutContext timeout;
 
     private final @NotNull CompletableFuture<Response> future;
 
@@ -22,14 +22,14 @@ public final class Request {
             long id,
             @NotNull CompiledRoute route,
             @Nullable JsonElement content,
-            long deadline
+            @NotNull TimeoutContext timeout
     ) {
         this.networkHandler = networkHandler;
         this.id = id;
 
         this.route = route;
         this.content = content;
-        this.deadline = deadline;
+        this.timeout = timeout;
 
         this.future = new CompletableFuture<>();
     }
@@ -50,8 +50,8 @@ public final class Request {
         return content;
     }
 
-    public long getDeadline() {
-        return deadline;
+    public @NotNull TimeoutContext getTimeout() {
+        return timeout;
     }
 
     public @NotNull CompletableFuture<Response> getFuture() {
