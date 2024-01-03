@@ -10,6 +10,8 @@ import org.burrow_studios.obelisk.server.permissions.PermissionManager;
 import org.burrow_studios.obelisk.server.users.UserService;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
+
 public final class ObeliskServer {
     private final Authenticator     authenticator;
     private final DataProvider      dataProvider;
@@ -20,7 +22,7 @@ public final class ObeliskServer {
     private final PermissionManager permissionManager;
     private final UserService       userService;
 
-    ObeliskServer() {
+    ObeliskServer() throws IOException {
         this.authenticator     = new Authenticator(this);
         this.dataProvider      = new DataProvider(this);
         this.eventManager      = new EventManager(this);

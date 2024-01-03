@@ -2,17 +2,21 @@ package org.burrow_studios.obelisk.internal.entities;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.api.cache.TurtleSetView;
+import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Ticket;
+import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.action.ActionImpl;
+import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.internal.action.entity.ticket.TicketModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
-public final class TicketImpl extends TurtleImpl implements Ticket {
+public final class TicketImpl extends TurtleImpl<Ticket> implements Ticket {
     private @Nullable String title;
     private @NotNull State state;
     private final @NotNull List<String> tags;
@@ -53,6 +57,23 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
     }
 
     @Override
+    public @NotNull TicketModifierImpl modify() {
+        return new TicketModifierImpl(this);
+    }
+
+    @Override
+    public @NotNull DeleteAction<Ticket> delete() {
+        return new DeleteActionImpl<>(
+                this.getAPI(),
+                Ticket.class,
+                this.getId(),
+                Route.Ticket.DELETE.builder()
+                        .withArg(getId())
+                        .compile()
+        );
+    }
+
+    @Override
     public @Nullable String getTitle() {
         return this.title;
     }
@@ -80,12 +101,27 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
     }
 
     @Override
-    public @NotNull Set<Long> getUserIds() {
-        return this.users.getIdsAsImmutaleSet();
+    public @NotNull DelegatingTurtleCacheView<UserImpl> getUsers() {
+        return this.users;
     }
 
     @Override
-    public @NotNull TurtleSetView<UserImpl> getUsers() {
-        return this.users;
+    public @NotNull ActionImpl<Ticket> addUser(@NotNull User user) {
+        return new ActionImpl<>(this.api, this,
+                Route.Ticket.ADD_USER.builder()
+                        .withArg(getId())
+                        .withArg(user.getId())
+                        .compile()
+        );
+    }
+
+    @Override
+    public @NotNull ActionImpl<Ticket> removeUser(@NotNull User user) {
+        return new ActionImpl<>(this.api, this,
+                Route.Ticket.DEL_USER.builder()
+                        .withArg(getId())
+                        .withArg(user.getId())
+                        .compile()
+        );
     }
 }

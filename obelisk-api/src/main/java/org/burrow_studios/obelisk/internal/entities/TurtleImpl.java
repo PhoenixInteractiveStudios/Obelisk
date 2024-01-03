@@ -3,12 +3,12 @@ package org.burrow_studios.obelisk.internal.entities;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
-import org.burrow_studios.obelisk.internal.entities.issue.BoardImpl;
-import org.burrow_studios.obelisk.internal.entities.issue.IssueImpl;
-import org.burrow_studios.obelisk.internal.entities.issue.TagImpl;
+import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
+import org.burrow_studios.obelisk.internal.entities.board.IssueImpl;
+import org.burrow_studios.obelisk.internal.entities.board.TagImpl;
 import org.jetbrains.annotations.NotNull;
 
-public abstract sealed class TurtleImpl implements Turtle permits GroupImpl, ProjectImpl, TicketImpl, UserImpl, BoardImpl, IssueImpl, TagImpl {
+public abstract sealed class TurtleImpl<T extends Turtle> implements Turtle permits GroupImpl, ProjectImpl, TicketImpl, UserImpl, BoardImpl, IssueImpl, TagImpl {
     protected final @NotNull ObeliskImpl api;
     protected final long id;
 

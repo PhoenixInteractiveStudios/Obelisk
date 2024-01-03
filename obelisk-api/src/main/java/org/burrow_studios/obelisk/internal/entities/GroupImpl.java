@@ -2,15 +2,18 @@ package org.burrow_studios.obelisk.internal.entities;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.api.cache.TurtleSetView;
+import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Group;
+import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.action.ActionImpl;
+import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.internal.action.entity.group.GroupModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
-public final class GroupImpl extends TurtleImpl implements Group {
+public final class GroupImpl extends TurtleImpl<Group> implements Group {
     private @NotNull String name;
     private final @NotNull DelegatingTurtleCacheView<UserImpl> members;
     private int position;
@@ -43,6 +46,23 @@ public final class GroupImpl extends TurtleImpl implements Group {
     }
 
     @Override
+    public @NotNull GroupModifierImpl modify() {
+        return new GroupModifierImpl(this);
+    }
+
+    @Override
+    public @NotNull DeleteAction<Group> delete() {
+        return new DeleteActionImpl<>(
+                this.getAPI(),
+                Group.class,
+                this.getId(),
+                Route.Group.DELETE.builder()
+                        .withArg(getId())
+                        .compile()
+        );
+    }
+
+    @Override
     public @NotNull String getName() {
         return this.name;
     }
@@ -57,13 +77,28 @@ public final class GroupImpl extends TurtleImpl implements Group {
     }
 
     @Override
-    public @NotNull TurtleSetView<UserImpl> getMembers() {
+    public @NotNull DelegatingTurtleCacheView<UserImpl> getMembers() {
         return this.members;
     }
 
     @Override
-    public @NotNull Set<Long> getMemberIds() {
-        return this.members.getIdsAsImmutaleSet();
+    public @NotNull ActionImpl<Group> addMember(@NotNull User user) {
+        return new ActionImpl<>(this.api, this,
+                Route.Group.ADD_MEMBER.builder()
+                        .withArg(getId())
+                        .withArg(user.getId())
+                        .compile()
+        );
+    }
+
+    @Override
+    public @NotNull ActionImpl<Group> removeMember(@NotNull User user) {
+        return new ActionImpl<>(this.api, this,
+                Route.Group.DEL_MEMBER.builder()
+                        .withArg(getId())
+                        .withArg(user.getId())
+                        .compile()
+        );
     }
 
     @Override

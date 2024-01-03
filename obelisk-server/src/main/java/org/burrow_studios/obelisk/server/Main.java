@@ -3,6 +3,7 @@ package org.burrow_studios.obelisk.server;
 import org.burrow_studios.obelisk.common.ResourceTools;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class Main {
@@ -27,7 +28,7 @@ public class Main {
     }
 
     /** JVM entrypoint */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (VERSION == null)
             throw new AssertionError("Unknown version");
         System.out.printf(" version %s...%n", VERSION);

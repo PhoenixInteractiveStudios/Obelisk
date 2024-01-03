@@ -6,9 +6,11 @@ import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetView<T> {
     private final TurtleCache<? super T> cache;
@@ -31,6 +33,13 @@ public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetVie
     }
 
     public @NotNull Set<Long> getIdsAsImmutaleSet() {
+        return ids.stream()
+                // remove 'ghost entities' as they would probably cause API errors
+                .filter(id -> cache.get(id, contentType) != null)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    public @NotNull Set<Long> getIdsAsImmutableSetRaw() {
         return Set.copyOf(this.ids);
     }
 
@@ -54,6 +63,7 @@ public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetVie
     public boolean contains(Object o) {
         if (o == null) return false;
         if (!(o instanceof Turtle turtle)) return false;
+        if (!contentType.isInstance(turtle)) return false;
         return this.containsId(turtle.getId());
     }
 
@@ -82,6 +92,11 @@ public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetVie
         return this.ids.add(t.getId());
     }
 
+    public boolean add(long id) {
+        // no checks on the id to allow 'ghost entities' (usually entities that do not exist YET as they are still being built)
+        return this.ids.add(id);
+    }
+
     public boolean remove(Object o) {
         if (!(o instanceof Turtle turtle)) return false;
         return this.removeById(turtle.getId());
@@ -96,6 +111,18 @@ public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetVie
         for (T t : c)
             changed = this.add(t) | changed;
         return changed;
+    }
+
+    public boolean addAllIds(@NotNull Iterable<Long> c) {
+        boolean changed = false;
+        for (Long id : c)
+            if (id != null)
+                changed = this.add(id) | changed;
+        return changed;
+    }
+
+    public boolean retainIds(@NotNull Collection<Long> c) {
+        return ids.retainAll(c);
     }
 
     public boolean removeAll(@NotNull Iterable<?> c) {

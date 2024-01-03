@@ -2,15 +2,18 @@ package org.burrow_studios.obelisk.internal.entities;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.api.cache.TurtleSetView;
+import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Project;
+import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
+import org.burrow_studios.obelisk.internal.action.ActionImpl;
+import org.burrow_studios.obelisk.internal.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.internal.action.entity.project.ProjectModifierImpl;
 import org.burrow_studios.obelisk.internal.cache.DelegatingTurtleCacheView;
+import org.burrow_studios.obelisk.internal.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Set;
-
-public final class ProjectImpl extends TurtleImpl implements Project {
+public final class ProjectImpl extends TurtleImpl<Project> implements Project {
     private @NotNull String title;
     private @NotNull Timings timings;
     private @NotNull State state;
@@ -58,6 +61,23 @@ public final class ProjectImpl extends TurtleImpl implements Project {
     }
 
     @Override
+    public @NotNull ProjectModifierImpl modify() {
+        return new ProjectModifierImpl(this);
+    }
+
+    @Override
+    public @NotNull DeleteAction<Project> delete() {
+        return new DeleteActionImpl<>(
+                this.getAPI(),
+                Project.class,
+                this.getId(),
+                Route.Project.DELETE.builder()
+                        .withArg(getId())
+                        .compile()
+        );
+    }
+
+    @Override
     public @NotNull String getTitle() {
         return this.title;
     }
@@ -85,12 +105,27 @@ public final class ProjectImpl extends TurtleImpl implements Project {
     }
 
     @Override
-    public @NotNull Set<Long> getMemberIds() {
-        return this.members.getIdsAsImmutaleSet();
+    public @NotNull DelegatingTurtleCacheView<UserImpl> getMembers() {
+        return this.members;
     }
 
     @Override
-    public @NotNull TurtleSetView<UserImpl> getMembers() {
-        return this.members;
+    public @NotNull ActionImpl<Project> addMember(@NotNull User user) {
+        return new ActionImpl<>(this.api, this,
+                Route.Project.ADD_MEMBER.builder()
+                        .withArg(getId())
+                        .withArg(user.getId())
+                        .compile()
+        );
+    }
+
+    @Override
+    public @NotNull ActionImpl<Project> removeMember(@NotNull User user) {
+        return new ActionImpl<>(this.api, this,
+                Route.Project.DEL_MEMBER.builder()
+                        .withArg(getId())
+                        .withArg(user.getId())
+                        .compile()
+        );
     }
 }
