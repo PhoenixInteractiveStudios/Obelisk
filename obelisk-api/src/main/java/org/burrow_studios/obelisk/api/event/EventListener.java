@@ -1,9 +1,9 @@
 package org.burrow_studios.obelisk.api.event;
 
 import org.burrow_studios.obelisk.api.event.entity.group.*;
-import org.burrow_studios.obelisk.api.event.entity.issue.board.*;
-import org.burrow_studios.obelisk.api.event.entity.issue.issue.*;
-import org.burrow_studios.obelisk.api.event.entity.issue.tag.*;
+import org.burrow_studios.obelisk.api.event.entity.board.board.*;
+import org.burrow_studios.obelisk.api.event.entity.board.issue.*;
+import org.burrow_studios.obelisk.api.event.entity.board.tag.*;
 import org.burrow_studios.obelisk.api.event.entity.project.*;
 import org.burrow_studios.obelisk.api.event.entity.ticket.*;
 import org.burrow_studios.obelisk.api.event.entity.user.*;

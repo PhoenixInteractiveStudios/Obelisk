@@ -1,7 +1,7 @@
-package org.burrow_studios.obelisk.api.event.entity.issue.board;
+package org.burrow_studios.obelisk.api.event.entity.board.board;
 
-import org.burrow_studios.obelisk.api.entities.issue.Board;
-import org.burrow_studios.obelisk.api.entities.issue.Tag;
+import org.burrow_studios.obelisk.api.entities.board.Board;
+import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
