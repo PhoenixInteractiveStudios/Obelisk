@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.server.net.http;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.JsonElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +15,7 @@ public record Request(
         @NotNull String path,
         @NotNull String[] segments,
         @NotNull Map<String, String> headers,
+        @Nullable DecodedJWT token,
         @Nullable JsonElement body
 ) {
     public <T> T getSegment(int index, @NotNull Function<String, T> fun) {

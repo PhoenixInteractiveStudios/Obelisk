@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.server.net.http;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -21,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class APIHandler {
     protected final @NotNull NetworkHandler networkHandler;
 
-    protected static final Gson GSON = new GsonBuilder()
+    public static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .serializeNulls()
             .create();
@@ -93,6 +94,8 @@ public abstract class APIHandler {
                     .build();
         }
 
+        DecodedJWT token = null;
+
         // auth
         if (endpoint.isPrivileged()) {
             final String authHeader = headers.get("Authorization");
@@ -103,14 +106,14 @@ public abstract class APIHandler {
                         .setHeader("WWW-Authenticate", "Bearer")
                         .build();
 
-            final String token = authHeader.substring("Bearer ".length());
+            final String tokenStr = authHeader.substring("Bearer ".length());
 
             final TokenManager tokenManager = this.getNetworkHandler().getServer().getAuthenticator().getTokenManager();
 
             try {
                 switch (endpoint.getPrivilege()) {
-                    case SESSION  -> tokenManager.decodeSessionToken(token);
-                    case IDENTITY -> tokenManager.decodeIdentityToken(token);
+                    case SESSION  -> token = tokenManager.decodeSessionToken(tokenStr);
+                    case IDENTITY -> token = tokenManager.decodeIdentityToken(tokenStr);
                 }
             } catch (JWTVerificationException e) {
                 return new ResponseBuilder()
@@ -132,7 +135,7 @@ public abstract class APIHandler {
         }
 
         try {
-            final Request request = new Request(this, endpoint, path, segments, headers, body);
+            final Request request = new Request(this, endpoint, path, segments, headers, token, body);
             final ResponseBuilder builder = new ResponseBuilder();
 
             handler.handle(request, builder);
