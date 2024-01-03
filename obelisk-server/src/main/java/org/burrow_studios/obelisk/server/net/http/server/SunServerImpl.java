@@ -49,7 +49,9 @@ public class SunServerImpl extends APIHandler implements HttpHandler {
                 // collect as Map<String, String>
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        final Response response = this.handle(headers, method, uri.getPath());
+        final String body = new String(exchange.getRequestBody().readAllBytes());
+
+        final Response response = this.handle(method, uri.getPath(), headers, body);
 
         final Headers responseHeaders = exchange.getResponseHeaders();
         response.headers().forEach(responseHeaders::add);

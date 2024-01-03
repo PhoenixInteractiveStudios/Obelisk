@@ -3,12 +3,14 @@ package org.burrow_studios.obelisk.server.net.http;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.server.auth.crypto.TokenManager;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
 import org.burrow_studios.obelisk.server.net.http.exceptions.ForbiddenException;
 import org.burrow_studios.obelisk.server.net.http.exceptions.IllegalMethodException;
 import org.burrow_studios.obelisk.server.net.http.exceptions.UnauthorizedException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,7 @@ public abstract class APIHandler {
         return this.networkHandler;
     }
 
-    protected final @NotNull Response handle(@NotNull Map<String, String> headers, @NotNull Method method, @NotNull String path) {
+    protected final @NotNull Response handle(@NotNull Method method, @NotNull String path, @NotNull Map<String, String> headers, @Nullable String bodyStr) {
         final String[] segments = path.substring(1).split("/");
 
         Endpoint endpoint = null;
@@ -117,8 +119,20 @@ public abstract class APIHandler {
             }
         }
 
+        JsonElement body = null;
+        if (bodyStr != null && !bodyStr.isEmpty()) {
+            // for now only JSON bodies are supported
+            final String contentType = headers.get("Content-Type");
+            if (!Objects.equals(contentType, "application/json"))
+                return new ResponseBuilder()
+                        .setCode(400)
+                        .build();
+
+            body = GSON.fromJson(bodyStr, JsonElement.class);
+        }
+
         try {
-            final Request request = new Request(this, endpoint, headers);
+            final Request request = new Request(this, endpoint, path, segments, headers, body);
             final ResponseBuilder builder = new ResponseBuilder();
 
             handler.handle(request, builder);
