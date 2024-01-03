@@ -6,6 +6,7 @@ import org.burrow_studios.obelisk.api.action.entity.project.ProjectBuilder;
 import org.burrow_studios.obelisk.api.action.entity.ticket.TicketBuilder;
 import org.burrow_studios.obelisk.api.action.entity.user.UserBuilder;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
+import org.burrow_studios.obelisk.api.event.EventHandler;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.Ticket;
@@ -17,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface Obelisk {
+    @NotNull EventHandler getEventHandler();
+
     @NotNull TurtleSetView<? extends Group> getGroups();
 
     @Nullable Group getGroup(long id);
