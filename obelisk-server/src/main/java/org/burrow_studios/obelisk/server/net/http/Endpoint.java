@@ -9,10 +9,12 @@ public final class Endpoint {
     private final @NotNull Method method;
     private final @NotNull String path;
     private final @NotNull Segment[] segments;
+    private final @NotNull AuthLevel privilege;
 
-    public Endpoint(@NotNull Method method, @NotNull String path) {
+    public Endpoint(@NotNull Method method, @NotNull String path, @NotNull AuthLevel privilege) {
         this.method = method;
         this.path = path;
+        this.privilege = privilege;
 
         // FIXME: placeholder
         assert !path.endsWith("/");
@@ -22,6 +24,14 @@ public final class Endpoint {
 
     public @NotNull Method getMethod() {
         return this.method;
+    }
+
+    public boolean isPrivileged() {
+        return !getPrivilege().equals(AuthLevel.NONE);
+    }
+
+    public @NotNull AuthLevel getPrivilege() {
+        return privilege;
     }
 
     public boolean matchPath(@NotNull String[] segments) {

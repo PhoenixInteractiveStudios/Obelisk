@@ -1,14 +1,19 @@
 package org.burrow_studios.obelisk.server.net.http;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.burrow_studios.obelisk.server.auth.crypto.TokenManager;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
 import org.burrow_studios.obelisk.server.net.http.exceptions.ForbiddenException;
 import org.burrow_studios.obelisk.server.net.http.exceptions.IllegalMethodException;
 import org.burrow_studios.obelisk.server.net.http.exceptions.UnauthorizedException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class APIHandler {
@@ -26,8 +31,8 @@ public abstract class APIHandler {
         this.handlers = new ConcurrentHashMap<>();
     }
 
-    public final @NotNull APIHandler addEndpoint(@NotNull Method method, @NotNull String path, @NotNull EndpointHandler handler) {
-        return this.addEndpoint(new Endpoint(method, path), handler);
+    public final @NotNull APIHandler addEndpoint(@NotNull Method method, @NotNull String path, @NotNull AuthLevel privilege, @NotNull EndpointHandler handler) {
+        return this.addEndpoint(new Endpoint(method, path, privilege), handler);
     }
 
     public final @NotNull APIHandler addEndpoint(@NotNull Endpoint endpoint, @NotNull EndpointHandler handler) {
@@ -57,10 +62,9 @@ public abstract class APIHandler {
             break;
         }
 
-        if (endpoint == null)
-            endpoint = new Endpoint(method, path);
-
-        EndpointHandler handler = this.handlers.get(endpoint);
+        final EndpointHandler handler = Optional.ofNullable(endpoint)
+                .map(this.handlers::get)
+                .orElse(null);
 
         if (handler == null) {
             // no handler found. Looking for endpoints with the same path but different methods
@@ -87,13 +91,34 @@ public abstract class APIHandler {
                     .build();
         }
 
-        final Request request = new Request(
-                this,
-                endpoint,
-                headers
-        );
+        // auth
+        if (endpoint.isPrivileged()) {
+            final String authHeader = headers.get("Authorization");
+
+            if (authHeader == null || !authHeader.startsWith("Bearer"))
+                return new ResponseBuilder()
+                        .setCode(401)
+                        .setHeader("WWW-Authenticate", "Bearer")
+                        .build();
+
+            final String token = authHeader.substring("Bearer ".length());
+
+            final TokenManager tokenManager = this.getNetworkHandler().getServer().getAuthenticator().getTokenManager();
+
+            try {
+                switch (endpoint.getPrivilege()) {
+                    case SESSION  -> tokenManager.decodeSessionToken(token);
+                    case IDENTITY -> tokenManager.decodeIdentityToken(token);
+                }
+            } catch (JWTVerificationException e) {
+                return new ResponseBuilder()
+                        .setCode(403)
+                        .build();
+            }
+        }
 
         try {
+            final Request request = new Request(this, endpoint, headers);
             final ResponseBuilder builder = new ResponseBuilder();
 
             handler.handle(request, builder);
