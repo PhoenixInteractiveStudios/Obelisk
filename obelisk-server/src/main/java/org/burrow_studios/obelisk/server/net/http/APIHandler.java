@@ -3,10 +3,12 @@ package org.burrow_studios.obelisk.server.net.http;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
+import org.burrow_studios.obelisk.server.net.http.exceptions.ForbiddenException;
+import org.burrow_studios.obelisk.server.net.http.exceptions.IllegalMethodException;
+import org.burrow_studios.obelisk.server.net.http.exceptions.UnauthorizedException;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URI;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class APIHandler {
@@ -18,12 +20,10 @@ public abstract class APIHandler {
             .create();
 
     private final ConcurrentHashMap<Endpoint, EndpointHandler> handlers;
-    private final EndpointHandler defaultHandler;
 
     public APIHandler(@NotNull NetworkHandler networkHandler) {
         this.networkHandler = networkHandler;
         this.handlers = new ConcurrentHashMap<>();
-        this.defaultHandler = (req, res) -> res.setCode(404);
     }
 
     public final @NotNull APIHandler addEndpoint(@NotNull Method method, @NotNull String path, @NotNull EndpointHandler handler) {
@@ -44,21 +44,79 @@ public abstract class APIHandler {
         return this.networkHandler;
     }
 
-    protected final @NotNull Endpoint getEndpoint(@NotNull Method method, @NotNull URI uri) {
-        final String   path     = uri.getPath();
+    protected final @NotNull Response handle(@NotNull Map<String, String> headers, @NotNull Method method, @NotNull String path) {
         final String[] segments = path.substring(1).split("/");
 
-        for (Endpoint endpoint : handlers.keySet()) {
-            if (!Objects.equals(endpoint.getMethod(), method)) continue;
-            if (!endpoint.matchPath(segments))                 continue;
+        Endpoint endpoint = null;
 
-            return endpoint;
+        for (Endpoint e : this.handlers.keySet()) {
+            if (!Objects.equals(e.getMethod(), method)) continue;
+            if (!e.matchPath(segments))                 continue;
+
+            endpoint = e;
+            break;
         }
 
-        return new Endpoint(method, uri.getPath());
-    }
+        if (endpoint == null)
+            endpoint = new Endpoint(method, path);
 
-    protected final @NotNull EndpointHandler getHandler(@NotNull Endpoint endpoint) {
-        return this.handlers.getOrDefault(endpoint, this.defaultHandler);
+        EndpointHandler handler = this.handlers.get(endpoint);
+
+        if (handler == null) {
+            // no handler found. Looking for endpoints with the same path but different methods
+
+            final List<String> methods = this.handlers.keySet().stream()
+                    // filter for matching paths
+                    .filter(e -> e.matchPath(segments))
+                    // get other methods of same path
+                    .map(Endpoint::getMethod)
+                    .map(Enum::name)
+                    .toList();
+
+            if (!methods.isEmpty()) {
+                // there seem to be other methods, this calls for a 405
+                return new ResponseBuilder()
+                        .setCode(405)
+                        .setHeader("Allow", String.join(", ", methods))
+                        .build();
+            }
+
+            // path does not exist on the server at all -> 404
+            return new ResponseBuilder()
+                    .setCode(404)
+                    .build();
+        }
+
+        final Request request = new Request(
+                this,
+                endpoint,
+                headers
+        );
+
+        try {
+            final ResponseBuilder builder = new ResponseBuilder();
+
+            handler.handle(request, builder);
+
+            return builder.build();
+        } catch (UnauthorizedException e) {
+            return new ResponseBuilder()
+                    .setCode(401)
+                    .setHeader("WWW-Authenticate", "Bearer")
+                    .build();
+        } catch (ForbiddenException e) {
+            return new ResponseBuilder()
+                    .setCode(403)
+                    .build();
+        } catch (IllegalMethodException e) {
+            return new ResponseBuilder()
+                    .setCode(405)
+                    .setHeader("Allow", String.join(", ", e.getAllowedStr()))
+                    .build();
+        } catch (Exception e) {
+            return new ResponseBuilder()
+                    .setCode(500)
+                    .build();
+        }
     }
 }
