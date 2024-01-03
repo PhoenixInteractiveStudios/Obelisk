@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.server.net;
 
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.net.http.APIHandler;
+import org.burrow_studios.obelisk.server.net.http.AuthLevel;
 import org.burrow_studios.obelisk.server.net.http.Method;
 import org.burrow_studios.obelisk.server.net.http.handlers.*;
 import org.burrow_studios.obelisk.server.net.http.server.SunServerImpl;
@@ -30,63 +31,67 @@ public class NetworkHandler {
 
         this.apiHandler = new SunServerImpl(this)
                 // Session lifecycle
-                .addEndpoint(Method.POST  , "/session/:long"      , sessionHandler::onLogin)
-                .addEndpoint(Method.DELETE, "/session/:long/:long", sessionHandler::onLogout)
-                .addEndpoint(Method.DELETE, "/session/:long"      , sessionHandler::onLogoutAll)
+                .addEndpoint(Method.POST  , "/session/:long"      , AuthLevel.IDENTITY, sessionHandler::onLogin)
+                .addEndpoint(Method.DELETE, "/session/:long/:long", AuthLevel.SESSION , sessionHandler::onLogout)
+                .addEndpoint(Method.DELETE, "/session/:long"      , AuthLevel.IDENTITY, sessionHandler::onLogoutAll)
                 // Resource: Group
-                .addEndpoint(Method.GET   , "/groups"                    , groupHandler::onGetAll)
-                .addEndpoint(Method.GET   , "/groups/:long"              , groupHandler::onGet)
-                .addEndpoint(Method.POST  , "/groups"                    , groupHandler::onCreate)
-                .addEndpoint(Method.PUT   , "/groups/:long/members/:long", groupHandler::onAddMember)
-                .addEndpoint(Method.DELETE, "/groups/:long/members/:long", groupHandler::onDeleteMember)
-                .addEndpoint(Method.DELETE, "/groups/:long"              , groupHandler::onDelete)
-                .addEndpoint(Method.PATCH , "/groups/:long"              , groupHandler::onEdit)
+                .addEndpoint(Method.GET   , "/groups"                    , AuthLevel.SESSION, groupHandler::onGetAll)
+                .addEndpoint(Method.GET   , "/groups/:long"              , AuthLevel.SESSION, groupHandler::onGet)
+                .addEndpoint(Method.POST  , "/groups"                    , AuthLevel.SESSION, groupHandler::onCreate)
+                .addEndpoint(Method.PUT   , "/groups/:long/members/:long", AuthLevel.SESSION, groupHandler::onAddMember)
+                .addEndpoint(Method.DELETE, "/groups/:long/members/:long", AuthLevel.SESSION, groupHandler::onDeleteMember)
+                .addEndpoint(Method.DELETE, "/groups/:long"              , AuthLevel.SESSION, groupHandler::onDelete)
+                .addEndpoint(Method.PATCH , "/groups/:long"              , AuthLevel.SESSION, groupHandler::onEdit)
                 // Resource: Project
-                .addEndpoint(Method.GET   , "/projects"                    , projectHandler::onGetAll)
-                .addEndpoint(Method.GET   , "/projects/:long"              , projectHandler::onGet)
-                .addEndpoint(Method.POST  , "/projects"                    , projectHandler::onCreate)
-                .addEndpoint(Method.PUT   , "/projects/:long/members/:long", projectHandler::onAddMember)
-                .addEndpoint(Method.DELETE, "/projects/:long/members/:long", projectHandler::onDeleteMember)
-                .addEndpoint(Method.DELETE, "/projects/:long"              , projectHandler::onDelete)
-                .addEndpoint(Method.PATCH , "/projects/:long"              , projectHandler::onEdit)
+                .addEndpoint(Method.GET   , "/projects"                    , AuthLevel.SESSION, projectHandler::onGetAll)
+                .addEndpoint(Method.GET   , "/projects/:long"              , AuthLevel.SESSION, projectHandler::onGet)
+                .addEndpoint(Method.POST  , "/projects"                    , AuthLevel.SESSION, projectHandler::onCreate)
+                .addEndpoint(Method.PUT   , "/projects/:long/members/:long", AuthLevel.SESSION, projectHandler::onAddMember)
+                .addEndpoint(Method.DELETE, "/projects/:long/members/:long", AuthLevel.SESSION, projectHandler::onDeleteMember)
+                .addEndpoint(Method.DELETE, "/projects/:long"              , AuthLevel.SESSION, projectHandler::onDelete)
+                .addEndpoint(Method.PATCH , "/projects/:long"              , AuthLevel.SESSION, projectHandler::onEdit)
                 // Resource: Ticket
-                .addEndpoint(Method.GET   , "/tickets"                  , ticketHandler::onGetAll)
-                .addEndpoint(Method.GET   , "/tickets/:long"            , ticketHandler::onGet)
-                .addEndpoint(Method.POST  , "/tickets"                  , ticketHandler::onCreate)
-                .addEndpoint(Method.PUT   , "/tickets/:long/users/:long", ticketHandler::onAddUser)
-                .addEndpoint(Method.DELETE, "/tickets/:long/users/:long", ticketHandler::onDeleteUser)
-                .addEndpoint(Method.DELETE, "/tickets/:long"            , ticketHandler::onDelete)
-                .addEndpoint(Method.PATCH , "/tickets/:long"            , ticketHandler::onEdit)
+                .addEndpoint(Method.GET   , "/tickets"                  , AuthLevel.SESSION, ticketHandler::onGetAll)
+                .addEndpoint(Method.GET   , "/tickets/:long"            , AuthLevel.SESSION, ticketHandler::onGet)
+                .addEndpoint(Method.POST  , "/tickets"                  , AuthLevel.SESSION, ticketHandler::onCreate)
+                .addEndpoint(Method.PUT   , "/tickets/:long/users/:long", AuthLevel.SESSION, ticketHandler::onAddUser)
+                .addEndpoint(Method.DELETE, "/tickets/:long/users/:long", AuthLevel.SESSION, ticketHandler::onDeleteUser)
+                .addEndpoint(Method.DELETE, "/tickets/:long"            , AuthLevel.SESSION, ticketHandler::onDelete)
+                .addEndpoint(Method.PATCH , "/tickets/:long"            , AuthLevel.SESSION, ticketHandler::onEdit)
                 // Resource: User
-                .addEndpoint(Method.GET   , "/users"      , userHandler::onGetAll)
-                .addEndpoint(Method.GET   , "/users/:long", userHandler::onGet)
-                .addEndpoint(Method.POST  , "/users"      , userHandler::onCreate)
-                .addEndpoint(Method.DELETE, "/users/:long", userHandler::onDelete)
-                .addEndpoint(Method.PATCH , "/users/:long", userHandler::onEdit)
+                .addEndpoint(Method.GET   , "/users"      , AuthLevel.SESSION, userHandler::onGetAll)
+                .addEndpoint(Method.GET   , "/users/:long", AuthLevel.SESSION, userHandler::onGet)
+                .addEndpoint(Method.POST  , "/users"      , AuthLevel.SESSION, userHandler::onCreate)
+                .addEndpoint(Method.DELETE, "/users/:long", AuthLevel.SESSION, userHandler::onDelete)
+                .addEndpoint(Method.PATCH , "/users/:long", AuthLevel.SESSION, userHandler::onEdit)
                 // Resource: Board
-                .addEndpoint(Method.GET   , "/boards"      , boardHandler::onGetAll)
-                .addEndpoint(Method.GET   , "/boards/:long", boardHandler::onGet)
-                .addEndpoint(Method.POST  , "/boards"      , boardHandler::onCreate)
-                .addEndpoint(Method.DELETE, "/boards/:long", boardHandler::onDelete)
-                .addEndpoint(Method.PATCH , "/boards/:long", boardHandler::onEdit)
+                .addEndpoint(Method.GET   , "/boards"      , AuthLevel.SESSION, boardHandler::onGetAll)
+                .addEndpoint(Method.GET   , "/boards/:long", AuthLevel.SESSION, boardHandler::onGet)
+                .addEndpoint(Method.POST  , "/boards"      , AuthLevel.SESSION, boardHandler::onCreate)
+                .addEndpoint(Method.DELETE, "/boards/:long", AuthLevel.SESSION, boardHandler::onDelete)
+                .addEndpoint(Method.PATCH , "/boards/:long", AuthLevel.SESSION, boardHandler::onEdit)
                 // Resource: Tag
-                .addEndpoint(Method.GET   , "/boards/:long/tags"      , tagHandler::onGetAll)
-                .addEndpoint(Method.GET   , "/boards/:long/tags/:long", tagHandler::onGet)
-                .addEndpoint(Method.POST  , "/boards/:long/tags"      , tagHandler::onCreate)
-                .addEndpoint(Method.DELETE, "/boards/:long/tags/:long", tagHandler::onDelete)
-                .addEndpoint(Method.PATCH , "/boards/:long/tags/:long", tagHandler::onEdit)
+                .addEndpoint(Method.GET   , "/boards/:long/tags"      , AuthLevel.SESSION, tagHandler::onGetAll)
+                .addEndpoint(Method.GET   , "/boards/:long/tags/:long", AuthLevel.SESSION, tagHandler::onGet)
+                .addEndpoint(Method.POST  , "/boards/:long/tags"      , AuthLevel.SESSION, tagHandler::onCreate)
+                .addEndpoint(Method.DELETE, "/boards/:long/tags/:long", AuthLevel.SESSION, tagHandler::onDelete)
+                .addEndpoint(Method.PATCH , "/boards/:long/tags/:long", AuthLevel.SESSION, tagHandler::onEdit)
                 // Resource: Ticket
-                .addEndpoint(Method.GET   , "/boards/:long/issues"                      , issueHandler::onGetAll)
-                .addEndpoint(Method.GET   , "/boards/:long/issues/:long"                , issueHandler::onGet)
-                .addEndpoint(Method.POST  , "/boards/:long/issues"                      , issueHandler::onCreate)
-                .addEndpoint(Method.PUT   , "/boards/:long/issues/:long/assignees/:long", issueHandler::onAddAssignee)
-                .addEndpoint(Method.DELETE, "/boards/:long/issues/:long/assignees/:long", issueHandler::onDeleteAssignee)
-                .addEndpoint(Method.PUT   , "/boards/:long/issues/:long/tags/:long"     , issueHandler::onAddTag)
-                .addEndpoint(Method.DELETE, "/boards/:long/issues/:long/tags/:long"     , issueHandler::onDeleteTag)
-                .addEndpoint(Method.DELETE, "/boards/:long/issues/:long"                , issueHandler::onDelete)
-                .addEndpoint(Method.PATCH , "/boards/:long/issues/:long"                , issueHandler::onEdit);
+                .addEndpoint(Method.GET   , "/boards/:long/issues"                      , AuthLevel.SESSION, issueHandler::onGetAll)
+                .addEndpoint(Method.GET   , "/boards/:long/issues/:long"                , AuthLevel.SESSION, issueHandler::onGet)
+                .addEndpoint(Method.POST  , "/boards/:long/issues"                      , AuthLevel.SESSION, issueHandler::onCreate)
+                .addEndpoint(Method.PUT   , "/boards/:long/issues/:long/assignees/:long", AuthLevel.SESSION, issueHandler::onAddAssignee)
+                .addEndpoint(Method.DELETE, "/boards/:long/issues/:long/assignees/:long", AuthLevel.SESSION, issueHandler::onDeleteAssignee)
+                .addEndpoint(Method.PUT   , "/boards/:long/issues/:long/tags/:long"     , AuthLevel.SESSION, issueHandler::onAddTag)
+                .addEndpoint(Method.DELETE, "/boards/:long/issues/:long/tags/:long"     , AuthLevel.SESSION, issueHandler::onDeleteTag)
+                .addEndpoint(Method.DELETE, "/boards/:long/issues/:long"                , AuthLevel.SESSION, issueHandler::onDelete)
+                .addEndpoint(Method.PATCH , "/boards/:long/issues/:long"                , AuthLevel.SESSION, issueHandler::onEdit);
 
         this.eventDispatcher = new EventDispatcher(this);
+    }
+
+    public @NotNull ObeliskServer getServer() {
+        return server;
     }
 
     public @NotNull APIHandler getApiHandler() {
