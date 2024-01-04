@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,12 +31,22 @@ class SQLiteUserDB extends SQLUserDB {
     }
 
     @Override
-    protected void updateUserDiscordIds0(long id, @NotNull List<Long> discordIds) throws SQLException {
+    protected void addUserDiscordId0(long user, long snowflake) throws SQLException {
         // TODO
     }
 
     @Override
-    protected void updateUserMinecraftIds0(long id, @NotNull List<UUID> minecraftIds) throws SQLException {
+    protected void removeUserDiscordId0(long user, long snowflake) throws SQLException {
+        // TODO
+    }
+
+    @Override
+    protected void addUserMinecraftId0(long user, @NotNull UUID uuid) throws SQLException {
+        // TODO
+    }
+
+    @Override
+    protected void removeUserMinecraftId0(long user, @NotNull UUID uuid) throws SQLException {
         // TODO
     }
 }

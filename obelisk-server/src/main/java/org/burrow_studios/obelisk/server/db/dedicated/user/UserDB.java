@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -21,7 +20,11 @@ public interface UserDB {
 
     void updateUserName(long id, @NotNull String name) throws DatabaseException;
 
-    void updateUserDiscordIds(long id, @NotNull List<Long> discordIds) throws DatabaseException;
+    void addUserDiscordId(long user, long snowflake) throws DatabaseException;
 
-    void updateUserMinecraftIds(long id, @NotNull List<UUID> minecraftIds) throws DatabaseException;
+    void removeUserDiscordId(long user, long snowflake) throws DatabaseException;
+
+    void addUserMinecraftId(long user, @NotNull UUID uuid) throws DatabaseException;
+
+    void removeUserMinecraftId(long user, @NotNull UUID uuid) throws DatabaseException;
 }

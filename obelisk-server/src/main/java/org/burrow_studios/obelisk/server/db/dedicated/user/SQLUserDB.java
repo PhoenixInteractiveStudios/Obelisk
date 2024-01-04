@@ -6,7 +6,6 @@ import org.burrow_studios.obelisk.server.db.dedicated.SQLDB;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,16 +39,30 @@ abstract class SQLUserDB extends SQLDB implements UserDB {
     protected abstract void updateUserName0(long id, @NotNull String name) throws SQLException;
 
     @Override
-    public final void updateUserDiscordIds(long id, @NotNull List<Long> discordIds) throws DatabaseException {
-        this.wrap(() -> this.updateUserDiscordIds0(id, discordIds));
+    public final void addUserDiscordId(long user, long snowflake) throws DatabaseException {
+        this.wrap(() -> this.addUserDiscordId0(user, snowflake));
     }
 
-    protected abstract void updateUserDiscordIds0(long id, @NotNull List<Long> discordIds) throws SQLException;
+    protected abstract void addUserDiscordId0(long user, long snowflake) throws SQLException;
 
     @Override
-    public final void updateUserMinecraftIds(long id, @NotNull List<UUID> minecraftIds) throws DatabaseException {
-        this.wrap(() -> this.updateUserMinecraftIds0(id, minecraftIds));
+    public final void removeUserDiscordId(long user, long snowflake) throws DatabaseException {
+        this.wrap(() -> this.removeUserDiscordId0(user, snowflake));
     }
 
-    protected abstract void updateUserMinecraftIds0(long id, @NotNull List<UUID> minecraftIds) throws SQLException;
+    protected abstract void removeUserDiscordId0(long user, long snowflake) throws SQLException;
+
+    @Override
+    public final void addUserMinecraftId(long user, @NotNull UUID uuid) throws DatabaseException {
+        this.wrap(() -> this.addUserMinecraftId0(user, uuid));
+    }
+
+    protected abstract void addUserMinecraftId0(long user, @NotNull UUID uuid) throws SQLException;
+
+    @Override
+    public final void removeUserMinecraftId(long user, @NotNull UUID uuid) throws DatabaseException {
+        this.wrap(() -> this.removeUserMinecraftId0(user, uuid));
+    }
+
+    protected abstract void removeUserMinecraftId0(long user, @NotNull UUID uuid) throws SQLException;
 }
