@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.server.auth.db;
 
+import org.burrow_studios.obelisk.server.db.DatabaseException;
+
 public interface AuthDB {
     long[] getActiveSessions(long identity) throws DatabaseException;
 
