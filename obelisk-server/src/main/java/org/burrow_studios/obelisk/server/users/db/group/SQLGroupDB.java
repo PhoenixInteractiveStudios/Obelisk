@@ -1,8 +1,8 @@
-package org.burrow_studios.obelisk.server.db.dedicated.group;
+package org.burrow_studios.obelisk.server.users.db.group;
 
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
-import org.burrow_studios.obelisk.server.db.dedicated.SQLDB;
+import org.burrow_studios.obelisk.server.db.SQLDB;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;

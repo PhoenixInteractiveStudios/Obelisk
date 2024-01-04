@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.server.db.dedicated.board;
+package org.burrow_studios.obelisk.server.its.db;
 
 public enum IssueState {
     OPEN,

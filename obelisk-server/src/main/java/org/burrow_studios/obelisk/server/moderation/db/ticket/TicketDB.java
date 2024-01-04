@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.server.db.dedicated.ticket;
+package org.burrow_studios.obelisk.server.moderation.db.ticket;
 
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.server.db.DatabaseException;

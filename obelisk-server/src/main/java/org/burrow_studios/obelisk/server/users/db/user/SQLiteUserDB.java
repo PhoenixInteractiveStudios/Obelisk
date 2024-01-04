@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.server.db.dedicated.user;
+package org.burrow_studios.obelisk.server.users.db.user;
 
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
