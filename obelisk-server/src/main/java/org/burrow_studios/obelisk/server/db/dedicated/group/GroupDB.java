@@ -1,0 +1,27 @@
+package org.burrow_studios.obelisk.server.db.dedicated.group;
+
+import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.server.db.DatabaseException;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Set;
+
+public interface GroupDB {
+    static @NotNull GroupDB get() {
+        return new SQLiteGroupDB();
+    }
+
+    @NotNull Set<Long> getGroupIds() throws DatabaseException;
+
+    @NotNull JsonObject getGroup(long id) throws DatabaseException;
+
+    void createGroup(long id, @NotNull String name, int position) throws DatabaseException;
+
+    void updateGroupName(long id, @NotNull String name) throws DatabaseException;
+
+    void updateGroupPosition(long id, int position) throws DatabaseException;
+
+    void addGroupMember(long group, long user) throws DatabaseException;
+
+    void removeGroupMember(long group, long user) throws DatabaseException;
+}
