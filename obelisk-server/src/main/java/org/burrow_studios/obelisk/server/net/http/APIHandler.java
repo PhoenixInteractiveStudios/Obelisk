@@ -7,9 +7,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.server.auth.crypto.TokenManager;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
-import org.burrow_studios.obelisk.server.net.http.exceptions.ForbiddenException;
-import org.burrow_studios.obelisk.server.net.http.exceptions.IllegalMethodException;
-import org.burrow_studios.obelisk.server.net.http.exceptions.UnauthorizedException;
+import org.burrow_studios.obelisk.server.net.http.exceptions.APIException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -141,20 +139,8 @@ public abstract class APIHandler {
             handler.handle(request, builder);
 
             return builder.build();
-        } catch (UnauthorizedException e) {
-            return new ResponseBuilder()
-                    .setCode(401)
-                    .setHeader("WWW-Authenticate", "Bearer")
-                    .build();
-        } catch (ForbiddenException e) {
-            return new ResponseBuilder()
-                    .setCode(403)
-                    .build();
-        } catch (IllegalMethodException e) {
-            return new ResponseBuilder()
-                    .setCode(405)
-                    .setHeader("Allow", String.join(", ", e.getAllowedStr()))
-                    .build();
+        } catch (APIException e) {
+            return e.asResponse();
         } catch (Exception e) {
             return new ResponseBuilder()
                     .setCode(500)

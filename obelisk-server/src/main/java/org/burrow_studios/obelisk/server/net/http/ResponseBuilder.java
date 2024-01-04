@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.server.net.http;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -53,6 +54,12 @@ public class ResponseBuilder {
     public @NotNull ResponseBuilder setBody(@NotNull JsonElement json) {
         return this.setBody(APIHandler.GSON.toJson(json))
                 .setContentType("application/json");
+    }
+
+    public @NotNull ResponseBuilder setSimpleBody(@NotNull String message) {
+        JsonObject json = new JsonObject();
+        json.addProperty("message", message);
+        return this.setBody(json);
     }
 
     public @NotNull ResponseBuilder setContentType(@NotNull String contentType) {
