@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.common.TurtleGenerator;
 import org.burrow_studios.obelisk.server.ObeliskServer;
+import org.burrow_studios.obelisk.server.db.Cache;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
 import org.burrow_studios.obelisk.server.users.db.group.GroupDB;
 import org.burrow_studios.obelisk.server.users.db.user.UserDB;
@@ -13,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class UserService {
     private final ObeliskServer server;
@@ -21,8 +21,8 @@ public class UserService {
     private final GroupDB groupDB;
     private final  UserDB  userDB;
 
-    private final ConcurrentHashMap<Long, JsonObject> groupCache;
-    private final ConcurrentHashMap<Long, JsonObject>  userCache;
+    private final Cache<JsonObject> groupCache;
+    private final Cache<JsonObject>  userCache;
 
     private final TurtleGenerator turtleGenerator;
 
@@ -32,39 +32,31 @@ public class UserService {
         this.groupDB = GroupDB.get();
         this.userDB  = UserDB.get();
 
-        this.groupCache = new ConcurrentHashMap<>();
-        this.userCache  = new ConcurrentHashMap<>();
+        this.groupCache = new Cache<>();
+        this.userCache  = new Cache<>();
 
         this.turtleGenerator = TurtleGenerator.get("UserService");
 
-        this.groupDB.getGroupIds().forEach(id -> groupCache.put(id, null));
-        this.userDB.getUserIds().forEach(id -> userCache.put(id, null));
+        this.groupDB.getGroupIds().forEach(groupCache::add);
+        this.userDB.getUserIds().forEach(userCache::add);
     }
 
     public @NotNull Set<Long> getGroups() {
-        return Set.copyOf(this.groupCache.keySet());
+        return this.groupCache.getIds();
     }
     
     public @NotNull Set<Long> getUsers() {
-        return Set.copyOf(this.userCache.keySet());
+        return this.userCache.getIds();
     }
 
     public @NotNull JsonObject getGroup(long id) throws DatabaseException {
-        final JsonObject cachedGroup = this.groupCache.get(id);
-
-        if (cachedGroup != null)
-            return cachedGroup;
-
-        return this.retrieveGroup(id);
+        return this.groupCache.get(id)
+                .orElseGet(() -> this.retrieveGroup(id));
     }
 
     public @NotNull JsonObject getUser(long id) throws DatabaseException {
-        JsonObject cachedUser = this.userCache.get(id);
-
-        if (cachedUser != null)
-            return cachedUser;
-
-        return this.retrieveUser(id);
+        return this.userCache.get(id)
+                .orElseGet(() -> this.retrieveUser(id));
     }
 
     private @NotNull JsonObject retrieveGroup(long id) throws DatabaseException {
