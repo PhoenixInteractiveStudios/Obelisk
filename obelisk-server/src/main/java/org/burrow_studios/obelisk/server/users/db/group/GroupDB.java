@@ -24,4 +24,6 @@ public interface GroupDB {
     void addGroupMember(long group, long user) throws DatabaseException;
 
     void removeGroupMember(long group, long user) throws DatabaseException;
+
+    void deleteGroup(long id) throws DatabaseException;
 }

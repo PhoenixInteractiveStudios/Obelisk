@@ -27,4 +27,6 @@ public interface UserDB {
     void addUserMinecraftId(long user, @NotNull UUID uuid) throws DatabaseException;
 
     void removeUserMinecraftId(long user, @NotNull UUID uuid) throws DatabaseException;
+
+    void deleteUser(long id) throws DatabaseException;
 }

@@ -44,6 +44,11 @@ abstract class SQLGroupDB extends SQLDB implements GroupDB {
         this.wrap(() -> this.removeGroupMember0(group, user));
     }
 
+    @Override
+    public final void deleteGroup(long id) throws DatabaseException {
+        this.wrap(() -> this.deleteGroup0(id));
+    }
+
     protected abstract @NotNull Set<Long> getGroupIds0() throws SQLException;
 
     protected abstract @NotNull JsonObject getGroup0(long id) throws SQLException;
@@ -57,4 +62,6 @@ abstract class SQLGroupDB extends SQLDB implements GroupDB {
     protected abstract void addGroupMember0(long group, long user) throws SQLException;
 
     protected abstract void removeGroupMember0(long group, long user) throws SQLException;
+
+    protected abstract void deleteGroup0(long id) throws SQLException;
 }

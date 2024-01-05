@@ -43,4 +43,9 @@ class SQLiteGroupDB extends SQLGroupDB {
     protected void removeGroupMember0(long group, long user) throws SQLException {
         // TODO
     }
+
+    @Override
+    protected void deleteGroup0(long id) throws SQLException {
+        // TODO
+    }
 }

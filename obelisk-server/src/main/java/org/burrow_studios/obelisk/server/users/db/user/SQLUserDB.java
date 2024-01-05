@@ -50,6 +50,11 @@ abstract class SQLUserDB extends SQLDB implements UserDB {
         this.wrap(() -> this.removeUserMinecraftId0(user, uuid));
     }
 
+    @Override
+    public final void deleteUser(long id) throws DatabaseException {
+        this.wrap(() -> this.deleteUser0(id));
+    }
+
     protected abstract @NotNull Set<Long> getUserIds0() throws SQLException;
 
     protected abstract @NotNull JsonObject getUser0(long id) throws SQLException;
@@ -65,4 +70,6 @@ abstract class SQLUserDB extends SQLDB implements UserDB {
     protected abstract void addUserMinecraftId0(long user, @NotNull UUID uuid) throws SQLException;
 
     protected abstract void removeUserMinecraftId0(long user, @NotNull UUID uuid) throws SQLException;
+
+    protected abstract void deleteUser0(long id) throws SQLException;
 }

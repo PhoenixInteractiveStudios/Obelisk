@@ -49,4 +49,9 @@ class SQLiteUserDB extends SQLUserDB {
     protected void removeUserMinecraftId0(long user, @NotNull UUID uuid) throws SQLException {
         // TODO
     }
+
+    @Override
+    protected void deleteUser0(long id) throws SQLException {
+        // TODO
+    }
 }
