@@ -6,12 +6,17 @@ import org.burrow_studios.obelisk.server.db.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 
 public interface UserDB {
-    static @NotNull UserDB get() {
-        return new FileUserDB(new File(Main.DIR, "users"));
+    static @NotNull UserDB get() throws DatabaseException {
+        try {
+            return new FileUserDB(new File(Main.DIR, "users"));
+        } catch (IOException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @NotNull Set<Long> getUserIds() throws DatabaseException;

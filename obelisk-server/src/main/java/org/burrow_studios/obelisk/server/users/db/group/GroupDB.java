@@ -6,11 +6,16 @@ import org.burrow_studios.obelisk.server.db.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Set;
 
 public interface GroupDB {
-    static @NotNull GroupDB get() {
-        return new FileGroupDB(new File(Main.DIR, "groups"));
+    static @NotNull GroupDB get() throws DatabaseException {
+        try {
+            return new FileGroupDB(new File(Main.DIR, "groups"));
+        } catch (IOException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @NotNull Set<Long> getGroupIds() throws DatabaseException;
