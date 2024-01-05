@@ -36,6 +36,9 @@ public class UserService {
         this.userCache  = new ConcurrentHashMap<>();
 
         this.turtleGenerator = TurtleGenerator.get("UserService");
+
+        this.groupDB.getGroupIds().forEach(id -> groupCache.put(id, null));
+        this.userDB.getUserIds().forEach(id -> userCache.put(id, null));
     }
 
     public @NotNull Set<Long> getGroups() {

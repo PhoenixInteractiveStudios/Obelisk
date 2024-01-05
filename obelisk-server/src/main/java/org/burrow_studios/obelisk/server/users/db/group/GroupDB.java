@@ -1,14 +1,16 @@
 package org.burrow_studios.obelisk.server.users.db.group;
 
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.server.Main;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.util.Set;
 
 public interface GroupDB {
     static @NotNull GroupDB get() {
-        return new SQLiteGroupDB();
+        return new FileGroupDB(new File(Main.DIR, "groups"));
     }
 
     @NotNull Set<Long> getGroupIds() throws DatabaseException;
