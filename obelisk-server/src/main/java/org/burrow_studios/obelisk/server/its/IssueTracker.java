@@ -12,7 +12,7 @@ public class IssueTracker {
     public IssueTracker(@NotNull ObeliskServer server) {
         this.server = server;
 
-        this.database = BoardDB.get();
+        this.database = BoardDB.get(this);
     }
 
     public @NotNull BoardDB getDatabase() {
