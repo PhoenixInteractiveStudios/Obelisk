@@ -14,8 +14,8 @@ public class ModerationService {
     public ModerationService(@NotNull ObeliskServer server) {
         this.server = server;
 
-        this.projectDB = ProjectDB.get();
-        this.ticketDB  = TicketDB.get();
+        this.projectDB = ProjectDB.get(this);
+        this.ticketDB  = TicketDB.get(this);
     }
 
     public @NotNull ProjectDB getProjectDB() {

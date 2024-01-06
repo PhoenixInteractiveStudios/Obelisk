@@ -21,8 +21,8 @@ abstract class SQLProjectDB extends SQLDB implements ProjectDB {
     }
 
     @Override
-    public final void createProject(long id, @NotNull String title, int position) throws DatabaseException {
-        this.wrap(() -> this.createProject0(id, title, position));
+    public final void createProject(long id, @NotNull String title, @NotNull ProjectState state) throws DatabaseException {
+        this.wrap(() -> this.createProject0(id, title, state));
     }
 
     @Override
@@ -59,7 +59,7 @@ abstract class SQLProjectDB extends SQLDB implements ProjectDB {
 
     protected abstract @NotNull JsonObject getProject0(long id) throws SQLException;
 
-    protected abstract void createProject0(long id, @NotNull String title, int position) throws SQLException;
+    protected abstract void createProject0(long id, @NotNull String title, @NotNull ProjectState state) throws SQLException;
 
     protected abstract void updateProjectTitle0(long id, @NotNull String title) throws SQLException;
 
