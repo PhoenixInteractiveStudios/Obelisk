@@ -77,7 +77,10 @@ public class UserService {
         final String name     = json.get("name").getAsString();
         final int    position = json.get("position").getAsInt();
 
-        // TODO: validate data
+        if (name.length() < 2 || name.length() > 256)
+            throw new IllegalArgumentException("Name must be between 2 and 256 characters long");
+        if (name.isBlank())
+            throw new IllegalArgumentException("Name may not be blank");
 
         this.groupDB.createGroup(id, name, position);
         return this.retrieveGroup(id);
@@ -88,7 +91,10 @@ public class UserService {
 
         final String name = json.get("name").getAsString();
 
-        // TODO: validate data
+        if (name.length() < 2 || name.length() > 256)
+            throw new IllegalArgumentException("Name must be between 2 and 256 characters long");
+        if (name.isBlank())
+            throw new IllegalArgumentException("Name may not be blank");
 
         this.userDB.createUser(id, name);
         return this.retrieveUser(id);
@@ -107,6 +113,13 @@ public class UserService {
     public void patchGroup(long id, @NotNull JsonObject json) throws DatabaseException {
         Optional.ofNullable(json.get("name"))
                 .map(JsonElement::getAsString)
+                .map(name -> {
+                    if (name.length() < 2 || name.length() > 256)
+                        throw new IllegalArgumentException("Name must be between 2 and 256 characters long");
+                    if (name.isBlank())
+                        throw new IllegalArgumentException("Name may not be blank");
+                    return name;
+                })
                 .ifPresent(name -> groupDB.updateGroupName(id, name));
 
         Optional.ofNullable(json.get("position"))
@@ -119,6 +132,13 @@ public class UserService {
     public void patchUser(long id, @NotNull JsonObject json) throws DatabaseException {
         Optional.ofNullable(json.get("name"))
                 .map(JsonElement::getAsString)
+                .map(name -> {
+                    if (name.length() < 2 || name.length() > 256)
+                        throw new IllegalArgumentException("Name must be between 2 and 256 characters long");
+                    if (name.isBlank())
+                        throw new IllegalArgumentException("Name may not be blank");
+                    return name;
+                })
                 .ifPresent(name -> userDB.updateUserName(id, name));
 
         JsonObject user = this.getUser(id);
