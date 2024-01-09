@@ -31,13 +31,13 @@ abstract class SQLProjectDB extends SQLDB implements ProjectDB {
     }
 
     @Override
-    public final void updateProjectTiming(long id, @NotNull String key, @NotNull Instant time) throws DatabaseException {
-        this.wrap(() -> this.updateProjectTiming0(id, key, time));
+    public final void addProjectTiming(long id, @NotNull String name, @NotNull Instant time) throws DatabaseException {
+        this.wrap(() -> this.addProjectTiming0(id, name, time));
     }
 
     @Override
-    public final void removeProjectTiming(long id, @NotNull String key) throws DatabaseException {
-        this.wrap(() -> this.removeProjectTiming0(id, key));
+    public final void removeProjectTiming(long id, @NotNull String name) throws DatabaseException {
+        this.wrap(() -> this.removeProjectTiming0(id, name));
     }
 
     @Override
@@ -63,9 +63,9 @@ abstract class SQLProjectDB extends SQLDB implements ProjectDB {
 
     protected abstract void updateProjectTitle0(long id, @NotNull String title) throws SQLException;
 
-    protected abstract void updateProjectTiming0(long id, @NotNull String key, @NotNull Instant time) throws SQLException;
+    protected abstract void addProjectTiming0(long id, @NotNull String name, @NotNull Instant time) throws SQLException;
 
-    protected abstract void removeProjectTiming0(long id, @NotNull String key) throws SQLException;
+    protected abstract void removeProjectTiming0(long id, @NotNull String name) throws SQLException;
 
     protected abstract void updateProjectState0(long id, @NotNull ProjectState state) throws SQLException;
 

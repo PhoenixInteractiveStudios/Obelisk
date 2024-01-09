@@ -31,7 +31,7 @@ class MySQLProjectDB extends SQLProjectDB {
     private static final String UPDATE_PROJECT_TITLE = "UPDATE `projects` SET `title` = '?' WHERE `id` = ?;";
     private static final String UPDATE_PROJECT_STATE = "UPDATE `projects` SET `state` = '?' WHERE `id` = ?;";
 
-    private static final String ADD_PROJECT_TIMING = "INSERT INTO `project_timings` (`project`, `name`, `time`) VALUES ('?', '?', '?');";
+    private static final String ADD_PROJECT_TIMING = "INSERT INTO `project_timings` (`project`, `name`, `time`) VALUES ('?', '?', '?') ON DUPLICATE KEY UPDATE `time` = '?';";
     private static final String ADD_PROJECT_MEMBER = "INSERT INTO `project_members` (`project`, `user`) VALUES ('?', '?');";
 
     private static final String REMOVE_PROJECT_TIMING = "DELETE FROM `project_timings` WHERE `project` = ? AND `name` = ?;";
@@ -149,10 +149,10 @@ class MySQLProjectDB extends SQLProjectDB {
     }
 
     @Override
-    protected void updateProjectTiming0(long id, @NotNull String key, @NotNull Instant time) throws SQLException {
+    protected void addProjectTiming0(long id, @NotNull String name, @NotNull Instant time) throws SQLException {
         try (PreparedStatement stmt = this.connection.prepareStatement(ADD_PROJECT_TIMING)) {
             stmt.setLong(1, id);
-            stmt.setString(2, key);
+            stmt.setString(2, name);
             stmt.setTimestamp(3, Timestamp.from(time));
 
             stmt.execute();
@@ -160,10 +160,10 @@ class MySQLProjectDB extends SQLProjectDB {
     }
 
     @Override
-    protected void removeProjectTiming0(long id, @NotNull String key) throws SQLException {
+    protected void removeProjectTiming0(long id, @NotNull String name) throws SQLException {
         try (PreparedStatement stmt = this.connection.prepareStatement(REMOVE_PROJECT_TIMING)) {
             stmt.setLong(1, id);
-            stmt.setString(2, key);
+            stmt.setString(2, name);
 
             stmt.execute();
         }

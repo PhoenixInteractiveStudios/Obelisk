@@ -27,9 +27,9 @@ public interface ProjectDB {
 
     void updateProjectTitle(long id, @NotNull String title) throws DatabaseException;
 
-    void updateProjectTiming(long id, @NotNull String key, @NotNull Instant time) throws DatabaseException;
+    void addProjectTiming(long id, @NotNull String name, @NotNull Instant time) throws DatabaseException;
 
-    void removeProjectTiming(long id, @NotNull String key) throws DatabaseException;
+    void removeProjectTiming(long id, @NotNull String name) throws DatabaseException;
 
     void updateProjectState(long id, @NotNull ProjectState state) throws DatabaseException;
 
