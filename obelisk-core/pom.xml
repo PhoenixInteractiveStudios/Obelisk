@@ -13,4 +13,12 @@
         <version>1.0.0-alpha.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.burrow-studios</groupId>
+            <artifactId>obelisk-api</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
 </project>

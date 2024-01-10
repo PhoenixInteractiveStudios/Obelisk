@@ -32,7 +32,7 @@
     <dependencies>
         <dependency>
             <groupId>org.burrow-studios</groupId>
-            <artifactId>obelisk-common</artifactId>
+            <artifactId>obelisk-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
