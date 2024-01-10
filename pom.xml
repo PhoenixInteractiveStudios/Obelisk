@@ -16,6 +16,7 @@
 
     <modules>
         <module>obelisk-api</module>
+        <module>obelisk-core</module>
         <module>obelisk-common</module>
         <module>obelisk-server</module>
     </modules>
