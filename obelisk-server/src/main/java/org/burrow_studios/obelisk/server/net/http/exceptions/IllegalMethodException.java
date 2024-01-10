@@ -1,6 +1,8 @@
 package org.burrow_studios.obelisk.server.net.http.exceptions;
 
 import org.burrow_studios.obelisk.server.net.http.Method;
+import org.burrow_studios.obelisk.server.net.http.Response;
+import org.burrow_studios.obelisk.server.net.http.ResponseBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -26,5 +28,13 @@ public class IllegalMethodException extends APIException {
         return Arrays.stream(allowed)
                 .map(Enum::name)
                 .toArray(String[]::new);
+    }
+
+    @Override
+    public Response asResponse() {
+        return new ResponseBuilder()
+                .setCode(405)
+                .setHeader("Allow", String.join(", ", getAllowedStr()))
+                .build();
     }
 }

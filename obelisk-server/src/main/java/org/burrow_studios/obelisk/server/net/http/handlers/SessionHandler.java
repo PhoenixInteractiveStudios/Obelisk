@@ -3,7 +3,7 @@ package org.burrow_studios.obelisk.server.net.http.handlers;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.server.auth.Authenticator;
 import org.burrow_studios.obelisk.server.auth.crypto.TokenManager;
-import org.burrow_studios.obelisk.server.auth.db.DatabaseException;
+import org.burrow_studios.obelisk.server.db.DatabaseException;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
 import org.burrow_studios.obelisk.server.net.http.AuthLevel;
 import org.burrow_studios.obelisk.server.net.http.Request;
