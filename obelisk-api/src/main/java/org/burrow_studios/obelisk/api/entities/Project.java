@@ -4,13 +4,12 @@ import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.action.entity.project.ProjectModifier;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
-import org.burrow_studios.obelisk.internal.entities.ProjectImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 
-public sealed interface Project extends Turtle permits ProjectImpl {
+public interface Project extends Turtle {
     @Override
     @NotNull ProjectModifier modify();
 
