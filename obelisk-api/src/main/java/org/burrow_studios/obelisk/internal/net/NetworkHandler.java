@@ -3,7 +3,7 @@ package org.burrow_studios.obelisk.internal.net;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import org.burrow_studios.obelisk.common.TimeBasedIdGenerator;
+import org.burrow_studios.obelisk.util.TimeBasedIdGenerator;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.action.ActionImpl;
 import org.burrow_studios.obelisk.internal.net.http.Method;

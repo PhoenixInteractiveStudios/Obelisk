@@ -2,7 +2,7 @@ package org.burrow_studios.obelisk.internal.action;
 
 import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.api.action.Action;
-import org.burrow_studios.obelisk.common.function.ExceptionalBiFunction;
+import org.burrow_studios.obelisk.util.function.ExceptionalBiFunction;
 import org.burrow_studios.obelisk.internal.ObeliskImpl;
 import org.burrow_studios.obelisk.internal.net.NetworkHandler;
 import org.burrow_studios.obelisk.internal.net.Request;

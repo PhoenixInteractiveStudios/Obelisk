@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.common.function;
+package org.burrow_studios.obelisk.util.function;
 
 @FunctionalInterface
 public interface ExceptionalBiFunction<P1, P2, R, T extends Throwable> {

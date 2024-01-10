@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.common;
+package org.burrow_studios.obelisk.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

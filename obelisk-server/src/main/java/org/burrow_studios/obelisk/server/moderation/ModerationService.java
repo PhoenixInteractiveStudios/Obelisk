@@ -3,7 +3,7 @@ package org.burrow_studios.obelisk.server.moderation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.common.TurtleGenerator;
+import org.burrow_studios.obelisk.util.TurtleGenerator;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.db.Cache;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
