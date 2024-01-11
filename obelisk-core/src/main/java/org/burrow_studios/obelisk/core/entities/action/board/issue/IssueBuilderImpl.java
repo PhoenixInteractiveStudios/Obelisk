@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
 
-public class IssueBuilderImpl extends BuilderImpl<Issue, IssueImpl> implements IssueBuilder {
+public class IssueBuilderImpl extends BuilderImpl<Issue> implements IssueBuilder {
     public IssueBuilderImpl(@NotNull BoardImpl board) {
         super(
                 board.getAPI(),

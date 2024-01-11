@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
 import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildList;
 
-public class TicketBuilderImpl extends BuilderImpl<Ticket, TicketImpl> implements TicketBuilder {
+public class TicketBuilderImpl extends BuilderImpl<Ticket> implements TicketBuilder {
     public TicketBuilderImpl(@NotNull ObeliskImpl api) {
         super(
                 api,

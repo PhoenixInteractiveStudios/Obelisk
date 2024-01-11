@@ -13,7 +13,7 @@ import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public final class GroupImpl extends TurtleImpl<Group> implements Group {
+public final class GroupImpl extends TurtleImpl implements Group {
     private @NotNull String name;
     private final @NotNull DelegatingTurtleCacheView<UserImpl> members;
     private int position;

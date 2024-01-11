@@ -5,7 +5,7 @@ import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class TurtleImpl<T extends Turtle> implements Turtle {
+public abstract class TurtleImpl implements Turtle {
     protected final @NotNull ObeliskImpl api;
     protected final long id;
 

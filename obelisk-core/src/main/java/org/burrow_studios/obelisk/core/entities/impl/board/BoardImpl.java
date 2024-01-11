@@ -16,7 +16,7 @@ import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public final class BoardImpl extends TurtleImpl<Board> implements Board {
+public final class BoardImpl extends TurtleImpl implements Board {
     private @NotNull String title;
     private @NotNull GroupImpl group;
     private final @NotNull DelegatingTurtleCacheView<TagImpl> availableTags;

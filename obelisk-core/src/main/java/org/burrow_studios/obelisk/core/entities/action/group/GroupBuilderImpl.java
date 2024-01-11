@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
 
-public class GroupBuilderImpl extends BuilderImpl<Group, GroupImpl> implements GroupBuilder {
+public class GroupBuilderImpl extends BuilderImpl<Group> implements GroupBuilder {
     public GroupBuilderImpl(@NotNull ObeliskImpl api) {
         super(
                 api,

@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public final class TicketImpl extends TurtleImpl<Ticket> implements Ticket {
+public final class TicketImpl extends TurtleImpl implements Ticket {
     private @Nullable String title;
     private @NotNull State state;
     private final @NotNull List<String> tags;
