@@ -3,17 +3,13 @@ package org.burrow_studios.obelisk.api.entities;
 import org.burrow_studios.obelisk.api.Obelisk;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.action.Modifier;
-import org.burrow_studios.obelisk.api.entities.board.Board;
-import org.burrow_studios.obelisk.api.entities.board.Issue;
-import org.burrow_studios.obelisk.api.entities.board.Tag;
-import org.burrow_studios.obelisk.internal.entities.TurtleImpl;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * A turtle entity is an entity that can be uniquely identified by its turtle id.
  * @see Turtle#getId()
  */
-public sealed interface Turtle permits Group, Project, Ticket, User, Board, Issue, Tag, TurtleImpl {
+public interface Turtle {
     /**
      * Provides the unique turtle id of this entity. This id should never change and always only refer to this entity.
      * @return Long representation of the id.

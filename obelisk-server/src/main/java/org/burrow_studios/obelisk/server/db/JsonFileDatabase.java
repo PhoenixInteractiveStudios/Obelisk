@@ -3,7 +3,7 @@ package org.burrow_studios.obelisk.server.db;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.common.function.ExceptionalConsumer;
+import org.burrow_studios.obelisk.util.function.ExceptionalConsumer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;

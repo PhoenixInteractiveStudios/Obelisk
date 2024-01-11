@@ -1,7 +1,7 @@
 package org.burrow_studios.obelisk.server.db;
 
-import org.burrow_studios.obelisk.common.function.ExceptionalRunnable;
-import org.burrow_studios.obelisk.common.function.ExceptionalSupplier;
+import org.burrow_studios.obelisk.util.function.ExceptionalRunnable;
+import org.burrow_studios.obelisk.util.function.ExceptionalSupplier;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.SQLException;

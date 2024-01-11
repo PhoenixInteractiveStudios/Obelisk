@@ -1,6 +1,6 @@
 package org.burrow_studios.obelisk.server;
 
-import org.burrow_studios.obelisk.common.ResourceTools;
+import org.burrow_studios.obelisk.util.ResourceTools;
 
 import java.io.File;
 import java.io.IOException;

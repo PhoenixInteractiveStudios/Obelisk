@@ -4,10 +4,9 @@ import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.action.entity.group.GroupModifier;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
-import org.burrow_studios.obelisk.internal.entities.GroupImpl;
 import org.jetbrains.annotations.NotNull;
 
-public sealed interface Group extends Turtle permits GroupImpl {
+public interface Group extends Turtle {
     @Override
     @NotNull GroupModifier modify();
 

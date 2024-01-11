@@ -7,10 +7,9 @@ import org.burrow_studios.obelisk.api.action.entity.board.tag.TagBuilder;
 import org.burrow_studios.obelisk.api.cache.TurtleSetView;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.Turtle;
-import org.burrow_studios.obelisk.internal.entities.board.BoardImpl;
 import org.jetbrains.annotations.NotNull;
 
-public sealed interface Board extends Turtle permits BoardImpl {
+public interface Board extends Turtle {
     @Override
     @NotNull BoardModifier modify();
 
