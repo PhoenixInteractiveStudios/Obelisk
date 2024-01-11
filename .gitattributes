@@ -7,3 +7,6 @@ docs/* linguist-documentation=false
 
 # Include maven files as detectable language
 *.xml linguist-detectable
+
+# Include entity-files as detectable language
+*.yml linguist-detectable
