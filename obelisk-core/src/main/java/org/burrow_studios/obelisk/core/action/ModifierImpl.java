@@ -4,33 +4,32 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.Modifier;
 import org.burrow_studios.obelisk.api.entities.Turtle;
-import org.burrow_studios.obelisk.core.entities.data.Data;
+import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
 import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
+import java.util.function.BiConsumer;
 
-public abstract class ModifierImpl<T extends Turtle, I extends TurtleImpl<T>, D extends Data<I>> extends ActionImpl<T> implements Modifier<T> {
+public abstract class ModifierImpl<T extends Turtle, I extends TurtleImpl<T>> extends ActionImpl<T> implements Modifier<T> {
     protected final I entity;
-    protected final D data;
+    protected final EntityData data;
 
     public ModifierImpl(
             @NotNull I entity,
             @NotNull CompiledRoute route,
-            @NotNull D data,
-            @NotNull Function<JsonObject, D> responseBuilder
-    ) {
+            @NotNull BiConsumer<EntityData, I> updater
+            ) {
         super(entity.getAPI(), route, (request, response) -> {
             // TODO: handle errors
             final JsonObject content = response.getContent().getAsJsonObject();
-            final D responseData = responseBuilder.apply(content);
+            final EntityData updateData = new EntityData(content);
 
-            responseData.update(entity);
+            updater.accept(updateData, entity);
             return (T) entity;
         });
         this.entity = entity;
-        this.data = data;
+        this.data = new EntityData();
     }
 
     @Override

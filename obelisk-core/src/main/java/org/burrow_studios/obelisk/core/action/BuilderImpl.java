@@ -5,35 +5,34 @@ import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.Builder;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
-import org.burrow_studios.obelisk.core.entities.data.Data;
+import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
 import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
-public abstract class BuilderImpl<T extends Turtle, I extends TurtleImpl<T>, D extends Data<I>> extends ActionImpl<T> implements Builder<T> {
+public abstract class BuilderImpl<T extends Turtle, I extends TurtleImpl<T>> extends ActionImpl<T> implements Builder<T> {
     private final @NotNull Class<T> type;
-    protected final @NotNull D data;
+    protected final @NotNull EntityData data;
 
     public BuilderImpl(
             @NotNull ObeliskImpl api,
             @NotNull Class<T> type,
             @NotNull CompiledRoute route,
-            @NotNull D data,
-            @NotNull Function<JsonObject, D> responseBuilder
-    ) {
+            @NotNull BiFunction<EntityData, ObeliskImpl, T> func
+            ) {
         super(api, route, (request, response) -> {
             // TODO: checks (error responses)
             final JsonObject content = response.getContent().getAsJsonObject();
-            final D responseData = responseBuilder.apply(content);
+            EntityData trustedData = new EntityData();
 
-            final @NotNull I entity = responseData.build(api);
+            final @NotNull T entity = func.apply(trustedData, api);
             // TODO: fire events
-            return (T) entity;
+            return entity;
         });
         this.type = type;
-        this.data = data;
+        this.data = new EntityData();
     }
 
     @Override
