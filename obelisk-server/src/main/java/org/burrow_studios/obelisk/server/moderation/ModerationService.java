@@ -3,6 +3,8 @@ package org.burrow_studios.obelisk.server.moderation;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.core.entities.checks.ProjectChecks;
+import org.burrow_studios.obelisk.core.entities.checks.TicketChecks;
 import org.burrow_studios.obelisk.util.TurtleGenerator;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.db.Cache;
@@ -82,10 +84,7 @@ public class ModerationService {
 
         final ProjectState state = ProjectState.valueOf(stateStr);
 
-        if (title.length() < 2 || title.length() > 256)
-            throw new IllegalArgumentException("Title must be between 2 and 256 characters long");
-        if (title.isBlank())
-            throw new IllegalArgumentException("Title may not be blank");
+        ProjectChecks.checkTitle(title);
 
         // TODO: timings
 
@@ -101,10 +100,7 @@ public class ModerationService {
 
         final TicketState state = TicketState.valueOf(stateStr);
 
-        if (title.length() < 2 || title.length() > 256)
-            throw new IllegalArgumentException("Title must be between 2 and 256 characters long");
-        if (title.isBlank())
-            throw new IllegalArgumentException("Title may not be blank");
+        TicketChecks.checkTitle(title);
 
         // TODO: tags?
 
@@ -115,14 +111,10 @@ public class ModerationService {
     public void patchProject(long id, @NotNull JsonObject json) throws DatabaseException {
         Optional.ofNullable(json.get("title"))
                 .map(JsonElement::getAsString)
-                .map(title -> {
-                    if (title.length() < 2 || title.length() > 256)
-                        throw new IllegalArgumentException("Title must be between 2 and 256 characters long");
-                    if (title.isBlank())
-                        throw new IllegalArgumentException("Title may not be blank");
-                    return title;
-                })
-                .ifPresent(title -> projectDB.updateProjectTitle(id, title));
+                .ifPresent(title -> {
+                    ProjectChecks.checkTitle(title);
+                    projectDB.updateProjectTitle(id, title);
+                });
 
         Optional.ofNullable(json.get("state"))
                 .map(JsonElement::getAsString)
@@ -154,14 +146,10 @@ public class ModerationService {
     public void patchTicket(long id, @NotNull JsonObject json) throws DatabaseException {
         Optional.ofNullable(json.get("title"))
                 .map(JsonElement::getAsString)
-                .map(title -> {
-                    if (title.length() < 2 || title.length() > 256)
-                        throw new IllegalArgumentException("Title must be between 2 and 256 characters long");
-                    if (title.isBlank())
-                        throw new IllegalArgumentException("Title may not be blank");
-                    return title;
-                })
-                .ifPresent(title -> ticketDB.updateTicketTitle(id, title));
+                .ifPresent(title -> {
+                    TicketChecks.checkTitle(title);
+                    ticketDB.updateTicketTitle(id, title);
+                });
 
         Optional.ofNullable(json.get("state"))
                 .map(JsonElement::getAsString)

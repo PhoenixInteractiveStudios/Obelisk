@@ -2,6 +2,9 @@ package org.burrow_studios.obelisk.server.its;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.core.entities.checks.board.BoardChecks;
+import org.burrow_studios.obelisk.core.entities.checks.board.IssueChecks;
+import org.burrow_studios.obelisk.core.entities.checks.board.TagChecks;
 import org.burrow_studios.obelisk.util.TurtleGenerator;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.db.Cache;
@@ -94,10 +97,7 @@ public class IssueTracker {
         final String title = json.get("title").getAsString();
         final long   group = json.get("group").getAsLong();
 
-        if (title.length() < 2 || title.length() > 256)
-            throw new IllegalArgumentException("Title must be between 2 and 256 characters long");
-        if (title.isBlank())
-            throw new IllegalArgumentException("Title may not be blank");
+        BoardChecks.checkTitle(title);
 
         this.database.createBoard(id, title, group);
         return this.retrieveBoard(id);
@@ -112,10 +112,7 @@ public class IssueTracker {
 
         final IssueState state = IssueState.valueOf(stateStr);
 
-        if (title.length() < 2 || title.length() > 256)
-            throw new IllegalArgumentException("Title must be between 2 and 256 characters long");
-        if (title.isBlank())
-            throw new IllegalArgumentException("Title may not be blank");
+        IssueChecks.checkTitle(title);
 
         this.database.createIssue(board, id, author, title, state);
         return this.retrieveIssue(board, id);
@@ -126,10 +123,7 @@ public class IssueTracker {
 
         final String name = json.get("name").getAsString();
 
-        if (name.length() < 2 || name.length() > 256)
-            throw new IllegalArgumentException("Name must be between 2 and 256 characters long");
-        if (name.isBlank())
-            throw new IllegalArgumentException("Name may not be blank");
+        TagChecks.checkName(name);
 
         this.database.createTag(board, id, name);
         return this.retrieveTag(board, id);
@@ -138,14 +132,10 @@ public class IssueTracker {
     public void patchBoard(long id, @NotNull JsonObject json) throws DatabaseException {
         Optional.ofNullable(json.get("title"))
                 .map(JsonElement::getAsString)
-                .map(title -> {
-                    if (title.length() < 2 || title.length() > 256)
-                        throw new IllegalArgumentException("Title must be between 2 and 256 characters long");
-                    if (title.isBlank())
-                        throw new IllegalArgumentException("Title may not be blank");
-                    return title;
-                })
-                .ifPresent(title -> database.updateBoardTitle(id, title));
+                .ifPresent(title -> {
+                    BoardChecks.checkTitle(title);
+                    database.updateBoardTitle(id, title);
+                });
 
         Optional.ofNullable(json.get("group"))
                 .map(JsonElement::getAsLong)
@@ -157,14 +147,10 @@ public class IssueTracker {
     public void patchIssue(long board, long id, @NotNull JsonObject json) throws DatabaseException {
         Optional.ofNullable(json.get("title"))
                 .map(JsonElement::getAsString)
-                .map(title -> {
-                    if (title.length() < 2 || title.length() > 256)
-                        throw new IllegalArgumentException("Title must be between 2 and 256 characters long");
-                    if (title.isBlank())
-                        throw new IllegalArgumentException("Title may not be blank");
-                    return title;
-                })
-                .ifPresent(title -> database.updateIssueTitle(board, id, title));
+                .ifPresent(title -> {
+                    IssueChecks.checkTitle(title);
+                    database.updateIssueTitle(board, id, title);
+                });
 
         Optional.ofNullable(json.get("state"))
                 .map(JsonElement::getAsString)
@@ -177,14 +163,10 @@ public class IssueTracker {
     public void patchTag(long board, long id, @NotNull JsonObject json) throws DatabaseException {
         Optional.ofNullable(json.get("name"))
                 .map(JsonElement::getAsString)
-                .map(name -> {
-                    if (name.length() < 2 || name.length() > 256)
-                        throw new IllegalArgumentException("Name must be between 2 and 256 characters long");
-                    if (name.isBlank())
-                        throw new IllegalArgumentException("Name may not be blank");
-                    return name;
-                })
-                .ifPresent(name -> database.updateTagTitle(board, id, name));
+                .ifPresent(name -> {
+                    TagChecks.checkName(name);
+                    database.updateTagTitle(board, id, name);
+                });
 
         this.retrieveTag(board, id);
     }
