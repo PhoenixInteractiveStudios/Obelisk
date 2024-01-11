@@ -8,7 +8,7 @@ import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.jetbrains.annotations.NotNull;
 
 public interface BoardBuilder extends Builder<Board> {
-    @NotNull BoardBuilder setTitle(@NotNull String title);
+    @NotNull BoardBuilder setTitle(@NotNull String title) throws IllegalArgumentException;
 
     @NotNull BoardBuilder setGroup(@NotNull Group group);
 

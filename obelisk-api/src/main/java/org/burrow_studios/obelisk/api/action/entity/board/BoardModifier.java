@@ -6,7 +6,7 @@ import org.burrow_studios.obelisk.api.entities.board.Board;
 import org.jetbrains.annotations.NotNull;
 
 public interface BoardModifier extends Modifier<Board> {
-    @NotNull BoardModifier setTitle(@NotNull String title);
+    @NotNull BoardModifier setTitle(@NotNull String title) throws IllegalArgumentException;
 
     @NotNull BoardModifier setGroup(@NotNull Group group);
 }

@@ -10,6 +10,7 @@ import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.BuilderImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.checks.ProjectChecks;
 import org.burrow_studios.obelisk.core.entities.impl.ProjectImpl;
 import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
@@ -48,7 +49,8 @@ public class ProjectBuilderImpl extends BuilderImpl<Project> implements ProjectB
     }
 
     @Override
-    public @NotNull ProjectBuilderImpl setTitle(@NotNull String title) {
+    public @NotNull ProjectBuilderImpl setTitle(@NotNull String title) throws IllegalArgumentException {
+        ProjectChecks.checkTitle(title);
         data.set("title", new JsonPrimitive(title));
         return this;
     }

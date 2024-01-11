@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface TicketModifier extends Modifier<Ticket> {
-    @NotNull TicketModifier setTitle(@Nullable String title);
+    @NotNull TicketModifier setTitle(@Nullable String title) throws IllegalArgumentException;
 
     @NotNull TicketModifier setState(@NotNull Ticket.State state);
 

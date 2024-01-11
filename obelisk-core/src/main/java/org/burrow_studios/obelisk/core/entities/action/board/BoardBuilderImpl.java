@@ -12,6 +12,7 @@ import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.BuilderImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.checks.board.BoardChecks;
 import org.burrow_studios.obelisk.core.entities.impl.GroupImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
@@ -52,7 +53,8 @@ public class BoardBuilderImpl extends BuilderImpl<Board> implements BoardBuilder
     }
 
     @Override
-    public @NotNull BoardBuilderImpl setTitle(@NotNull String title) {
+    public @NotNull BoardBuilderImpl setTitle(@NotNull String title) throws IllegalArgumentException {
+        BoardChecks.checkTitle(title);
         data.set("title", new JsonPrimitive(title));
         return this;
     }

@@ -7,6 +7,7 @@ import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.BuilderImpl;
 import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.checks.board.TagChecks;
 import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
@@ -40,7 +41,8 @@ public class TagBuilderImpl extends BuilderImpl<Tag> implements TagBuilder {
     }
 
     @Override
-    public @NotNull TagBuilderImpl setName(@NotNull String name) {
+    public @NotNull TagBuilderImpl setName(@NotNull String name) throws IllegalArgumentException {
+        TagChecks.checkName(name);
         data.set("name", new JsonPrimitive(name));
         return this;
     }

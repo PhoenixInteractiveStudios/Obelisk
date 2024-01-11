@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public interface IssueBuilder extends Builder<Issue> {
     @NotNull IssueBuilder addAssignees(@NotNull User... users);
 
-    @NotNull IssueBuilder setTitle(@NotNull String title);
+    @NotNull IssueBuilder setTitle(@NotNull String title) throws IllegalArgumentException;
 
     @NotNull IssueBuilder setState(@NotNull Issue.State state);
 

@@ -5,7 +5,7 @@ import org.burrow_studios.obelisk.api.entities.Project;
 import org.jetbrains.annotations.NotNull;
 
 public interface ProjectModifier extends Modifier<Project> {
-    @NotNull ProjectModifier setTitle(@NotNull String title);
+    @NotNull ProjectModifier setTitle(@NotNull String title) throws IllegalArgumentException;
 
     @NotNull ProjectModifier setTimings(@NotNull Project.Timings timings);
 

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface TicketBuilder extends Builder<Ticket> {
-    @NotNull TicketBuilder setTitle(@Nullable String title);
+    @NotNull TicketBuilder setTitle(@Nullable String title) throws IllegalArgumentException;
 
     @NotNull TicketBuilder setState(@NotNull Ticket.State state);
 

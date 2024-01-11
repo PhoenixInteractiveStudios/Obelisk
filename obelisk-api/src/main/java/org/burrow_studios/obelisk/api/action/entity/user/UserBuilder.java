@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public interface UserBuilder extends Builder<User> {
-    @NotNull UserBuilder setName(@NotNull String name);
+    @NotNull UserBuilder setName(@NotNull String name) throws IllegalArgumentException;
 
     @NotNull UserBuilder addDiscordIds(long... ids);
 
