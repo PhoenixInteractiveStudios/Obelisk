@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
 
-public class BoardBuilderImpl extends BuilderImpl<Board, BoardImpl> implements BoardBuilder {
+public class BoardBuilderImpl extends BuilderImpl<Board> implements BoardBuilder {
     public BoardBuilderImpl(@NotNull ObeliskImpl api) {
         super(
                 api,

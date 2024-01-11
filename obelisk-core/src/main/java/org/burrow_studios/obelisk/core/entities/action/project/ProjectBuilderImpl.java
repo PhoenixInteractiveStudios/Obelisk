@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
 import static org.burrow_studios.obelisk.core.entities.action.project.ProjectUtils.buildProjectTimings;
 
-public class ProjectBuilderImpl extends BuilderImpl<Project, ProjectImpl> implements ProjectBuilder {
+public class ProjectBuilderImpl extends BuilderImpl<Project> implements ProjectBuilder {
     public ProjectBuilderImpl(@NotNull ObeliskImpl api) {
         super(
                 api,

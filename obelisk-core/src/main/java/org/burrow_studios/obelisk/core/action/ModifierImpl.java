@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
 
-public abstract class ModifierImpl<T extends Turtle, I extends TurtleImpl<T>> extends ActionImpl<T> implements Modifier<T> {
+public abstract class ModifierImpl<T extends Turtle, I extends TurtleImpl> extends ActionImpl<T> implements Modifier<T> {
     protected final I entity;
     protected final EntityData data;
 
@@ -19,7 +19,7 @@ public abstract class ModifierImpl<T extends Turtle, I extends TurtleImpl<T>> ex
             @NotNull I entity,
             @NotNull CompiledRoute route,
             @NotNull BiConsumer<EntityData, I> updater
-            ) {
+    ) {
         super(entity.getAPI(), route, (request, response) -> {
             // TODO: handle errors
             final JsonObject content = response.getContent().getAsJsonObject();

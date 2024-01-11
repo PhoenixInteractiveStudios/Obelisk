@@ -16,7 +16,7 @@ import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public final class IssueImpl extends TurtleImpl<Issue> implements Issue {
+public final class IssueImpl extends TurtleImpl implements Issue {
     private final @NotNull BoardImpl board;
     private final @NotNull UserImpl author;
     private final @NotNull DelegatingTurtleCacheView<UserImpl> assignees;

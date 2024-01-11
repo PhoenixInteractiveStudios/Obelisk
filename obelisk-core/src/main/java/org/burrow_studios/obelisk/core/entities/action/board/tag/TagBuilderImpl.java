@@ -12,7 +12,7 @@ import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public class TagBuilderImpl extends BuilderImpl<Tag, TagImpl> implements TagBuilder {
+public class TagBuilderImpl extends BuilderImpl<Tag> implements TagBuilder {
     public TagBuilderImpl(@NotNull BoardImpl board) {
         super(
                 board.getAPI(),

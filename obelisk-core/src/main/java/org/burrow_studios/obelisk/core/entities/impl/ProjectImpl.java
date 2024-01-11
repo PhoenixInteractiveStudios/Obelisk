@@ -13,7 +13,7 @@ import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-public final class ProjectImpl extends TurtleImpl<Project> implements Project {
+public final class ProjectImpl extends TurtleImpl implements Project {
     private @NotNull String title;
     private @NotNull Timings timings;
     private @NotNull State state;

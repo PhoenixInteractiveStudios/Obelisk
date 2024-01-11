@@ -18,7 +18,7 @@ import java.util.UUID;
 
 import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildList;
 
-public class UserBuilderImpl extends BuilderImpl<User, UserImpl> implements UserBuilder {
+public class UserBuilderImpl extends BuilderImpl<User> implements UserBuilder {
     public UserBuilderImpl(@NotNull ObeliskImpl api) {
         super(
                 api,

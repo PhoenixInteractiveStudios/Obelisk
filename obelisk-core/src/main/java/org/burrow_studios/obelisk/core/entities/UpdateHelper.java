@@ -32,7 +32,7 @@ public class UpdateHelper {
         consumer.accept(obj);
     }
 
-    public static <U extends TurtleImpl<?>> void handleUpdateTurtle(
+    public static <U extends TurtleImpl> void handleUpdateTurtle(
             @NotNull JsonObject json,
             @NotNull String path,
             @NotNull Function<Long, U> supplier,
@@ -41,7 +41,7 @@ public class UpdateHelper {
         handleUpdate(json, path, jsonElement -> supplier.apply(jsonElement.getAsLong()), consumer);
     }
 
-    public static <U extends TurtleImpl<?>> void handleUpdateTurtle(
+    public static <U extends TurtleImpl> void handleUpdateTurtle(
             @NotNull JsonObject json,
             @NotNull String path,
             @NotNull ObeliskImpl api,
