@@ -14,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 
+import static org.burrow_studios.obelisk.core.entities.BuildHelper.*;
+import static org.burrow_studios.obelisk.core.entities.UpdateHelper.*;
+
 public final class ProjectData extends Data<ProjectImpl> {
     public ProjectData() {
         super();

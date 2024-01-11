@@ -9,6 +9,8 @@ import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
 import org.jetbrains.annotations.NotNull;
 
+import static org.burrow_studios.obelisk.core.entities.UpdateHelper.*;
+
 public final class TagData extends Data<TagImpl> {
     public TagData() {
         super();
