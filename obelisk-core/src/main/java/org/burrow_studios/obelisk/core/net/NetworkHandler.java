@@ -3,10 +3,13 @@ package org.burrow_studios.obelisk.core.net;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import org.burrow_studios.obelisk.util.TimeBasedIdGenerator;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
 import org.burrow_studios.obelisk.core.net.http.Method;
+import org.burrow_studios.obelisk.core.source.DataProvider;
+import org.burrow_studios.obelisk.core.source.Request;
+import org.burrow_studios.obelisk.core.source.Response;
+import org.burrow_studios.obelisk.util.TimeBasedIdGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.http.HttpClient;
@@ -16,7 +19,7 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class NetworkHandler {
+public class NetworkHandler implements DataProvider {
     private final ObeliskImpl api;
     private final TimeBasedIdGenerator requestIdGenerator = TimeBasedIdGenerator.get();
     private final ConcurrentHashMap<Long, Request> pendingRequests = new ConcurrentHashMap<>();
@@ -32,6 +35,11 @@ public class NetworkHandler {
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(8))
                 .build();
+    }
+
+    @Override
+    public @NotNull ObeliskImpl getAPI() {
+        return this.api;
     }
 
     public @NotNull Request submitRequest(@NotNull ActionImpl<?> action) {
@@ -76,7 +84,7 @@ public class NetworkHandler {
         this.httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString())
                 .handle((httpResponse, throwable) -> {
                     if (throwable == null) {
-                        Response response = Response.ofHttpResponse(httpResponse, request);
+                        Response response = makeResponse(httpResponse, request);
                         requestFuture.complete(response);
                     } else {
                         requestFuture.completeExceptionally(throwable);
@@ -85,5 +93,15 @@ public class NetworkHandler {
                     this.pendingRequests.remove(id);
                     return null;
                 });
+    }
+
+    private @NotNull Response makeResponse(@NotNull HttpResponse<String> httpResponse, @NotNull Request request) {
+        if (!request.getProvider().equals(this))
+            throw new IllegalArgumentException("Request must be to this provider");
+
+        final String bodyStr = httpResponse.body();
+        final JsonElement body = bodyStr == null ? null : gson.fromJson(bodyStr, JsonElement.class);
+
+        return new Response(this, request.getId(), httpResponse.statusCode(), body);
     }
 }

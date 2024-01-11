@@ -16,12 +16,13 @@ import org.burrow_studios.obelisk.core.entities.board.IssueImpl;
 import org.burrow_studios.obelisk.core.entities.board.TagImpl;
 import org.burrow_studios.obelisk.core.event.EventHandlerImpl;
 import org.burrow_studios.obelisk.core.net.NetworkHandler;
+import org.burrow_studios.obelisk.core.source.DataProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ObeliskImpl implements Obelisk {
     private final EventHandlerImpl eventHandler;
-    private final NetworkHandler   networkHandler;
+    private final DataProvider     dataProvider;
 
     private final TurtleCache<GroupImpl>     groupCache;
     private final TurtleCache<ProjectImpl> projectCache;
@@ -34,8 +35,8 @@ public class ObeliskImpl implements Obelisk {
     private final String token;
 
     public ObeliskImpl() {
-        this.eventHandler   = new EventHandlerImpl(this);
-        this.networkHandler = new NetworkHandler(this);
+        this.eventHandler = new EventHandlerImpl(this);
+        this.dataProvider = new NetworkHandler(this); // FIXME (dummy)
 
         this.groupCache   = new TurtleCache<>(this);
         this.projectCache = new TurtleCache<>(this);
@@ -52,8 +53,8 @@ public class ObeliskImpl implements Obelisk {
         return eventHandler;
     }
 
-    public @NotNull NetworkHandler getNetworkHandler() {
-        return networkHandler;
+    public @NotNull DataProvider getDataProvider() {
+        return dataProvider;
     }
 
     public @NotNull String getToken() {

@@ -2,12 +2,12 @@ package org.burrow_studios.obelisk.core.action;
 
 import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.api.action.Action;
-import org.burrow_studios.obelisk.util.function.ExceptionalBiFunction;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
-import org.burrow_studios.obelisk.core.net.NetworkHandler;
-import org.burrow_studios.obelisk.core.net.Request;
-import org.burrow_studios.obelisk.core.net.Response;
+import org.burrow_studios.obelisk.core.source.Request;
+import org.burrow_studios.obelisk.core.source.Response;
 import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
+import org.burrow_studios.obelisk.core.source.DataProvider;
+import org.burrow_studios.obelisk.util.function.ExceptionalBiFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,8 +59,8 @@ public class ActionImpl<T> implements Action<T> {
 
     @Override
     public final @NotNull CompletableFuture<T> submit() {
-        final NetworkHandler networkHandler = this.api.getNetworkHandler();
-        final Request        request        = networkHandler.submitRequest(this);
+        final DataProvider source  = this.api.getDataProvider();
+        final Request      request = source.submitRequest(this);
 
         return request.getFuture().handle((response, throwable) -> {
             try {

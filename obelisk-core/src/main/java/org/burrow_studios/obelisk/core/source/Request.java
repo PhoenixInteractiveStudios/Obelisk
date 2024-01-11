@@ -1,6 +1,7 @@
-package org.burrow_studios.obelisk.core.net;
+package org.burrow_studios.obelisk.core.source;
 
 import com.google.gson.JsonElement;
+import org.burrow_studios.obelisk.core.net.TimeoutContext;
 import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public final class Request {
-    private final @NotNull NetworkHandler networkHandler;
+    private final @NotNull DataProvider provider;
     private final long id;
 
     private final @NotNull CompiledRoute route;
@@ -17,14 +18,14 @@ public final class Request {
 
     private final @NotNull CompletableFuture<Response> future;
 
-    Request(
-            @NotNull NetworkHandler networkHandler,
+    public Request(
+            @NotNull DataProvider provider,
             long id,
             @NotNull CompiledRoute route,
             @Nullable JsonElement content,
             @NotNull TimeoutContext timeout
     ) {
-        this.networkHandler = networkHandler;
+        this.provider = provider;
         this.id = id;
 
         this.route = route;
@@ -34,8 +35,8 @@ public final class Request {
         this.future = new CompletableFuture<>();
     }
 
-    public @NotNull NetworkHandler getNetworkHandler() {
-        return networkHandler;
+    public @NotNull DataProvider getProvider() {
+        return provider;
     }
 
     public long getId() {
