@@ -16,6 +16,9 @@ import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
 import org.jetbrains.annotations.NotNull;
 
+import static org.burrow_studios.obelisk.core.entities.BuildHelper.*;
+import static org.burrow_studios.obelisk.core.entities.UpdateHelper.*;
+
 public final class BoardData extends Data<BoardImpl> {
     public BoardData() {
         super();

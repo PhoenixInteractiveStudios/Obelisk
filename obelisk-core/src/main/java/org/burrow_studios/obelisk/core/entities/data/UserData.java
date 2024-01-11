@@ -11,6 +11,9 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import static org.burrow_studios.obelisk.core.entities.BuildHelper.*;
+import static org.burrow_studios.obelisk.core.entities.UpdateHelper.*;
+
 public final class UserData extends Data<UserImpl> {
     public UserData() {
         super();

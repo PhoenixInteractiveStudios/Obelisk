@@ -11,6 +11,9 @@ import org.burrow_studios.obelisk.core.entities.impl.GroupImpl;
 import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
 import org.jetbrains.annotations.NotNull;
 
+import static org.burrow_studios.obelisk.core.entities.BuildHelper.*;
+import static org.burrow_studios.obelisk.core.entities.UpdateHelper.*;
+
 public final class GroupData extends Data<GroupImpl> {
     public GroupData() {
         super();
