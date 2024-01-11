@@ -37,9 +37,6 @@ public class GroupBuilderImpl extends BuilderImpl<Group> implements GroupBuilder
 
         final DelegatingTurtleCacheView<UserImpl> members = buildDelegatingCacheView(json, "members", api.getUsers(), UserImpl.class);
 
-        GroupChecks.checkName(name);
-        GroupChecks.checkPosition(position);
-
         final GroupImpl group = new GroupImpl(api, id, name, members, position);
 
         api.getGroups().add(group);
