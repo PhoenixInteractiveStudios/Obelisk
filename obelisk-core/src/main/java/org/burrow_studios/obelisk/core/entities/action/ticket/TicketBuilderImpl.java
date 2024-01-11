@@ -8,6 +8,7 @@ import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.BuilderImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.checks.TicketChecks;
 import org.burrow_studios.obelisk.core.entities.impl.TicketImpl;
 import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
@@ -49,7 +50,8 @@ public class TicketBuilderImpl extends BuilderImpl<Ticket> implements TicketBuil
     }
 
     @Override
-    public @NotNull TicketBuilderImpl setTitle(@Nullable String title) {
+    public @NotNull TicketBuilderImpl setTitle(@Nullable String title) throws IllegalArgumentException {
+        TicketChecks.checkTitle(title);
         data.set("title", (title == null)
                 ? JsonNull.INSTANCE
                 : new JsonPrimitive(title)

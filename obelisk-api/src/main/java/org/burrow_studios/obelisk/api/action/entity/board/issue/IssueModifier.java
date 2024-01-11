@@ -5,7 +5,7 @@ import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.jetbrains.annotations.NotNull;
 
 public interface IssueModifier extends Modifier<Issue> {
-    @NotNull IssueModifier setTitle(@NotNull String title);
+    @NotNull IssueModifier setTitle(@NotNull String title) throws IllegalArgumentException;
 
     @NotNull IssueModifier setState(@NotNull Issue.State state);
 }

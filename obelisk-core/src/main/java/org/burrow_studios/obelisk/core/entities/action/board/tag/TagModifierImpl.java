@@ -7,6 +7,7 @@ import org.burrow_studios.obelisk.api.action.entity.board.tag.TagModifier;
 import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.checks.board.TagChecks;
 import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +33,8 @@ public class TagModifierImpl extends ModifierImpl<Tag, TagImpl> implements TagMo
     }
 
     @Override
-    public @NotNull TagModifier setName(@NotNull String name) {
+    public @NotNull TagModifier setName(@NotNull String name) throws IllegalArgumentException {
+        TagChecks.checkName(name);
         data.set("name", new JsonPrimitive(name));
         return this;
     }

@@ -47,13 +47,15 @@ public class GroupBuilderImpl extends BuilderImpl<Group> implements GroupBuilder
     }
 
     @Override
-    public @NotNull GroupBuilderImpl setName(@NotNull String name) {
+    public @NotNull GroupBuilderImpl setName(@NotNull String name) throws IllegalArgumentException {
+        GroupChecks.checkName(name);
         data.set("name", new JsonPrimitive(name));
         return this;
     }
 
     @Override
-    public @NotNull GroupBuilderImpl setPosition(int position) {
+    public @NotNull GroupBuilderImpl setPosition(int position) throws IllegalArgumentException {
+        GroupChecks.checkPosition(position);
         data.set("position", new JsonPrimitive(position));
         return this;
     }

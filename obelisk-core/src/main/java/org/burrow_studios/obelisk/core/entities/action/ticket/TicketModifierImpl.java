@@ -5,6 +5,7 @@ import org.burrow_studios.obelisk.api.action.entity.ticket.TicketModifier;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.checks.TicketChecks;
 import org.burrow_studios.obelisk.core.entities.impl.TicketImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,8 @@ public class TicketModifierImpl extends ModifierImpl<Ticket, TicketImpl> impleme
     }
 
     @Override
-    public @NotNull TicketModifierImpl setTitle(@Nullable String title) {
+    public @NotNull TicketModifierImpl setTitle(@Nullable String title) throws IllegalArgumentException {
+        TicketChecks.checkTitle(title);
         data.set("title", (title == null)
                 ? JsonNull.INSTANCE
                 : new JsonPrimitive(title)

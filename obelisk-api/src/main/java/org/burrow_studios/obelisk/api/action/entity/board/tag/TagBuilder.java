@@ -5,5 +5,5 @@ import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.jetbrains.annotations.NotNull;
 
 public interface TagBuilder extends Builder<Tag> {
-    @NotNull TagBuilder setName(@NotNull String name);
+    @NotNull TagBuilder setName(@NotNull String name) throws IllegalArgumentException;
 }

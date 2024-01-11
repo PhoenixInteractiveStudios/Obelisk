@@ -9,6 +9,7 @@ import org.burrow_studios.obelisk.api.entities.board.Board;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.checks.board.BoardChecks;
 import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +37,8 @@ public class BoardModifierImpl extends ModifierImpl<Board, BoardImpl> implements
     }
 
     @Override
-    public @NotNull BoardModifierImpl setTitle(@NotNull String title) {
+    public @NotNull BoardModifierImpl setTitle(@NotNull String title) throws IllegalArgumentException {
+        BoardChecks.checkTitle(title);
         data.set("title", new JsonPrimitive(title));
         return this;
     }

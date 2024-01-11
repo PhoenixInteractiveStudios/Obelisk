@@ -7,6 +7,7 @@ import org.burrow_studios.obelisk.api.action.entity.board.issue.IssueModifier;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.checks.board.IssueChecks;
 import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +36,8 @@ public class IssueModifierImpl extends ModifierImpl<Issue, IssueImpl> implements
     }
 
     @Override
-    public @NotNull IssueModifierImpl setTitle(@NotNull String title) {
+    public @NotNull IssueModifierImpl setTitle(@NotNull String title) throws IllegalArgumentException {
+        IssueChecks.checkTitle(title);
         data.set("title", new JsonPrimitive(title));
         return this;
     }

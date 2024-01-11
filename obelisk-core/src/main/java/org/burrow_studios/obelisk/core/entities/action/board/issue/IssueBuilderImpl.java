@@ -12,6 +12,7 @@ import org.burrow_studios.obelisk.core.action.BuilderImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.core.cache.TurtleCache;
 import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.checks.board.IssueChecks;
 import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
@@ -70,7 +71,8 @@ public class IssueBuilderImpl extends BuilderImpl<Issue> implements IssueBuilder
     }
 
     @Override
-    public @NotNull IssueBuilderImpl setTitle(@NotNull String title) {
+    public @NotNull IssueBuilderImpl setTitle(@NotNull String title) throws IllegalArgumentException {
+        IssueChecks.checkTitle(title);
         data.set("title", new JsonPrimitive(title));
         return this;
     }

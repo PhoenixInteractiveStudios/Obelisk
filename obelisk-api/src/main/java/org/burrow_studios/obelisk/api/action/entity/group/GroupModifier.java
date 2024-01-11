@@ -5,7 +5,7 @@ import org.burrow_studios.obelisk.api.entities.Group;
 import org.jetbrains.annotations.NotNull;
 
 public interface GroupModifier extends Modifier<Group> {
-    @NotNull GroupModifier setName(@NotNull String name);
+    @NotNull GroupModifier setName(@NotNull String name) throws IllegalArgumentException;
 
-    @NotNull GroupModifier setPosition(int position);
+    @NotNull GroupModifier setPosition(int position) throws IllegalArgumentException;
 }
