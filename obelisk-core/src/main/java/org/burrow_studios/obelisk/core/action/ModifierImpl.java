@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.Modifier;
 import org.burrow_studios.obelisk.api.entities.Turtle;
-import org.burrow_studios.obelisk.core.data.Data;
-import org.burrow_studios.obelisk.core.entities.TurtleImpl;
+import org.burrow_studios.obelisk.core.entities.data.Data;
+import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
 import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
 import org.jetbrains.annotations.NotNull;
 
