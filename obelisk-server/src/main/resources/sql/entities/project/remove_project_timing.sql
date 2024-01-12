@@ -1,0 +1,1 @@
+DELETE FROM `project_timings` WHERE `project` = ? AND `name` = ?;

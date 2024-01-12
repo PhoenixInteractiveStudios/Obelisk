@@ -1,0 +1,1 @@
+INSERT INTO `user_discord` (`user`, `discord`) VALUES (?, ?);

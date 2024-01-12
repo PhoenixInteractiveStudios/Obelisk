@@ -1,0 +1,1 @@
+SELECT * FROM `issues` WHERE `board` = ? AND `id` = ?;

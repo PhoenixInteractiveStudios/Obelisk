@@ -7,55 +7,39 @@ import org.burrow_studios.obelisk.server.db.NoSuchEntryException;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 class MySQLUserDB extends SQLUserDB {
-    private static final String URL = "jdbc:mysql://{0}:{1}/{2}";
+    private static final String URL = "jdbc:mysql://%s:%s/%s?allowMultiQueries=true";
 
-    private static final String CREATE_TABLE_USERS          = "CREATE TABLE IF NOT EXISTS `users` (`id` BIGINT(20) NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`));";
-    private static final String CREATE_TABLE_USER_DISCORD   = "CREATE TABLE IF NOT EXISTS `user_discord` (`user` BIGINT(20) NOT NULL, `discord` BIGINT(20) NOT NULL, PRIMARY KEY (`user`, `discord`), UNIQUE(`discord`));";
-    private static final String CREATE_TABLE_USER_MINECRAFT = "CREATE TABLE IF NOT EXISTS `user_minecraft` (`user` BIGINT(20) NOT NULL, `minecraft` UUID NOT NULL, PRIMARY KEY (`user`, `minecraft`), UNIQUE(`minecraft`));";
-    private static final String ALTER_TABLE_USER_DISCORD   = "ALTER TABLE `user_discord` ADD FOREIGN KEY (`user`) REFERENCES `users`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
-    private static final String ALTER_TABLE_USER_MINECRAFT = "ALTER TABLE `user_minecraft` ADD FOREIGN KEY (`user`) REFERENCES `users`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
+    private static final String GET_USER_IDS = getStatementFromResources("/sql/entities/user/get_users.sql");
+    private static final String GET_USER     = getStatementFromResources("/sql/entities/user/get_user.sql");
+    private static final String GET_USER_DISCORD   = getStatementFromResources("/sql/entities/user/get_user_discord.sql");
+    private static final String GET_USER_MINECRAFT = getStatementFromResources("/sql/entities/user/get_user_minecraft.sql");
 
-    private static final String GET_USER_IDS = "SELECT `id` FROM `users`;";
-    private static final String GET_USER     = "SELECT * FROM `users` WHERE `id` = ?;";
-    private static final String GET_USER_DISCORD   = "SELECT `discord` FROM `user_discord` WHERE `user` = ?;";
-    private static final String GET_USER_MINECRAFT = "SELECT `minecraft` FROM `user_minecraft` WHERE `user` = ?;";
+    private static final String CREATE_USER = getStatementFromResources("/sql/entities/user/create_user.sql");;
 
-    private static final String CREATE_USER = "INSERT INTO `users` (`id`, `name`) VALUES ('?', '?');";
+    private static final String UPDATE_USER_NAME = getStatementFromResources("/sql/entities/user/update_user_name.sql");
 
-    private static final String UPDATE_USER_NAME = "UPDATE `users` SET `name` = '?' WHERE `id` = ?;";
+    private static final String ADD_USER_DISCORD   = getStatementFromResources("/sql/entities/user/add_user_discord.sql");
+    private static final String ADD_USER_MINECRAFT = getStatementFromResources("/sql/entities/user/add_user_minecraft.sql");
 
-    private static final String ADD_USER_DISCORD   = "INSERT INTO `user_discord` (`user`, `discord`) VALUES ('?', '?');";
-    private static final String ADD_USER_MINECRAFT = "INSERT INTO `user_minecraft` (`user`, `minecraft`) VALUES ('?', '?');";
-
-    private static final String REMOVE_USER_DISCORD   = "DELETE FROM `user_discord` WHERE `user` = ? AND `discord` = ?;";
-    private static final String REMOVE_USER_MINECRAFT = "DELETE FROM `user_minecraft` WHERE `user` = ? AND `minecraft` = ?;";
+    private static final String REMOVE_USER_DISCORD   = getStatementFromResources("/sql/entities/user/remove_user_discord.sql");
+    private static final String REMOVE_USER_MINECRAFT = getStatementFromResources("/sql/entities/user/remove_user_minecraft.sql");
 
     private final Connection connection;
 
     public MySQLUserDB(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String pass) throws DatabaseException {
-        final String url = MessageFormat.format(URL, host, port, database);
+        final String url = URL.formatted(host, port, database);
+
+        final String tableStmt = getStatementFromResources("/sql/entities/user/tables_user.sql");
 
         try {
             this.connection = DriverManager.getConnection(url, user, pass);
 
-            final PreparedStatement createUsers         = this.connection.prepareStatement(CREATE_TABLE_USERS);
-            final PreparedStatement createUserDiscord   = this.connection.prepareStatement(CREATE_TABLE_USER_DISCORD);
-            final PreparedStatement createUserMinecraft = this.connection.prepareStatement(CREATE_TABLE_USER_MINECRAFT);
-
-            final PreparedStatement alterUserDiscord   = this.connection.prepareStatement(ALTER_TABLE_USER_DISCORD);
-            final PreparedStatement alterUserMinecraft = this.connection.prepareStatement(ALTER_TABLE_USER_MINECRAFT);
-
-            createUsers.execute();
-            createUserDiscord.execute();
-            createUserMinecraft.execute();
-            alterUserDiscord.execute();
-            alterUserMinecraft.execute();
+            this.connection.createStatement().execute(tableStmt);
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }

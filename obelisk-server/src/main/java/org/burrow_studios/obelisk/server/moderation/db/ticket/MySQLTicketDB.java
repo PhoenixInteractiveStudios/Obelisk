@@ -8,56 +8,39 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.*;
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 
 class MySQLTicketDB extends SQLTicketDB {
-    private static final String URL = "jdbc:mysql://{0}:{1}/{2}";
+    private static final String URL = "jdbc:mysql://%s:%s/%s?allowMultiQueries=true";
 
-    private static final String CREATE_TABLE_TICKETS      = "CREATE TABLE IF NOT EXISTS `tickets` (`id` BIGINT(20) NOT NULL, `title` TEXT NULL, `state` TEXT NOT NULL, PRIMARY KEY (`id`));";
-    private static final String CREATE_TABLE_TICKET_TAGS  = "CREATE TABLE IF NOT EXISTS `ticket_tags` (`ticket` BIGINT(20) NOT NULL, `tag` VARCHAR(256) NOT NULL, PRIMARY KEY (`ticket`, `tag`));";
-    private static final String CREATE_TABLE_TICKET_USERS = "CREATE TABLE IF NOT EXISTS `ticket_users` (`ticket` BIGINT(20) NOT NULL, `user` BIGINT(20) NOT NULL, PRIMARY KEY (`ticket`, `user`));";
-    private static final String ALTER_TABLE_TICKET_TAGS  = "ALTER TABLE `ticket_tags` ADD FOREIGN KEY (`ticket`) REFERENCES `tickets`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
-    private static final String ALTER_TABLE_TICKET_USERS = "ALTER TABLE `ticket_users` ADD FOREIGN KEY (`ticket`) REFERENCES `tickets`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
+    private static final String GET_TICKET_IDS = getStatementFromResources("/sql/entities/ticket/get_tickets.sql");
+    private static final String GET_TICKET     = getStatementFromResources("/sql/entities/ticket/get_ticket.sql");
+    private static final String GET_TICKET_TAGS  = getStatementFromResources("/sql/entities/ticket/get_ticket_tags.sql");
+    private static final String GET_TICKET_USERS = getStatementFromResources("/sql/entities/ticket/get_ticket_users.sql");
 
-    private static final String GET_TICKET_IDS = "SELECT `id` FROM `tickets`;";
-    private static final String GET_TICKET     = "SELECT * FROM `tickets` WHERE `id` = ?;";
-    private static final String GET_TICKET_TAGS  = "SELECT `tag` FROM `ticket_tags` WHERE `ticket` = ?;";
-    private static final String GET_TICKET_USERS = "SELECT `user` FROM `ticket_users` WHERE `ticket` = ?;";
+    private static final String CREATE_TICKET = getStatementFromResources("/sql/entities/ticket/create_ticket.sql");
 
-    private static final String CREATE_TICKET = "INSERT INTO `tickets` (`id`, `title`, `state`) VALUES ('?', '?', '?');";
+    private static final String UPDATE_TICKET_TITLE = getStatementFromResources("/sql/entities/ticket/update_ticket_title.sql");
+    private static final String UPDATE_TICKET_STATE = getStatementFromResources("/sql/entities/ticket/update_ticket_state.sql");
 
-    private static final String UPDATE_TICKET_TITLE = "UPDATE `tickets` SET `title` = '?' WHERE `id` = ?;";
-    private static final String UPDATE_TICKET_STATE = "UPDATE `tickets` SET `state` = '?' WHERE `id` = ?;";
+    private static final String ADD_TICKET_TAG  = getStatementFromResources("/sql/entities/ticket/add_ticket_tag.sql");
+    private static final String ADD_TICKET_USER = getStatementFromResources("/sql/entities/ticket/add_ticket_user.sql");
 
-    private static final String ADD_TICKET_TAG  = "INSERT INTO `ticket_tags` (`ticket`, `tag`) VALUES ('?', '?');";
-    private static final String ADD_TICKET_USER = "INSERT INTO `ticket_users` (`ticket`, `user`) VALUES ('?', '?');";
-
-    private static final String REMOVE_TICKET_TAG  = "DELETE FROM `ticket_tags` WHERE `ticket` = ? AND `tag` = ?;";
-    private static final String REMOVE_TICKET_USER = "DELETE FROM `ticket_users` WHERE `ticket` = ? AND `user` = ?;";
+    private static final String REMOVE_TICKET_TAG  = getStatementFromResources("/sql/entities/ticket/remove_ticket_tag.sql");
+    private static final String REMOVE_TICKET_USER = getStatementFromResources("/sql/entities/ticket/remove_ticket_user.sql");
 
     private final Connection connection;
 
     public MySQLTicketDB(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String pass) throws DatabaseException {
-        final String url = MessageFormat.format(URL, host, port, database);
+        final String url = URL.formatted(host, port, database);
+
+        final String tableStmt = getStatementFromResources("/sql/entities/ticket/tables_ticket.sql");
 
         try {
             this.connection = DriverManager.getConnection(url, user, pass);
 
-            final PreparedStatement createTickets     = this.connection.prepareStatement(CREATE_TABLE_TICKETS);
-            final PreparedStatement createTicketTags  = this.connection.prepareStatement(CREATE_TABLE_TICKET_TAGS);
-            final PreparedStatement createTicketUsers = this.connection.prepareStatement(CREATE_TABLE_TICKET_USERS);
-
-            final PreparedStatement alterTicketTags  = this.connection.prepareStatement(ALTER_TABLE_TICKET_TAGS);
-            final PreparedStatement alterTicketUsers = this.connection.prepareStatement(ALTER_TABLE_TICKET_USERS);
-
-            createTickets.execute();
-            createTicketTags.execute();
-            createTicketUsers.execute();
-
-            alterTicketTags.execute();
-            alterTicketUsers.execute();
+            this.connection.createStatement().execute(tableStmt);
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
