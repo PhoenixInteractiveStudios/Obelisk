@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.server.moderation.db.ticket;
+package org.burrow_studios.obelisk.server.moderation;
 
 public enum TicketState {
     OPEN,

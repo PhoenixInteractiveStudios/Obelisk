@@ -1,7 +1,8 @@
-package org.burrow_studios.obelisk.server.moderation.db.project;
+package org.burrow_studios.obelisk.server.db.entity;
 
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
+import org.burrow_studios.obelisk.server.moderation.ProjectState;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;

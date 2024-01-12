@@ -1,11 +1,11 @@
 package org.burrow_studios.obelisk.server.db;
 
 import org.burrow_studios.obelisk.server.ObeliskServer;
-import org.burrow_studios.obelisk.server.its.db.BoardDB;
-import org.burrow_studios.obelisk.server.moderation.db.project.ProjectDB;
-import org.burrow_studios.obelisk.server.moderation.db.ticket.TicketDB;
-import org.burrow_studios.obelisk.server.users.db.group.GroupDB;
-import org.burrow_studios.obelisk.server.users.db.user.UserDB;
+import org.burrow_studios.obelisk.server.db.entity.BoardDB;
+import org.burrow_studios.obelisk.server.db.entity.ProjectDB;
+import org.burrow_studios.obelisk.server.db.entity.TicketDB;
+import org.burrow_studios.obelisk.server.db.entity.GroupDB;
+import org.burrow_studios.obelisk.server.db.entity.UserDB;
 import org.jetbrains.annotations.NotNull;
 
 public class EntityProvider {

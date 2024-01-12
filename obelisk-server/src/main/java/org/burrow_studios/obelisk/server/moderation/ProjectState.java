@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.server.moderation.db.project;
+package org.burrow_studios.obelisk.server.moderation;
 
 public enum ProjectState {
     CONCEPT,

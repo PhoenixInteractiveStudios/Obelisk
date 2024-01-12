@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.server.users.db.user;
+package org.burrow_studios.obelisk.server.db.entity;
 
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
