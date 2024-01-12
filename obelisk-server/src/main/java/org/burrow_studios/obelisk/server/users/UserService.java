@@ -9,8 +9,8 @@ import org.burrow_studios.obelisk.util.TurtleGenerator;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.db.Cache;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
-import org.burrow_studios.obelisk.server.users.db.group.GroupDB;
-import org.burrow_studios.obelisk.server.users.db.user.UserDB;
+import org.burrow_studios.obelisk.server.db.entity.GroupDB;
+import org.burrow_studios.obelisk.server.db.entity.UserDB;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

@@ -1,7 +1,8 @@
-package org.burrow_studios.obelisk.server.moderation.db.ticket;
+package org.burrow_studios.obelisk.server.db.entity;
 
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
+import org.burrow_studios.obelisk.server.moderation.TicketState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

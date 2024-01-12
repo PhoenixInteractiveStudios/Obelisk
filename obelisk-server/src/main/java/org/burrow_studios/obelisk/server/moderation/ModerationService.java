@@ -9,10 +9,8 @@ import org.burrow_studios.obelisk.util.TurtleGenerator;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.db.Cache;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
-import org.burrow_studios.obelisk.server.moderation.db.project.ProjectDB;
-import org.burrow_studios.obelisk.server.moderation.db.project.ProjectState;
-import org.burrow_studios.obelisk.server.moderation.db.ticket.TicketDB;
-import org.burrow_studios.obelisk.server.moderation.db.ticket.TicketState;
+import org.burrow_studios.obelisk.server.db.entity.ProjectDB;
+import org.burrow_studios.obelisk.server.db.entity.TicketDB;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -165,7 +163,7 @@ public class ModerationService {
                     // add new tags
                     for (JsonElement element : elements)
                         if (!tags.contains(element))
-                            ticketDB.removeTicketTag(id, element.getAsString());
+                            ticketDB.addTicketTag(id, element.getAsString());
                     // remove old tags
                     for (JsonElement element : tags)
                         if (!elements.contains(element))
