@@ -4,7 +4,7 @@ import org.burrow_studios.obelisk.server.Main;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.auth.crypto.TokenManager;
 import org.burrow_studios.obelisk.server.auth.db.AuthDB;
-import org.burrow_studios.obelisk.server.auth.db.sqlite.SQLiteAuthDB;
+import org.burrow_studios.obelisk.server.auth.db.SQLiteAuthDB;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
