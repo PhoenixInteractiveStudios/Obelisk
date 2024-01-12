@@ -1,21 +1,20 @@
 package org.burrow_studios.obelisk.server.users.db.group;
 
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.server.Main;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Set;
 
 public interface GroupDB {
     static @NotNull GroupDB get() throws DatabaseException {
-        try {
-            return new FileGroupDB(new File(Main.DIR, "groups"));
-        } catch (IOException e) {
-            throw new DatabaseException(e);
-        }
+        final String host     = "null";
+        final int    port     = 3306;
+        final String database = "null";
+        final String user     = "null";
+        final String pass     = "null";
+
+        return new MySQLGroupDB(host, port, database, user, pass);
     }
 
     @NotNull Set<Long> getGroupIds() throws DatabaseException;

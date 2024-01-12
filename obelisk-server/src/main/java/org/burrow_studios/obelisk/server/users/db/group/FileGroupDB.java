@@ -9,6 +9,7 @@ import java.io.File;
 import java.nio.file.NotDirectoryException;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 class FileGroupDB implements GroupDB {
     private final JsonFileDatabase database;
 

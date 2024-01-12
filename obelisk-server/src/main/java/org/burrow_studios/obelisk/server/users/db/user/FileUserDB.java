@@ -12,6 +12,7 @@ import java.nio.file.NotDirectoryException;
 import java.util.Set;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 class FileUserDB implements UserDB {
     private final JsonFileDatabase database;
 
