@@ -8,16 +8,6 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface UserDB {
-    static @NotNull UserDB get() throws DatabaseException {
-        final String host     = "null";
-        final int    port     = 3306;
-        final String database = "null";
-        final String user     = "null";
-        final String pass     = "null";
-
-        return new MySQLUserDB(host, port, database, user, pass);
-    }
-
     @NotNull Set<Long> getUserIds() throws DatabaseException;
 
     @NotNull JsonObject getUser(long id) throws DatabaseException;

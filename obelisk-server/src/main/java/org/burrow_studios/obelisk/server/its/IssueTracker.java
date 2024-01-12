@@ -30,7 +30,7 @@ public class IssueTracker {
     public IssueTracker(@NotNull ObeliskServer server) {
         this.server = server;
 
-        this.database = BoardDB.get(this);
+        this.database = server.getEntityProvider().getBoardDB();
 
         this.boardCache = new Cache<>();
         this.issueCache = new Cache<>();

@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.server;
 
 import org.burrow_studios.obelisk.server.auth.Authenticator;
+import org.burrow_studios.obelisk.server.db.EntityProvider;
 import org.burrow_studios.obelisk.server.event.EventManager;
 import org.burrow_studios.obelisk.server.its.IssueTracker;
 import org.burrow_studios.obelisk.server.moderation.ModerationService;
@@ -13,6 +14,7 @@ import java.io.IOException;
 
 public final class ObeliskServer {
     private final Authenticator     authenticator;
+    private final EntityProvider    entityProvider;
     private final EventManager      eventManager;
     private final IssueTracker      issueTracker;
     private final ModerationService moderationService;
@@ -22,6 +24,7 @@ public final class ObeliskServer {
 
     ObeliskServer() throws IOException {
         this.authenticator     = new Authenticator(this);
+        this.entityProvider    = new EntityProvider(this);
         this.eventManager      = new EventManager(this);
         this.issueTracker      = new IssueTracker(this);
         this.moderationService = new ModerationService(this);
@@ -36,6 +39,10 @@ public final class ObeliskServer {
 
     public @NotNull Authenticator getAuthenticator() {
         return authenticator;
+    }
+
+    public @NotNull EntityProvider getEntityProvider() {
+        return entityProvider;
     }
 
     public @NotNull EventManager getEventManager() {
