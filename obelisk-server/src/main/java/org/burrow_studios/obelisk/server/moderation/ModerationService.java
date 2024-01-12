@@ -34,8 +34,8 @@ public class ModerationService {
     public ModerationService(@NotNull ObeliskServer server) {
         this.server = server;
 
-        this.projectDB = ProjectDB.get(this);
-        this.ticketDB  = TicketDB.get(this);
+        this.projectDB = server.getEntityProvider().getProjectDB();
+        this.ticketDB  = server.getEntityProvider().getTicketDB();
 
         this.projectCache = new Cache<>();
         this.ticketCache  = new Cache<>();

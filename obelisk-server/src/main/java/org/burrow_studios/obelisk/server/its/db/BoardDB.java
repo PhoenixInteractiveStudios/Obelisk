@@ -2,22 +2,11 @@ package org.burrow_studios.obelisk.server.its.db;
 
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
-import org.burrow_studios.obelisk.server.its.IssueTracker;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
 public interface BoardDB {
-    static @NotNull BoardDB get(@NotNull IssueTracker its) throws DatabaseException {
-        final String host     = "null";
-        final int    port     = 3306;
-        final String database = "null";
-        final String user     = "null";
-        final String pass     = "null";
-
-        return new MySQLBoardDB(host, port, database, user, pass);
-    }
-
     @NotNull Set<Long> getBoardIds() throws DatabaseException;
 
     @NotNull JsonObject getBoard(long id) throws DatabaseException;

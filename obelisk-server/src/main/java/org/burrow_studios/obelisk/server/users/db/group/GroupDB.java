@@ -7,16 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 
 public interface GroupDB {
-    static @NotNull GroupDB get() throws DatabaseException {
-        final String host     = "null";
-        final int    port     = 3306;
-        final String database = "null";
-        final String user     = "null";
-        final String pass     = "null";
-
-        return new MySQLGroupDB(host, port, database, user, pass);
-    }
-
     @NotNull Set<Long> getGroupIds() throws DatabaseException;
 
     @NotNull JsonObject getGroup(long id) throws DatabaseException;

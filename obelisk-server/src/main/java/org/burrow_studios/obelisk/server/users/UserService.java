@@ -31,8 +31,8 @@ public class UserService {
     public UserService(@NotNull ObeliskServer server) {
         this.server = server;
 
-        this.groupDB = GroupDB.get();
-        this.userDB  = UserDB.get();
+        this.groupDB = server.getEntityProvider().getGroupDB();
+        this.userDB  = server.getEntityProvider().getUserDB();
 
         this.groupCache = new Cache<>();
         this.userCache  = new Cache<>();
