@@ -7,57 +7,40 @@ import org.burrow_studios.obelisk.server.db.NoSuchEntryException;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
-import java.text.MessageFormat;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
 class MySQLProjectDB extends SQLProjectDB {
-    private static final String URL = "jdbc:mysql://{0}:{1}/{2}";
+    private static final String URL = "jdbc:mysql://%s:%s/%s?allowMultiQueries=true";
 
-    private static final String CREATE_TABLE_PROJECTS        = "CREATE TABLE IF NOT EXISTS `projects` (`id` BIGINT(20) NOT NULL, `title` TEXT NOT NULL, `state` TEXT NOT NULL, PRIMARY KEY (`id`));";
-    private static final String CREATE_TABLE_PROJECT_TIMINGS = "CREATE TABLE IF NOT EXISTS `project_timings` (`project` BIGINT(20) NOT NULL, `name` VARCHAR(256) NOT NULL, `time` TIMESTAMP NOT NULL, PRIMARY KEY (`project`, `name`));";
-    private static final String CREATE_TABLE_PROJECT_MEMBERS = "CREATE TABLE IF NOT EXISTS `project_members` (`project` BIGINT(20) NOT NULL, `member` BIGINT(20) NOT NULL, PRIMARY KEY (`project`, `member`));";
-    private static final String ALTER_TABLE_PROJECT_TIMINGS = "ALTER TABLE `project_timings` ADD FOREIGN KEY (`project`) REFERENCES `projects`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
-    private static final String ALTER_TABLE_PROJECT_MEMBERS = "ALTER TABLE `project_members` ADD FOREIGN KEY (`project`) REFERENCES `projects`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
+    private static final String GET_PROJECT_IDS = getStatementFromResources("/sql/entities/project/get_projects.sql");
+    private static final String GET_PROJECT     = getStatementFromResources("/sql/entities/project/get_project.sql");
+    private static final String GET_PROJECT_TIMINGS = getStatementFromResources("/sql/entities/project/get_project_timings.sql");
+    private static final String GET_PROJECT_MEMBERS = getStatementFromResources("/sql/entities/project/get_project_members.sql");
 
-    private static final String GET_PROJECT_IDS = "SELECT `id` FROM `projects`;";
-    private static final String GET_PROJECT     = "SELECT * FROM `projects` WHERE `id` = ?;";
-    private static final String GET_PROJECT_TIMINGS = "SELECT `name`, `time` FROM `project_timings` WHERE `project` = ?;";
-    private static final String GET_PROJECT_MEMBERS = "SELECT `member` FROM `project_members` WHERE `project` = ?;";
+    private static final String CREATE_PROJECT = getStatementFromResources("/sql/entities/project/create_project.sql");
 
-    private static final String CREATE_PROJECT = "INSERT INTO `projects` (`id`, `title`, `state`) VALUES ('?', '?', '?');";
+    private static final String UPDATE_PROJECT_TITLE = getStatementFromResources("/sql/entities/project/update_project_title.sql");
+    private static final String UPDATE_PROJECT_STATE = getStatementFromResources("/sql/entities/project/update_project_state.sql");
 
-    private static final String UPDATE_PROJECT_TITLE = "UPDATE `projects` SET `title` = '?' WHERE `id` = ?;";
-    private static final String UPDATE_PROJECT_STATE = "UPDATE `projects` SET `state` = '?' WHERE `id` = ?;";
+    private static final String ADD_PROJECT_TIMING = getStatementFromResources("/sql/entities/project/add_project_timing.sql");
+    private static final String ADD_PROJECT_MEMBER = getStatementFromResources("/sql/entities/project/add_project_member.sql");
 
-    private static final String ADD_PROJECT_TIMING = "INSERT INTO `project_timings` (`project`, `name`, `time`) VALUES ('?', '?', '?') ON DUPLICATE KEY UPDATE `time` = '?';";
-    private static final String ADD_PROJECT_MEMBER = "INSERT INTO `project_members` (`project`, `user`) VALUES ('?', '?');";
-
-    private static final String REMOVE_PROJECT_TIMING = "DELETE FROM `project_timings` WHERE `project` = ? AND `name` = ?;";
-    private static final String REMOVE_PROJECT_MEMBER = "DELETE FROM `project_members` WHERE `project` = ? AND `user` = ?;";
+    private static final String REMOVE_PROJECT_TIMING = getStatementFromResources("/sql/entities/project/remove_project_timing.sql");
+    private static final String REMOVE_PROJECT_MEMBER = getStatementFromResources("/sql/entities/project/remove_project_member.sql");
 
     private final Connection connection;
 
     public MySQLProjectDB(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String pass) throws DatabaseException {
-        final String url = MessageFormat.format(URL, host, port, database);
+        final String url = URL.formatted(host, port, database);
+
+        final String tableStmt = getStatementFromResources("/sql/entities/project/tables_project.sql");
 
         try {
             this.connection = DriverManager.getConnection(url, user, pass);
 
-            final PreparedStatement createProjects       = this.connection.prepareStatement(CREATE_TABLE_PROJECTS);
-            final PreparedStatement createProjectTimings = this.connection.prepareStatement(CREATE_TABLE_PROJECT_TIMINGS);
-            final PreparedStatement createProjectMembers = this.connection.prepareStatement(CREATE_TABLE_PROJECT_MEMBERS);
-
-            final PreparedStatement alterProjectTimings = this.connection.prepareStatement(ALTER_TABLE_PROJECT_TIMINGS);
-            final PreparedStatement alterProjectMembers = this.connection.prepareStatement(ALTER_TABLE_PROJECT_MEMBERS);
-
-            createProjects.execute();
-            createProjectTimings.execute();
-            createProjectMembers.execute();
-
-            alterProjectTimings.execute();
-            alterProjectMembers.execute();
+            this.connection.createStatement().execute(tableStmt);
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }

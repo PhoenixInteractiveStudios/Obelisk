@@ -1,0 +1,1 @@
+UPDATE `issues` SET `state` = ? WHERE `board` = ? AND `id` = ?;

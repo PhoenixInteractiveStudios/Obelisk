@@ -1,0 +1,1 @@
+INSERT INTO `tags` (`id`, `board`, `name`) VALUES (?, ?, ?);

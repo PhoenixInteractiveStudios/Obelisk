@@ -6,76 +6,47 @@ import org.burrow_studios.obelisk.server.db.NoSuchEntryException;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 
 class MySQLBoardDB extends SQLBoardDB {
-    private static final String URL = "jdbc:mysql://{0}:{1}/{2}";
+    private static final String URL = "jdbc:mysql://%s:%s/%s?allowMultiQueries=true";
 
-    private static final String CREATE_TABLE_BOARDS = "CREATE TABLE IF NOT EXISTS `boards` (`id` BIGINT(20) NOT NULL, `title` TEXT NOT NULL, `group_id` BIGINT(20) NOT NULL, PRIMARY KEY (`id`));";
-    private static final String CREATE_TABLE_ISSUES = "CREATE TABLE IF NOT EXISTS `issues` (`id` BIGINT(20) NOT NULL, `board` BIGINT(20) NOT NULL, `author` BIGINT(20) NOT NULL, `title` TEXT NOT NULL, `state` TEXT NOT NULL, PRIMARY KEY (`id`));";
-    private static final String CREATE_TABLE_TAGS   = "CREATE TABLE IF NOT EXISTS `tags` (`id` BIGINT(20) NOT NULL, `board` BIGINT(20) NOT NULL, `name` TEXT NOT NULL, PRIMARY KEY (`id`));";
-    private static final String CREATE_TABLE_ISSUE_ASSIGNEES = "CREATE TABLE IF NOT EXISTS `issue_assignees` (`issue` BIGINT(20) NOT NULL, `user` BIGINT(20) NOT NULL, PRIMARY KEY (`issue`, `user`));";
-    private static final String CREATE_TABLE_ISSUE_TAGS      = "CREATE TABLE IF NOT EXISTS `issue_tags` (`issue` BIGINT(20) NOT NULL, `tag` BIGINT(20) NOT NULL, PRIMARY KEY (`issue`, `tag`));";
-    private static final String ALTER_TABLE_ISSUES = "ALTER TABLE `issues` ADD FOREIGN KEY (`board`) REFERENCES `boards`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
-    private static final String ALTER_TABLE_TAGS   = "ALTER TABLE `tags` ADD FOREIGN KEY (`board`) REFERENCES `boards`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
-    private static final String ALTER_TABLE_ISSUE_TAGS1 = "ALTER TABLE `issue_tags` ADD FOREIGN KEY (`issue`) REFERENCES `issues`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
-    private static final String ALTER_TABLE_ISSUE_TAGS2 = "ALTER TABLE `issue_tags` ADD FOREIGN KEY (`tag`) REFERENCES `tags`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
+    private static final String GET_BOARD_IDS = getStatementFromResources("/sql/entities/board/get_boards.sql");
+    private static final String GET_ISSUE_IDS = getStatementFromResources("/sql/entities/board/get_issues.sql");
+    private static final String GET_TAG_IDS   = getStatementFromResources("/sql/entities/board/get_tags.sql");
 
-    private static final String GET_BOARD_IDS = "SELECT `id` FROM `boards`;";
-    private static final String GET_ISSUE_IDS = "SELECT `id` FROM `issues` WHERE `board` = ?;";
-    private static final String GET_TAG_IDS   = "SELECT `id` FROM `tags` WHERE `board` = ?;";
+    private static final String GET_BOARD = getStatementFromResources("/sql/entities/board/get_board.sql");
+    private static final String GET_ISSUE = getStatementFromResources("/sql/entities/board/get_issue.sql");
+    private static final String GET_TAG   = getStatementFromResources("/sql/entities/board/get_tag.sql");
 
-    private static final String GET_BOARD = "SELECT * FROM `boards` WHERE `id` = ?;";
-    private static final String GET_ISSUE = "SELECT * FROM `issues` WHERE `board` = ? AND `id` = ?;";
-    private static final String GET_TAG   = "SELECT * FROM `tags` WHERE `board` = ? AND `id` = ?;";
+    private static final String CREATE_BOARD = getStatementFromResources("/sql/entities/board/create_board.sql");
+    private static final String CREATE_ISSUE = getStatementFromResources("/sql/entities/board/create_issue.sql");
+    private static final String CREATE_TAG   = getStatementFromResources("/sql/entities/board/create_tag.sql");
 
-    private static final String CREATE_BOARD = "INSERT INTO `boards` (`id`, `title`, `group_id`) VALUES ('?', '?', '?');";
-    private static final String CREATE_ISSUE = "INSERT INTO `issues` (`id`, `board`, `author`, `title`, `state`) VALUES ('?', '?', '?', '?', '?');";
-    private static final String CREATE_TAG   = "INSERT INTO `tags` (`id`, `board`, `name`) VALUES ('?', '?', '?')";
+    private static final String UPDATE_BOARD_TITLE = getStatementFromResources("/sql/entities/board/update_board_title.sql");
+    private static final String UPDATE_BOARD_GROUP = getStatementFromResources("/sql/entities/board/update_board_group.sql");
+    private static final String UPDATE_ISSUE_TITLE = getStatementFromResources("/sql/entities/board/update_issue_title.sql");
+    private static final String UPDATE_ISSUE_STATE = getStatementFromResources("/sql/entities/board/update_issue_state.sql");
+    private static final String UPDATE_TAG_NAME    = getStatementFromResources("/sql/entities/board/update_tag_name.sql");
 
-    private static final String UPDATE_BOARD_TITLE = "UPDATE `boards` SET `title` = '?' WHERE `id` = ?;";
-    private static final String UPDATE_BOARD_GROUP = "UPDATE `boards` SET `group_id` = ? WHERE `id` = ?;";
-    private static final String UPDATE_ISSUE_TITLE = "UPDATE `issues` SET `title` = '?' WHERE `board` = ? AND `id` = ?;";
-    private static final String UPDATE_ISSUE_STATE = "UPDATE `issues` SET `state` = '?' WHERE `board` = ? AND `id` = ?;";
-    private static final String UPDATE_TAG_NAME = "UPDATE `tags` SET `name` = '?' WHERE `board` = ? AND `id` = ?;";
+    private static final String ADD_ISSUE_ASSIGNEE = getStatementFromResources("/sql/entities/board/add_issue_assignee.sql");
+    private static final String ADD_ISSUE_TAG      = getStatementFromResources("/sql/entities/board/add_issue_tag.sql");
 
-    private static final String ADD_ISSUE_ASSIGNEE = "INSERT INTO `issue_assignees` (`issue`, `user`) VALUES ('?', '?');";
-    private static final String ADD_ISSUE_TAG      = "INSERT INTO `issue_tags` (`issue`, `tag`) VALUES ('?', '?');";
-
-    private static final String REMOVE_ISSUE_ASSIGNEE = "DELETE FROM `issue_assignees` WHERE `issue` = ? AND `user` = ?;";
-    private static final String REMOVE_ISSUE_TAG      = "DELETE FROM `issue_tags` WHERE `issue` = ? AND `tag` = ?;";
+    private static final String REMOVE_ISSUE_ASSIGNEE = getStatementFromResources("/sql/entities/board/remove_issue_assignee.sql");
+    private static final String REMOVE_ISSUE_TAG      = getStatementFromResources("/sql/entities/board/remove_issue_tag.sql");
 
     private final Connection connection;
 
     public MySQLBoardDB(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String pass) throws DatabaseException {
-        final String url = MessageFormat.format(URL, host, port, database);
+        final String url = URL.formatted(host, port, database);
+
+        final String tableStmt = getStatementFromResources("/sql/entities/board/tables_board.sql");
 
         try {
             this.connection = DriverManager.getConnection(url, user, pass);
 
-            final PreparedStatement createBoards = this.connection.prepareStatement(CREATE_TABLE_BOARDS);
-            final PreparedStatement createIssues = this.connection.prepareStatement(CREATE_TABLE_ISSUES);
-            final PreparedStatement createTags   = this.connection.prepareStatement(CREATE_TABLE_TAGS);
-            final PreparedStatement createIssueAssignees = this.connection.prepareStatement(CREATE_TABLE_ISSUE_ASSIGNEES);
-            final PreparedStatement createIssueTags      = this.connection.prepareStatement(CREATE_TABLE_ISSUE_TAGS);
-
-            final PreparedStatement alterIssues = this.connection.prepareStatement(ALTER_TABLE_ISSUES);
-            final PreparedStatement alterTags   = this.connection.prepareStatement(ALTER_TABLE_TAGS);
-            final PreparedStatement alterIssueTags1 = this.connection.prepareStatement(ALTER_TABLE_ISSUE_TAGS1);
-            final PreparedStatement alterIssueTags2 = this.connection.prepareStatement(ALTER_TABLE_ISSUE_TAGS2);
-
-            createBoards.execute();
-            createIssues.execute();
-            createTags.execute();
-            createIssueAssignees.execute();
-            createIssueTags.execute();
-
-            alterIssues.execute();
-            alterTags.execute();
-            alterIssueTags1.execute();
-            alterIssueTags2.execute();
+            this.connection.createStatement().execute(tableStmt);
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }

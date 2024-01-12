@@ -7,44 +7,35 @@ import org.burrow_studios.obelisk.server.db.NoSuchEntryException;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.*;
-import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Set;
 
 class MySQLGroupDB extends SQLGroupDB {
-    private static final String URL = "jdbc:mysql://{0}:{1}/{2}";
+    private static final String URL = "jdbc:mysql://%s:%s/%s?allowMultiQueries=true";
 
-    private static final String CREATE_TABLE_GROUPS        = "CREATE TABLE IF NOT EXISTS `groups` (`id` BIGINT(20) NOT NULL, `name` TEXT NOT NULL, `position` INT NOT NULL, PRIMARY KEY (`id`));";
-    private static final String CREATE_TABLE_GROUP_MEMBERS = "CREATE TABLE IF NOT EXISTS `group_members` (`group` BIGINT(20) NOT NULL, `user` BIGINT(20) NOT NULL, PRIMARY KEY (`group`, `user`));";
-    private static final String ALTER_TABLE_GROUP_MEMBERS  = "ALTER TABLE `group_members` ADD FOREIGN KEY (`group`) REFERENCES `groups`(`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;";
+    private static final String GET_GROUP_IDS = getStatementFromResources("/sql/entities/group/get_groups.sql");
+    private static final String GET_GROUP     = getStatementFromResources("/sql/entities/group/get_group.sql");
+    private static final String GET_GROUP_MEMBERS = getStatementFromResources("/sql/entities/group/get_group_members.sql");
 
-    private static final String GET_GROUP_IDS = "SELECT `id` FROM `groups`;";
-    private static final String GET_GROUP     = "SELECT * FROM `groups` WHERE `id` = ?;";
-    private static final String GET_GROUP_MEMBERS = "SELECT `user` FROM `group_members` WHERE `group` = ?;";
+    private static final String CREATE_GROUP = getStatementFromResources("/sql/entities/group/create_group.sql");
 
-    private static final String CREATE_GROUP = "INSERT INTO `groups` (`id`, `name`, `position`) VALUES ('?', '?', '?');";
+    private static final String UPDATE_GROUP_NAME     = getStatementFromResources("/sql/entities/group/update_group_name.sql");
+    private static final String UPDATE_GROUP_POSITION = getStatementFromResources("/sql/entities/group/update_group_position.sql");
 
-    private static final String UPDATE_GROUP_NAME     = "UPDATE `groups` SET `name` = '?' WHERE `id` = ?;";
-    private static final String UPDATE_GROUP_POSITION = "UPDATE `groups` SET `position` = ? WHERE `id` = ?;";
-
-    private static final String ADD_GROUP_MEMBER = "INSERT INTO `group_members` (`group`, `user`) VALUES ('?', '?');";
-    private static final String REMOVE_GROUP_MEMBER = "DELETE FROM `group_members` WHERE `group` = ? AND `user` = ?;";
+    private static final String ADD_GROUP_MEMBER = getStatementFromResources("/sql/entities/group/add_group_member.sql");
+    private static final String REMOVE_GROUP_MEMBER = getStatementFromResources("/sql/entities/group/remove_group_member.sql");
 
     private final Connection connection;
 
     public MySQLGroupDB(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String pass) throws DatabaseException {
-        final String url = MessageFormat.format(URL, host, port, database);
+        final String url = URL.formatted(host, port, database);
+
+        final String tableStmt = getStatementFromResources("/sql/entities/group/tables_group.sql");
 
         try {
             this.connection = DriverManager.getConnection(url, user, pass);
 
-            final PreparedStatement createGroups       = this.connection.prepareStatement(CREATE_TABLE_GROUPS);
-            final PreparedStatement createGroupMembers = this.connection.prepareStatement(CREATE_TABLE_GROUP_MEMBERS);
-            final PreparedStatement alterGroupMembers  = this.connection.prepareStatement(ALTER_TABLE_GROUP_MEMBERS);
-
-            createGroups.execute();
-            createGroupMembers.execute();
-            alterGroupMembers.execute();
+            this.connection.createStatement().execute(tableStmt);
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }

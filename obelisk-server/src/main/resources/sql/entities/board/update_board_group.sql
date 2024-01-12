@@ -1,0 +1,1 @@
+UPDATE `boards` SET `group_id` = ? WHERE `id` = ?;

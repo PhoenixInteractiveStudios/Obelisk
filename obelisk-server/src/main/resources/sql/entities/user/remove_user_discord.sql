@@ -1,0 +1,1 @@
+DELETE FROM `user_discord` WHERE `user` = ? AND `discord` = ?;
