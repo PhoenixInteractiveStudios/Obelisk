@@ -14,45 +14,15 @@ import java.util.Set;
 class MySQLProjectDB extends SQLProjectDB {
     private static final String URL = "jdbc:mysql://%s:%s/%s?allowMultiQueries=true";
 
-    private static final String GET_PROJECT_IDS = getStatementFromResources("/sql/entities/project/get_projects.sql");
-    private static final String GET_PROJECT     = getStatementFromResources("/sql/entities/project/get_project.sql");
-    private static final String GET_PROJECT_TIMINGS = getStatementFromResources("/sql/entities/project/get_project_timings.sql");
-    private static final String GET_PROJECT_MEMBERS = getStatementFromResources("/sql/entities/project/get_project_members.sql");
-
-    private static final String CREATE_PROJECT = getStatementFromResources("/sql/entities/project/create_project.sql");
-
-    private static final String UPDATE_PROJECT_TITLE = getStatementFromResources("/sql/entities/project/update_project_title.sql");
-    private static final String UPDATE_PROJECT_STATE = getStatementFromResources("/sql/entities/project/update_project_state.sql");
-
-    private static final String ADD_PROJECT_TIMING = getStatementFromResources("/sql/entities/project/add_project_timing.sql");
-    private static final String ADD_PROJECT_MEMBER = getStatementFromResources("/sql/entities/project/add_project_member.sql");
-
-    private static final String REMOVE_PROJECT_TIMING = getStatementFromResources("/sql/entities/project/remove_project_timing.sql");
-    private static final String REMOVE_PROJECT_MEMBER = getStatementFromResources("/sql/entities/project/remove_project_member.sql");
-
-    private final Connection connection;
-
     public MySQLProjectDB(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String pass) throws DatabaseException {
-        final String url = URL.formatted(host, port, database);
-
-        final String tableStmt = getStatementFromResources("/sql/entities/project/tables_project.sql");
-
-        try {
-            this.connection = DriverManager.getConnection(url, user, pass);
-
-            this.connection.createStatement().execute(tableStmt);
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
+        super(URL.formatted(host, port, database), user, pass, "project/tables_project");
     }
 
     @Override
     protected @NotNull Set<Long> getProjectIds0() throws SQLException {
         HashSet<Long> ids = new HashSet<>();
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_PROJECT_IDS)) {
-            ResultSet result = stmt.executeQuery();
-
+        try (ResultSet result = executeQuery("project/get_projects")) {
             while (result.next())
                 ids.add(result.getLong(1));
         }
@@ -65,7 +35,7 @@ class MySQLProjectDB extends SQLProjectDB {
         JsonObject json = new JsonObject();
         json.addProperty("id", id);
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_PROJECT)) {
+        try (PreparedStatement stmt = prepareStatement("project/get_project")) {
             stmt.setLong(1, id);
 
             ResultSet result = stmt.executeQuery();
@@ -77,7 +47,7 @@ class MySQLProjectDB extends SQLProjectDB {
             json.addProperty("state", result.getString("state"));
         }
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_PROJECT_TIMINGS)) {
+        try (PreparedStatement stmt = prepareStatement("project/get_project_timings")) {
             stmt.setLong(1, id);
 
             JsonObject timings = new JsonObject();
@@ -94,7 +64,7 @@ class MySQLProjectDB extends SQLProjectDB {
             json.add("timings", timings);
         }
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_PROJECT_MEMBERS)) {
+        try (PreparedStatement stmt = prepareStatement("project/get_project_members")) {
             stmt.setLong(1, id);
 
             JsonArray arr = new JsonArray();
@@ -112,7 +82,7 @@ class MySQLProjectDB extends SQLProjectDB {
 
     @Override
     protected void createProject0(long id, @NotNull String title, @NotNull ProjectState state) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(CREATE_PROJECT)) {
+        try (PreparedStatement stmt = prepareStatement("project/create_project")) {
             stmt.setLong(1, id);
             stmt.setString(2, title);
             stmt.setString(3, state.name());
@@ -123,7 +93,7 @@ class MySQLProjectDB extends SQLProjectDB {
 
     @Override
     protected void updateProjectTitle0(long id, @NotNull String title) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(UPDATE_PROJECT_TITLE)) {
+        try (PreparedStatement stmt = prepareStatement("project/update_project_title")) {
             stmt.setString(1, title);
             stmt.setLong(2, id);
 
@@ -133,7 +103,7 @@ class MySQLProjectDB extends SQLProjectDB {
 
     @Override
     protected void addProjectTiming0(long id, @NotNull String name, @NotNull Instant time) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(ADD_PROJECT_TIMING)) {
+        try (PreparedStatement stmt = prepareStatement("project/add_project_timing")) {
             stmt.setLong(1, id);
             stmt.setString(2, name);
             stmt.setTimestamp(3, Timestamp.from(time));
@@ -144,7 +114,7 @@ class MySQLProjectDB extends SQLProjectDB {
 
     @Override
     protected void removeProjectTiming0(long id, @NotNull String name) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(REMOVE_PROJECT_TIMING)) {
+        try (PreparedStatement stmt = prepareStatement("project/remove_project_timing")) {
             stmt.setLong(1, id);
             stmt.setString(2, name);
 
@@ -154,7 +124,7 @@ class MySQLProjectDB extends SQLProjectDB {
 
     @Override
     protected void updateProjectState0(long id, @NotNull ProjectState state) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(UPDATE_PROJECT_STATE)) {
+        try (PreparedStatement stmt = prepareStatement("project/update_project_state")) {
             stmt.setString(1, state.name());
             stmt.setLong(2, id);
 
@@ -164,7 +134,7 @@ class MySQLProjectDB extends SQLProjectDB {
 
     @Override
     protected void addProjectMember0(long project, long user) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(ADD_PROJECT_MEMBER)) {
+        try (PreparedStatement stmt = prepareStatement("project/add_project_member")) {
             stmt.setLong(1, project);
             stmt.setLong(2, user);
 
@@ -174,7 +144,7 @@ class MySQLProjectDB extends SQLProjectDB {
 
     @Override
     protected void removeProjectMember0(long project, long user) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(REMOVE_PROJECT_MEMBER)) {
+        try (PreparedStatement stmt = prepareStatement("project/remove_project_member")) {
             stmt.setLong(1, project);
             stmt.setLong(2, user);
 

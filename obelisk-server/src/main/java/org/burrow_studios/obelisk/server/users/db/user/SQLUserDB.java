@@ -10,6 +10,10 @@ import java.util.Set;
 import java.util.UUID;
 
 abstract class SQLUserDB extends SQLDB implements UserDB {
+    public SQLUserDB(@NotNull String url, @NotNull String user, @NotNull String pass, @NotNull String tableKey) throws DatabaseException {
+        super(url, user, pass, tableKey);
+    }
+
     @Override
     public final @NotNull Set<Long> getUserIds() throws DatabaseException {
         return this.wrap(this::getUserIds0);

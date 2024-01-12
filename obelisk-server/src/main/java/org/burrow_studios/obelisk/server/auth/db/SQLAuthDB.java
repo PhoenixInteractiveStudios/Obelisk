@@ -6,6 +6,10 @@ import org.burrow_studios.obelisk.server.db.SQLDB;
 import java.sql.SQLException;
 
 public abstract class SQLAuthDB extends SQLDB implements AuthDB {
+    public SQLAuthDB() {
+        super(connection);
+    }
+
     @Override
     public final long[] getActiveSessions(long identity) throws DatabaseException {
         return this.wrap(() -> this.getActiveSessions0(identity));

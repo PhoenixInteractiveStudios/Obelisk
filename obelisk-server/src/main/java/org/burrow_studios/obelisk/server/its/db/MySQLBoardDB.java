@@ -12,53 +12,15 @@ import java.util.Set;
 class MySQLBoardDB extends SQLBoardDB {
     private static final String URL = "jdbc:mysql://%s:%s/%s?allowMultiQueries=true";
 
-    private static final String GET_BOARD_IDS = getStatementFromResources("/sql/entities/board/get_boards.sql");
-    private static final String GET_ISSUE_IDS = getStatementFromResources("/sql/entities/board/get_issues.sql");
-    private static final String GET_TAG_IDS   = getStatementFromResources("/sql/entities/board/get_tags.sql");
-
-    private static final String GET_BOARD = getStatementFromResources("/sql/entities/board/get_board.sql");
-    private static final String GET_ISSUE = getStatementFromResources("/sql/entities/board/get_issue.sql");
-    private static final String GET_TAG   = getStatementFromResources("/sql/entities/board/get_tag.sql");
-
-    private static final String CREATE_BOARD = getStatementFromResources("/sql/entities/board/create_board.sql");
-    private static final String CREATE_ISSUE = getStatementFromResources("/sql/entities/board/create_issue.sql");
-    private static final String CREATE_TAG   = getStatementFromResources("/sql/entities/board/create_tag.sql");
-
-    private static final String UPDATE_BOARD_TITLE = getStatementFromResources("/sql/entities/board/update_board_title.sql");
-    private static final String UPDATE_BOARD_GROUP = getStatementFromResources("/sql/entities/board/update_board_group.sql");
-    private static final String UPDATE_ISSUE_TITLE = getStatementFromResources("/sql/entities/board/update_issue_title.sql");
-    private static final String UPDATE_ISSUE_STATE = getStatementFromResources("/sql/entities/board/update_issue_state.sql");
-    private static final String UPDATE_TAG_NAME    = getStatementFromResources("/sql/entities/board/update_tag_name.sql");
-
-    private static final String ADD_ISSUE_ASSIGNEE = getStatementFromResources("/sql/entities/board/add_issue_assignee.sql");
-    private static final String ADD_ISSUE_TAG      = getStatementFromResources("/sql/entities/board/add_issue_tag.sql");
-
-    private static final String REMOVE_ISSUE_ASSIGNEE = getStatementFromResources("/sql/entities/board/remove_issue_assignee.sql");
-    private static final String REMOVE_ISSUE_TAG      = getStatementFromResources("/sql/entities/board/remove_issue_tag.sql");
-
-    private final Connection connection;
-
     public MySQLBoardDB(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String pass) throws DatabaseException {
-        final String url = URL.formatted(host, port, database);
-
-        final String tableStmt = getStatementFromResources("/sql/entities/board/tables_board.sql");
-
-        try {
-            this.connection = DriverManager.getConnection(url, user, pass);
-
-            this.connection.createStatement().execute(tableStmt);
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
+        super(URL.formatted(host, port, database), user, pass, "board/tables_board");
     }
 
     @Override
     protected @NotNull Set<Long> getBoardIds0() throws SQLException {
         HashSet<Long> set = new HashSet<>();
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_BOARD_IDS)) {
-            ResultSet result = stmt.executeQuery();
-
+        try (ResultSet result = executeQuery("board/get_boards")) {
             while (result.next())
                 set.add(result.getLong(1));
         }
@@ -71,7 +33,7 @@ class MySQLBoardDB extends SQLBoardDB {
         JsonObject json = new JsonObject();
         json.addProperty("id", id);
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_BOARD)) {
+        try (PreparedStatement stmt = prepareStatement("board/get_board")) {
             stmt.setLong(1, id);
 
             ResultSet result = stmt.executeQuery();
@@ -88,7 +50,7 @@ class MySQLBoardDB extends SQLBoardDB {
 
     @Override
     protected void createBoard0(long id, @NotNull String title, long group) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(CREATE_BOARD)) {
+        try (PreparedStatement stmt = prepareStatement("board/create_board")) {
             stmt.setLong(1, id);
             stmt.setString(2, title);
             stmt.setLong(3, group);
@@ -99,7 +61,7 @@ class MySQLBoardDB extends SQLBoardDB {
 
     @Override
     protected void updateBoardTitle0(long id, @NotNull String title) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(UPDATE_BOARD_TITLE)) {
+        try (PreparedStatement stmt = prepareStatement("board/update_board_title")) {
             stmt.setString(1, title);
             stmt.setLong(2, id);
 
@@ -109,7 +71,7 @@ class MySQLBoardDB extends SQLBoardDB {
 
     @Override
     protected void updateBoardGroup0(long board, long group) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(UPDATE_BOARD_GROUP)) {
+        try (PreparedStatement stmt = prepareStatement("board/update_board_group")) {
             stmt.setLong(1, group);
             stmt.setLong(2, board);
 
@@ -123,9 +85,7 @@ class MySQLBoardDB extends SQLBoardDB {
     protected @NotNull Set<Long> getIssueIds0(long board) throws SQLException {
         HashSet<Long> set = new HashSet<>();
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_ISSUE_IDS)) {
-            ResultSet result = stmt.executeQuery();
-
+        try (ResultSet result = executeQuery("board/get_issues")) {
             while (result.next())
                 set.add(result.getLong(1));
         }
@@ -139,7 +99,7 @@ class MySQLBoardDB extends SQLBoardDB {
         json.addProperty("id", id);
         json.addProperty("board", board);
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_ISSUE)) {
+        try (PreparedStatement stmt = prepareStatement("board/get_issue")) {
             stmt.setLong(1, board);
             stmt.setLong(2, id);
 
@@ -160,7 +120,7 @@ class MySQLBoardDB extends SQLBoardDB {
 
     @Override
     protected void createIssue0(long board, long id, long author, @NotNull String title, @NotNull IssueState state) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(CREATE_ISSUE)) {
+        try (PreparedStatement stmt = prepareStatement("board/create_issue")) {
             stmt.setLong(1, id);
             stmt.setLong(2, board);
             stmt.setLong(3, author);
@@ -173,7 +133,7 @@ class MySQLBoardDB extends SQLBoardDB {
 
     @Override
     protected void updateIssueTitle0(long board, long id, @NotNull String title) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(UPDATE_ISSUE_TITLE)) {
+        try (PreparedStatement stmt = prepareStatement("board/update_issue_title")) {
             stmt.setString(1, title);
             stmt.setLong(2, board);
             stmt.setLong(3, id);
@@ -184,7 +144,7 @@ class MySQLBoardDB extends SQLBoardDB {
 
     @Override
     protected void updateIssueState0(long board, long id, @NotNull IssueState state) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(UPDATE_ISSUE_STATE)) {
+        try (PreparedStatement stmt = prepareStatement("board/update_issue_state")) {
             stmt.setString(1, state.name());
             stmt.setLong(2, board);
             stmt.setLong(3, id);
@@ -195,7 +155,7 @@ class MySQLBoardDB extends SQLBoardDB {
 
     @Override
     protected void addIssueAssignee0(long board, long id, long assignee) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(ADD_ISSUE_ASSIGNEE)) {
+        try (PreparedStatement stmt = prepareStatement("board/add_issue_assignee")) {
             stmt.setLong(1, id);
             stmt.setLong(2, assignee);
 
@@ -205,7 +165,7 @@ class MySQLBoardDB extends SQLBoardDB {
 
     @Override
     protected void removeIssueAssignee0(long board, long id, long assignee) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(REMOVE_ISSUE_ASSIGNEE)) {
+        try (PreparedStatement stmt = prepareStatement("board/remove_issue_assignee")) {
             stmt.setLong(1, id);
             stmt.setLong(2, assignee);
 
@@ -215,7 +175,7 @@ class MySQLBoardDB extends SQLBoardDB {
 
     @Override
     protected void addIssueTag0(long board, long id, long tag) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(ADD_ISSUE_TAG)) {
+        try (PreparedStatement stmt = prepareStatement("board/add_issue_tag")) {
             stmt.setLong(1, id);
             stmt.setLong(2, tag);
 
@@ -225,7 +185,7 @@ class MySQLBoardDB extends SQLBoardDB {
 
     @Override
     protected void removeIssueTag0(long board, long id, long tag) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(REMOVE_ISSUE_TAG)) {
+        try (PreparedStatement stmt = prepareStatement("board/remove_issue_tag")) {
             stmt.setLong(1, id);
             stmt.setLong(2, tag);
 
@@ -239,9 +199,7 @@ class MySQLBoardDB extends SQLBoardDB {
     protected @NotNull Set<Long> getTagIds0(long board) throws SQLException {
         HashSet<Long> set = new HashSet<>();
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_TAG_IDS)) {
-            ResultSet result = stmt.executeQuery();
-
+        try (ResultSet result = executeQuery("board/get_tags")) {
             while (result.next())
                 set.add(result.getLong(1));
         }
@@ -255,7 +213,7 @@ class MySQLBoardDB extends SQLBoardDB {
         json.addProperty("id", id);
         json.addProperty("board", board);
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_TAG)) {
+        try (PreparedStatement stmt = prepareStatement("board/get_tag")) {
             stmt.setLong(1, board);
             stmt.setLong(2, id);
 
@@ -272,7 +230,7 @@ class MySQLBoardDB extends SQLBoardDB {
 
     @Override
     protected void createTag0(long board, long id, @NotNull String name) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(CREATE_TAG)) {
+        try (PreparedStatement stmt = prepareStatement("board/create_tag")) {
             stmt.setLong(1, id);
             stmt.setLong(2, board);
             stmt.setString(3, name);
@@ -283,7 +241,7 @@ class MySQLBoardDB extends SQLBoardDB {
 
     @Override
     protected void updateTagTitle0(long board, long id, @NotNull String name) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(UPDATE_TAG_NAME)) {
+        try (PreparedStatement stmt = prepareStatement("board/update_tag_name")) {
             stmt.setString(1, name);
             stmt.setLong(2, board);
             stmt.setLong(3, id);

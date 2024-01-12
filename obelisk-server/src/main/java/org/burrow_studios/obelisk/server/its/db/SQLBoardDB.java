@@ -9,6 +9,10 @@ import java.sql.SQLException;
 import java.util.Set;
 
 abstract class SQLBoardDB extends SQLDB implements BoardDB {
+    public SQLBoardDB(@NotNull String url, @NotNull String user, @NotNull String pass, @NotNull String tableKey) throws DatabaseException {
+        super(url, user, pass, tableKey);
+    }
+
     @Override
     public final @NotNull Set<Long> getBoardIds() throws DatabaseException {
         return this.wrap(this::getBoardIds0);

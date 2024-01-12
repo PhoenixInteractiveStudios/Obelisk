@@ -10,6 +10,10 @@ import java.time.Instant;
 import java.util.Set;
 
 abstract class SQLProjectDB extends SQLDB implements ProjectDB {
+    public SQLProjectDB(@NotNull String url, @NotNull String user, @NotNull String pass, @NotNull String tableKey) throws DatabaseException {
+        super(url, user, pass, tableKey);
+    }
+
     @Override
     public final @NotNull Set<Long> getProjectIds() throws DatabaseException {
         return this.wrap(this::getProjectIds0);

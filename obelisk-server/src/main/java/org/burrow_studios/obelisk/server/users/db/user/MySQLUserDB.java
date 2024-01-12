@@ -14,44 +14,15 @@ import java.util.UUID;
 class MySQLUserDB extends SQLUserDB {
     private static final String URL = "jdbc:mysql://%s:%s/%s?allowMultiQueries=true";
 
-    private static final String GET_USER_IDS = getStatementFromResources("/sql/entities/user/get_users.sql");
-    private static final String GET_USER     = getStatementFromResources("/sql/entities/user/get_user.sql");
-    private static final String GET_USER_DISCORD   = getStatementFromResources("/sql/entities/user/get_user_discord.sql");
-    private static final String GET_USER_MINECRAFT = getStatementFromResources("/sql/entities/user/get_user_minecraft.sql");
-
-    private static final String CREATE_USER = getStatementFromResources("/sql/entities/user/create_user.sql");;
-
-    private static final String UPDATE_USER_NAME = getStatementFromResources("/sql/entities/user/update_user_name.sql");
-
-    private static final String ADD_USER_DISCORD   = getStatementFromResources("/sql/entities/user/add_user_discord.sql");
-    private static final String ADD_USER_MINECRAFT = getStatementFromResources("/sql/entities/user/add_user_minecraft.sql");
-
-    private static final String REMOVE_USER_DISCORD   = getStatementFromResources("/sql/entities/user/remove_user_discord.sql");
-    private static final String REMOVE_USER_MINECRAFT = getStatementFromResources("/sql/entities/user/remove_user_minecraft.sql");
-
-    private final Connection connection;
-
     public MySQLUserDB(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String pass) throws DatabaseException {
-        final String url = URL.formatted(host, port, database);
-
-        final String tableStmt = getStatementFromResources("/sql/entities/user/tables_user.sql");
-
-        try {
-            this.connection = DriverManager.getConnection(url, user, pass);
-
-            this.connection.createStatement().execute(tableStmt);
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
+        super(URL.formatted(host, port, database), user, pass, "user/tables_user");
     }
 
     @Override
     protected @NotNull Set<Long> getUserIds0() throws SQLException {
         HashSet<Long> ids = new HashSet<>();
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_USER_IDS)) {
-            ResultSet result = stmt.executeQuery();
-
+        try (ResultSet result = executeQuery("user/get_users")) {
             while (result.next())
                 ids.add(result.getLong(1));
         }
@@ -64,7 +35,7 @@ class MySQLUserDB extends SQLUserDB {
         JsonObject json = new JsonObject();
         json.addProperty("id", id);
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_USER)) {
+        try (PreparedStatement stmt = prepareStatement("user/get_user")) {
             stmt.setLong(1, id);
 
             ResultSet result = stmt.executeQuery();
@@ -75,7 +46,7 @@ class MySQLUserDB extends SQLUserDB {
             json.addProperty("name", result.getString("name"));
         }
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_USER_DISCORD)) {
+        try (PreparedStatement stmt = prepareStatement("user/get_user_discord")) {
             stmt.setLong(1, id);
 
             JsonArray arr = new JsonArray();
@@ -88,7 +59,7 @@ class MySQLUserDB extends SQLUserDB {
             json.add("discord", arr);
         }
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_USER_MINECRAFT)) {
+        try (PreparedStatement stmt = prepareStatement("user/get_user_minecraft")) {
             stmt.setLong(1, id);
 
             JsonArray arr = new JsonArray();
@@ -106,7 +77,7 @@ class MySQLUserDB extends SQLUserDB {
 
     @Override
     protected void createUser0(long id, @NotNull String name) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(CREATE_USER)) {
+        try (PreparedStatement stmt = prepareStatement("user/create_user")) {
             stmt.setLong(1, id);
             stmt.setString(2, name);
 
@@ -116,7 +87,7 @@ class MySQLUserDB extends SQLUserDB {
 
     @Override
     protected void updateUserName0(long id, @NotNull String name) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(UPDATE_USER_NAME)) {
+        try (PreparedStatement stmt = prepareStatement("user/update_user_name")) {
             stmt.setString(1, name);
             stmt.setLong(2, id);
 
@@ -126,7 +97,7 @@ class MySQLUserDB extends SQLUserDB {
 
     @Override
     protected void addUserDiscordId0(long user, long snowflake) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(ADD_USER_DISCORD)) {
+        try (PreparedStatement stmt = prepareStatement("user/add_user_discord")) {
             stmt.setLong(1, user);
             stmt.setLong(2, snowflake);
 
@@ -136,7 +107,7 @@ class MySQLUserDB extends SQLUserDB {
 
     @Override
     protected void removeUserDiscordId0(long user, long snowflake) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(REMOVE_USER_DISCORD)) {
+        try (PreparedStatement stmt = prepareStatement("user/remove_user_discord")) {
             stmt.setLong(1, user);
             stmt.setLong(2, snowflake);
 
@@ -146,7 +117,7 @@ class MySQLUserDB extends SQLUserDB {
 
     @Override
     protected void addUserMinecraftId0(long user, @NotNull UUID uuid) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(ADD_USER_MINECRAFT)) {
+        try (PreparedStatement stmt = prepareStatement("user/add_user_minecraft")) {
             stmt.setLong(1, user);
             stmt.setString(2, uuid.toString());
 
@@ -156,7 +127,7 @@ class MySQLUserDB extends SQLUserDB {
 
     @Override
     protected void removeUserMinecraftId0(long user, @NotNull UUID uuid) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(REMOVE_USER_MINECRAFT)) {
+        try (PreparedStatement stmt = prepareStatement("user/remove_user_minecraft")) {
             stmt.setLong(1, user);
             stmt.setString(2, uuid.toString());
 
