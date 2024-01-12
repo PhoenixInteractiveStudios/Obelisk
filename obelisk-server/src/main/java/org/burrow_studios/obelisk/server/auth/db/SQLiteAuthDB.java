@@ -1,6 +1,6 @@
-package org.burrow_studios.obelisk.server.auth.db.sqlite;
+package org.burrow_studios.obelisk.server.auth.db;
 
-import org.burrow_studios.obelisk.server.auth.db.SQLAuthDB;
+import org.burrow_studios.obelisk.server.db.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 import org.sqlite.SQLiteConfig;
 
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SQLiteAuthDB extends SQLAuthDB {
+public class SQLiteAuthDB implements AuthDB {
     private static final String STMT_CREATE_TABLE_IDENTITIES   = "CREATE TABLE IF NOT EXISTS `identities` (`subject` BIGINT(20) NOT NULL, `token_family` INT NOT NULL, `token_id` BIGINT(20) NOT NULL, PRIMARY KEY (`token_id`));";
     private static final String STMT_CREATE_TABLE_EXP_FAMILIES = "CREATE TABLE IF NOT EXISTS `expired_families` (`subject` BIGINT(20) NOT NULL, `family` INT NOT NULL, PRIMARY KEY (`subject`, `family`), FOREIGN KEY (`subject`, `family`) REFERENCES `identities`(`subject`, `token_family`));";
     private static final String STMT_CREATE_TABLE_SESSIONS     = "CREATE TABLE IF NOT EXISTS `sessions` (`id` BIGINT(20) NOT NULL, `identity` BIGINT(20) NOT NULL, `token` TEXT NOT NULL, `expired` BOOLEAN NOT NULL DEFAULT FALSE, PRIMARY KEY (`id`), FOREIGN KEY (`identity`) REFERENCES `identities`(`token_id`), UNIQUE (`token`));"; // TODO: don't store token?
@@ -70,7 +70,7 @@ public class SQLiteAuthDB extends SQLAuthDB {
     }
 
     @Override
-    protected long[] getActiveSessions0(long identity) throws SQLException {
+    public long[] getActiveSessions(long identity) throws DatabaseException {
         try (PreparedStatement stmt = connection.prepareStatement(STMT_SELECT_SESSIONS)) {
             stmt.setLong(1, identity);
 
@@ -84,41 +84,49 @@ public class SQLiteAuthDB extends SQLAuthDB {
             return sessionIds.stream()
                     .mapToLong(Long::longValue)
                     .toArray();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
         }
     }
 
     @Override
-    public void createSession0(long id, long identity, String token) throws SQLException {
+    public void createSession(long id, long identity, String token) throws DatabaseException {
         try (PreparedStatement stmt = connection.prepareStatement(STMT_INSERT_SESSION)) {
             stmt.setLong(1, id);
             stmt.setLong(2, identity);
             stmt.setString(3, token);
 
             stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
         }
     }
 
     @Override
-    protected void invalidateSession0(long id, long identity) throws SQLException {
+    public void invalidateSession(long id, long identity) throws DatabaseException {
         try (PreparedStatement stmt = connection.prepareStatement(STMT_UPDATE_SESSION_EXPIRE)) {
             stmt.setLong(1, id);
             stmt.setLong(2, identity);
 
             stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
         }
     }
 
     @Override
-    protected void invalidateAllSessions0(long identity) throws SQLException {
+    public void invalidateAllSessions(long identity) throws DatabaseException {
         try (PreparedStatement stmt = connection.prepareStatement(STMT_UPDATE_SESSION_EXPIRE_ALL)) {
             stmt.setLong(1, identity);
 
             stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
         }
     }
 
     @Override
-    protected void invalidateIdentityTokenFamily0(long subject) throws SQLException {
+    public void invalidateIdentityTokenFamily(long subject) throws DatabaseException {
         final int family = getCurrentFamily(subject, false);
 
         try (PreparedStatement stmt = connection.prepareStatement(STMT_INSERT_EXP_FAMILY)) {
@@ -126,11 +134,13 @@ public class SQLiteAuthDB extends SQLAuthDB {
             stmt.setInt(2, family);
 
             stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
         }
     }
 
     @Override
-    protected void createIdentity0(long id, long subject) throws SQLException {
+    public void createIdentity(long id, long subject) throws DatabaseException {
         final int family = getCurrentFamily(subject, true);
 
         try (PreparedStatement stmt = connection.prepareStatement(STMT_INSERT_IDENTITY)) {
@@ -139,10 +149,12 @@ public class SQLiteAuthDB extends SQLAuthDB {
             stmt.setLong(3, id);
 
             stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
         }
     }
 
-    private int getCurrentFamily(long subject, boolean createNew) throws SQLException {
+    private int getCurrentFamily(long subject, boolean createNew) throws DatabaseException {
         int family = 0;
 
         try (PreparedStatement stmt = connection.prepareStatement(STMT_SELECT_FAMILY)) {
@@ -152,6 +164,8 @@ public class SQLiteAuthDB extends SQLAuthDB {
 
             if (result.next())
                 family = result.getInt("family");
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
         }
 
         // check if family is expired
@@ -160,6 +174,8 @@ public class SQLiteAuthDB extends SQLAuthDB {
 
             if (result.next() && createNew)
                 family++;
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
         }
 
         return family;
