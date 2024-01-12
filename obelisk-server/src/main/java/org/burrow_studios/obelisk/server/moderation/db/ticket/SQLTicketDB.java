@@ -10,6 +10,10 @@ import java.sql.SQLException;
 import java.util.Set;
 
 abstract class SQLTicketDB extends SQLDB implements TicketDB {
+    public SQLTicketDB(@NotNull String url, @NotNull String user, @NotNull String pass, @NotNull String tableKey) throws DatabaseException {
+        super(url, user, pass, tableKey);
+    }
+
     @Override
     public final @NotNull Set<Long> getTicketIds() throws DatabaseException {
         return this.wrap(this::getTicketIds0);

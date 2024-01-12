@@ -13,41 +13,15 @@ import java.util.Set;
 class MySQLGroupDB extends SQLGroupDB {
     private static final String URL = "jdbc:mysql://%s:%s/%s?allowMultiQueries=true";
 
-    private static final String GET_GROUP_IDS = getStatementFromResources("/sql/entities/group/get_groups.sql");
-    private static final String GET_GROUP     = getStatementFromResources("/sql/entities/group/get_group.sql");
-    private static final String GET_GROUP_MEMBERS = getStatementFromResources("/sql/entities/group/get_group_members.sql");
-
-    private static final String CREATE_GROUP = getStatementFromResources("/sql/entities/group/create_group.sql");
-
-    private static final String UPDATE_GROUP_NAME     = getStatementFromResources("/sql/entities/group/update_group_name.sql");
-    private static final String UPDATE_GROUP_POSITION = getStatementFromResources("/sql/entities/group/update_group_position.sql");
-
-    private static final String ADD_GROUP_MEMBER = getStatementFromResources("/sql/entities/group/add_group_member.sql");
-    private static final String REMOVE_GROUP_MEMBER = getStatementFromResources("/sql/entities/group/remove_group_member.sql");
-
-    private final Connection connection;
-
     public MySQLGroupDB(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String pass) throws DatabaseException {
-        final String url = URL.formatted(host, port, database);
-
-        final String tableStmt = getStatementFromResources("/sql/entities/group/tables_group.sql");
-
-        try {
-            this.connection = DriverManager.getConnection(url, user, pass);
-
-            this.connection.createStatement().execute(tableStmt);
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
+        super(URL.formatted(host, port, database), user, pass, "group/tables_group");
     }
 
     @Override
     protected @NotNull Set<Long> getGroupIds0() throws SQLException {
         HashSet<Long> ids = new HashSet<>();
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_GROUP_IDS)) {
-            ResultSet result = stmt.executeQuery();
-
+        try (ResultSet result = executeQuery("group/get_groups")) {
             while (result.next())
                 ids.add(result.getLong(1));
         }
@@ -60,7 +34,7 @@ class MySQLGroupDB extends SQLGroupDB {
         JsonObject json = new JsonObject();
         json.addProperty("id", id);
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_GROUP)) {
+        try (PreparedStatement stmt = prepareStatement("group/get_group")) {
             stmt.setLong(1, id);
 
             ResultSet result = stmt.executeQuery();
@@ -72,7 +46,7 @@ class MySQLGroupDB extends SQLGroupDB {
             json.addProperty("position", result.getInt("position"));
         }
 
-        try (PreparedStatement stmt = this.connection.prepareStatement(GET_GROUP_MEMBERS)) {
+        try (PreparedStatement stmt = prepareStatement("group/get_group_members")) {
             stmt.setLong(1, id);
 
             JsonArray arr = new JsonArray();
@@ -90,7 +64,7 @@ class MySQLGroupDB extends SQLGroupDB {
 
     @Override
     protected void createGroup0(long id, @NotNull String name, int position) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(CREATE_GROUP)) {
+        try (PreparedStatement stmt = prepareStatement("group/create_group")) {
             stmt.setLong(1, id);
             stmt.setString(2, name);
             stmt.setInt(3, position);
@@ -101,7 +75,7 @@ class MySQLGroupDB extends SQLGroupDB {
 
     @Override
     protected void updateGroupName0(long id, @NotNull String name) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(UPDATE_GROUP_NAME)) {
+        try (PreparedStatement stmt = prepareStatement("group/update_group_name")) {
             stmt.setString(1, name);
             stmt.setLong(2, id);
 
@@ -111,7 +85,7 @@ class MySQLGroupDB extends SQLGroupDB {
 
     @Override
     protected void updateGroupPosition0(long id, int position) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(UPDATE_GROUP_POSITION)) {
+        try (PreparedStatement stmt = prepareStatement("group/update_group_position")) {
             stmt.setInt(1, position);
             stmt.setLong(2, id);
 
@@ -121,7 +95,7 @@ class MySQLGroupDB extends SQLGroupDB {
 
     @Override
     protected void addGroupMember0(long group, long user) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(ADD_GROUP_MEMBER)) {
+        try (PreparedStatement stmt = prepareStatement("group/add_group_member")) {
             stmt.setLong(1, group);
             stmt.setLong(2, user);
 
@@ -131,7 +105,7 @@ class MySQLGroupDB extends SQLGroupDB {
 
     @Override
     protected void removeGroupMember0(long group, long user) throws SQLException {
-        try (PreparedStatement stmt = this.connection.prepareStatement(REMOVE_GROUP_MEMBER)) {
+        try (PreparedStatement stmt = prepareStatement("group/remove_group_member")) {
             stmt.setLong(1, group);
             stmt.setLong(2, user);
 

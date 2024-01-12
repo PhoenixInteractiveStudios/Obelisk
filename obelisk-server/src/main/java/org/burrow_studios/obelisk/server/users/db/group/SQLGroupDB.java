@@ -9,6 +9,10 @@ import java.sql.SQLException;
 import java.util.Set;
 
 abstract class SQLGroupDB extends SQLDB implements GroupDB {
+    public SQLGroupDB(@NotNull String url, @NotNull String user, @NotNull String pass, @NotNull String tableKey) throws DatabaseException {
+        super(url, user, pass, tableKey);
+    }
+
     @Override
     public final @NotNull Set<Long> getGroupIds() throws DatabaseException {
         return this.wrap(this::getGroupIds0);
