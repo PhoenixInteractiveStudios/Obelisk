@@ -10,3 +10,6 @@ docs/* linguist-documentation=false
 
 # Include entity-files as detectable language
 *.yml linguist-detectable
+
+# Include SQL files as detectable language
+*.sql linguist-detectable
