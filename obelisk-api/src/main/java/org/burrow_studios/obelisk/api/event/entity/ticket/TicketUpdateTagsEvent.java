@@ -10,8 +10,8 @@ public final class TicketUpdateTagsEvent extends TicketUpdateEvent<Set<String>> 
     private final @NotNull Set<String>   addedTags;
     private final @NotNull Set<String> removedTags;
 
-    public TicketUpdateTagsEvent(@NotNull Ticket entity, @NotNull Set<String> oldValue, @NotNull Set<String> newValue) {
-        super(entity, oldValue, newValue);
+    public TicketUpdateTagsEvent(long id, @NotNull Ticket entity, @NotNull Set<String> oldValue, @NotNull Set<String> newValue) {
+        super(id, entity, oldValue, newValue);
         this.addedTags = newValue.stream()
                 .filter(tag -> !oldValue.contains(tag))
                 .collect(Collectors.toUnmodifiableSet());

@@ -11,8 +11,8 @@ public final class IssueUpdateTagsEvent extends IssueUpdateEvent<Set<Tag>> {
     private final @NotNull Set<Tag>   addedTags;
     private final @NotNull Set<Tag> removedTags;
 
-    public IssueUpdateTagsEvent(@NotNull Issue entity, @NotNull Set<Tag> oldValue, @NotNull Set<Tag> newValue) {
-        super(entity, oldValue, newValue);
+    public IssueUpdateTagsEvent(long id, @NotNull Issue entity, @NotNull Set<Tag> oldValue, @NotNull Set<Tag> newValue) {
+        super(id, entity, oldValue, newValue);
         this.addedTags = newValue.stream()
                 .filter(tag -> !oldValue.contains(tag))
                 .collect(Collectors.toUnmodifiableSet());

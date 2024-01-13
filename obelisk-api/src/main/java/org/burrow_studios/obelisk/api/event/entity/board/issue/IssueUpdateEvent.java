@@ -8,8 +8,8 @@ public abstract class IssueUpdateEvent<T> extends IssueEvent implements EntityUp
     protected final T oldValue;
     protected final T newValue;
 
-    protected IssueUpdateEvent(@NotNull Issue entity, T oldValue, T newValue) {
-        super(entity);
+    protected IssueUpdateEvent(long id, @NotNull Issue entity, T oldValue, T newValue) {
+        super(id, entity);
         this.oldValue = oldValue;
         this.newValue = newValue;
     }

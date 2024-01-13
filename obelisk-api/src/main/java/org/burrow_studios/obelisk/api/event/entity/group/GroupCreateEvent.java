@@ -5,7 +5,7 @@ import org.burrow_studios.obelisk.api.event.entity.EntityDeleteEvent;
 import org.jetbrains.annotations.NotNull;
 
 public final class GroupCreateEvent extends GroupEvent implements EntityDeleteEvent<Group> {
-    public GroupCreateEvent(@NotNull Group entity) {
-        super(entity);
+    public GroupCreateEvent(long id, @NotNull Group entity) {
+        super(id, entity);
     }
 }

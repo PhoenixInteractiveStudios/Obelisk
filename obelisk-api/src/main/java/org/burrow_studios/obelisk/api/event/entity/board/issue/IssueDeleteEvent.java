@@ -5,7 +5,7 @@ import org.burrow_studios.obelisk.api.event.entity.EntityDeleteEvent;
 import org.jetbrains.annotations.NotNull;
 
 public final class IssueDeleteEvent extends IssueEvent implements EntityDeleteEvent<Issue> {
-    public IssueDeleteEvent(@NotNull Issue entity) {
-        super(entity);
+    public IssueDeleteEvent(long id, @NotNull Issue entity) {
+        super(id, entity);
     }
 }

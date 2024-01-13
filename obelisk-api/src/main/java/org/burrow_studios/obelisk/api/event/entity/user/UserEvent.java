@@ -5,7 +5,7 @@ import org.burrow_studios.obelisk.api.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class UserEvent extends EntityEvent<User> {
-    protected UserEvent(@NotNull User entity) {
-        super(entity);
+    protected UserEvent(long id, @NotNull User entity) {
+        super(id, entity);
     }
 }

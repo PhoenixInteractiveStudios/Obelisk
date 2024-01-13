@@ -10,8 +10,8 @@ public final class UserUpdateDiscordIdsEvent extends UserUpdateEvent<Set<Long>> 
     private final @NotNull Set<Long>   addedIds;
     private final @NotNull Set<Long> removedIds;
 
-    public UserUpdateDiscordIdsEvent(@NotNull User entity, @NotNull Set<Long> oldValue, @NotNull Set<Long> newValue) {
-        super(entity, oldValue, newValue);
+    public UserUpdateDiscordIdsEvent(long id, @NotNull User entity, @NotNull Set<Long> oldValue, @NotNull Set<Long> newValue) {
+        super(id, entity, oldValue, newValue);
         this.addedIds = newValue.stream()
                 .filter(discordId -> !oldValue.contains(discordId))
                 .collect(Collectors.toUnmodifiableSet());

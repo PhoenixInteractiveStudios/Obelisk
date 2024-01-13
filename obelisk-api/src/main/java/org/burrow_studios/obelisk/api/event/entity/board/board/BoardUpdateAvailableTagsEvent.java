@@ -11,8 +11,8 @@ public final class BoardUpdateAvailableTagsEvent extends BoardUpdateEvent<Set<Ta
     private final @NotNull Set<Tag>   addedTags;
     private final @NotNull Set<Tag> removedTags;
 
-    public BoardUpdateAvailableTagsEvent(@NotNull Board entity, @NotNull Set<Tag> oldValue, @NotNull Set<Tag> newValue) {
-        super(entity, oldValue, newValue);
+    public BoardUpdateAvailableTagsEvent(long id, @NotNull Board entity, @NotNull Set<Tag> oldValue, @NotNull Set<Tag> newValue) {
+        super(id, entity, oldValue, newValue);
         this.addedTags = newValue.stream()
                 .filter(tag -> !oldValue.contains(tag))
                 .collect(Collectors.toUnmodifiableSet());

@@ -8,8 +8,8 @@ public abstract class GroupUpdateEvent<T> extends GroupEvent implements EntityUp
     protected final T oldValue;
     protected final T newValue;
 
-    protected GroupUpdateEvent(@NotNull Group entity, T oldValue, T newValue) {
-        super(entity);
+    protected GroupUpdateEvent(long id, @NotNull Group entity, T oldValue, T newValue) {
+        super(id, entity);
         this.oldValue = oldValue;
         this.newValue = newValue;
     }

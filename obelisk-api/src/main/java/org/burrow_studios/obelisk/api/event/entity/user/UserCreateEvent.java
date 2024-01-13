@@ -5,7 +5,7 @@ import org.burrow_studios.obelisk.api.event.entity.EntityDeleteEvent;
 import org.jetbrains.annotations.NotNull;
 
 public final class UserCreateEvent extends UserEvent implements EntityDeleteEvent<User> {
-    public UserCreateEvent(@NotNull User entity) {
-        super(entity);
+    public UserCreateEvent(long id, @NotNull User entity) {
+        super(id, entity);
     }
 }

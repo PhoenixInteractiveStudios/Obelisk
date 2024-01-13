@@ -8,8 +8,8 @@ public abstract class TagUpdateEvent<T> extends TagEvent implements EntityUpdate
     protected final T oldValue;
     protected final T newValue;
 
-    protected TagUpdateEvent(@NotNull Tag entity, T oldValue, T newValue) {
-        super(entity);
+    protected TagUpdateEvent(long id, @NotNull Tag entity, T oldValue, T newValue) {
+        super(id, entity);
         this.oldValue = oldValue;
         this.newValue = newValue;
     }

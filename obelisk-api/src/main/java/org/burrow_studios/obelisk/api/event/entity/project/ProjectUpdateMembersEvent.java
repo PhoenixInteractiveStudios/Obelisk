@@ -11,8 +11,8 @@ public final class ProjectUpdateMembersEvent extends ProjectUpdateEvent<Set<User
     private final @NotNull Set<User> joiningMembers;
     private final @NotNull Set<User> leavingMembers;
 
-    public ProjectUpdateMembersEvent(@NotNull Project entity, @NotNull Set<User> oldValue, @NotNull Set<User> newValue) {
-        super(entity, oldValue, newValue);
+    public ProjectUpdateMembersEvent(long id, @NotNull Project entity, @NotNull Set<User> oldValue, @NotNull Set<User> newValue) {
+        super(id, entity, oldValue, newValue);
         this.joiningMembers = newValue.stream()
                 .filter(member -> !oldValue.contains(member))
                 .collect(Collectors.toUnmodifiableSet());

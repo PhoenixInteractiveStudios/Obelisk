@@ -11,8 +11,8 @@ public final class IssueUpdateAssigneesEvent extends IssueUpdateEvent<Set<User>>
     private final @NotNull Set<User>   addedAssignees;
     private final @NotNull Set<User> removedAssignees;
 
-    public IssueUpdateAssigneesEvent(@NotNull Issue entity, @NotNull Set<User> oldValue, @NotNull Set<User> newValue) {
-        super(entity, oldValue, newValue);
+    public IssueUpdateAssigneesEvent(long id, @NotNull Issue entity, @NotNull Set<User> oldValue, @NotNull Set<User> newValue) {
+        super(id, entity, oldValue, newValue);
         this.addedAssignees = newValue.stream()
                 .filter(assignee -> !oldValue.contains(assignee))
                 .collect(Collectors.toUnmodifiableSet());

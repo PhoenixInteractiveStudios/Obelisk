@@ -5,7 +5,7 @@ import org.burrow_studios.obelisk.api.event.entity.EntityDeleteEvent;
 import org.jetbrains.annotations.NotNull;
 
 public final class TicketCreateEvent extends TicketEvent implements EntityDeleteEvent<Ticket> {
-    public TicketCreateEvent(@NotNull Ticket entity) {
-        super(entity);
+    public TicketCreateEvent(long id, @NotNull Ticket entity) {
+        super(id, entity);
     }
 }

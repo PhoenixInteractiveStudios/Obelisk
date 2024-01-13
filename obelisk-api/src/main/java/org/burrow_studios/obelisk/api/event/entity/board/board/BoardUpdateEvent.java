@@ -8,8 +8,8 @@ public abstract class BoardUpdateEvent<T> extends BoardEvent implements EntityUp
     protected final T oldValue;
     protected final T newValue;
 
-    protected BoardUpdateEvent(@NotNull Board entity, T oldValue, T newValue) {
-        super(entity);
+    protected BoardUpdateEvent(long id, @NotNull Board entity, T oldValue, T newValue) {
+        super(id, entity);
         this.oldValue = oldValue;
         this.newValue = newValue;
     }

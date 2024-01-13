@@ -11,8 +11,8 @@ public final class BoardUpdateIssuesEvent extends BoardUpdateEvent<Set<Issue>> {
     private final @NotNull Set<Issue>   addedIssues;
     private final @NotNull Set<Issue> removedIssues;
 
-    public BoardUpdateIssuesEvent(@NotNull Board entity, @NotNull Set<Issue> oldValue, @NotNull Set<Issue> newValue) {
-        super(entity, oldValue, newValue);
+    public BoardUpdateIssuesEvent(long id, @NotNull Board entity, @NotNull Set<Issue> oldValue, @NotNull Set<Issue> newValue) {
+        super(id, entity, oldValue, newValue);
         this.addedIssues = newValue.stream()
                 .filter(issue -> !oldValue.contains(issue))
                 .collect(Collectors.toUnmodifiableSet());

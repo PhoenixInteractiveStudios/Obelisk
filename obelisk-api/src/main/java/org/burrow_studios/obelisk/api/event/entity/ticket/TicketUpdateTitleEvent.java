@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class TicketUpdateTitleEvent extends TicketUpdateEvent<String> {
-    public TicketUpdateTitleEvent(@NotNull Ticket entity, @Nullable String oldValue, @Nullable String newValue) {
-        super(entity, oldValue, newValue);
+    public TicketUpdateTitleEvent(long id, @NotNull Ticket entity, @Nullable String oldValue, @Nullable String newValue) {
+        super(id, entity, oldValue, newValue);
     }
 }

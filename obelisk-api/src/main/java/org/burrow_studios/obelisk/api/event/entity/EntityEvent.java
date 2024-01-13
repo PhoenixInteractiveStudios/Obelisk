@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 public abstract class EntityEvent<E extends Turtle> extends AbstractEvent {
     protected final @NotNull E entity;
 
-    protected EntityEvent(@NotNull E entity) {
-        super(entity.getAPI());
+    protected EntityEvent(long id, @NotNull E entity) {
+        super(entity.getAPI(), id);
         this.entity = entity;
     }
 

@@ -8,8 +8,8 @@ public abstract class ProjectUpdateEvent<T> extends ProjectEvent implements Enti
     protected final T oldValue;
     protected final T newValue;
 
-    protected ProjectUpdateEvent(@NotNull Project entity, T oldValue, T newValue) {
-        super(entity);
+    protected ProjectUpdateEvent(long id, @NotNull Project entity, T oldValue, T newValue) {
+        super(id, entity);
         this.oldValue = oldValue;
         this.newValue = newValue;
     }

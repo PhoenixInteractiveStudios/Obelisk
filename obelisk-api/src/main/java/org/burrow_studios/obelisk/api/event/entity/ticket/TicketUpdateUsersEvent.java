@@ -11,8 +11,8 @@ public final class TicketUpdateUsersEvent extends TicketUpdateEvent<Set<User>> {
     private final @NotNull Set<User>   addedUsers;
     private final @NotNull Set<User> removedUsers;
 
-    public TicketUpdateUsersEvent(@NotNull Ticket entity, @NotNull Set<User> oldValue, @NotNull Set<User> newValue) {
-        super(entity, oldValue, newValue);
+    public TicketUpdateUsersEvent(long id, @NotNull Ticket entity, @NotNull Set<User> oldValue, @NotNull Set<User> newValue) {
+        super(id, entity, oldValue, newValue);
         this.addedUsers = newValue.stream()
                 .filter(user -> !oldValue.contains(user))
                 .collect(Collectors.toUnmodifiableSet());

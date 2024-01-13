@@ -5,7 +5,7 @@ import org.burrow_studios.obelisk.api.event.entity.EntityDeleteEvent;
 import org.jetbrains.annotations.NotNull;
 
 public final class TagCreateEvent extends TagEvent implements EntityDeleteEvent<Tag> {
-    public TagCreateEvent(@NotNull Tag entity) {
-        super(entity);
+    public TagCreateEvent(long id, @NotNull Tag entity) {
+        super(id, entity);
     }
 }

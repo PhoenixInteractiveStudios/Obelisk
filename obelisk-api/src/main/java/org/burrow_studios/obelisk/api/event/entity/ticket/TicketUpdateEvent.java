@@ -8,8 +8,8 @@ public abstract class TicketUpdateEvent<T> extends TicketEvent implements Entity
     protected final T oldValue;
     protected final T newValue;
 
-    protected TicketUpdateEvent(@NotNull Ticket entity, T oldValue, T newValue) {
-        super(entity);
+    protected TicketUpdateEvent(long id, @NotNull Ticket entity, T oldValue, T newValue) {
+        super(id, entity);
         this.oldValue = oldValue;
         this.newValue = newValue;
     }

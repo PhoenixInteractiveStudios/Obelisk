@@ -11,8 +11,8 @@ public final class UserUpdateMinecraftIdsEvent extends UserUpdateEvent<Set<UUID>
     private final @NotNull Set<UUID>   addedIds;
     private final @NotNull Set<UUID> removedIds;
 
-    public UserUpdateMinecraftIdsEvent(@NotNull User entity, @NotNull Set<UUID> oldValue, @NotNull Set<UUID> newValue) {
-        super(entity, oldValue, newValue);
+    public UserUpdateMinecraftIdsEvent(long id, @NotNull User entity, @NotNull Set<UUID> oldValue, @NotNull Set<UUID> newValue) {
+        super(id, entity, oldValue, newValue);
         this.addedIds = newValue.stream()
                 .filter(minecraftId -> !oldValue.contains(minecraftId))
                 .collect(Collectors.toUnmodifiableSet());

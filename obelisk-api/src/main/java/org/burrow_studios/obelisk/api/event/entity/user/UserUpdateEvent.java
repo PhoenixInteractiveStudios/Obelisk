@@ -8,8 +8,8 @@ public abstract class UserUpdateEvent<T> extends UserEvent implements EntityUpda
     protected final T oldValue;
     protected final T newValue;
 
-    protected UserUpdateEvent(@NotNull User entity, T oldValue, T newValue) {
-        super(entity);
+    protected UserUpdateEvent(long id, @NotNull User entity, T oldValue, T newValue) {
+        super(id, entity);
         this.oldValue = oldValue;
         this.newValue = newValue;
     }
