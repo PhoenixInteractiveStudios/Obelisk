@@ -1,12 +1,12 @@
 package org.burrow_studios.obelisk.core;
 
 import org.burrow_studios.obelisk.api.Obelisk;
+import org.burrow_studios.obelisk.core.cache.TurtleCache;
 import org.burrow_studios.obelisk.core.entities.action.board.BoardBuilderImpl;
 import org.burrow_studios.obelisk.core.entities.action.group.GroupBuilderImpl;
 import org.burrow_studios.obelisk.core.entities.action.project.ProjectBuilderImpl;
 import org.burrow_studios.obelisk.core.entities.action.ticket.TicketBuilderImpl;
 import org.burrow_studios.obelisk.core.entities.action.user.UserBuilderImpl;
-import org.burrow_studios.obelisk.core.cache.TurtleCache;
 import org.burrow_studios.obelisk.core.entities.impl.GroupImpl;
 import org.burrow_studios.obelisk.core.entities.impl.ProjectImpl;
 import org.burrow_studios.obelisk.core.entities.impl.TicketImpl;
@@ -15,38 +15,35 @@ import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
 import org.burrow_studios.obelisk.core.event.EventHandlerImpl;
-import org.burrow_studios.obelisk.core.net.NetworkHandler;
 import org.burrow_studios.obelisk.core.source.DataProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Function;
 
 public class ObeliskImpl implements Obelisk {
     private final EventHandlerImpl eventHandler;
     private final DataProvider     dataProvider;
 
-    private final TurtleCache<GroupImpl>     groupCache;
-    private final TurtleCache<ProjectImpl> projectCache;
-    private final TurtleCache<TicketImpl>   ticketCache;
-    private final TurtleCache<UserImpl>       userCache;
-    private final TurtleCache<BoardImpl>     boardCache;
-    private final TurtleCache<IssueImpl>     issueCache;
-    private final TurtleCache<TagImpl>         tagCache;
+    private final TurtleCache<GroupImpl>     groupCache = new TurtleCache<>(this);
+    private final TurtleCache<ProjectImpl> projectCache = new TurtleCache<>(this);
+    private final TurtleCache<TicketImpl>   ticketCache = new TurtleCache<>(this);
+    private final TurtleCache<UserImpl>       userCache = new TurtleCache<>(this);
+    private final TurtleCache<BoardImpl>     boardCache = new TurtleCache<>(this);
+    private final TurtleCache<IssueImpl>     issueCache = new TurtleCache<>(this);
+    private final TurtleCache<TagImpl>         tagCache = new TurtleCache<>(this);
 
     private final String token;
 
-    public ObeliskImpl() {
-        this.eventHandler = new EventHandlerImpl(this);
-        this.dataProvider = new NetworkHandler(this); // FIXME (dummy)
+    ObeliskImpl(
+            @NotNull String token,
+            @NotNull Function<ObeliskImpl, EventHandlerImpl> eventHandlerSupplier,
+            @NotNull Function<ObeliskImpl, DataProvider> dataProviderSupplier
+    ) {
+        this.eventHandler = eventHandlerSupplier.apply(this);
+        this.dataProvider = dataProviderSupplier.apply(this);
 
-        this.groupCache   = new TurtleCache<>(this);
-        this.projectCache = new TurtleCache<>(this);
-        this.ticketCache  = new TurtleCache<>(this);
-        this.userCache    = new TurtleCache<>(this);
-        this.boardCache   = new TurtleCache<>(this);
-        this.issueCache   = new TurtleCache<>(this);
-        this.tagCache     = new TurtleCache<>(this);
-
-        this.token = "null"; // TODO
+        this.token = token;
     }
 
     public @NotNull EventHandlerImpl getEventHandler() {
