@@ -1,5 +1,9 @@
 package org.burrow_studios.obelisk.server.db;
 
+import org.burrow_studios.obelisk.core.ObeliskImpl;
+import org.burrow_studios.obelisk.core.action.ActionImpl;
+import org.burrow_studios.obelisk.core.source.DataProvider;
+import org.burrow_studios.obelisk.core.source.Request;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.db.entity.BoardDB;
 import org.burrow_studios.obelisk.server.db.entity.ProjectDB;
@@ -8,7 +12,7 @@ import org.burrow_studios.obelisk.server.db.entity.GroupDB;
 import org.burrow_studios.obelisk.server.db.entity.UserDB;
 import org.jetbrains.annotations.NotNull;
 
-public class EntityProvider {
+public class EntityProvider implements DataProvider {
     private final ObeliskServer server;
     private final EntityDatabase database;
 
@@ -42,5 +46,16 @@ public class EntityProvider {
 
     public @NotNull BoardDB getBoardDB() {
         return this.database;
+    }
+
+    @Override
+    public @NotNull ObeliskImpl getAPI() {
+        return this.server.getAPI();
+    }
+
+    @Override
+    public @NotNull Request submitRequest(@NotNull ActionImpl<?> action) {
+        // TODO
+        return null;
     }
 }
