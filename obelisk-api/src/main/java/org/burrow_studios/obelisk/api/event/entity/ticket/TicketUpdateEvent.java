@@ -4,7 +4,7 @@ import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.event.entity.EntityUpdateEvent;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class TicketUpdateEvent<T> extends TicketEvent implements EntityUpdateEvent<Ticket, T> {
+public abstract sealed class TicketUpdateEvent<T> extends TicketEvent implements EntityUpdateEvent<Ticket, T> permits TicketUpdateStateEvent, TicketUpdateTagsEvent, TicketUpdateTitleEvent, TicketUpdateUsersEvent {
     protected final T oldValue;
     protected final T newValue;
 

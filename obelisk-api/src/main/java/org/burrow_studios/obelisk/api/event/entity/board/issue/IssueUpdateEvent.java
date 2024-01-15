@@ -4,7 +4,7 @@ import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.api.event.entity.EntityUpdateEvent;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class IssueUpdateEvent<T> extends IssueEvent implements EntityUpdateEvent<Issue, T> {
+public abstract sealed class IssueUpdateEvent<T> extends IssueEvent implements EntityUpdateEvent<Issue, T> permits IssueUpdateAssigneesEvent, IssueUpdateStateEvent, IssueUpdateTagsEvent, IssueUpdateTitleEvent {
     protected final T oldValue;
     protected final T newValue;
 

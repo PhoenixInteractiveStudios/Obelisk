@@ -4,7 +4,7 @@ import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.api.event.entity.EntityUpdateEvent;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class TagUpdateEvent<T> extends TagEvent implements EntityUpdateEvent<Tag, T> {
+public abstract sealed class TagUpdateEvent<T> extends TagEvent implements EntityUpdateEvent<Tag, T> permits TagUpdateNameEvent {
     protected final T oldValue;
     protected final T newValue;
 

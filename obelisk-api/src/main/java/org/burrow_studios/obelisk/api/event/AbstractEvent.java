@@ -1,9 +1,10 @@
 package org.burrow_studios.obelisk.api.event;
 
 import org.burrow_studios.obelisk.api.Obelisk;
+import org.burrow_studios.obelisk.api.event.entity.EntityEvent;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class AbstractEvent implements Event {
+public abstract sealed class AbstractEvent implements Event, GatewayEvent permits EntityEvent {
     protected final @NotNull Obelisk api;
     protected final long id;
 

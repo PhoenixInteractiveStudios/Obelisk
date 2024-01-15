@@ -4,7 +4,7 @@ import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.api.event.entity.EntityUpdateEvent;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class UserUpdateEvent<T> extends UserEvent implements EntityUpdateEvent<User, T> {
+public abstract sealed class UserUpdateEvent<T> extends UserEvent implements EntityUpdateEvent<User, T> permits UserUpdateDiscordIdsEvent, UserUpdateMinecraftIdsEvent, UserUpdateNameEvent {
     protected final T oldValue;
     protected final T newValue;
 

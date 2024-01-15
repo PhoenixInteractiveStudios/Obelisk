@@ -4,7 +4,7 @@ import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.event.entity.EntityUpdateEvent;
 import org.jetbrains.annotations.NotNull;
 
-public abstract class GroupUpdateEvent<T> extends GroupEvent implements EntityUpdateEvent<Group, T> {
+public abstract sealed class GroupUpdateEvent<T> extends GroupEvent implements EntityUpdateEvent<Group, T> permits GroupUpdateMembersEvent, GroupUpdateNameEvent, GroupUpdatePositionEvent {
     protected final T oldValue;
     protected final T newValue;
 
