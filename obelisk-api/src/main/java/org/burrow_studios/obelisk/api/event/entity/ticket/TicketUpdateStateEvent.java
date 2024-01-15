@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.ticket;
 
 import org.burrow_studios.obelisk.api.entities.Ticket;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 public final class TicketUpdateStateEvent extends TicketUpdateEvent<Ticket.State> {
@@ -10,6 +11,6 @@ public final class TicketUpdateStateEvent extends TicketUpdateEvent<Ticket.State
 
     @Override
     public int getOpcode() {
-        return 122;
+        return GatewayOpcodes.TICKET_UPDATE_STATE_EVENT;
     }
 }

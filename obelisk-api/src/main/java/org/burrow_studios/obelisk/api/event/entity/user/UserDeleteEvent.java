@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.user;
 
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.burrow_studios.obelisk.api.event.entity.EntityDeleteEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +12,6 @@ public final class UserDeleteEvent extends UserEvent implements EntityDeleteEven
 
     @Override
     public int getOpcode() {
-        return 131;
+        return GatewayOpcodes.USER_DELETE_EVENT;
     }
 }

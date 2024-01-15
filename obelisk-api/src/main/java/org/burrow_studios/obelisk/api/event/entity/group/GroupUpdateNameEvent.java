@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.group;
 
 import org.burrow_studios.obelisk.api.entities.Group;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 public final class GroupUpdateNameEvent extends GroupUpdateEvent<String> {
@@ -10,6 +11,6 @@ public final class GroupUpdateNameEvent extends GroupUpdateEvent<String> {
 
     @Override
     public int getOpcode() {
-        return 103;
+        return GatewayOpcodes.GROUP_UPDATE_NAME_EVENT;
     }
 }

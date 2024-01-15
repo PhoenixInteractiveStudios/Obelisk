@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.api.event.entity.board.issue;
 
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -31,6 +32,6 @@ public final class IssueUpdateAssigneesEvent extends IssueUpdateEvent<Set<User>>
 
     @Override
     public int getOpcode() {
-        return 152;
+        return GatewayOpcodes.ISSUE_UPDATE_ASSIGNEES_EVENT;
     }
 }

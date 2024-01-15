@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.board.issue;
 
 import org.burrow_studios.obelisk.api.entities.board.Issue;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 public final class IssueUpdateTitleEvent extends IssueUpdateEvent<String> {
@@ -10,6 +11,6 @@ public final class IssueUpdateTitleEvent extends IssueUpdateEvent<String> {
 
     @Override
     public int getOpcode() {
-        return 155;
+        return GatewayOpcodes.ISSUE_UPDATE_TITLE_EVENT;
     }
 }

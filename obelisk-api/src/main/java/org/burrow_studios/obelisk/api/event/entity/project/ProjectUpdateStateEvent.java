@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.project;
 
 import org.burrow_studios.obelisk.api.entities.Project;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 public final class ProjectUpdateStateEvent extends ProjectUpdateEvent<Project.State> {
@@ -10,6 +11,6 @@ public final class ProjectUpdateStateEvent extends ProjectUpdateEvent<Project.St
 
     @Override
     public int getOpcode() {
-        return 113;
+        return GatewayOpcodes.PROJECT_UPDATE_STATE_EVENT;
     }
 }

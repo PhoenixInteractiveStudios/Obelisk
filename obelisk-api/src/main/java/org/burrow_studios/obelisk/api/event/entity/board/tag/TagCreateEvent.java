@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.board.tag;
 
 import org.burrow_studios.obelisk.api.entities.board.Tag;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.burrow_studios.obelisk.api.event.entity.EntityCreateEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +12,6 @@ public final class TagCreateEvent extends TagEvent implements EntityCreateEvent<
 
     @Override
     public int getOpcode() {
-        return 160;
+        return GatewayOpcodes.TAG_CREATE_EVENT;
     }
 }

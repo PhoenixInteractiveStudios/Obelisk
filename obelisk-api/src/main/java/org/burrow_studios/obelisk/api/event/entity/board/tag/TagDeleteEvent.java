@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.board.tag;
 
 import org.burrow_studios.obelisk.api.entities.board.Tag;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.burrow_studios.obelisk.api.event.entity.EntityDeleteEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +12,6 @@ public final class TagDeleteEvent extends TagEvent implements EntityDeleteEvent<
 
     @Override
     public int getOpcode() {
-        return 161;
+        return GatewayOpcodes.TAG_DELETE_EVENT;
     }
 }

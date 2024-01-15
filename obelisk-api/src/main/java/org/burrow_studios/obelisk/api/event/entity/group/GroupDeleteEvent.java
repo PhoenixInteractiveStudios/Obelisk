@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.group;
 
 import org.burrow_studios.obelisk.api.entities.Group;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.burrow_studios.obelisk.api.event.entity.EntityDeleteEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +12,6 @@ public final class GroupDeleteEvent extends GroupEvent implements EntityDeleteEv
 
     @Override
     public int getOpcode() {
-        return 101;
+        return GatewayOpcodes.GROUP_DELETE_EVENT;
     }
 }

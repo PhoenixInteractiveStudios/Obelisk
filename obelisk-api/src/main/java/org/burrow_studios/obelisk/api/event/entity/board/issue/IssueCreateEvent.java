@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.board.issue;
 
 import org.burrow_studios.obelisk.api.entities.board.Issue;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.burrow_studios.obelisk.api.event.entity.EntityCreateEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +12,6 @@ public final class IssueCreateEvent extends IssueEvent implements EntityCreateEv
 
     @Override
     public int getOpcode() {
-        return 150;
+        return GatewayOpcodes.ISSUE_CREATE_EVENT;
     }
 }

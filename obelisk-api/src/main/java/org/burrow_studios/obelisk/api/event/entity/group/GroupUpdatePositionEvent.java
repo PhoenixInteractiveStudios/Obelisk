@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.group;
 
 import org.burrow_studios.obelisk.api.entities.Group;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 public final class GroupUpdatePositionEvent extends GroupUpdateEvent<Integer> {
@@ -10,6 +11,6 @@ public final class GroupUpdatePositionEvent extends GroupUpdateEvent<Integer> {
 
     @Override
     public int getOpcode() {
-        return 104;
+        return GatewayOpcodes.GROUP_UPDATE_POSITION_EVENT;
     }
 }

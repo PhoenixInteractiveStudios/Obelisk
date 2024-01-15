@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.api.event.entity.project;
 
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -31,6 +32,6 @@ public final class ProjectUpdateMembersEvent extends ProjectUpdateEvent<Set<User
 
     @Override
     public int getOpcode() {
-        return 112;
+        return GatewayOpcodes.PROJECT_UPDATE_MEMBERS_EVENT;
     }
 }

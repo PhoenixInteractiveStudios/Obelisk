@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.ticket;
 
 import org.burrow_studios.obelisk.api.entities.Ticket;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.burrow_studios.obelisk.api.event.entity.EntityDeleteEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +12,6 @@ public final class TicketDeleteEvent extends TicketEvent implements EntityDelete
 
     @Override
     public int getOpcode() {
-        return 121;
+        return GatewayOpcodes.TICKET_DELETE_EVENT;
     }
 }

@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.user;
 
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 public final class UserUpdateNameEvent extends UserUpdateEvent<String> {
@@ -10,6 +11,6 @@ public final class UserUpdateNameEvent extends UserUpdateEvent<String> {
 
     @Override
     public int getOpcode() {
-        return 134;
+        return GatewayOpcodes.USER_UPDATE_NAME_EVENT;
     }
 }

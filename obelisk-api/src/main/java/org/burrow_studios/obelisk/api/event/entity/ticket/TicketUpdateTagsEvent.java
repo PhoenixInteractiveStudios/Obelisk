@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.ticket;
 
 import org.burrow_studios.obelisk.api.entities.Ticket;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -30,6 +31,6 @@ public final class TicketUpdateTagsEvent extends TicketUpdateEvent<Set<String>> 
 
     @Override
     public int getOpcode() {
-        return 123;
+        return GatewayOpcodes.TICKET_UPDATE_TAGS_EVENT;
     }
 }

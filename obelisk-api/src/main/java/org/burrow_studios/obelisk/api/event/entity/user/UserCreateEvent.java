@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.event.entity.user;
 
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.burrow_studios.obelisk.api.event.entity.EntityCreateEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,6 +12,6 @@ public final class UserCreateEvent extends UserEvent implements EntityCreateEven
 
     @Override
     public int getOpcode() {
-        return 130;
+        return GatewayOpcodes.USER_CREATE_EVENT;
     }
 }
