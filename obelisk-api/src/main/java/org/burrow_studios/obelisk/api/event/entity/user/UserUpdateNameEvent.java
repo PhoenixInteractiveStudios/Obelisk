@@ -1,16 +1,10 @@
 package org.burrow_studios.obelisk.api.event.entity.user;
 
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 public final class UserUpdateNameEvent extends UserUpdateEvent<String> {
     public UserUpdateNameEvent(long id, @NotNull User entity, @NotNull String oldValue, @NotNull String newValue) {
         super(id, entity, oldValue, newValue);
-    }
-
-    @Override
-    public int getOpcode() {
-        return GatewayOpcodes.USER_UPDATE_NAME_EVENT;
     }
 }

@@ -2,7 +2,6 @@ package org.burrow_studios.obelisk.api.event.entity.board.issue;
 
 import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.api.entities.board.Tag;
-import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -28,10 +27,5 @@ public final class IssueUpdateTagsEvent extends IssueUpdateEvent<Set<Tag>> {
 
     public @NotNull Set<Tag> getRemovedTags() {
         return this.removedTags;
-    }
-
-    @Override
-    public int getOpcode() {
-        return GatewayOpcodes.ISSUE_UPDATE_TAGS_EVENT;
     }
 }

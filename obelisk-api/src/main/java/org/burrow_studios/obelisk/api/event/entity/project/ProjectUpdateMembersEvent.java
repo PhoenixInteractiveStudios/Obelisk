@@ -2,7 +2,6 @@ package org.burrow_studios.obelisk.api.event.entity.project;
 
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -28,10 +27,5 @@ public final class ProjectUpdateMembersEvent extends ProjectUpdateEvent<Set<User
 
     public @NotNull Set<User> getLeavingMembers() {
         return this.leavingMembers;
-    }
-
-    @Override
-    public int getOpcode() {
-        return GatewayOpcodes.PROJECT_UPDATE_MEMBERS_EVENT;
     }
 }

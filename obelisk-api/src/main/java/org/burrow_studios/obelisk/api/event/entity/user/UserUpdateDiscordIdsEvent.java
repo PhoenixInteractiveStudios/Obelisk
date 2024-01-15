@@ -1,7 +1,6 @@
 package org.burrow_studios.obelisk.api.event.entity.user;
 
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -27,10 +26,5 @@ public final class UserUpdateDiscordIdsEvent extends UserUpdateEvent<Set<Long>> 
 
     public @NotNull Set<Long> getRemovedIds() {
         return this.removedIds;
-    }
-
-    @Override
-    public int getOpcode() {
-        return GatewayOpcodes.USER_UPDATE_DISCORD_IDS_EVENT;
     }
 }

@@ -1,7 +1,6 @@
 package org.burrow_studios.obelisk.api.event.entity.ticket;
 
 import org.burrow_studios.obelisk.api.entities.Ticket;
-import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -27,10 +26,5 @@ public final class TicketUpdateTagsEvent extends TicketUpdateEvent<Set<String>> 
 
     public @NotNull Set<String> getRemovedTags() {
         return this.removedTags;
-    }
-
-    @Override
-    public int getOpcode() {
-        return GatewayOpcodes.TICKET_UPDATE_TAGS_EVENT;
     }
 }

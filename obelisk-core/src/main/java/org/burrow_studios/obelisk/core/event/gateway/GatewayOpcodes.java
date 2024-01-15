@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.api.event;
+package org.burrow_studios.obelisk.core.event.gateway;
 
 public final class GatewayOpcodes {
     public static final int GROUP_CREATE_EVENT          = 100;

@@ -1,7 +1,6 @@
 package org.burrow_studios.obelisk.api.event.entity.user;
 
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -28,10 +27,5 @@ public final class UserUpdateMinecraftIdsEvent extends UserUpdateEvent<Set<UUID>
 
     public @NotNull Set<UUID> getRemovedIds() {
         return this.removedIds;
-    }
-
-    @Override
-    public int getOpcode() {
-        return GatewayOpcodes.USER_UPDATE_MINECRAFT_IDS_EVENT;
     }
 }

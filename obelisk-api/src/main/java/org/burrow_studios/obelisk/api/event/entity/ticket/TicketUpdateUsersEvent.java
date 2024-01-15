@@ -2,7 +2,6 @@ package org.burrow_studios.obelisk.api.event.entity.ticket;
 
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.entities.User;
-import org.burrow_studios.obelisk.api.event.GatewayOpcodes;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -28,10 +27,5 @@ public final class TicketUpdateUsersEvent extends TicketUpdateEvent<Set<User>> {
 
     public @NotNull Set<User> getRemovedUsers() {
         return this.removedUsers;
-    }
-
-    @Override
-    public int getOpcode() {
-        return GatewayOpcodes.TICKET_UPDATE_USERS_EVENT;
     }
 }
