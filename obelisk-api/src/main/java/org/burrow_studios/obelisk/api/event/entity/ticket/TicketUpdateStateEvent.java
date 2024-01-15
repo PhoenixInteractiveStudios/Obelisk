@@ -7,4 +7,9 @@ public final class TicketUpdateStateEvent extends TicketUpdateEvent<Ticket.State
     public TicketUpdateStateEvent(long id, @NotNull Ticket entity, @NotNull Ticket.State oldValue, @NotNull Ticket.State newValue) {
         super(id, entity, oldValue, newValue);
     }
+
+    @Override
+    public int getOpcode() {
+        return 122;
+    }
 }

@@ -8,4 +8,9 @@ public final class TicketDeleteEvent extends TicketEvent implements EntityDelete
     public TicketDeleteEvent(long id, @NotNull Ticket entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 121;
+    }
 }

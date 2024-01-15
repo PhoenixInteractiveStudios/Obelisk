@@ -28,4 +28,9 @@ public final class BoardUpdateAvailableTagsEvent extends BoardUpdateEvent<Set<Ta
     public @NotNull Set<Tag> getRemovedTags() {
         return this.removedTags;
     }
+
+    @Override
+    public int getOpcode() {
+        return 142;
+    }
 }

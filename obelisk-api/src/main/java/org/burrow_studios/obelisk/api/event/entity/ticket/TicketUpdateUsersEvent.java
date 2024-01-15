@@ -28,4 +28,9 @@ public final class TicketUpdateUsersEvent extends TicketUpdateEvent<Set<User>> {
     public @NotNull Set<User> getRemovedUsers() {
         return this.removedUsers;
     }
+
+    @Override
+    public int getOpcode() {
+        return 125;
+    }
 }

@@ -8,4 +8,9 @@ public final class BoardCreateEvent extends BoardEvent implements EntityCreateEv
     public BoardCreateEvent(long id, @NotNull Board entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 140;
+    }
 }

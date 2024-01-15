@@ -7,4 +7,9 @@ public final class ProjectUpdateTimingsEvent extends ProjectUpdateEvent<Project.
     public ProjectUpdateTimingsEvent(long id, @NotNull Project entity, @NotNull Project.Timings oldValue, @NotNull Project.Timings newValue) {
         super(id, entity, oldValue, newValue);
     }
+
+    @Override
+    public int getOpcode() {
+        return 114;
+    }
 }

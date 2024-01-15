@@ -8,4 +8,9 @@ public final class GroupDeleteEvent extends GroupEvent implements EntityDeleteEv
     public GroupDeleteEvent(long id, @NotNull Group entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 101;
+    }
 }

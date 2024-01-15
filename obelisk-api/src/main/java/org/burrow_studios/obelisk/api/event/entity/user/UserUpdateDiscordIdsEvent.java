@@ -27,4 +27,9 @@ public final class UserUpdateDiscordIdsEvent extends UserUpdateEvent<Set<Long>> 
     public @NotNull Set<Long> getRemovedIds() {
         return this.removedIds;
     }
+
+    @Override
+    public int getOpcode() {
+        return 132;
+    }
 }

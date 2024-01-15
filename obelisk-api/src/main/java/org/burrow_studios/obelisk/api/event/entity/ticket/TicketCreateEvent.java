@@ -8,4 +8,9 @@ public final class TicketCreateEvent extends TicketEvent implements EntityCreate
     public TicketCreateEvent(long id, @NotNull Ticket entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 120;
+    }
 }

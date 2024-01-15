@@ -8,4 +8,9 @@ public final class UserCreateEvent extends UserEvent implements EntityCreateEven
     public UserCreateEvent(long id, @NotNull User entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 130;
+    }
 }

@@ -8,4 +8,9 @@ public final class TagCreateEvent extends TagEvent implements EntityCreateEvent<
     public TagCreateEvent(long id, @NotNull Tag entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 160;
+    }
 }

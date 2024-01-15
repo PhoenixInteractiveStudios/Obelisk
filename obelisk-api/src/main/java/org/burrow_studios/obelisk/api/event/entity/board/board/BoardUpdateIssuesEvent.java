@@ -28,4 +28,9 @@ public final class BoardUpdateIssuesEvent extends BoardUpdateEvent<Set<Issue>> {
     public @NotNull Set<Issue> getRemovedIssues() {
         return this.removedIssues;
     }
+
+    @Override
+    public int getOpcode() {
+        return 144;
+    }
 }

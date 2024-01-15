@@ -8,4 +8,9 @@ public final class TagDeleteEvent extends TagEvent implements EntityDeleteEvent<
     public TagDeleteEvent(long id, @NotNull Tag entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 161;
+    }
 }

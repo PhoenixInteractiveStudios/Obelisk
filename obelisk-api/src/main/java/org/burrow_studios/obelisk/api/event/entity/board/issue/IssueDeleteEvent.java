@@ -8,4 +8,9 @@ public final class IssueDeleteEvent extends IssueEvent implements EntityDeleteEv
     public IssueDeleteEvent(long id, @NotNull Issue entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 151;
+    }
 }

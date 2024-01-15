@@ -8,4 +8,9 @@ public final class UserDeleteEvent extends UserEvent implements EntityDeleteEven
     public UserDeleteEvent(long id, @NotNull User entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 131;
+    }
 }

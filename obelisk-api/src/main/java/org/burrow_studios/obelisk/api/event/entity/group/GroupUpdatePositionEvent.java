@@ -7,4 +7,9 @@ public final class GroupUpdatePositionEvent extends GroupUpdateEvent<Integer> {
     public GroupUpdatePositionEvent(long id, @NotNull Group entity, @NotNull Integer oldValue, @NotNull Integer newValue) {
         super(id, entity, oldValue, newValue);
     }
+
+    @Override
+    public int getOpcode() {
+        return 104;
+    }
 }

@@ -27,4 +27,9 @@ public final class TicketUpdateTagsEvent extends TicketUpdateEvent<Set<String>> 
     public @NotNull Set<String> getRemovedTags() {
         return this.removedTags;
     }
+
+    @Override
+    public int getOpcode() {
+        return 123;
+    }
 }

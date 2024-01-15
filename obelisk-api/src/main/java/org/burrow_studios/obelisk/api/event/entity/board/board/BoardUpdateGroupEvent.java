@@ -8,4 +8,9 @@ public final class BoardUpdateGroupEvent extends BoardUpdateEvent<Group> {
     public BoardUpdateGroupEvent(long id, @NotNull Board entity, @NotNull Group oldValue, @NotNull Group newValue) {
         super(id, entity, oldValue, newValue);
     }
+
+    @Override
+    public int getOpcode() {
+        return 143;
+    }
 }

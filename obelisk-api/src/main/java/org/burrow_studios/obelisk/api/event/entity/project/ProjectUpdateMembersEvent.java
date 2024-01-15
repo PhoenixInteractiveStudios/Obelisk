@@ -28,4 +28,9 @@ public final class ProjectUpdateMembersEvent extends ProjectUpdateEvent<Set<User
     public @NotNull Set<User> getLeavingMembers() {
         return this.leavingMembers;
     }
+
+    @Override
+    public int getOpcode() {
+        return 112;
+    }
 }

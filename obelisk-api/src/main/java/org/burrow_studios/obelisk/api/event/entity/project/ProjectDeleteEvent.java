@@ -8,4 +8,9 @@ public final class ProjectDeleteEvent extends ProjectEvent implements EntityDele
     public ProjectDeleteEvent(long id, @NotNull Project entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 111;
+    }
 }

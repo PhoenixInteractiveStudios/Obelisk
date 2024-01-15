@@ -8,4 +8,9 @@ public final class GroupCreateEvent extends GroupEvent implements EntityCreateEv
     public GroupCreateEvent(long id, @NotNull Group entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 100;
+    }
 }

@@ -28,4 +28,9 @@ public final class IssueUpdateTagsEvent extends IssueUpdateEvent<Set<Tag>> {
     public @NotNull Set<Tag> getRemovedTags() {
         return this.removedTags;
     }
+
+    @Override
+    public int getOpcode() {
+        return 154;
+    }
 }

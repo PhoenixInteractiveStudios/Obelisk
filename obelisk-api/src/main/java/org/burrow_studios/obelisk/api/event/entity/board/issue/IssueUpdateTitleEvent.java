@@ -7,4 +7,9 @@ public final class IssueUpdateTitleEvent extends IssueUpdateEvent<String> {
     public IssueUpdateTitleEvent(long id, @NotNull Issue entity, @NotNull String oldValue, @NotNull String newValue) {
         super(id, entity, oldValue, newValue);
     }
+
+    @Override
+    public int getOpcode() {
+        return 155;
+    }
 }

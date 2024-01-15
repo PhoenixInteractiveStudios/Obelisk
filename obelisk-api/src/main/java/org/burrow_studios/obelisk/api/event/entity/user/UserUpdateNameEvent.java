@@ -7,4 +7,9 @@ public final class UserUpdateNameEvent extends UserUpdateEvent<String> {
     public UserUpdateNameEvent(long id, @NotNull User entity, @NotNull String oldValue, @NotNull String newValue) {
         super(id, entity, oldValue, newValue);
     }
+
+    @Override
+    public int getOpcode() {
+        return 134;
+    }
 }

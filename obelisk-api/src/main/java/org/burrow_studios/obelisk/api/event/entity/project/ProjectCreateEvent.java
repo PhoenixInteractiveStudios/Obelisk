@@ -8,4 +8,9 @@ public final class ProjectCreateEvent extends ProjectEvent implements EntityCrea
     public ProjectCreateEvent(long id, @NotNull Project entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 110;
+    }
 }

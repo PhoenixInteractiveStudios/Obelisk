@@ -8,4 +8,9 @@ public final class IssueCreateEvent extends IssueEvent implements EntityCreateEv
     public IssueCreateEvent(long id, @NotNull Issue entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 150;
+    }
 }

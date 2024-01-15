@@ -7,4 +7,9 @@ public final class BoardUpdateTitleEvent extends BoardUpdateEvent<String> {
     public BoardUpdateTitleEvent(long id, @NotNull Board entity, @NotNull String oldValue, @NotNull String newValue) {
         super(id, entity, oldValue, newValue);
     }
+
+    @Override
+    public int getOpcode() {
+        return 145;
+    }
 }

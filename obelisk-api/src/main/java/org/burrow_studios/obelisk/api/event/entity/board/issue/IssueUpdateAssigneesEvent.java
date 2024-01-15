@@ -28,4 +28,9 @@ public final class IssueUpdateAssigneesEvent extends IssueUpdateEvent<Set<User>>
     public @NotNull Set<User> getRemovedAssignees() {
         return this.removedAssignees;
     }
+
+    @Override
+    public int getOpcode() {
+        return 152;
+    }
 }

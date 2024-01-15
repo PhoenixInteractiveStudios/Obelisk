@@ -7,4 +7,9 @@ public final class ProjectUpdateStateEvent extends ProjectUpdateEvent<Project.St
     public ProjectUpdateStateEvent(long id, @NotNull Project entity, @NotNull Project.State oldValue, @NotNull Project.State newValue) {
         super(id, entity, oldValue, newValue);
     }
+
+    @Override
+    public int getOpcode() {
+        return 113;
+    }
 }

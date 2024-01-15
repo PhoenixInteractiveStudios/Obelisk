@@ -8,4 +8,9 @@ public final class BoardDeleteEvent extends BoardEvent implements EntityDeleteEv
     public BoardDeleteEvent(long id, @NotNull Board entity) {
         super(id, entity);
     }
+
+    @Override
+    public int getOpcode() {
+        return 141;
+    }
 }

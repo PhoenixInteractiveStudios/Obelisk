@@ -28,4 +28,9 @@ public final class UserUpdateMinecraftIdsEvent extends UserUpdateEvent<Set<UUID>
     public @NotNull Set<UUID> getRemovedIds() {
         return this.removedIds;
     }
+
+    @Override
+    public int getOpcode() {
+        return 133;
+    }
 }

@@ -7,4 +7,9 @@ public final class GroupUpdateNameEvent extends GroupUpdateEvent<String> {
     public GroupUpdateNameEvent(long id, @NotNull Group entity, @NotNull String oldValue, @NotNull String newValue) {
         super(id, entity, oldValue, newValue);
     }
+
+    @Override
+    public int getOpcode() {
+        return 103;
+    }
 }

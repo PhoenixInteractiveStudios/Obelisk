@@ -28,4 +28,9 @@ public final class GroupUpdateMembersEvent extends GroupUpdateEvent<Set<User>> {
     public @NotNull Set<User> getLeavingMembers() {
         return this.leavingMembers;
     }
+
+    @Override
+    public int getOpcode() {
+        return 102;
+    }
 }

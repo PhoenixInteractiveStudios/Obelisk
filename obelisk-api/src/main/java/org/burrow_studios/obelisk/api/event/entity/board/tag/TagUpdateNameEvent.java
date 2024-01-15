@@ -7,4 +7,9 @@ public final class TagUpdateNameEvent extends TagUpdateEvent<String> {
     public TagUpdateNameEvent(long id, @NotNull Tag entity, @NotNull String oldValue, @NotNull String newValue) {
         super(id, entity, oldValue, newValue);
     }
+
+    @Override
+    public int getOpcode() {
+        return 162;
+    }
 }
