@@ -27,12 +27,10 @@ public final class GatewayOpcodes {
     public static final int USER_UPDATE_MINECRAFT_IDS_EVENT = 133;
     public static final int USER_UPDATE_NAME_EVENT          = 134;
 
-    public static final int BOARD_CREATE_EVENT                = 140;
-    public static final int BOARD_DELETE_EVENT                = 141;
-    public static final int BOARD_UPDATE_AVAILABLE_TAGS_EVENT = 142;
-    public static final int BOARD_UPDATE_GROUP_EVENT          = 143;
-    public static final int BOARD_UPDATE_ISSUES_EVENT         = 144;
-    public static final int BOARD_UPDATE_TITLE_EVENT          = 145;
+    public static final int BOARD_CREATE_EVENT       = 140;
+    public static final int BOARD_DELETE_EVENT       = 141;
+    public static final int BOARD_UPDATE_GROUP_EVENT = 143;
+    public static final int BOARD_UPDATE_TITLE_EVENT = 145;
 
     public static final int ISSUE_CREATE_EVENT           = 150;
     public static final int ISSUE_DELETE_EVENT           = 151;

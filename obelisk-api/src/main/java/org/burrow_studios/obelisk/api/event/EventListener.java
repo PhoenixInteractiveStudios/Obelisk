@@ -35,8 +35,6 @@ public abstract class EventListener {
 
     public void onBoardUpdateTitle(@NotNull BoardUpdateTitleEvent event) { }
     public void onBoardUpdateGroup(@NotNull BoardUpdateGroupEvent event) { }
-    public void onBoardUpdateAvailableTags(@NotNull BoardUpdateAvailableTagsEvent event) { }
-    public void onBoardUpdateIssues(@NotNull BoardUpdateIssuesEvent event) { }
 
     public void onIssueUpdateAssignees(@NotNull IssueUpdateAssigneesEvent event) { }
     public void onIssueUpdateTitle(@NotNull IssueUpdateTitleEvent event) { }
