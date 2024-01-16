@@ -1,11 +1,16 @@
 package org.burrow_studios.obelisk.core.net;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
+import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
 import org.burrow_studios.obelisk.core.net.http.Method;
+import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.socket.SocketAdapter;
 import org.burrow_studios.obelisk.core.source.DataProvider;
 import org.burrow_studios.obelisk.core.source.Request;
 import org.burrow_studios.obelisk.core.source.Response;
@@ -16,14 +21,16 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Optional;
+import java.util.concurrent.*;
 
 public class NetworkHandler implements DataProvider {
     private final ObeliskImpl api;
     private final TimeBasedIdGenerator requestIdGenerator = TimeBasedIdGenerator.get();
     private final ConcurrentHashMap<Long, Request> pendingRequests = new ConcurrentHashMap<>();
+    private final SocketAdapter socketAdapter;
     private final HttpClient httpClient;
+    private String sessionToken;
     final Gson gson;
 
     public NetworkHandler(@NotNull ObeliskImpl api) {
@@ -32,9 +39,74 @@ public class NetworkHandler implements DataProvider {
                 .setPrettyPrinting()
                 .serializeNulls()
                 .create();
+        this.socketAdapter = new SocketAdapter(this);
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(8))
                 .build();
+
+        this.login();
+    }
+
+    private CompletableFuture<Response> logout() {
+        if (this.sessionToken == null)
+            return CompletableFuture.completedFuture(null);
+
+        final long sub = this.api.getSubjectId();
+        final long id  = this.requestIdGenerator.newId();
+        final TimeoutContext timeout = TimeoutContext.DEFAULT;
+
+        try {
+            final String sessionId = JWT.decode(this.sessionToken).getId();
+
+            this.sessionToken = null;
+
+            if (sessionId == null)
+                return CompletableFuture.completedFuture(null);
+
+            final CompiledRoute route = Route.LOGOUT.builder()
+                    .withArg(sub)
+                    .withArg(sessionId)
+                    .compile();
+            final Request request = new Request(this, id, route, null, timeout);
+
+            this.send(request);
+
+            return request.getFuture();
+        } catch (JWTDecodeException ignored) {
+            this.sessionToken = null;
+            return CompletableFuture.completedFuture(null);
+        }
+    }
+
+    private void login() {
+        try {
+            this.logout().get();
+        } catch (Exception ignored) { }
+
+        final long sub = this.api.getSubjectId();
+        final long id  = this.requestIdGenerator.newId();
+        final CompiledRoute  route   = Route.LOGIN.builder().withArg(sub).compile();
+        final TimeoutContext timeout = TimeoutContext.DEFAULT;
+        final Request request = new Request(this, id, route, null, timeout);
+
+        this.send(request);
+
+        try {
+            Response response = request.getFuture().get(timeout.asTimeout(), TimeUnit.MILLISECONDS);
+
+            if (response.getCode() != 200) {
+                throw new RuntimeException("Unexpected login response");
+            }
+
+            this.sessionToken = Optional.of(response)
+                    .map(Response::getContent)
+                    .map(JsonElement::getAsJsonObject)
+                    .map(json -> json.get("token"))
+                    .map(JsonElement::getAsString)
+                    .orElseThrow(() -> new RuntimeException("Unexpected login response"));
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
