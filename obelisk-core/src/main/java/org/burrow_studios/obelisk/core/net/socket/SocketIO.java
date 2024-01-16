@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.core.net.socket;
 
 import org.burrow_studios.obelisk.core.net.socket.crypto.EncryptionException;
 import org.burrow_studios.obelisk.core.net.socket.crypto.EncryptionHandler;
+import org.burrow_studios.obelisk.util.function.ExceptionalConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,8 +27,8 @@ class SocketIO extends Thread {
     private volatile boolean listen = true;
     /** @see #receive() */
     private boolean running = true;
-    private @NotNull Consumer<Throwable> onShutdown = t -> { };
-    private @NotNull Consumer<byte[]> onReceive = b -> { };
+    private @NotNull ExceptionalConsumer<Throwable, ? extends Exception> onShutdown = t -> { };
+    private @NotNull ExceptionalConsumer<byte[], ? extends Exception> onReceive = b -> { };
     private int packetsSent     = 0;
     private int packetsReceived = 0;
 
@@ -58,11 +59,11 @@ class SocketIO extends Thread {
             this.notifyAll();
     }
 
-    public void onShutdown(@NotNull Consumer<Throwable> onShutdown) {
+    public void onShutdown(@NotNull ExceptionalConsumer<Throwable, ? extends Exception> onShutdown) {
         this.onShutdown = onShutdown;
     }
 
-    public void onReceive(@NotNull Consumer<byte[]> onReceive) {
+    public void onReceive(@NotNull ExceptionalConsumer<byte[], ? extends Exception> onReceive) {
         this.onReceive = onReceive;
     }
 
@@ -84,7 +85,11 @@ class SocketIO extends Thread {
             }
         }
 
-        this.onShutdown.accept(cause);
+        try {
+            this.onShutdown.accept(cause);
+        } catch (Exception e) {
+            LOG.log(Level.WARNING, "Encountered an unexpected exception when attempting to consume shutdown cause.", e);
+        }
     }
 
     @Override
@@ -126,7 +131,11 @@ class SocketIO extends Thread {
 
             final byte[] decrypted = this.crypto.decrypt(data);
 
-            this.onReceive.accept(decrypted);
+            try {
+                this.onReceive.accept(decrypted);
+            } catch (Exception e) {
+                LOG.log(Level.WARNING, "Encountered an unexpected exception when attempting to consume received packet.", e);
+            }
 
             this.packetsReceived++;
         } catch (EOFException e) {

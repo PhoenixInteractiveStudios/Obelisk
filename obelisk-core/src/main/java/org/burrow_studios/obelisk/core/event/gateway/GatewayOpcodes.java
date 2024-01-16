@@ -21,6 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class GatewayOpcodes {
+    public static final int DISCONNECT = 0;
+    public static final int HELLO      = 1;
+    public static final int HANDSHAKE_CHALLENGE = 10;
+    public static final int HANDSHAKE_RESPONSE  = 11;
+
     private static final GatewayOpcodes INSTANCE = new GatewayOpcodes()
             // GROUP
             .add(100, GroupCreateEvent.class)

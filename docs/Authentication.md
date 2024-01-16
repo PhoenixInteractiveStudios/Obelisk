@@ -59,6 +59,7 @@ new session by using its identity token.
 | exp   | numDate          | A timestamp that this token must not be used _after_.    |
 | ?nbf  | numDate          | A timestamp that this token must not be used _before_.   |
 | jti   | turtle           | Unique id of his session token.                          |
+| sok   | string           | Key to initiate symmetric socket encryption.             |
 | aud   | array of strings |                                                          |
 
 The JWT also contains the implicit information about when it was issued. A timestamp can be extracted from the unique id

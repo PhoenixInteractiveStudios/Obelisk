@@ -6,9 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.burrow_studios.obelisk.util.TurtleGenerator;
+import org.burrow_studios.obelisk.core.util.crypto.PassGen;
 import org.burrow_studios.obelisk.server.auth.Authenticator;
 import org.burrow_studios.obelisk.server.auth.db.AuthDB;
+import org.burrow_studios.obelisk.util.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -57,11 +58,14 @@ public class TokenManager {
         final long id = turtleGenerator.newId();
         final Algorithm algorithm = keyManager.getCurrentSessionAlgorithm();
 
+        final String sok = PassGen.generate(32);
+
         final String token = JWT.create()
                 .withKeyId(Long.toString(identity))
                 .withIssuer("Shelly")
                 .withSubject(Long.toString(subject))
                 .withJWTId(Long.toString(id))
+                .withClaim("sok", sok)
                 .sign(algorithm);
 
         AuthDB database = authenticator.getDatabase();

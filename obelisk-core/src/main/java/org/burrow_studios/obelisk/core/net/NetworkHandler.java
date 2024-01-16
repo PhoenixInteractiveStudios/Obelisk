@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.core.net;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -11,6 +12,7 @@ import org.burrow_studios.obelisk.core.action.ActionImpl;
 import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
 import org.burrow_studios.obelisk.core.net.http.Method;
 import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.socket.NetworkException;
 import org.burrow_studios.obelisk.core.net.socket.SocketAdapter;
 import org.burrow_studios.obelisk.core.source.DataProvider;
 import org.burrow_studios.obelisk.core.source.Request;
@@ -45,8 +47,12 @@ public class NetworkHandler implements DataProvider {
                 .connectTimeout(Duration.ofSeconds(8))
                 .build();
 
-        this.login();
-        this.connectSocketAdapter();
+        try {
+            this.login();
+            this.connectSocketAdapter();
+        } catch (NetworkException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private CompletableFuture<Response> logout() {
@@ -110,7 +116,7 @@ public class NetworkHandler implements DataProvider {
         }
     }
 
-    private void connectSocketAdapter() {
+    private void connectSocketAdapter() throws NetworkException {
         final long id = this.requestIdGenerator.newId();
         final CompiledRoute route = Route.GET_SOCKET.builder().compile();
         final TimeoutContext timeout = TimeoutContext.DEFAULT;
@@ -132,9 +138,15 @@ public class NetworkHandler implements DataProvider {
             final String host = json.get("host").getAsString();
             final int    port = json.get("port").getAsInt();
 
-            this.socketAdapter.connect(host, port);
+            final DecodedJWT token = JWT.decode(this.sessionToken);
+            final String sid = token.getId();
+            final String sok = token.getClaim("sok").asString();
+
+            this.socketAdapter.connect(host, port, sid, sok);
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
+        } catch (JWTDecodeException | NullPointerException e) {
+            throw new RuntimeException("Unable to decode session token", e);
         }
     }
 
