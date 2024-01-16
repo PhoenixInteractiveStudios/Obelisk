@@ -27,6 +27,7 @@ class SocketIO extends Thread {
     /** @see #receive() */
     private boolean running;
     private @NotNull Consumer<Throwable> onShutdown = t -> { };
+    private @NotNull Consumer<byte[]> onReceive = b -> { };
     private int packetsSent     = 0;
     private int packetsReceived = 0;
 
@@ -59,6 +60,14 @@ class SocketIO extends Thread {
 
     public void onShutdown(@NotNull Consumer<Throwable> onShutdown) {
         this.onShutdown = onShutdown;
+    }
+
+    public void onReceive(@NotNull Consumer<byte[]> onReceive) {
+        this.onReceive = onReceive;
+    }
+
+    public void onReceiveString(@NotNull Consumer<String> onReceive) {
+        this.onReceive = bytes -> onReceive.accept(new String(bytes));
     }
 
     void shutdown(@Nullable Throwable cause) {
@@ -116,6 +125,8 @@ class SocketIO extends Thread {
             this.in.readFully(data);
 
             final byte[] decrypted = this.crypto.decrypt(data);
+
+            this.onReceive.accept(decrypted);
 
             this.packetsReceived++;
         } catch (EOFException e) {
