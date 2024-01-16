@@ -3,6 +3,7 @@ package org.burrow_studios.obelisk.core.net.socket;
 import org.burrow_studios.obelisk.core.net.socket.crypto.EncryptionException;
 import org.burrow_studios.obelisk.core.net.socket.crypto.EncryptionHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,6 +26,7 @@ class SocketIO extends Thread {
     private volatile boolean listen = true;
     /** @see #receive() */
     private boolean running;
+    private @NotNull Consumer<Throwable> onShutdown = t -> { };
     private int packetsSent     = 0;
     private int packetsReceived = 0;
 
@@ -54,7 +57,11 @@ class SocketIO extends Thread {
             this.notifyAll();
     }
 
-    void shutdown() {
+    public void onShutdown(@NotNull Consumer<Throwable> onShutdown) {
+        this.onShutdown = onShutdown;
+    }
+
+    void shutdown(@Nullable Throwable cause) {
         this.listen = false;
         this.running = false; // see #receive()
 
@@ -67,6 +74,8 @@ class SocketIO extends Thread {
                 LOG.log(Level.WARNING, "Could not properly close socket connection to " + address, e);
             }
         }
+
+        this.onShutdown.accept(cause);
     }
 
     @Override
@@ -96,7 +105,7 @@ class SocketIO extends Thread {
     private synchronized void receive() {
         try {
             if (this.socket.isClosed()) {
-                this.shutdown();
+                this.shutdown(null);
                 return;
             }
 
@@ -111,7 +120,7 @@ class SocketIO extends Thread {
             this.packetsReceived++;
         } catch (EOFException e) {
             LOG.log(Level.WARNING, "Unexpected EOFException. This usually happens when a connection is abruptly closed", e);
-            this.shutdown();
+            this.shutdown(e);
         } catch (SocketException e) {
             if (!running) {
                 // in.readInt() threw an exception because the socket closed as intended.
@@ -164,10 +173,10 @@ class SocketIO extends Thread {
             this.out = new DataOutputStream(this.socket.getOutputStream());
         } catch (IOException e) {
             LOG.log(Level.WARNING, "Could not establish connection to " + address + " due to an IOException", e);
-            this.shutdown();
+            this.shutdown(e);
         } catch (Throwable t) {
             LOG.log(Level.WARNING, "Internal error occurred when attempting to establish connection to " + address, t);
-            this.shutdown();
+            this.shutdown(t);
         }
     }
 
