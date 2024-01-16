@@ -25,7 +25,7 @@ class SocketIO extends Thread {
     private @NotNull EncryptionHandler crypto;
     private volatile boolean listen = true;
     /** @see #receive() */
-    private boolean running;
+    private boolean running = true;
     private @NotNull Consumer<Throwable> onShutdown = t -> { };
     private @NotNull Consumer<byte[]> onReceive = b -> { };
     private int packetsSent     = 0;

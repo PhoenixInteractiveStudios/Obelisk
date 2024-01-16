@@ -5,6 +5,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
 import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
@@ -45,6 +46,7 @@ public class NetworkHandler implements DataProvider {
                 .build();
 
         this.login();
+        this.connectSocketAdapter();
     }
 
     private CompletableFuture<Response> logout() {
@@ -94,9 +96,8 @@ public class NetworkHandler implements DataProvider {
         try {
             Response response = request.getFuture().get(timeout.asTimeout(), TimeUnit.MILLISECONDS);
 
-            if (response.getCode() != 200) {
+            if (response.getCode() != 200)
                 throw new RuntimeException("Unexpected login response");
-            }
 
             this.sessionToken = Optional.of(response)
                     .map(Response::getContent)
@@ -105,6 +106,34 @@ public class NetworkHandler implements DataProvider {
                     .map(JsonElement::getAsString)
                     .orElseThrow(() -> new RuntimeException("Unexpected login response"));
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void connectSocketAdapter() {
+        final long id = this.requestIdGenerator.newId();
+        final CompiledRoute route = Route.GET_SOCKET.builder().compile();
+        final TimeoutContext timeout = TimeoutContext.DEFAULT;
+        final Request request = new Request(this, id, route, null, timeout);
+
+        this.send(request);
+
+        try {
+            Response response = request.getFuture().get();
+
+            if (response.getCode() != 200)
+                throw new RuntimeException("Unexpected response to socket-request");
+
+            JsonObject json = Optional.of(response)
+                    .map(Response::getContent)
+                    .map(JsonElement::getAsJsonObject)
+                    .orElseThrow(() -> new RuntimeException("Unexpected response to socket-request"));
+
+            final String host = json.get("host").getAsString();
+            final int    port = json.get("port").getAsInt();
+
+            this.socketAdapter.connect(host, port);
+        } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
     }

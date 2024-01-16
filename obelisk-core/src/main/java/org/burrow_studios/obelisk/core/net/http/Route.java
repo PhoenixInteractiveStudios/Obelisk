@@ -9,6 +9,8 @@ public final class Route {
     public static final Route LOGOUT     = new Route(Method.DELETE, "/session/%s/%s");
     public static final Route LOGOUT_ALL = new Route(Method.DELETE, "/session/%s");
 
+    public static final Route GET_SOCKET = new Route(Method.GET, "/socket");
+
     public static final class Group {
         public static final Route GET_ALL    = new Route(Method.GET   , "/groups");
         public static final Route GET        = new Route(Method.GET   , "/groups/%s");
