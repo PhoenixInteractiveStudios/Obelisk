@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.core.event.gateway.GatewayOpcodes;
 import org.burrow_studios.obelisk.core.net.NetworkHandler;
+import org.burrow_studios.obelisk.core.net.socket.crypto.EncryptionException;
 import org.burrow_studios.obelisk.core.net.socket.crypto.EncryptionHandler;
 import org.burrow_studios.obelisk.core.net.socket.crypto.SimpleSymmetricEncryption;
 import org.burrow_studios.obelisk.util.TurtleGenerator;
@@ -27,16 +28,16 @@ public class SocketAdapter {
                 .create();
     }
 
-    public void connect(@NotNull String host, int port, @NotNull String sid, @NotNull String sok) throws NetworkException {
+    public void connect(@NotNull String host, int port, @NotNull String sub, @NotNull String sid, @NotNull String sok) throws NetworkException {
         if (this.socketIO != null)
             this.socketIO.shutdown(null);
 
         final SocketAddress address = new InetSocketAddress(host, port);
 
-        final SimpleSymmetricEncryption crypto = new SimpleSymmetricEncryption(sok.toCharArray());
+        final SimpleSymmetricEncryption tmpCrypto = new SimpleSymmetricEncryption(sok.toCharArray());
 
         this.socketIO = new SocketIO(address);
-        this.socketIO.onReceive(bytes -> receiveHandshake(bytes, crypto));
+        this.socketIO.onReceive(bytes -> receiveHandshake(bytes, tmpCrypto));
         this.socketIO.onShutdown(this::handleShutdown);
         this.socketIO.start();
 
@@ -44,6 +45,7 @@ public class SocketAdapter {
         JsonObject json = new JsonObject();
         json.addProperty("id", turtleGenerator.newId());
         json.addProperty("op", GatewayOpcodes.HELLO);
+        json.addProperty("sub", sub);
         json.addProperty("sid", sid);
 
         // send hello
@@ -54,7 +56,7 @@ public class SocketAdapter {
         // TODO
     }
 
-    private void receiveHandshake(byte[] data, @NotNull EncryptionHandler crypto) throws NetworkException {
+    private void receiveHandshake(byte[] data, @NotNull EncryptionHandler tmpCrypto) throws NetworkException, EncryptionException {
         JsonObject json = gson.fromJson(new String(data), JsonObject.class);
 
         final long op = json.get("op").getAsLong();
@@ -70,12 +72,16 @@ public class SocketAdapter {
             return;
         }
 
+        final String obfuscatedKey = json.get("c").getAsString();
+        final String key = new String(tmpCrypto.decrypt(obfuscatedKey.getBytes()));
+
+        final SimpleSymmetricEncryption crypto = new SimpleSymmetricEncryption(key.toCharArray());
+        this.socketIO.setCrypto(crypto);
+
         JsonObject response = new JsonObject();
         response.addProperty("id", turtleGenerator.newId());
         response.addProperty("op", GatewayOpcodes.HANDSHAKE_RESPONSE);
-        response.add("c", json.get("c").deepCopy());
 
-        this.socketIO.setCrypto(crypto);
         this.socketIO.onReceive(this::receive);
         this.socketIO.send(gson.toJson(response));
     }

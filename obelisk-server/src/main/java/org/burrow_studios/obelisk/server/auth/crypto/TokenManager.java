@@ -134,6 +134,7 @@ public class TokenManager {
                 .withClaimPresence("sub")
                 .withClaimPresence("exp")
                 .withClaimPresence("aud")
+                .withClaimPresence("sok")
                 .build();
 
         AuthDB database = authenticator.getDatabase();
@@ -141,5 +142,13 @@ public class TokenManager {
         // TODO: validate key id
 
         return verifier.verify(decode);
+    }
+
+    public @NotNull String getSocketKey(long sub, long sid) {
+        String token = this.authenticator.getDatabase().getSocketKey(sid);
+
+        return JWT.decode(token)
+                .getClaim("sok")
+                .asString();
     }
 }

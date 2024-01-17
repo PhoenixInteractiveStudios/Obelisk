@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.server.auth.db;
 
 import org.burrow_studios.obelisk.server.db.DatabaseException;
+import org.burrow_studios.obelisk.server.db.NoSuchEntryException;
 import org.jetbrains.annotations.NotNull;
 import org.sqlite.SQLiteConfig;
 
@@ -21,6 +22,7 @@ public class SQLiteAuthDB implements AuthDB {
     private static final String STMT_SELECT_SESSIONS   = "SELECT * FROM `sessions` WHERE `identity` = ? AND `expired` = 0;";
     private static final String STMT_SELECT_FAMILY     = "SELECT `token_family` AS `family` FROM `identities` WHERE `subject` = ? ORDER BY `family` DESC LIMIT 1;";
     private static final String STMT_SELECT_EXP_FAMILY = "SELECT * FROM `expired_families` WHERE `subject` = ? AND `family` = ?;";
+    private static final String STMT_SELECT_SESSION    = "SELECT * FROM `sessions` WHERE `id` = ? LIMIT 1;";
 
     private static final String STMT_INSERT_IDENTITY   = "INSERT INTO `identities` (`subject`, `token_family`, `token_id`) VALUES (?, ?, ?);";
     private static final String STMT_INSERT_EXP_FAMILY = "INSERT OR IGNORE INTO `expired_families` (`subject`, `family`) VALUES (?, ?);";
@@ -84,6 +86,22 @@ public class SQLiteAuthDB implements AuthDB {
             return sessionIds.stream()
                     .mapToLong(Long::longValue)
                     .toArray();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public @NotNull String getSocketKey(long session) throws DatabaseException {
+        try (PreparedStatement stmt = connection.prepareStatement(STMT_SELECT_SESSION)) {
+            stmt.setLong(1, session);
+
+            ResultSet result = stmt.executeQuery();
+
+            if (!result.next())
+                throw new NoSuchEntryException();
+
+            return result.getString("token");
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }

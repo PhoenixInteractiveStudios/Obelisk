@@ -17,18 +17,24 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-class SocketIO extends Thread {
+public class SocketIO extends Thread {
     private static final Logger LOG = Logger.getLogger(SocketIO.class.getSimpleName());
+
     private final SocketAddress address;
     private final Socket socket;
+
     private DataInputStream  in;
     private DataOutputStream out;
+
     private @NotNull EncryptionHandler crypto;
+
     private volatile boolean listen = true;
     /** @see #receive() */
     private boolean running = true;
+
     private @NotNull ExceptionalConsumer<Throwable, ? extends Exception> onShutdown = t -> { };
     private @NotNull ExceptionalConsumer<byte[], ? extends Exception> onReceive = b -> { };
+
     private int packetsSent     = 0;
     private int packetsReceived = 0;
 
@@ -71,7 +77,7 @@ class SocketIO extends Thread {
         this.onReceive = bytes -> onReceive.accept(new String(bytes));
     }
 
-    void shutdown(@Nullable Throwable cause) {
+    public void shutdown(@Nullable Throwable cause) {
         this.listen = false;
         this.running = false; // see #receive()
 

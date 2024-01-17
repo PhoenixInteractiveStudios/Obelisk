@@ -139,10 +139,11 @@ public class NetworkHandler implements DataProvider {
             final int    port = json.get("port").getAsInt();
 
             final DecodedJWT token = JWT.decode(this.sessionToken);
+            final String sub = token.getSubject();
             final String sid = token.getId();
             final String sok = token.getClaim("sok").asString();
 
-            this.socketAdapter.connect(host, port, sid, sok);
+            this.socketAdapter.connect(host, port, sub, sid, sok);
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         } catch (JWTDecodeException | NullPointerException e) {

@@ -3,6 +3,7 @@ package org.burrow_studios.obelisk.server;
 import org.burrow_studios.obelisk.api.ObeliskBuilder;
 import org.burrow_studios.obelisk.core.ObeliskBuilderImpl;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
+import org.burrow_studios.obelisk.core.net.socket.NetworkException;
 import org.burrow_studios.obelisk.server.auth.Authenticator;
 import org.burrow_studios.obelisk.server.db.EntityProvider;
 import org.burrow_studios.obelisk.server.event.EventManager;
@@ -27,7 +28,7 @@ public final class ObeliskServer {
 
     private final ObeliskImpl api;
 
-    ObeliskServer() throws IOException {
+    ObeliskServer() throws IOException, NetworkException {
         this.authenticator     = new Authenticator(this);
         this.entityProvider    = new EntityProvider(this);
         this.eventManager      = new EventManager(this);

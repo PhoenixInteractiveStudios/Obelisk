@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.server.net;
 
+import org.burrow_studios.obelisk.core.net.socket.NetworkException;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.net.http.APIHandler;
 import org.burrow_studios.obelisk.server.net.http.AuthLevel;
@@ -17,7 +18,7 @@ public class NetworkHandler {
     private final APIHandler      apiHandler;
     private final EventDispatcher eventDispatcher;
 
-    public NetworkHandler(@NotNull ObeliskServer server) throws IOException {
+    public NetworkHandler(@NotNull ObeliskServer server) throws IOException, NetworkException {
         this.server = server;
 
         final SessionHandler sessionHandler = new SessionHandler(this);
@@ -87,7 +88,7 @@ public class NetworkHandler {
                 .addEndpoint(Method.DELETE, "/boards/:long/issues/:long"                , AuthLevel.SESSION, issueHandler::onDelete)
                 .addEndpoint(Method.PATCH , "/boards/:long/issues/:long"                , AuthLevel.SESSION, issueHandler::onEdit);
 
-        this.eventDispatcher = new EventDispatcher(this);
+        this.eventDispatcher = new EventDispatcher(this, /* TODO */ 8346);
     }
 
     public @NotNull ObeliskServer getServer() {

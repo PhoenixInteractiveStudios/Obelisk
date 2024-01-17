@@ -25,6 +25,7 @@ public final class GatewayOpcodes {
     public static final int HELLO      = 1;
     public static final int HANDSHAKE_CHALLENGE = 10;
     public static final int HANDSHAKE_RESPONSE  = 11;
+    public static final int HANDSHAKE_ASCEND    = 12;
 
     private static final GatewayOpcodes INSTANCE = new GatewayOpcodes()
             // GROUP
