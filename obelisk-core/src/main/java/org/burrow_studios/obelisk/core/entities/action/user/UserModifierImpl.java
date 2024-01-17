@@ -1,22 +1,17 @@
 package org.burrow_studios.obelisk.core.entities.action.user;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.api.action.entity.user.UserModifier;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.core.action.ModifierImpl;
-import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.UserChecks;
 import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
-
-import static org.burrow_studios.obelisk.core.entities.UpdateHelper.handleUpdate;
-import static org.burrow_studios.obelisk.core.entities.UpdateHelper.handleUpdateArray;
 
 public class UserModifierImpl extends ModifierImpl<User, UserImpl> implements UserModifier {
     public UserModifierImpl(@NotNull UserImpl user) {
@@ -25,16 +20,8 @@ public class UserModifierImpl extends ModifierImpl<User, UserImpl> implements Us
                 Route.User.EDIT.builder()
                         .withArg(user.getId())
                         .compile(),
-                UserModifierImpl::update
+                EntityUpdater::updateUser
         );
-    }
-
-    protected static void update(@NotNull EntityData data, @NotNull UserImpl user) {
-        final JsonObject json = data.toJson();
-
-        handleUpdate(json, "name", JsonElement::getAsString, user::setName);
-        handleUpdateArray(json, "discord", JsonElement::getAsLong, user.getDiscordIdsMutable());
-        handleUpdateArray(json, "minecraft", j -> UUID.fromString(j.getAsString()), user.getMinecraftIdsMutable());
     }
 
     @Override

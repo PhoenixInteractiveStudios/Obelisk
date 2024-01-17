@@ -1,18 +1,14 @@
 package org.burrow_studios.obelisk.core.entities.action.board.tag;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.api.action.entity.board.tag.TagModifier;
 import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.core.action.ModifierImpl;
-import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.board.TagChecks;
 import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
-
-import static org.burrow_studios.obelisk.core.entities.UpdateHelper.handleUpdate;
 
 public class TagModifierImpl extends ModifierImpl<Tag, TagImpl> implements TagModifier {
     public TagModifierImpl(@NotNull TagImpl tag) {
@@ -22,14 +18,8 @@ public class TagModifierImpl extends ModifierImpl<Tag, TagImpl> implements TagMo
                         .withArg(tag.getBoard().getId())
                         .withArg(tag.getId())
                         .compile(),
-                TagModifierImpl::update
+                EntityUpdater::updateTag
         );
-    }
-
-    protected static void update(@NotNull EntityData data, @NotNull TagImpl tag) {
-        final JsonObject json = data.toJson();
-
-        handleUpdate(json, "name", JsonElement::getAsString, tag::setName);
     }
 
     @Override

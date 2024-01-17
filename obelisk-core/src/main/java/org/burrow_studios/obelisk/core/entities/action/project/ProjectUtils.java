@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
 
-class ProjectUtils {
+public class ProjectUtils {
     private ProjectUtils() { }
 
     public static @NotNull Project.Timings buildProjectTimings(@NotNull JsonObject json) {

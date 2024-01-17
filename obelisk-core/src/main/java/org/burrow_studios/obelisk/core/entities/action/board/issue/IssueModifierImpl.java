@@ -1,18 +1,14 @@
 package org.burrow_studios.obelisk.core.entities.action.board.issue;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.api.action.entity.board.issue.IssueModifier;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.core.action.ModifierImpl;
-import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.board.IssueChecks;
 import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
-
-import static org.burrow_studios.obelisk.core.entities.UpdateHelper.*;
 
 public class IssueModifierImpl extends ModifierImpl<Issue, IssueImpl> implements IssueModifier {
     public IssueModifierImpl(@NotNull IssueImpl issue) {
@@ -22,17 +18,8 @@ public class IssueModifierImpl extends ModifierImpl<Issue, IssueImpl> implements
                         .withArg(issue.getBoard().getId())
                         .withArg(issue.getId())
                         .compile(),
-                IssueModifierImpl::update
+                EntityUpdater::updateIssue
         );
-    }
-
-    protected static void update(@NotNull EntityData data, @NotNull IssueImpl issue) {
-        final JsonObject json = data.toJson();
-
-        handleUpdateTurtles(json, "assignees", issue::getAssignees);
-        handleUpdate(json, "title", JsonElement::getAsString, issue::setTitle);
-        handleUpdateEnum(json, "state", Issue.State.class, issue::setState);
-        handleUpdateTurtles(json, "tags", issue::getTags);
     }
 
     @Override
