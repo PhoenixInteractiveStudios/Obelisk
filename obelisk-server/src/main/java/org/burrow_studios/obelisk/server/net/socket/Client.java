@@ -20,7 +20,7 @@ public class Client extends Thread {
     public Client(@NotNull EventDispatcher eventDispatcher, @NotNull SocketIO socketIO) {
         this.eventDispatcher = eventDispatcher;
         this.socketIO = socketIO;
-        this.socketIO.onReceive(this::receive);
+        this.socketIO.onReceiveString(this::receive);
         this.socketIO.onShutdown(this::onShutdown);
 
         this.setDaemon(true);
@@ -46,8 +46,8 @@ public class Client extends Thread {
         }
     }
 
-    private void receive(byte[] data) throws Exception {
-        final JsonObject json = eventDispatcher.gson.fromJson(new String(data), JsonObject.class);
+    private void receive(@NotNull String data) throws Exception {
+        final JsonObject json = eventDispatcher.gson.fromJson(data, JsonObject.class);
 
         final long id = json.get("id").getAsLong();
         final int  op = json.get("op").getAsInt();

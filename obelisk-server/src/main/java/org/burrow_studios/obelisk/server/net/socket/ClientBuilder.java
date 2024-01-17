@@ -28,7 +28,7 @@ public class ClientBuilder {
         this.encryptionKey = new byte[512];
         new SecureRandom().nextBytes(this.encryptionKey);
 
-        this.socketIO.onReceive(this::receive);
+        this.socketIO.onReceiveString(this::receive);
         this.socketIO.onShutdown(this::shutdown);
         this.socketIO.start();
 
@@ -53,8 +53,8 @@ public class ClientBuilder {
         this.socketIO = null;
     }
 
-    private void receive(byte[] data) throws Exception {
-        this.receive(eventDispatcher.gson.fromJson(new String(data), JsonObject.class));
+    private void receive(@NotNull String data) throws Exception {
+        this.receive(eventDispatcher.gson.fromJson(data, JsonObject.class));
     }
 
     private synchronized void receive(@NotNull JsonObject json) throws Exception {

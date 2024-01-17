@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketException;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,7 +72,7 @@ public class SocketIO extends Thread {
         this.onReceive = onReceive;
     }
 
-    public void onReceiveString(@NotNull Consumer<String> onReceive) {
+    public void onReceiveString(@NotNull ExceptionalConsumer<String, ? extends Exception> onReceive) {
         this.onReceive = bytes -> onReceive.accept(new String(bytes));
     }
 

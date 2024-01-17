@@ -37,7 +37,7 @@ public class SocketAdapter {
         final SimpleSymmetricEncryption tmpCrypto = new SimpleSymmetricEncryption(sok.toCharArray());
 
         this.socketIO = new SocketIO(address);
-        this.socketIO.onReceive(bytes -> receiveHandshake(bytes, tmpCrypto));
+        this.socketIO.onReceiveString(str -> receiveHandshake(str, tmpCrypto));
         this.socketIO.onShutdown(this::handleShutdown);
         this.socketIO.start();
 
@@ -56,8 +56,8 @@ public class SocketAdapter {
         // TODO
     }
 
-    private void receiveHandshake(byte[] data, @NotNull EncryptionHandler tmpCrypto) throws NetworkException, EncryptionException {
-        JsonObject json = gson.fromJson(new String(data), JsonObject.class);
+    private void receiveHandshake(@NotNull String data, @NotNull EncryptionHandler tmpCrypto) throws NetworkException, EncryptionException {
+        JsonObject json = gson.fromJson(data, JsonObject.class);
 
         final long op = json.get("op").getAsLong();
 
