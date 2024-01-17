@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.core.event.gateway.GatewayOpcodes;
 import org.burrow_studios.obelisk.core.net.NetworkHandler;
 import org.burrow_studios.obelisk.core.net.socket.crypto.EncryptionException;
-import org.burrow_studios.obelisk.core.net.socket.crypto.EncryptionHandler;
 import org.burrow_studios.obelisk.core.net.socket.crypto.SimpleSymmetricEncryption;
 import org.burrow_studios.obelisk.util.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +16,7 @@ import java.net.SocketAddress;
 public class SocketAdapter {
     private final @NotNull NetworkHandler networkHandler;
     private final TurtleGenerator turtleGenerator = TurtleGenerator.get("Socket");
+    private SimpleSymmetricEncryption sokCrypto;
     private SocketIO socketIO;
     final Gson gson;
 
@@ -34,10 +34,10 @@ public class SocketAdapter {
 
         final SocketAddress address = new InetSocketAddress(host, port);
 
-        final SimpleSymmetricEncryption tmpCrypto = new SimpleSymmetricEncryption(sok.toCharArray());
+        this.sokCrypto = new SimpleSymmetricEncryption(sok.toCharArray());
 
         this.socketIO = new SocketIO(address);
-        this.socketIO.onReceiveString(str -> receiveHandshake(str, tmpCrypto));
+        this.socketIO.onReceiveString(this::receiveHandshake);
         this.socketIO.onShutdown(this::handleShutdown);
         this.socketIO.start();
 
@@ -56,34 +56,49 @@ public class SocketAdapter {
         // TODO
     }
 
-    private void receiveHandshake(@NotNull String data, @NotNull EncryptionHandler tmpCrypto) throws NetworkException, EncryptionException {
-        JsonObject json = gson.fromJson(data, JsonObject.class);
+    private void receiveHandshake(@NotNull String data) throws NetworkException, EncryptionException {
+        this.receiveHandshake(gson.fromJson(data, JsonObject.class));
+    }
 
-        final long op = json.get("op").getAsLong();
+    private synchronized void receiveHandshake(@NotNull JsonObject json) throws NetworkException, EncryptionException {
+        final long id = json.get("id").getAsLong();
+        final int  op = json.get("op").getAsInt();
 
-        if (op == GatewayOpcodes.DISCONNECT) {
-            // TODO: shutdown?
-            this.socketIO.shutdown(null);
-            return;
+        final JsonObject c = json.getAsJsonObject("c");
+
+        switch (op) {
+            case GatewayOpcodes.DISCONNECT          -> this.onDisconnect(c);
+            case GatewayOpcodes.HANDSHAKE_CHALLENGE -> this.onChallenge(c);
+            case GatewayOpcodes.HANDSHAKE_ASCEND    -> this.onAscend(c);
+            default -> { /* TODO: shutdown */ }
         }
+    }
 
-        if (op != GatewayOpcodes.HANDSHAKE_CHALLENGE) {
-            // TODO: fail
-            return;
-        }
-
+    private void onChallenge(@NotNull JsonObject json) throws NetworkException, EncryptionException {
+        // decrypt the new encryption key
         final String obfuscatedKey = json.get("c").getAsString();
-        final String key = new String(tmpCrypto.decrypt(obfuscatedKey.getBytes()));
+        final String key = new String(this.sokCrypto.decrypt(obfuscatedKey.getBytes()));
 
+        // apply new encryption
         final SimpleSymmetricEncryption crypto = new SimpleSymmetricEncryption(key.toCharArray());
         this.socketIO.setCrypto(crypto);
 
+        // send encrypted acknowledgement
         JsonObject response = new JsonObject();
         response.addProperty("id", turtleGenerator.newId());
         response.addProperty("op", GatewayOpcodes.HANDSHAKE_RESPONSE);
 
-        this.socketIO.onReceive(this::receive);
         this.socketIO.send(gson.toJson(response));
+    }
+
+    private void onAscend(JsonObject json) {
+        // re-route receiver
+        this.socketIO.onReceive(this::receive);
+    }
+
+    private void onDisconnect(JsonObject json) {
+        this.socketIO.shutdown(null);
+        // TODO: cascade fail
     }
 
     private void handleShutdown(Throwable throwable) throws Exception {

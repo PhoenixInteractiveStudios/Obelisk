@@ -19,6 +19,8 @@ public class ClientBuilder {
     private Long subBuffer;
     private Long sidBuffer;
 
+    private boolean encrypted = false;
+
     private final byte[] encryptionKey;
 
     public ClientBuilder(@NotNull EventDispatcher eventDispatcher, @NotNull Socket socket) throws NetworkException {
@@ -87,25 +89,49 @@ public class ClientBuilder {
         this.subBuffer = json.get("sub").getAsLong();
         this.sidBuffer = json.get("sid").getAsLong();
 
+        // encrypt the actual encryption key with the initial socket key
         final String key = this.eventDispatcher.getNetworkHandler().getServer().getAuthenticator().getTokenManager().getSocketKey(subBuffer, sidBuffer);
         final SimpleSymmetricEncryption tmpCrypto = new SimpleSymmetricEncryption(key.toCharArray());
         final String obfuscatedKey = new String(tmpCrypto.encrypt(encryptionKey));
 
+        // send key (semi-encrypted)
         JsonObject response = new JsonObject();
         response.addProperty("id", eventDispatcher.turtleGenerator.newId());
         response.addProperty("op", GatewayOpcodes.HANDSHAKE_CHALLENGE);
         response.addProperty("c", obfuscatedKey);
 
+        // pause receiver until new encryption is established on the server-side
         this.socketIO.setListen(false);
         this.socketIO.send(eventDispatcher.gson.toJson(response));
 
+        // apply new encryption
         final SimpleSymmetricEncryption crypto = new SimpleSymmetricEncryption(new String(encryptionKey).toCharArray());
         this.socketIO.setCrypto(crypto);
+        this.encrypted = true;
 
+        // resume listening (now encrypted)
         this.socketIO.setListen(true);
     }
 
-    private void onResponse(@NotNull JsonObject json) {
+    private void onResponse(@NotNull JsonObject json) throws NetworkException {
+        // check if the connection is already encrypted or if this packet was received as cleartext
+        if (!encrypted) {
+            JsonObject response = new JsonObject();
+            response.addProperty("id", eventDispatcher.turtleGenerator.newId());
+            response.addProperty("op", GatewayOpcodes.DISCONNECT);
+            this.socketIO.send(eventDispatcher.gson.toJson(response));
+            this.onDisconnect(null);
+            return;
+        }
+
+        // reaching this point means the packed was encrypted properly
+
+        JsonObject response = new JsonObject();
+        response.addProperty("id", eventDispatcher.turtleGenerator.newId());
+        response.addProperty("op", GatewayOpcodes.HANDSHAKE_ASCEND);
+
+        this.socketIO.send(eventDispatcher.gson.toJson(response));
+
         this.ascend();
     }
 
