@@ -9,12 +9,16 @@ import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
 import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
-import org.burrow_studios.obelisk.core.entities.action.board.issue.IssueModifierImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
+import org.burrow_studios.obelisk.core.cache.TurtleCache;
+import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.action.board.issue.IssueModifierImpl;
 import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
 import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
+
+import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
 
 public final class IssueImpl extends TurtleImpl implements Issue {
     private final @NotNull BoardImpl board;
@@ -41,6 +45,36 @@ public final class IssueImpl extends TurtleImpl implements Issue {
         this.title = title;
         this.state = state;
         this.tags = tags;
+    }
+
+    public IssueImpl(@NotNull ObeliskImpl api, @NotNull EntityData data) {
+        super(api, data.getId());
+
+        final JsonObject json = data.toJson();
+
+        final long boardId = json.get("board").getAsLong();
+        final BoardImpl board = api.getBoard(boardId);
+        if (board == null)
+            throw new IllegalStateException("The board id could not be mapped to a cached board");
+        this.board = board;
+
+        final long authorId = json.get("author").getAsLong();
+        final UserImpl author = api.getUser(authorId);
+        if (author == null)
+            throw new IllegalStateException("The author id could not be mapped to a cached user");
+        this.author = author;
+
+        this.title = json.get("title").getAsString();
+
+        this.assignees = buildDelegatingCacheView(json, "assignees", api.getUsers(), UserImpl.class);
+
+        final String stateStr = json.get("state").getAsString();
+        this.state = Issue.State.valueOf(stateStr);
+
+        final TurtleCache<TagImpl> availableTags = api.getTags();
+        this.tags = buildDelegatingCacheView(json, "tags", availableTags, TagImpl.class);
+
+        board.getIssues().add(this);
     }
 
     @Override

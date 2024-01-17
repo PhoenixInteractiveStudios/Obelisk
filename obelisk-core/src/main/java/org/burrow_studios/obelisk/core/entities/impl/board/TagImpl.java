@@ -6,6 +6,7 @@ import org.burrow_studios.obelisk.api.entities.board.Board;
 import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.board.tag.TagModifierImpl;
 import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
@@ -24,6 +25,22 @@ public final class TagImpl extends TurtleImpl implements Tag {
         super(api, id);
         this.board = board;
         this.name = name;
+    }
+
+    public TagImpl(@NotNull ObeliskImpl api, @NotNull EntityData data) {
+        super(api, data.getId());
+
+        final JsonObject json = data.toJson();
+
+        this.name = json.get("name").getAsString();
+
+        final long boardId = json.get("board").getAsLong();
+        final BoardImpl board = api.getBoard(boardId);
+        if (board == null)
+            throw new IllegalStateException("The board id could not be mapped to a cached board");
+        this.board = board;
+
+        board.getAvailableTags().add(this);
     }
 
     @Override

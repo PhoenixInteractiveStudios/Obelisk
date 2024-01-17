@@ -8,10 +8,13 @@ import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
 import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.group.GroupModifierImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
+
+import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
 
 public final class GroupImpl extends TurtleImpl implements Group {
     private @NotNull String name;
@@ -29,6 +32,19 @@ public final class GroupImpl extends TurtleImpl implements Group {
         this.name = name;
         this.members = members;
         this.position = position;
+    }
+
+    public GroupImpl(@NotNull ObeliskImpl api, @NotNull EntityData data) {
+        super(api, data.getId());
+
+        final JsonObject json = data.toJson();
+
+        this.name     = json.get("name").getAsString();
+        this.position = json.get("position").getAsInt();
+
+        this.members = buildDelegatingCacheView(json, "members", api.getUsers(), UserImpl.class);
+
+        api.getGroups().add(this);
     }
 
     @Override

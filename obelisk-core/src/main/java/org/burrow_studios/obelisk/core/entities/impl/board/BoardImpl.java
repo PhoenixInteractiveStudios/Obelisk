@@ -7,6 +7,7 @@ import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.board.Board;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.board.BoardModifierImpl;
 import org.burrow_studios.obelisk.core.entities.action.board.issue.IssueBuilderImpl;
 import org.burrow_studios.obelisk.core.entities.action.board.tag.TagBuilderImpl;
@@ -15,6 +16,8 @@ import org.burrow_studios.obelisk.core.entities.impl.GroupImpl;
 import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
+
+import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
 
 public final class BoardImpl extends TurtleImpl implements Board {
     private @NotNull String title;
@@ -35,6 +38,25 @@ public final class BoardImpl extends TurtleImpl implements Board {
         this.group = group;
         this.availableTags = availableTags;
         this.issues = issues;
+    }
+
+    public BoardImpl(@NotNull ObeliskImpl api, @NotNull EntityData data) {
+        super(api, data.getId());
+
+        final JsonObject json = data.toJson();
+
+        this.title = json.get("title").getAsString();
+
+        final long groupId = json.get("group").getAsLong();
+        final GroupImpl group = api.getGroup(groupId);
+        if (group == null)
+            throw new IllegalStateException("The group id could not be mapped to a cached group");
+        this.group = group;
+
+        this.availableTags = buildDelegatingCacheView(json, "tags", api.getTags(), TagImpl.class);
+        this.issues        = buildDelegatingCacheView(json, "issues", api.getIssues(), IssueImpl.class);
+
+        api.getBoards().add(this);
     }
 
     @Override

@@ -19,14 +19,14 @@ public abstract class BuilderImpl<T extends Turtle> extends ActionImpl<T> implem
             @NotNull ObeliskImpl api,
             @NotNull Class<T> type,
             @NotNull CompiledRoute route,
-            @NotNull BiFunction<EntityData, ObeliskImpl, T> func
+            @NotNull BiFunction<ObeliskImpl, EntityData, T> func
     ) {
         super(api, route, (request, response) -> {
             // TODO: checks (error responses)
             final JsonObject content = response.getContent().getAsJsonObject();
             EntityData trustedData = new EntityData();
 
-            final @NotNull T entity = func.apply(trustedData, api);
+            final @NotNull T entity = func.apply(api, trustedData);
             // TODO: fire events
             return entity;
         });

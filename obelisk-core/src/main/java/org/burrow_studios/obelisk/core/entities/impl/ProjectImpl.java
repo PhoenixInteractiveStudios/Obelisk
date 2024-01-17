@@ -8,10 +8,14 @@ import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
 import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.project.ProjectModifierImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
+
+import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
+import static org.burrow_studios.obelisk.core.entities.action.project.ProjectUtils.buildProjectTimings;
 
 public final class ProjectImpl extends TurtleImpl implements Project {
     private @NotNull String title;
@@ -32,6 +36,23 @@ public final class ProjectImpl extends TurtleImpl implements Project {
         this.timings = timings;
         this.state = state;
         this.members = members;
+    }
+
+    public ProjectImpl(@NotNull ObeliskImpl api, @NotNull EntityData data) {
+        super(api, data.getId());
+
+        final JsonObject json = data.toJson();
+
+        this.title = json.get("title").getAsString();
+
+        this.timings = buildProjectTimings(json.getAsJsonObject("timings"));
+
+        final String stateStr = json.get("state").getAsString();
+        this.state = Project.State.valueOf(stateStr);
+
+        this.members = buildDelegatingCacheView(json, "members", api.getUsers(), UserImpl.class);
+
+        api.getProjects().add(this);
     }
 
     @Override

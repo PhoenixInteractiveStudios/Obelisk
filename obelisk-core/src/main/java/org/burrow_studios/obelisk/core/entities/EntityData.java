@@ -3,6 +3,7 @@ package org.burrow_studios.obelisk.core.entities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.NotNull;
 
 public class EntityData {
@@ -53,5 +54,12 @@ public class EntityData {
             array.remove(element);
 
         this.json.add(path, array);
+    }
+
+    public final long getId() throws IllegalStateException {
+        JsonPrimitive idElement = this.json.getAsJsonPrimitive("id");
+        if (idElement == null || idElement.isNumber())
+            throw new IllegalStateException("EntityData does not contain a valid id");
+        return idElement.getAsLong();
     }
 }

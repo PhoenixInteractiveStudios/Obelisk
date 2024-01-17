@@ -1,17 +1,21 @@
 package org.burrow_studios.obelisk.core.entities.impl;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
+import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.user.UserModifierImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
+
+import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildList;
 
 public final class UserImpl extends TurtleImpl implements User {
     private @NotNull String name;
@@ -29,6 +33,19 @@ public final class UserImpl extends TurtleImpl implements User {
         this.name = name;
         this.discordIds = discordIds;
         this.minecraftIds = minecraftIds;
+    }
+
+    public UserImpl(@NotNull ObeliskImpl api, @NotNull EntityData data) {
+        super(api, data.getId());
+
+        final JsonObject json = data.toJson();
+
+        this.name = json.get("name").getAsString();
+
+        this.discordIds   = buildList(json, "discord", JsonElement::getAsLong);
+        this.minecraftIds = buildList(json, "minecraft", e -> UUID.fromString(e.getAsString()));
+
+        api.getUsers().add(this);
     }
 
     @Override

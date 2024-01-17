@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.core.entities.impl;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Ticket;
@@ -8,13 +9,17 @@ import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
 import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
-import org.burrow_studios.obelisk.core.entities.action.ticket.TicketModifierImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
+import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.action.ticket.TicketModifierImpl;
 import org.burrow_studios.obelisk.core.net.http.Route;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
+import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildList;
 
 public final class TicketImpl extends TurtleImpl implements Ticket {
     private @Nullable String title;
@@ -35,6 +40,22 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
         this.state = state;
         this.tags = tags;
         this.users = users;
+    }
+
+    public TicketImpl(@NotNull ObeliskImpl api, @NotNull EntityData data) {
+        super(api, data.getId());
+
+        final JsonObject json = data.toJson();
+
+        this.title = json.get("title").getAsString();
+
+        final String stateStr = json.get("state").getAsString();
+        this.state = Ticket.State.valueOf(stateStr);
+
+        this.tags = buildList(json, "tags", JsonElement::getAsString);
+        this.users = buildDelegatingCacheView(json, "users", api.getUsers(), UserImpl.class);
+
+        api.getTickets().add(this);
     }
 
     @Override
