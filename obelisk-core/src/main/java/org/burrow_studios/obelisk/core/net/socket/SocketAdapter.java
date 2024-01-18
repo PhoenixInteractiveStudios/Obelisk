@@ -3,17 +3,28 @@ package org.burrow_studios.obelisk.core.net.socket;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.entities.Turtle;
+import org.burrow_studios.obelisk.api.event.GatewayEvent;
+import org.burrow_studios.obelisk.api.event.entity.EntityCreateEvent;
+import org.burrow_studios.obelisk.api.event.entity.EntityDeleteEvent;
+import org.burrow_studios.obelisk.api.event.entity.EntityEvent;
+import org.burrow_studios.obelisk.api.event.entity.EntityUpdateEvent;
+import org.burrow_studios.obelisk.core.ObeliskImpl;
+import org.burrow_studios.obelisk.core.entities.EntityData;
+import org.burrow_studios.obelisk.core.entities.EntityLifecycleHelper;
+import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.event.gateway.GatewayOpcodes;
 import org.burrow_studios.obelisk.core.net.NetworkHandler;
 import org.burrow_studios.obelisk.core.net.socket.crypto.EncryptionException;
 import org.burrow_studios.obelisk.core.net.socket.crypto.SimpleSymmetricEncryption;
+import org.burrow_studios.obelisk.core.source.EventProvider;
 import org.burrow_studios.obelisk.util.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
-public class SocketAdapter {
+public class SocketAdapter implements EventProvider {
     private final @NotNull NetworkHandler networkHandler;
     private final TurtleGenerator turtleGenerator = TurtleGenerator.get("Socket");
     private SimpleSymmetricEncryption sokCrypto;
@@ -53,7 +64,34 @@ public class SocketAdapter {
     }
 
     private void receive(byte[] data) throws Exception {
-        // TODO
+        final JsonObject json = this.gson.fromJson(new String(data), JsonObject.class);
+
+        final long id = json.get("id").getAsLong();
+        final int  op = json.get("op").getAsInt();
+
+        final JsonObject c = json.get("c").getAsJsonObject();
+
+        Class<? extends GatewayEvent> eventType = GatewayOpcodes.get(op);
+
+        if (EntityEvent.class.isAssignableFrom(eventType)) {
+            final long entityId = c.get("id").getAsLong();
+            final EntityData entityData = new EntityData(c);
+
+            if (EntityUpdateEvent.class.isAssignableFrom(eventType)) {
+                Turtle entity = this.getAPI().getTurtle(entityId);
+
+                if (entity == null)
+                    throw new NetworkException("Unknown entity: " + entityId + " (opcode " + op + ")");
+
+                EntityUpdater.update(entity, entityData, id);
+            } else if (EntityCreateEvent.class.isAssignableFrom(eventType)) {
+                EntityLifecycleHelper.createEntity(getAPI(), entityData, id, eventType);
+            } else if (EntityDeleteEvent.class.isAssignableFrom(eventType)) {
+                EntityLifecycleHelper.deleteEntity(getAPI(), entityId, id, eventType);
+            }
+        } else {
+            throw new NetworkException("Unknown opcode: " + op);
+        }
     }
 
     private void receiveHandshake(@NotNull String data) throws NetworkException, EncryptionException {
@@ -103,5 +141,10 @@ public class SocketAdapter {
 
     private void handleShutdown(Throwable throwable) throws Exception {
         // TODO
+    }
+
+    @Override
+    public @NotNull ObeliskImpl getAPI() {
+        return this.networkHandler.getAPI();
     }
 }

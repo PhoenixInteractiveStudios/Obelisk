@@ -3,21 +3,20 @@ package org.burrow_studios.obelisk.core;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import org.burrow_studios.obelisk.api.Obelisk;
+import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.core.cache.TurtleCache;
 import org.burrow_studios.obelisk.core.entities.action.board.BoardBuilderImpl;
 import org.burrow_studios.obelisk.core.entities.action.group.GroupBuilderImpl;
 import org.burrow_studios.obelisk.core.entities.action.project.ProjectBuilderImpl;
 import org.burrow_studios.obelisk.core.entities.action.ticket.TicketBuilderImpl;
 import org.burrow_studios.obelisk.core.entities.action.user.UserBuilderImpl;
-import org.burrow_studios.obelisk.core.entities.impl.GroupImpl;
-import org.burrow_studios.obelisk.core.entities.impl.ProjectImpl;
-import org.burrow_studios.obelisk.core.entities.impl.TicketImpl;
-import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
+import org.burrow_studios.obelisk.core.entities.impl.*;
 import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
 import org.burrow_studios.obelisk.core.event.EventHandlerImpl;
 import org.burrow_studios.obelisk.core.source.DataProvider;
+import org.burrow_studios.obelisk.core.util.Finder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,6 +70,28 @@ public class ObeliskImpl implements Obelisk {
     }
 
     /* - ENTITIES - */
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends Turtle> @Nullable T getTurtle(long id, @NotNull Class<T> type) {
+        TurtleImpl turtle = this.getTurtle(id);
+        if (type.isInstance(turtle))
+            return (T) turtle;
+        return null;
+    }
+
+    @Override
+    public @Nullable TurtleImpl getTurtle(long id) {
+        return Finder.empty(TurtleImpl.class)
+                .orElseFind(() -> this.groupCache.get(id))
+                .orElseFind(() -> this.projectCache.get(id))
+                .orElseFind(() -> this.ticketCache.get(id))
+                .orElseFind(() -> this.userCache.get(id))
+                .orElseFind(() -> this.boardCache.get(id))
+                .orElseFind(() -> this.issueCache.get(id))
+                .orElseFind(() -> this.tagCache.get(id))
+                .get();
+    }
 
     @Override
     public @NotNull TurtleCache<GroupImpl> getGroups() {
