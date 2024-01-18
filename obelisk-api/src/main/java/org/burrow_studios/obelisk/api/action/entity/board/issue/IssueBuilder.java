@@ -7,6 +7,8 @@ import org.burrow_studios.obelisk.api.entities.board.Tag;
 import org.jetbrains.annotations.NotNull;
 
 public interface IssueBuilder extends Builder<Issue> {
+    @NotNull IssueBuilder setAuthor(@NotNull User author);
+
     @NotNull IssueBuilder addAssignees(@NotNull User... users);
 
     @NotNull IssueBuilder setTitle(@NotNull String title) throws IllegalArgumentException;

@@ -24,6 +24,12 @@ public class IssueBuilderImpl extends BuilderImpl<Issue> implements IssueBuilder
     }
 
     @Override
+    public @NotNull IssueBuilderImpl setAuthor(@NotNull User author) {
+        data.set("author", new JsonPrimitive(author.getId()));
+        return this;
+    }
+
+    @Override
     public @NotNull IssueBuilderImpl addAssignees(@NotNull User... users) {
         JsonArray arr = new JsonArray();
         for (User user : users)
