@@ -1,8 +1,8 @@
 package org.burrow_studios.obelisk.server.db.entity;
 
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
-import org.burrow_studios.obelisk.server.its.IssueState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -24,11 +24,11 @@ public interface BoardDB {
 
     @NotNull JsonObject getIssue(long board, long id) throws DatabaseException;
 
-    void createIssue(long board, long id, long author, @NotNull String title, @NotNull IssueState state) throws DatabaseException;
+    void createIssue(long board, long id, long author, @NotNull String title, @NotNull Issue.State state) throws DatabaseException;
 
     void updateIssueTitle(long board, long id, @NotNull String title) throws DatabaseException;
 
-    void updateIssueState(long board, long id, @NotNull IssueState state) throws DatabaseException;
+    void updateIssueState(long board, long id, @NotNull Issue.State state) throws DatabaseException;
 
     void addIssueAssignee(long board, long id, long assignee) throws DatabaseException;
 

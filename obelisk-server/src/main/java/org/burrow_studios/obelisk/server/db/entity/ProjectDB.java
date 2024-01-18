@@ -1,8 +1,8 @@
 package org.burrow_studios.obelisk.server.db.entity;
 
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
-import org.burrow_studios.obelisk.server.moderation.ProjectState;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Instant;
@@ -13,7 +13,7 @@ public interface ProjectDB {
 
     @NotNull JsonObject getProject(long id) throws DatabaseException;
 
-    void createProject(long id, @NotNull String title, @NotNull ProjectState state) throws DatabaseException;
+    void createProject(long id, @NotNull String title, @NotNull Project.State state) throws DatabaseException;
 
     void updateProjectTitle(long id, @NotNull String title) throws DatabaseException;
 
@@ -21,7 +21,7 @@ public interface ProjectDB {
 
     void removeProjectTiming(long id, @NotNull String name) throws DatabaseException;
 
-    void updateProjectState(long id, @NotNull ProjectState state) throws DatabaseException;
+    void updateProjectState(long id, @NotNull Project.State state) throws DatabaseException;
 
     void addProjectMember(long project, long user) throws DatabaseException;
 

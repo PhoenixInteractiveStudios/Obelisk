@@ -2,15 +2,11 @@ package org.burrow_studios.obelisk.server.db;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.entities.Project;
+import org.burrow_studios.obelisk.api.entities.Ticket;
+import org.burrow_studios.obelisk.api.entities.board.Issue;
 import org.burrow_studios.obelisk.server.Main;
-import org.burrow_studios.obelisk.server.db.entity.BoardDB;
-import org.burrow_studios.obelisk.server.its.IssueState;
-import org.burrow_studios.obelisk.server.db.entity.ProjectDB;
-import org.burrow_studios.obelisk.server.moderation.ProjectState;
-import org.burrow_studios.obelisk.server.db.entity.TicketDB;
-import org.burrow_studios.obelisk.server.moderation.TicketState;
-import org.burrow_studios.obelisk.server.db.entity.GroupDB;
-import org.burrow_studios.obelisk.server.db.entity.UserDB;
+import org.burrow_studios.obelisk.server.db.entity.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -263,7 +259,7 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
     }
 
     @Override
-    public void createProject(long id, @NotNull String title, @NotNull ProjectState state) throws DatabaseException {
+    public void createProject(long id, @NotNull String title, @NotNull Project.State state) throws DatabaseException {
         try (PreparedStatement stmt = prepareStatement("project/create_project")) {
             stmt.setLong(1, id);
             stmt.setString(2, title);
@@ -313,7 +309,7 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
     }
 
     @Override
-    public void updateProjectState(long id, @NotNull ProjectState state) throws DatabaseException {
+    public void updateProjectState(long id, @NotNull Project.State state) throws DatabaseException {
         try (PreparedStatement stmt = prepareStatement("project/update_project_state")) {
             stmt.setString(1, state.name());
             stmt.setLong(2, id);
@@ -417,7 +413,7 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
     }
 
     @Override
-    public void createTicket(long id, @Nullable String title, @NotNull TicketState state) throws DatabaseException {
+    public void createTicket(long id, @Nullable String title, @NotNull Ticket.State state) throws DatabaseException {
         try (PreparedStatement stmt = prepareStatement("ticket/create_ticket")) {
             stmt.setLong(1, id);
             stmt.setString(2, title);
@@ -442,7 +438,7 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
     }
 
     @Override
-    public void updateTicketState(long id, @NotNull TicketState state) throws DatabaseException {
+    public void updateTicketState(long id, @NotNull Ticket.State state) throws DatabaseException {
         try (PreparedStatement stmt = prepareStatement("ticket/update_ticket_state")) {
             stmt.setString(1, state.name());
             stmt.setLong(2, id);
@@ -764,7 +760,7 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
     }
 
     @Override
-    public void createIssue(long board, long id, long author, @NotNull String title, @NotNull IssueState state) throws DatabaseException {
+    public void createIssue(long board, long id, long author, @NotNull String title, @NotNull Issue.State state) throws DatabaseException {
         try (PreparedStatement stmt = prepareStatement("board/create_issue")) {
             stmt.setLong(1, id);
             stmt.setLong(2, board);
@@ -792,7 +788,7 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
     }
 
     @Override
-    public void updateIssueState(long board, long id, @NotNull IssueState state) throws DatabaseException {
+    public void updateIssueState(long board, long id, @NotNull Issue.State state) throws DatabaseException {
         try (PreparedStatement stmt = prepareStatement("board/update_issue_state")) {
             stmt.setString(1, state.name());
             stmt.setLong(2, board);
