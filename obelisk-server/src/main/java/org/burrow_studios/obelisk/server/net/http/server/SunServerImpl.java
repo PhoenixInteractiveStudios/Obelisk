@@ -4,9 +4,9 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import org.burrow_studios.obelisk.core.net.http.Method;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
 import org.burrow_studios.obelisk.server.net.http.APIHandler;
-import org.burrow_studios.obelisk.server.net.http.Method;
 import org.burrow_studios.obelisk.server.net.http.Response;
 import org.jetbrains.annotations.NotNull;
 

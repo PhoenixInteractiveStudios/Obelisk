@@ -1,10 +1,10 @@
 package org.burrow_studios.obelisk.server.net;
 
+import org.burrow_studios.obelisk.core.net.http.Method;
 import org.burrow_studios.obelisk.core.net.socket.NetworkException;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.net.http.APIHandler;
 import org.burrow_studios.obelisk.server.net.http.AuthLevel;
-import org.burrow_studios.obelisk.server.net.http.Method;
 import org.burrow_studios.obelisk.server.net.http.handlers.*;
 import org.burrow_studios.obelisk.server.net.http.server.SunServerImpl;
 import org.burrow_studios.obelisk.server.net.socket.EventDispatcher;

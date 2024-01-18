@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.server.net.http;
 
+import org.burrow_studios.obelisk.core.net.http.Method;
 import org.burrow_studios.obelisk.util.function.ExceptionalFunction;
 import org.jetbrains.annotations.NotNull;
 

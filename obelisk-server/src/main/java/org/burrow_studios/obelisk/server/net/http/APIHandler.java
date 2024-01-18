@@ -5,6 +5,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import org.burrow_studios.obelisk.core.net.http.Method;
 import org.burrow_studios.obelisk.server.auth.crypto.TokenManager;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
 import org.burrow_studios.obelisk.server.net.http.exceptions.APIException;

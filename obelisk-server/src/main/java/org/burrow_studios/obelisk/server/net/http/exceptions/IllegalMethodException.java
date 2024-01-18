@@ -1,6 +1,6 @@
 package org.burrow_studios.obelisk.server.net.http.exceptions;
 
-import org.burrow_studios.obelisk.server.net.http.Method;
+import org.burrow_studios.obelisk.core.net.http.Method;
 import org.burrow_studios.obelisk.server.net.http.Response;
 import org.burrow_studios.obelisk.server.net.http.ResponseBuilder;
 import org.jetbrains.annotations.NotNull;
