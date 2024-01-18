@@ -3,8 +3,11 @@ package org.burrow_studios.obelisk.server.net.http.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.server.db.DatabaseException;
-import org.burrow_studios.obelisk.server.db.NoSuchEntryException;
+import org.burrow_studios.obelisk.core.ObeliskImpl;
+import org.burrow_studios.obelisk.core.entities.action.group.GroupBuilderImpl;
+import org.burrow_studios.obelisk.core.entities.action.group.GroupModifierImpl;
+import org.burrow_studios.obelisk.core.entities.impl.GroupImpl;
+import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
 import org.burrow_studios.obelisk.server.net.http.Request;
 import org.burrow_studios.obelisk.server.net.http.ResponseBuilder;
@@ -12,10 +15,10 @@ import org.burrow_studios.obelisk.server.net.http.exceptions.APIException;
 import org.burrow_studios.obelisk.server.net.http.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.server.net.http.exceptions.InternalServerErrorException;
 import org.burrow_studios.obelisk.server.net.http.exceptions.NotFoundException;
-import org.burrow_studios.obelisk.server.users.UserService;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 public class GroupHandler {
     private final @NotNull NetworkHandler networkHandler;
@@ -26,7 +29,8 @@ public class GroupHandler {
 
     public void onGetAll(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
         JsonArray json = new JsonArray();
-        getUserService().getGroups().forEach(json::add);
+        for (long id : getAPI().getGroups().getIdsAsImmutaleSet())
+            json.add(id);
 
         response.setCode(200);
         response.setBody(json);
@@ -35,18 +39,12 @@ public class GroupHandler {
     public void onGet(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
         final long groupId = request.getSegmentLong(1);
 
-        final JsonObject group;
-
-        try {
-            group = getUserService().getGroup(groupId);
-        } catch (NoSuchEntryException e) {
+        final GroupImpl group = getAPI().getGroup(groupId);
+        if (group == null)
             throw new NotFoundException();
-        } catch (DatabaseException e) {
-            throw new InternalServerErrorException();
-        }
         
         response.setCode(200);
-        response.setBody(group);
+        response.setBody(group.toJson());
     }
 
     public void onCreate(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
@@ -59,9 +57,35 @@ public class GroupHandler {
         final JsonObject json = body.get();
         final JsonObject result;
 
+        final GroupBuilderImpl builder;
+
         try {
-            result = getUserService().createGroup(json);
-        } catch (DatabaseException e) {
+            final String name     = json.get("name").getAsString();
+            final int    position = json.get("position").getAsInt();
+
+            builder = getAPI().createGroup()
+                    .setName(name)
+                    .setPosition(position);
+
+            JsonArray members = json.getAsJsonArray("members");
+            StreamSupport.stream(members.spliterator(), false)
+                    .map(JsonElement::getAsLong)
+                    .map(id -> {
+                        UserImpl user = getAPI().getUser(id);
+                        if (user == null)
+                            throw new IllegalArgumentException("Invalid user id: " + id);
+                        return user;
+                    })
+                    .forEach(builder::addMembers);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        } catch (Exception e) {
+            throw new BadRequestException("Malformed body");
+        }
+
+        try {
+            result = ((GroupImpl) builder.await()).toJson();
+        } catch (Exception e) {
             throw new InternalServerErrorException();
         }
 
@@ -70,12 +94,18 @@ public class GroupHandler {
     }
 
     public void onAddMember(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
-        final long group = request.getSegmentLong(1);
-        final long user  = request.getSegmentLong(3);
+        final long groupId = request.getSegmentLong(1);
+        final long  userId = request.getSegmentLong(3);
+
+        final GroupImpl group = getAPI().getGroup(groupId);
+        final UserImpl  user  = getAPI().getUser(userId);
+
+        if (group == null || user == null)
+            throw new NotFoundException();
 
         try {
-            getUserService().addGroupMember(group, user);
-        } catch (DatabaseException e) {
+            group.addMember(user).await();
+        } catch (Exception e) {
             throw new InternalServerErrorException();
         }
 
@@ -83,32 +113,43 @@ public class GroupHandler {
     }
 
     public void onDeleteMember(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
-        final long group = request.getSegmentLong(1);
-        final long user  = request.getSegmentLong(3);
+        final long groupId = request.getSegmentLong(1);
+        final long  userId = request.getSegmentLong(3);
 
-        try {
-            getUserService().removeGroupMember(group, user);
-        } catch (DatabaseException e) {
-            throw new InternalServerErrorException();
+        final GroupImpl group = getAPI().getGroup(groupId);
+        final UserImpl  user  = getAPI().getUser(userId);
+
+        if (group == null)
+            throw new NotFoundException();
+
+        if (user != null && group.getMembers().containsId(userId)) {
+            try {
+                group.removeMember(user).await();
+            } catch (Exception e) {
+                throw new InternalServerErrorException();
+            }
         }
 
         response.setCode(204);
     }
 
     public void onDelete(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
-        final long group = request.getSegmentLong(1);
+        final long groupId = request.getSegmentLong(1);
+        final GroupImpl group = getAPI().getGroup(groupId);
 
-        try {
-            getUserService().deleteGroup(group);
-        } catch (DatabaseException e) {
-            throw new InternalServerErrorException();
+        if (group != null) {
+            try {
+                group.delete().await();
+            } catch (Exception e) {
+                throw new InternalServerErrorException();
+            }
         }
 
         response.setCode(204);
     }
 
     public void onEdit(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
-        long group = request.getSegmentLong(1);
+        final long groupId = request.getSegmentLong(1);
 
         Optional<JsonObject> body = request.optionalBody()
                 .map(JsonElement::getAsJsonObject);
@@ -117,21 +158,37 @@ public class GroupHandler {
             throw new BadRequestException("No content");
 
         final JsonObject json = body.get();
-        final JsonObject result;
+
+        GroupImpl group = getAPI().getGroup(groupId);
+        if (group == null)
+            throw new NotFoundException();
+        final GroupModifierImpl modifier = group.modify();
 
         try {
-            getUserService().patchGroup(group, json);
+            Optional.ofNullable(json.get("name"))
+                    .map(JsonElement::getAsString)
+                    .ifPresent(modifier::setName);
 
-            result = getUserService().getGroup(group);
-        } catch (DatabaseException e) {
+            Optional.ofNullable(json.get("position"))
+                    .map(JsonElement::getAsInt)
+                    .ifPresent(modifier::setPosition);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        } catch (Exception e) {
+            throw new BadRequestException("Malformed body");
+        }
+
+        try {
+            group = ((GroupImpl) modifier.await());
+        } catch (Exception e) {
             throw new InternalServerErrorException();
         }
 
         response.setCode(200);
-        response.setBody(result);
+        response.setBody(group.toJson());
     }
-    
-    private @NotNull UserService getUserService() {
-        return this.networkHandler.getServer().getUserService();
+
+    private @NotNull ObeliskImpl getAPI() {
+        return this.networkHandler.getServer().getAPI();
     }
 }
