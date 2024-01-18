@@ -3,9 +3,11 @@ package org.burrow_studios.obelisk.server.net.http.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.server.db.DatabaseException;
-import org.burrow_studios.obelisk.server.db.NoSuchEntryException;
-import org.burrow_studios.obelisk.server.its.IssueTracker;
+import org.burrow_studios.obelisk.core.ObeliskImpl;
+import org.burrow_studios.obelisk.core.entities.action.board.BoardBuilderImpl;
+import org.burrow_studios.obelisk.core.entities.action.board.BoardModifierImpl;
+import org.burrow_studios.obelisk.core.entities.impl.GroupImpl;
+import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
 import org.burrow_studios.obelisk.server.net.http.Request;
 import org.burrow_studios.obelisk.server.net.http.ResponseBuilder;
@@ -26,27 +28,22 @@ public class BoardHandler {
 
     public void onGetAll(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
         JsonArray json = new JsonArray();
-        getIssueTracker().getBoards().forEach(json::add);
+        for (long id : getAPI().getBoards().getIdsAsImmutaleSet())
+            json.add(id);
 
         response.setCode(200);
         response.setBody(json);
     }
 
     public void onGet(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
-        final long board = request.getSegmentLong(1);
+        final long boardId = request.getSegmentLong(1);
 
-        final JsonObject result;
-
-        try {
-            result = getIssueTracker().getBoard(board);
-        } catch (NoSuchEntryException e) {
+        final BoardImpl board = getAPI().getBoard(boardId);
+        if (board == null)
             throw new NotFoundException();
-        } catch (DatabaseException e) {
-            throw new InternalServerErrorException();
-        }
 
         response.setCode(200);
-        response.setBody(result);
+        response.setBody(board.toJson());
     }
 
     public void onCreate(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
@@ -59,9 +56,28 @@ public class BoardHandler {
         final JsonObject json = body.get();
         final JsonObject result;
 
+        final BoardBuilderImpl builder;
+
         try {
-            result = getIssueTracker().createBoard(json);
-        } catch (DatabaseException e) {
+            final String title   = json.get("title").getAsString();
+            final long   groupId = json.get("group").getAsLong();
+
+            GroupImpl group = getAPI().getGroup(groupId);
+            if (group == null)
+                throw new IllegalArgumentException("Invalid group id: " + groupId);
+
+            builder = getAPI().createBoard()
+                    .setTitle(title)
+                    .setGroup(group);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        } catch (Exception e) {
+            throw new BadRequestException("Malformed body");
+        }
+
+        try {
+            result = ((BoardImpl) builder.await()).toJson();
+        } catch (Exception e) {
             throw new InternalServerErrorException();
         }
 
@@ -70,11 +86,22 @@ public class BoardHandler {
     }
 
     public void onDelete(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
-        response.setCode(501);
+        final long boardId = request.getSegmentLong(1);
+        final BoardImpl board = getAPI().getBoard(boardId);
+
+        if (board != null) {
+            try {
+                board.delete().await();
+            } catch (Exception e) {
+                throw new InternalServerErrorException();
+            }
+        }
+
+        response.setCode(204);
     }
 
     public void onEdit(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
-        final long board = request.getSegmentLong(1);
+        final long boardId = request.getSegmentLong(1);
 
         Optional<JsonObject> body = request.optionalBody()
                 .map(JsonElement::getAsJsonObject);
@@ -83,21 +110,42 @@ public class BoardHandler {
             throw new BadRequestException("No content");
 
         final JsonObject json = body.get();
-        final JsonObject result;
+
+        BoardImpl board = getAPI().getBoard(boardId);
+        if (board == null)
+            throw new NotFoundException();
+        final BoardModifierImpl modifier = board.modify();
 
         try {
-            getIssueTracker().patchBoard(board, json);
+            Optional.ofNullable(json.get("title"))
+                    .map(JsonElement::getAsString)
+                    .ifPresent(modifier::setTitle);
 
-            result = getIssueTracker().getBoard(board);
-        } catch (DatabaseException e) {
+            Optional.ofNullable(json.get("group"))
+                    .map(JsonElement::getAsLong)
+                    .ifPresent(groupId -> {
+                        GroupImpl group = getAPI().getGroup(groupId);
+                        if (group == null)
+                            throw new IllegalArgumentException("Invalid group id: " + groupId);
+                        modifier.setGroup(group);
+                    });
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        } catch (Exception e) {
+            throw new BadRequestException("Malformed body");
+        }
+
+        try {
+            board = ((BoardImpl) modifier.await());
+        } catch (Exception e) {
             throw new InternalServerErrorException();
         }
 
         response.setCode(200);
-        response.setBody(result);
+        response.setBody(board.toJson());
     }
 
-    public @NotNull IssueTracker getIssueTracker() {
-        return this.networkHandler.getServer().getIssueTracker();
+    private @NotNull ObeliskImpl getAPI() {
+        return this.networkHandler.getServer().getAPI();
     }
 }
