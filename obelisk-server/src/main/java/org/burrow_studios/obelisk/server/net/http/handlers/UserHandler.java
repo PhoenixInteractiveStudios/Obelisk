@@ -3,8 +3,10 @@ package org.burrow_studios.obelisk.server.net.http.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.server.db.DatabaseException;
-import org.burrow_studios.obelisk.server.db.NoSuchEntryException;
+import org.burrow_studios.obelisk.core.ObeliskImpl;
+import org.burrow_studios.obelisk.core.entities.action.user.UserBuilderImpl;
+import org.burrow_studios.obelisk.core.entities.action.user.UserModifierImpl;
+import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
 import org.burrow_studios.obelisk.server.net.http.Request;
 import org.burrow_studios.obelisk.server.net.http.ResponseBuilder;
@@ -12,10 +14,13 @@ import org.burrow_studios.obelisk.server.net.http.exceptions.APIException;
 import org.burrow_studios.obelisk.server.net.http.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.server.net.http.exceptions.InternalServerErrorException;
 import org.burrow_studios.obelisk.server.net.http.exceptions.NotFoundException;
-import org.burrow_studios.obelisk.server.users.UserService;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.StreamSupport;
 
 public class UserHandler {
     private final @NotNull NetworkHandler networkHandler;
@@ -26,7 +31,8 @@ public class UserHandler {
 
     public void onGetAll(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
         JsonArray json = new JsonArray();
-        getUserService().getUsers().forEach(json::add);
+        for (long id : getAPI().getUsers().getIdsAsImmutaleSet())
+            json.add(id);
 
         response.setCode(200);
         response.setBody(json);
@@ -35,18 +41,12 @@ public class UserHandler {
     public void onGet(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
         final long userId = request.getSegmentLong(1);
 
-        final JsonObject user;
-
-        try {
-            user = getUserService().getUser(userId);
-        } catch (NoSuchEntryException e) {
+        final UserImpl user = getAPI().getUser(userId);
+        if (user == null)
             throw new NotFoundException();
-        } catch (DatabaseException e) {
-            throw new InternalServerErrorException();
-        }
 
         response.setCode(200);
-        response.setBody(user);
+        response.setBody(user.toJson());
     }
 
     public void onCreate(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
@@ -59,9 +59,33 @@ public class UserHandler {
         final JsonObject json = body.get();
         final JsonObject result;
 
+        final UserBuilderImpl builder;
+
         try {
-            result = getUserService().createUser(json);
-        } catch (DatabaseException e) {
+            final String name = json.get("name").getAsString();
+
+            builder = getAPI().createUser()
+                    .setName(name);
+
+            JsonArray discord = json.getAsJsonArray("discord");
+            StreamSupport.stream(discord.spliterator(), false)
+                    .map(JsonElement::getAsLong)
+                    .forEach(builder::addDiscordIds);
+
+            JsonArray minecraft = json.getAsJsonArray("minecraft");
+            StreamSupport.stream(minecraft.spliterator(), false)
+                    .map(JsonElement::getAsString)
+                    .map(UUID::fromString)
+                    .forEach(builder::addMinecraftIds);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        } catch (Exception e) {
+            throw new BadRequestException("Malformed body");
+        }
+
+        try {
+            result = ((UserImpl) builder.await()).toJson();
+        } catch (Exception e) {
             throw new InternalServerErrorException();
         }
 
@@ -70,19 +94,22 @@ public class UserHandler {
     }
 
     public void onDelete(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
-        final long user = request.getSegmentLong(1);
+        final long userId = request.getSegmentLong(1);
+        final UserImpl user = getAPI().getUser(userId);
 
-        try {
-            getUserService().deleteUser(user);
-        } catch (DatabaseException e) {
-            throw new InternalServerErrorException();
+        if (user != null) {
+            try {
+                user.delete().await();
+            } catch (Exception e) {
+                throw new InternalServerErrorException();
+            }
         }
 
         response.setCode(204);
     }
 
     public void onEdit(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
-        long user = request.getSegmentLong(1);
+        final long userId = request.getSegmentLong(1);
 
         Optional<JsonObject> body = request.optionalBody()
                 .map(JsonElement::getAsJsonObject);
@@ -91,21 +118,73 @@ public class UserHandler {
             throw new BadRequestException("No content");
 
         final JsonObject json = body.get();
-        final JsonObject result;
+
+        UserImpl user = getAPI().getUser(userId);
+        if (user == null)
+            throw new NotFoundException();
+        final UserModifierImpl modifier = user.modify();
 
         try {
-            getUserService().patchUser(user, json);
+            Optional.ofNullable(json.get("name"))
+                    .map(JsonElement::getAsString)
+                    .ifPresent(modifier::setName);
 
-            result = getUserService().getUser(user);
-        } catch (DatabaseException e) {
+            final List<Long> discord = user.getDiscordIds();
+            Optional.ofNullable(json.get("discord"))
+                    .map(JsonElement::getAsJsonArray)
+                    .map(elements -> {
+                        List<Long> snowflakes = new ArrayList<>(elements.size());
+                        for (JsonElement element : elements)
+                            snowflakes.add(element.getAsLong());
+                        return snowflakes;
+                    })
+                    .ifPresent(elements -> {
+                        // add new ids
+                        for (long element : elements)
+                            if (!discord.contains(element))
+                                modifier.addDiscordIds(element);
+                        // remove old ids
+                        for (long element : discord)
+                            if (!elements.contains(element))
+                                modifier.removeDiscordIds(element);
+                    });
+
+            final List<UUID> minecraft = user.getMinecraftIds();
+            Optional.ofNullable(json.get("minecraft"))
+                    .map(JsonElement::getAsJsonArray)
+                    .map(elements -> {
+                        List<UUID> uuids = new ArrayList<>(elements.size());
+                        for (JsonElement element : elements)
+                            uuids.add(UUID.fromString(element.getAsString()));
+                        return uuids;
+                    })
+                    .ifPresent(elements -> {
+                        // add new ids
+                        for (UUID element : elements)
+                            if (!minecraft.contains(element))
+                                modifier.addMinecraftIds(element);
+                        // remove old ids
+                        for (UUID element : minecraft)
+                            if (!elements.contains(element))
+                                modifier.removeMinecraftIds(element);
+                    });
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException(e.getMessage());
+        } catch (Exception e) {
+            throw new BadRequestException("Malformed body");
+        }
+
+        try {
+            user = ((UserImpl) modifier.await());
+        } catch (Exception e) {
             throw new InternalServerErrorException();
         }
 
         response.setCode(200);
-        response.setBody(result);
+        response.setBody(user.toJson());
     }
 
-    private @NotNull UserService getUserService() {
-        return this.networkHandler.getServer().getUserService();
+    private @NotNull ObeliskImpl getAPI() {
+        return this.networkHandler.getServer().getAPI();
     }
 }
