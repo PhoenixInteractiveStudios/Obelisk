@@ -75,6 +75,15 @@ public class SessionHandler {
         response.setCode(204);
     }
 
+    public void onGetSocket(@NotNull Request request, @NotNull ResponseBuilder response) throws APIException {
+        JsonObject body = new JsonObject();
+        body.addProperty("host", "api.burrow-studios.org");
+        body.addProperty("port", 8346);
+
+        response.setCode(200);
+        response.setBody(body);
+    }
+
     private @NotNull Authenticator getAuthenticator() {
         return this.networkHandler.getServer().getAuthenticator();
     }

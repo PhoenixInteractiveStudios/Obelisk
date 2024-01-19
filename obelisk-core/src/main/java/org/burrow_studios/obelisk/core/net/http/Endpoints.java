@@ -7,7 +7,7 @@ public final class Endpoints {
     public static final Endpoint LOGOUT     = new Endpoint(Method.DELETE, "/session/:long/:long", AuthLevel.SESSION);
     public static final Endpoint LOGOUT_ALL = new Endpoint(Method.DELETE, "/session/:long"      , AuthLevel.IDENTITY);
 
-    public static final Endpoint GET_SOCKET = new Endpoint(Method.GET, "/socket", AuthLevel.SESSION);
+    public static final Endpoint GET_SOCKET = new Endpoint(Method.GET, "/socket", AuthLevel.NONE);
 
     public static final class Group {
         public static final Endpoint GET_ALL    = new Endpoint(Method.GET   , "/groups"                    , AuthLevel.SESSION);

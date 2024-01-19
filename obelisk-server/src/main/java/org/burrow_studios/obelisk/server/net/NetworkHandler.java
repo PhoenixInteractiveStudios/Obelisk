@@ -34,6 +34,7 @@ public class NetworkHandler {
                 .addEndpoint(Endpoints.LOGIN     , sessionHandler::onLogin)
                 .addEndpoint(Endpoints.LOGOUT    , sessionHandler::onLogout)
                 .addEndpoint(Endpoints.LOGOUT_ALL, sessionHandler::onLogoutAll)
+                .addEndpoint(Endpoints.GET_SOCKET, sessionHandler::onGetSocket)
                 // Resource: Group
                 .addEndpoint(Endpoints.Group.GET_ALL   , groupHandler::onGetAll)
                 .addEndpoint(Endpoints.Group.GET       , groupHandler::onGet)
