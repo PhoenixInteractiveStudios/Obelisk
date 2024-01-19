@@ -1,6 +1,5 @@
-package org.burrow_studios.obelisk.server.net.http;
+package org.burrow_studios.obelisk.core.net.http;
 
-import org.burrow_studios.obelisk.core.net.http.Method;
 import org.burrow_studios.obelisk.util.function.ExceptionalFunction;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,8 +22,24 @@ public final class Endpoint {
         this.segments = buildSegments(path);
     }
 
+    public @NotNull EndpointBuilder builder() {
+        return new EndpointBuilder(this);
+    }
+
     public @NotNull Method getMethod() {
         return this.method;
+    }
+
+    @NotNull String compile(String[] params) {
+        final StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < segments.length; i++) {
+            builder.append("/");
+            if (segments[i] instanceof VanillaSegment vSeg)
+                builder.append(vSeg.segment());
+            if (segments[i] instanceof ParameterSegment<?>)
+                builder.append(params[i]);
+        }
+        return builder.toString();
     }
 
     public boolean isPrivileged() {
@@ -33,6 +48,17 @@ public final class Endpoint {
 
     public @NotNull AuthLevel getPrivilege() {
         return privilege;
+    }
+
+    public int getSegmentLength() {
+        return this.segments.length;
+    }
+
+    public int getNextParameterIndex(int start) {
+        for (int i = start; i < this.segments.length; i++)
+            if (segments[i] instanceof ParameterSegment<?>)
+                return i;
+        return segments.length;
     }
 
     public boolean matchPath(@NotNull String[] segments) {

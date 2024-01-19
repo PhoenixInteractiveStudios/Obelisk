@@ -6,7 +6,7 @@ import org.burrow_studios.obelisk.api.action.Modifier;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
-import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
+import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
@@ -17,10 +17,10 @@ public abstract class ModifierImpl<T extends Turtle, I extends TurtleImpl> exten
 
     public ModifierImpl(
             @NotNull I entity,
-            @NotNull CompiledRoute route,
+            @NotNull CompiledEndpoint endpoint,
             @NotNull BiConsumer<EntityData, I> updater
     ) {
-        super(entity.getAPI(), route, (request, response) -> {
+        super(entity.getAPI(), endpoint, (request, response) -> {
             // TODO: handle errors
             final JsonObject content = response.getContent().getAsJsonObject();
             final EntityData updateData = new EntityData(content);

@@ -5,7 +5,7 @@ import org.burrow_studios.obelisk.server.auth.Authenticator;
 import org.burrow_studios.obelisk.server.auth.crypto.TokenManager;
 import org.burrow_studios.obelisk.server.db.DatabaseException;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
-import org.burrow_studios.obelisk.server.net.http.AuthLevel;
+import org.burrow_studios.obelisk.core.net.http.AuthLevel;
 import org.burrow_studios.obelisk.server.net.http.Request;
 import org.burrow_studios.obelisk.server.net.http.ResponseBuilder;
 import org.burrow_studios.obelisk.server.net.http.exceptions.APIException;

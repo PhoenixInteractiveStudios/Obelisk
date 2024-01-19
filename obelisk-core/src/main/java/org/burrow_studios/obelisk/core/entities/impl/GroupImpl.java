@@ -11,7 +11,7 @@ import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.group.GroupModifierImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
-import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
@@ -72,7 +72,7 @@ public final class GroupImpl extends TurtleImpl implements Group {
                 this.getAPI(),
                 Group.class,
                 this.getId(),
-                Route.Group.DELETE.builder()
+                Endpoints.Group.DELETE.builder()
                         .withArg(getId())
                         .compile()
         );
@@ -100,7 +100,7 @@ public final class GroupImpl extends TurtleImpl implements Group {
     @Override
     public @NotNull ActionImpl<Group> addMember(@NotNull User user) {
         return new ActionImpl<>(this.api, this,
-                Route.Group.ADD_MEMBER.builder()
+                Endpoints.Group.ADD_MEMBER.builder()
                         .withArg(getId())
                         .withArg(user.getId())
                         .compile()
@@ -110,7 +110,7 @@ public final class GroupImpl extends TurtleImpl implements Group {
     @Override
     public @NotNull ActionImpl<Group> removeMember(@NotNull User user) {
         return new ActionImpl<>(this.api, this,
-                Route.Group.DEL_MEMBER.builder()
+                Endpoints.Group.DEL_MEMBER.builder()
                         .withArg(getId())
                         .withArg(user.getId())
                         .compile()

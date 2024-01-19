@@ -9,7 +9,7 @@ import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.board.tag.TagModifierImpl;
 import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
-import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public final class TagImpl extends TurtleImpl implements Tag {
@@ -62,7 +62,7 @@ public final class TagImpl extends TurtleImpl implements Tag {
                 this.getAPI(),
                 Tag.class,
                 this.getId(),
-                Route.Board.Tag.DELETE.builder()
+                Endpoints.Board.Tag.DELETE.builder()
                         .withArg(getBoard().getId())
                         .withArg(getId())
                         .compile()

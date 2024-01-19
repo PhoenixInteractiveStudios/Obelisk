@@ -9,7 +9,7 @@ import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.BuilderImpl;
 import org.burrow_studios.obelisk.core.entities.checks.GroupChecks;
 import org.burrow_studios.obelisk.core.entities.impl.GroupImpl;
-import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public class GroupBuilderImpl extends BuilderImpl<Group> implements GroupBuilder {
@@ -17,7 +17,7 @@ public class GroupBuilderImpl extends BuilderImpl<Group> implements GroupBuilder
         super(
                 api,
                 Group.class,
-                Route.Group.CREATE.builder().compile(),
+                Endpoints.Group.CREATE.builder().compile(),
                 GroupImpl::new
         );
     }

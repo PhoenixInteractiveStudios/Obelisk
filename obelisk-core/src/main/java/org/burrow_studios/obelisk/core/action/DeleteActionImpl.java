@@ -3,7 +3,7 @@ package org.burrow_studios.obelisk.core.action;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
-import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
+import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
 import org.jetbrains.annotations.NotNull;
 
 public final class DeleteActionImpl<T extends Turtle> extends ActionImpl<Void> implements DeleteAction<T> {
@@ -14,9 +14,9 @@ public final class DeleteActionImpl<T extends Turtle> extends ActionImpl<Void> i
             @NotNull ObeliskImpl api,
             @NotNull Class<T> type,
             long entityId,
-            @NotNull CompiledRoute route
+            @NotNull CompiledEndpoint endpoint
     ) {
-        super(api, route, (request, response) -> {
+        super(api, endpoint, (request, response) -> {
             // TODO: throw exception if response is an error
             return null;
         });

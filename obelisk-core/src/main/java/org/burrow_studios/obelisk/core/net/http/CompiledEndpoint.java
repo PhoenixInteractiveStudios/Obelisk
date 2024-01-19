@@ -4,12 +4,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 
-public record CompiledRoute(
-        @NotNull Route route,
+public record CompiledEndpoint(
+        @NotNull Endpoint endpoint,
         @NotNull String uri
 ) {
     public @NotNull Method method() {
-        return route().getMethod();
+        return endpoint().getMethod();
     }
 
     public @NotNull URI asURI() {

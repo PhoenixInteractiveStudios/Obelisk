@@ -12,7 +12,7 @@ import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.ticket.TicketModifierImpl;
-import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,7 +88,7 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
                 this.getAPI(),
                 Ticket.class,
                 this.getId(),
-                Route.Ticket.DELETE.builder()
+                Endpoints.Ticket.DELETE.builder()
                         .withArg(getId())
                         .compile()
         );
@@ -129,7 +129,7 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
     @Override
     public @NotNull ActionImpl<Ticket> addUser(@NotNull User user) {
         return new ActionImpl<>(this.api, this,
-                Route.Ticket.ADD_USER.builder()
+                Endpoints.Ticket.ADD_USER.builder()
                         .withArg(getId())
                         .withArg(user.getId())
                         .compile()
@@ -139,7 +139,7 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
     @Override
     public @NotNull ActionImpl<Ticket> removeUser(@NotNull User user) {
         return new ActionImpl<>(this.api, this,
-                Route.Ticket.DEL_USER.builder()
+                Endpoints.Ticket.DEL_USER.builder()
                         .withArg(getId())
                         .withArg(user.getId())
                         .compile()

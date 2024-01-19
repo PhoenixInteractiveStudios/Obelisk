@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.server.net.http;
+package org.burrow_studios.obelisk.core.net.http;
 
 public enum AuthLevel {
     IDENTITY,

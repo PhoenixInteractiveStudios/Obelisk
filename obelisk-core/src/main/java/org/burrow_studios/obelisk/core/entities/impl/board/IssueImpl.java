@@ -15,7 +15,7 @@ import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.board.issue.IssueModifierImpl;
 import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
 import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
-import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
@@ -110,7 +110,7 @@ public final class IssueImpl extends TurtleImpl implements Issue {
                 this.getAPI(),
                 Issue.class,
                 this.getId(),
-                Route.Board.Issue.DELETE.builder()
+                Endpoints.Board.Issue.DELETE.builder()
                         .withArg(getBoard().getId())
                         .withArg(getId())
                         .compile()
@@ -135,7 +135,7 @@ public final class IssueImpl extends TurtleImpl implements Issue {
     @Override
     public @NotNull ActionImpl<Issue> addAssignee(@NotNull User user) {
         return new ActionImpl<>(this.api, this,
-                Route.Board.Issue.ADD_ASSIGNEE.builder()
+                Endpoints.Board.Issue.ADD_ASSIGNEE.builder()
                         .withArg(getBoard().getId())
                         .withArg(getId())
                         .withArg(user.getId())
@@ -146,7 +146,7 @@ public final class IssueImpl extends TurtleImpl implements Issue {
     @Override
     public @NotNull ActionImpl<Issue> removeAssignee(@NotNull User user) {
         return new ActionImpl<>(this.api, this,
-                Route.Board.Issue.DEL_ASSIGNEE.builder()
+                Endpoints.Board.Issue.DEL_ASSIGNEE.builder()
                         .withArg(getBoard().getId())
                         .withArg(getId())
                         .withArg(user.getId())
@@ -180,7 +180,7 @@ public final class IssueImpl extends TurtleImpl implements Issue {
     @Override
     public @NotNull ActionImpl<Issue> addTag(@NotNull Tag tag) {
         return new ActionImpl<>(this.api, this,
-                Route.Board.Issue.ADD_TAG.builder()
+                Endpoints.Board.Issue.ADD_TAG.builder()
                         .withArg(getBoard().getId())
                         .withArg(getId())
                         .withArg(tag.getId())
@@ -191,7 +191,7 @@ public final class IssueImpl extends TurtleImpl implements Issue {
     @Override
     public @NotNull ActionImpl<Issue> removeTag(@NotNull Tag tag) {
         return new ActionImpl<>(this.api, this,
-                Route.Board.Issue.DEL_TAG.builder()
+                Endpoints.Board.Issue.DEL_TAG.builder()
                         .withArg(getBoard().getId())
                         .withArg(getId())
                         .withArg(tag.getId())

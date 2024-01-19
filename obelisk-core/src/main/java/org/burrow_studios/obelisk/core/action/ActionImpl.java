@@ -5,7 +5,7 @@ import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.source.Request;
 import org.burrow_studios.obelisk.core.source.Response;
-import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
+import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
 import org.burrow_studios.obelisk.core.source.DataProvider;
 import org.burrow_studios.obelisk.util.function.ExceptionalBiFunction;
 import org.jetbrains.annotations.NotNull;
@@ -18,25 +18,25 @@ import java.util.concurrent.TimeoutException;
 
 public class ActionImpl<T> implements Action<T> {
     protected final @NotNull ObeliskImpl api;
-    private final @NotNull CompiledRoute route;
+    private final @NotNull CompiledEndpoint endpoint;
     private final @NotNull ExceptionalBiFunction<Request, Response, T, ? extends Exception> mapper;
 
     public ActionImpl(
             @NotNull ObeliskImpl api,
-            @NotNull CompiledRoute route,
+            @NotNull CompiledEndpoint endpoint,
             @NotNull ExceptionalBiFunction<Request, Response, T, ? extends Exception> mapper
     ) {
         this.api = api;
-        this.route = route;
+        this.endpoint = endpoint;
         this.mapper = mapper;
     }
 
     public ActionImpl(
             @NotNull ObeliskImpl api,
             @NotNull T returnValue,
-            @NotNull CompiledRoute route
+            @NotNull CompiledEndpoint endpoint
     ) {
-        this(api, route, (request, response) -> returnValue);
+        this(api, endpoint, (request, response) -> returnValue);
     }
 
     @Override
@@ -44,8 +44,8 @@ public class ActionImpl<T> implements Action<T> {
         return this.api;
     }
 
-    public final @NotNull CompiledRoute getRoute() {
-        return route;
+    public final @NotNull CompiledEndpoint getEndpoint() {
+        return endpoint;
     }
 
     public @Nullable JsonElement getContent() {

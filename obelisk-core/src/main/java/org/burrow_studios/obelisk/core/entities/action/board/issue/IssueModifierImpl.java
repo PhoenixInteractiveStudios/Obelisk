@@ -7,14 +7,14 @@ import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.board.IssueChecks;
 import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
-import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public class IssueModifierImpl extends ModifierImpl<Issue, IssueImpl> implements IssueModifier {
     public IssueModifierImpl(@NotNull IssueImpl issue) {
         super(
                 issue,
-                Route.Board.Issue.EDIT.builder()
+                Endpoints.Board.Issue.EDIT.builder()
                         .withArg(issue.getBoard().getId())
                         .withArg(issue.getId())
                         .compile(),

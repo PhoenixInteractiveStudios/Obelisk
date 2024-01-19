@@ -8,14 +8,14 @@ import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.board.BoardChecks;
 import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
-import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public class BoardModifierImpl extends ModifierImpl<Board, BoardImpl> implements BoardModifier {
     public BoardModifierImpl(@NotNull BoardImpl board) {
         super(
                 board,
-                Route.Board.EDIT.builder()
+                Endpoints.Board.EDIT.builder()
                         .withArg(board.getId())
                         .compile(),
                 EntityUpdater::updateBoard

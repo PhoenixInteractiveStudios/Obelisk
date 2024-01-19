@@ -9,7 +9,7 @@ import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.TicketChecks;
 import org.burrow_studios.obelisk.core.entities.impl.TicketImpl;
-import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +17,7 @@ public class TicketModifierImpl extends ModifierImpl<Ticket, TicketImpl> impleme
     public TicketModifierImpl(@NotNull TicketImpl ticket) {
         super(
                 ticket,
-                Route.Ticket.EDIT.builder()
+                Endpoints.Ticket.EDIT.builder()
                         .withArg(ticket.getId())
                         .compile(),
                 EntityUpdater::updateTicket

@@ -11,7 +11,7 @@ import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.project.ProjectModifierImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
-import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
@@ -92,7 +92,7 @@ public final class ProjectImpl extends TurtleImpl implements Project {
                 this.getAPI(),
                 Project.class,
                 this.getId(),
-                Route.Project.DELETE.builder()
+                Endpoints.Project.DELETE.builder()
                         .withArg(getId())
                         .compile()
         );
@@ -133,7 +133,7 @@ public final class ProjectImpl extends TurtleImpl implements Project {
     @Override
     public @NotNull ActionImpl<Project> addMember(@NotNull User user) {
         return new ActionImpl<>(this.api, this,
-                Route.Project.ADD_MEMBER.builder()
+                Endpoints.Project.ADD_MEMBER.builder()
                         .withArg(getId())
                         .withArg(user.getId())
                         .compile()
@@ -143,7 +143,7 @@ public final class ProjectImpl extends TurtleImpl implements Project {
     @Override
     public @NotNull ActionImpl<Project> removeMember(@NotNull User user) {
         return new ActionImpl<>(this.api, this,
-                Route.Project.DEL_MEMBER.builder()
+                Endpoints.Project.DEL_MEMBER.builder()
                         .withArg(getId())
                         .withArg(user.getId())
                         .compile()

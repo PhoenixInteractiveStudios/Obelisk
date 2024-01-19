@@ -2,7 +2,7 @@ package org.burrow_studios.obelisk.core.source;
 
 import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.core.net.TimeoutContext;
-import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
+import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +12,7 @@ public final class Request {
     private final @NotNull DataProvider provider;
     private final long id;
 
-    private final @NotNull CompiledRoute route;
+    private final @NotNull CompiledEndpoint endpoint;
     private final @Nullable JsonElement content;
     private final @NotNull TimeoutContext timeout;
 
@@ -21,14 +21,14 @@ public final class Request {
     public Request(
             @NotNull DataProvider provider,
             long id,
-            @NotNull CompiledRoute route,
+            @NotNull CompiledEndpoint endpoint,
             @Nullable JsonElement content,
             @NotNull TimeoutContext timeout
     ) {
         this.provider = provider;
         this.id = id;
 
-        this.route = route;
+        this.endpoint = endpoint;
         this.content = content;
         this.timeout = timeout;
 
@@ -43,8 +43,8 @@ public final class Request {
         return id;
     }
 
-    public @NotNull CompiledRoute getRoute() {
-        return route;
+    public @NotNull CompiledEndpoint getEndpoint() {
+        return endpoint;
     }
 
     public @Nullable JsonElement getContent() {

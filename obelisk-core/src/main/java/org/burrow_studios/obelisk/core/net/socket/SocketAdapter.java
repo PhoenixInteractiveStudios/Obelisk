@@ -130,7 +130,7 @@ public class SocketAdapter implements EventProvider {
     }
 
     private void onAscend(JsonObject json) {
-        // re-route receiver
+        // re-endpoint receiver
         this.socketIO.onReceive(this::receive);
     }
 

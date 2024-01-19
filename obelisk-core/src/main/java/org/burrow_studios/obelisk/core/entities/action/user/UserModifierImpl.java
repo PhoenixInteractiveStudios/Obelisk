@@ -8,7 +8,7 @@ import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.UserChecks;
 import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
-import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -17,7 +17,7 @@ public class UserModifierImpl extends ModifierImpl<User, UserImpl> implements Us
     public UserModifierImpl(@NotNull UserImpl user) {
         super(
                 user,
-                Route.User.EDIT.builder()
+                Endpoints.User.EDIT.builder()
                         .withArg(user.getId())
                         .compile(),
                 EntityUpdater::updateUser

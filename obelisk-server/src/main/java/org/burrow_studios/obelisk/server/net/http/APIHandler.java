@@ -5,6 +5,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import org.burrow_studios.obelisk.core.net.http.Endpoint;
 import org.burrow_studios.obelisk.core.net.http.Method;
 import org.burrow_studios.obelisk.server.auth.crypto.TokenManager;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
@@ -31,10 +32,6 @@ public abstract class APIHandler {
     public APIHandler(@NotNull NetworkHandler networkHandler) {
         this.networkHandler = networkHandler;
         this.handlers = new ConcurrentHashMap<>();
-    }
-
-    public final @NotNull APIHandler addEndpoint(@NotNull Method method, @NotNull String path, @NotNull AuthLevel privilege, @NotNull EndpointHandler handler) {
-        return this.addEndpoint(new Endpoint(method, path, privilege), handler);
     }
 
     public final @NotNull APIHandler addEndpoint(@NotNull Endpoint endpoint, @NotNull EndpointHandler handler) {

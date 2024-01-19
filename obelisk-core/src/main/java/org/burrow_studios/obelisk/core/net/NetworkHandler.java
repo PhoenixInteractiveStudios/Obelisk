@@ -9,9 +9,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
-import org.burrow_studios.obelisk.core.net.http.CompiledRoute;
+import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
 import org.burrow_studios.obelisk.core.net.http.Method;
-import org.burrow_studios.obelisk.core.net.http.Route;
+import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.burrow_studios.obelisk.core.net.socket.NetworkException;
 import org.burrow_studios.obelisk.core.net.socket.SocketAdapter;
 import org.burrow_studios.obelisk.core.source.DataProvider;
@@ -71,11 +71,11 @@ public class NetworkHandler implements DataProvider {
             if (sessionId == null)
                 return CompletableFuture.completedFuture(null);
 
-            final CompiledRoute route = Route.LOGOUT.builder()
+            final CompiledEndpoint endpoint = Endpoints.LOGOUT.builder()
                     .withArg(sub)
                     .withArg(sessionId)
                     .compile();
-            final Request request = new Request(this, id, route, null, timeout);
+            final Request request = new Request(this, id, endpoint, null, timeout);
 
             this.send(request);
 
@@ -93,9 +93,9 @@ public class NetworkHandler implements DataProvider {
 
         final long sub = this.api.getSubjectId();
         final long id  = this.requestIdGenerator.newId();
-        final CompiledRoute  route   = Route.LOGIN.builder().withArg(sub).compile();
-        final TimeoutContext timeout = TimeoutContext.DEFAULT;
-        final Request request = new Request(this, id, route, null, timeout);
+        final CompiledEndpoint endpoint = Endpoints.LOGIN.builder().withArg(sub).compile();
+        final TimeoutContext   timeout  = TimeoutContext.DEFAULT;
+        final Request request = new Request(this, id, endpoint, null, timeout);
 
         this.send(request);
 
@@ -118,9 +118,9 @@ public class NetworkHandler implements DataProvider {
 
     private void connectSocketAdapter() throws NetworkException {
         final long id = this.requestIdGenerator.newId();
-        final CompiledRoute route = Route.GET_SOCKET.builder().compile();
+        final CompiledEndpoint endpoint = Endpoints.GET_SOCKET.builder().compile();
         final TimeoutContext timeout = TimeoutContext.DEFAULT;
-        final Request request = new Request(this, id, route, null, timeout);
+        final Request request = new Request(this, id, endpoint, null, timeout);
 
         this.send(request);
 
@@ -162,7 +162,7 @@ public class NetworkHandler implements DataProvider {
         final Request request = new Request(
                 this,
                 id,
-                action.getRoute(),
+                action.getEndpoint(),
                 action.getContent(),
                 TimeoutContext.DEFAULT
         );
@@ -179,13 +179,13 @@ public class NetworkHandler implements DataProvider {
 
         final HttpRequest.Builder builder = HttpRequest.newBuilder();
 
-        builder.uri(request.getRoute().asURI());
+        builder.uri(request.getEndpoint().asURI());
 
         builder.timeout(request.getTimeout().asDuration());
 
         builder.header("Authorization", "Bearer " + api.getToken());
 
-        final Method method = request.getRoute().method();
+        final Method method = request.getEndpoint().method();
         if (content != null) {
             builder.method(method.name(), HttpRequest.BodyPublishers.ofString(gson.toJson(content)));
             builder.header("Content-Type", "application/json");

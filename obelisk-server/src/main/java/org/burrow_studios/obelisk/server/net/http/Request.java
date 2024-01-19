@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.server.net.http;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.JsonElement;
+import org.burrow_studios.obelisk.core.net.http.Endpoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
