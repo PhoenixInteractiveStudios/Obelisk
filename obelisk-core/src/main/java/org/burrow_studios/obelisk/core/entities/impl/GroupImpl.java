@@ -43,8 +43,6 @@ public final class GroupImpl extends TurtleImpl implements Group {
         this.position = json.get("position").getAsInt();
 
         this.members = buildDelegatingCacheView(json, "members", api.getUsers(), UserImpl.class);
-
-        api.getGroups().add(this);
     }
 
     @Override

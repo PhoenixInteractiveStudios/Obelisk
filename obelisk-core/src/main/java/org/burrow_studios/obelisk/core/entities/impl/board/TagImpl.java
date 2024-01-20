@@ -39,8 +39,6 @@ public final class TagImpl extends TurtleImpl implements Tag {
         if (board == null)
             throw new IllegalStateException("The board id could not be mapped to a cached board");
         this.board = board;
-
-        board.getAvailableTags().add(this);
     }
 
     @Override

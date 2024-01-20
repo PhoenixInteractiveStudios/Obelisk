@@ -44,8 +44,6 @@ public final class UserImpl extends TurtleImpl implements User {
 
         this.discordIds   = buildList(json, "discord", JsonElement::getAsLong);
         this.minecraftIds = buildList(json, "minecraft", e -> UUID.fromString(e.getAsString()));
-
-        api.getUsers().add(this);
     }
 
     @Override

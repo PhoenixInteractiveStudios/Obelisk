@@ -55,8 +55,6 @@ public final class BoardImpl extends TurtleImpl implements Board {
 
         this.availableTags = buildDelegatingCacheView(json, "tags", api.getTags(), TagImpl.class);
         this.issues        = buildDelegatingCacheView(json, "issues", api.getIssues(), IssueImpl.class);
-
-        api.getBoards().add(this);
     }
 
     @Override

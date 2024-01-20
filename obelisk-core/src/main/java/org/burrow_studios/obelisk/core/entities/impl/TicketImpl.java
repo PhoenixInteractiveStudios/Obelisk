@@ -54,8 +54,6 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
 
         this.tags = buildList(json, "tags", JsonElement::getAsString);
         this.users = buildDelegatingCacheView(json, "users", api.getUsers(), UserImpl.class);
-
-        api.getTickets().add(this);
     }
 
     @Override

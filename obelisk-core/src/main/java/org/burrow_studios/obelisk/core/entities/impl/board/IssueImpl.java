@@ -73,8 +73,6 @@ public final class IssueImpl extends TurtleImpl implements Issue {
 
         final TurtleCache<TagImpl> availableTags = api.getTags();
         this.tags = buildDelegatingCacheView(json, "tags", availableTags, TagImpl.class);
-
-        board.getIssues().add(this);
     }
 
     @Override

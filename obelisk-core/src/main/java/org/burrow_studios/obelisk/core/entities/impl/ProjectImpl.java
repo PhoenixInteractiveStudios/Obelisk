@@ -51,8 +51,6 @@ public final class ProjectImpl extends TurtleImpl implements Project {
         this.state = Project.State.valueOf(stateStr);
 
         this.members = buildDelegatingCacheView(json, "members", api.getUsers(), UserImpl.class);
-
-        api.getProjects().add(this);
     }
 
     @Override
