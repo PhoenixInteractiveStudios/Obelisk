@@ -9,6 +9,7 @@ import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.auth.crypto.TokenManager;
 import org.burrow_studios.obelisk.server.auth.db.AuthDB;
 import org.burrow_studios.obelisk.server.auth.db.SQLiteAuthDB;
+import org.burrow_studios.obelisk.util.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -22,6 +23,8 @@ public class Authenticator implements DataProvider {
     private final @NotNull ObeliskServer server;
     private final @NotNull AuthDB database;
     private final @NotNull TokenManager tokenManager;
+
+    private final TurtleGenerator turtleGenerator = TurtleGenerator.get(Authenticator.class.getSimpleName());
 
     public Authenticator(@NotNull ObeliskServer server) throws IOException {
         this.server = server;
@@ -56,7 +59,6 @@ public class Authenticator implements DataProvider {
 
     @Override
     public @NotNull Request submitRequest(@NotNull ActionImpl<?> action) {
-        // TODO
-        return null;
+        throw new UnsupportedOperationException("Authenticator requests originating form the server are not supported");
     }
 }
