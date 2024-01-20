@@ -1,5 +1,9 @@
 package org.burrow_studios.obelisk.server.auth;
 
+import org.burrow_studios.obelisk.core.ObeliskImpl;
+import org.burrow_studios.obelisk.core.action.ActionImpl;
+import org.burrow_studios.obelisk.core.source.DataProvider;
+import org.burrow_studios.obelisk.core.source.Request;
 import org.burrow_studios.obelisk.server.Main;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.auth.crypto.TokenManager;
@@ -12,7 +16,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Authenticator {
+public class Authenticator implements DataProvider {
     private static final Logger LOG = Logger.getLogger(Authenticator.class.getSimpleName());
 
     private final @NotNull ObeliskServer server;
@@ -43,5 +47,16 @@ public class Authenticator {
 
     public @NotNull TokenManager getTokenManager() {
         return this.tokenManager;
+    }
+
+    @Override
+    public @NotNull ObeliskImpl getAPI() {
+        return this.server.getAPI();
+    }
+
+    @Override
+    public @NotNull Request submitRequest(@NotNull ActionImpl<?> action) {
+        // TODO
+        return null;
     }
 }
