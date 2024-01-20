@@ -26,4 +26,6 @@ public interface TicketDB {
     void addTicketUser(long ticket, long user) throws DatabaseException;
 
     void removeTicketUser(long ticket, long user) throws DatabaseException;
+
+    void deleteTicket(long id) throws DatabaseException;
 }

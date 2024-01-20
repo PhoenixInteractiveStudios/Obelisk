@@ -26,4 +26,6 @@ public interface ProjectDB {
     void addProjectMember(long project, long user) throws DatabaseException;
 
     void removeProjectMember(long project, long user) throws DatabaseException;
+
+    void deleteProject(long id) throws DatabaseException;
 }

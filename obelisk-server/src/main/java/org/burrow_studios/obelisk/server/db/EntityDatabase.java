@@ -183,7 +183,7 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
 
     @Override
     public void deleteGroup(long id) throws DatabaseException {
-        // not implemented
+        // TODO
     }
 
     // PROJECTS
@@ -344,6 +344,11 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
         }
     }
 
+    @Override
+    public void deleteProject(long id) throws DatabaseException {
+        // TODO
+    }
+
     // TICKETS
 
     @Override
@@ -497,6 +502,11 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
         }
     }
 
+    @Override
+    public void deleteTicket(long id) throws DatabaseException {
+        // TODO
+    }
+
     // USERS
 
     @Override
@@ -638,7 +648,7 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
 
     @Override
     public void deleteUser(long id) throws DatabaseException {
-        // not implemented
+        // TODO
     }
 
     // BOARDS
@@ -714,6 +724,11 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
+    }
+
+    @Override
+    public void deleteBoard(long id) throws DatabaseException {
+        // TODO
     }
 
     // ISSUES
@@ -848,6 +863,11 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
         }
     }
 
+    @Override
+    public void deleteIssue(long board, long is) throws DatabaseException {
+        // TODO
+    }
+
     // TAGS
 
     @Override
@@ -911,5 +931,10 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
+    }
+
+    @Override
+    public void deleteTag(long board, long id) throws DatabaseException {
+        // TODO
     }
 }

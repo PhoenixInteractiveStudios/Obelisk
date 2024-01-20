@@ -18,6 +18,8 @@ public interface BoardDB {
 
     void updateBoardGroup(long board, long group) throws DatabaseException;
 
+    void deleteBoard(long id) throws DatabaseException;
+
     // ISSUES
 
     @NotNull Set<Long> getIssueIds(long board) throws DatabaseException;
@@ -38,6 +40,8 @@ public interface BoardDB {
 
     void removeIssueTag(long board, long id, long tag) throws DatabaseException;
 
+    void deleteIssue(long board, long is) throws DatabaseException;
+
     // TAGS
 
     @NotNull Set<Long> getTagIds(long board) throws DatabaseException;
@@ -47,4 +51,6 @@ public interface BoardDB {
     void createTag(long board, long id, @NotNull String name) throws DatabaseException;
 
     void updateTagTitle(long board, long id, @NotNull String name) throws DatabaseException;
+
+    void deleteTag(long board, long id) throws DatabaseException;
 }
