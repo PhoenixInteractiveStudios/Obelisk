@@ -1,5 +1,12 @@
 package org.burrow_studios.obelisk.core.net.http;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 public final class Endpoints {
     private Endpoints() { }
 
@@ -72,6 +79,43 @@ public final class Endpoints {
             public static final Endpoint DEL_TAG      = new Endpoint(Method.DELETE, "/boards/:long/issues/:long/tags/:long"     , AuthLevel.SESSION);
             public static final Endpoint DELETE       = new Endpoint(Method.DELETE, "/boards/:long/issues/:long"                , AuthLevel.SESSION);
             public static final Endpoint EDIT         = new Endpoint(Method.PATCH , "/boards/:long/issues/:long"                , AuthLevel.SESSION);
+        }
+    }
+
+    public static Endpoint[] getAuthEndpoints() {
+        return new Endpoint[]{ LOGIN, LOGOUT, LOGOUT_ALL, GET_SOCKET };
+    }
+
+    public static Endpoint[] getEntityEndpoints() {
+        return Stream.of(
+                        getEndpoints(Group.class),
+                        getEndpoints(Project.class),
+                        getEndpoints(Ticket.class),
+                        getEndpoints(User.class),
+                        getEndpoints(Board.class),
+                        getEndpoints(Board.Tag.class),
+                        getEndpoints(Board.Issue.class)
+                )
+                .mapMulti(Stream::forEach)
+                .map(Endpoint.class::cast)
+                .toArray(Endpoint[]::new);
+    }
+
+    private static Stream<Endpoint> getEndpoints(@NotNull Class<?> cls) {
+        return Arrays.stream(cls.getFields())
+                .filter(field -> Modifier.isPublic(field.getModifiers()))
+                .filter(field -> Modifier.isStatic(field.getModifiers()))
+                .filter(field -> Modifier.isFinal(field.getModifiers()))
+                .filter(field -> field.getType().equals(Endpoint.class))
+                .map(Endpoints::getStaticFieldValue)
+                .map(Endpoint.class::cast);
+    }
+
+    private static Object getStaticFieldValue(@NotNull Field field) {
+        try {
+            return field.get(null);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 }

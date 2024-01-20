@@ -6,6 +6,7 @@ import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public final class Request {
@@ -51,11 +52,19 @@ public final class Request {
         return content;
     }
 
+    public @NotNull Optional<JsonElement> optionalContent() {
+        return Optional.ofNullable(this.getContent());
+    }
+
     public @NotNull TimeoutContext getTimeout() {
         return timeout;
     }
 
     public @NotNull CompletableFuture<Response> getFuture() {
         return future;
+    }
+
+    public @NotNull Response respond(int code, @Nullable JsonElement content) {
+        return new Response(provider, id, code, content);
     }
 }

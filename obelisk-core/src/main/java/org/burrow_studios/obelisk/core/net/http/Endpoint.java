@@ -30,7 +30,7 @@ public final class Endpoint {
         return this.method;
     }
 
-    @NotNull String compile(String[] params) {
+    @NotNull String compile(Object[] params) {
         final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < segments.length; i++) {
             builder.append("/");
@@ -69,6 +69,17 @@ public final class Endpoint {
                 return false;
 
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getParameter(@NotNull String str, int i) {
+        final String[] segments = str.substring(1).split("/");
+
+        if (segments.length != this.segments.length)
+            throw new IllegalArgumentException("Mismatch in segment count");
+
+        ParameterSegment<T> segment = (ParameterSegment<T>) this.segments[i];
+        return segment.mapper.apply(segments[i]);
     }
 
     private interface Segment {

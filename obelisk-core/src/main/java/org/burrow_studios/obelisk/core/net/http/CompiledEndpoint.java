@@ -6,7 +6,8 @@ import java.net.URI;
 
 public record CompiledEndpoint(
         @NotNull Endpoint endpoint,
-        @NotNull String uri
+        @NotNull String uri,
+        @NotNull Object[] args
 ) {
     public @NotNull Method method() {
         return endpoint().getMethod();
