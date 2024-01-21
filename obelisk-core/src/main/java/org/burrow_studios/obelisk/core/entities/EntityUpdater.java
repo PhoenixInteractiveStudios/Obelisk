@@ -2,11 +2,11 @@ package org.burrow_studios.obelisk.core.entities;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.api.entities.Group;
-import org.burrow_studios.obelisk.api.entities.Project;
-import org.burrow_studios.obelisk.api.entities.Ticket;
-import org.burrow_studios.obelisk.api.entities.Turtle;
+import org.burrow_studios.obelisk.api.entities.*;
+import org.burrow_studios.obelisk.api.entities.board.Board;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
+import org.burrow_studios.obelisk.api.entities.board.Tag;
+import org.burrow_studios.obelisk.api.event.entity.EntityUpdateEvent;
 import org.burrow_studios.obelisk.api.event.entity.board.board.BoardUpdateGroupEvent;
 import org.burrow_studios.obelisk.api.event.entity.board.board.BoardUpdateTitleEvent;
 import org.burrow_studios.obelisk.api.event.entity.board.issue.IssueUpdateAssigneesEvent;
@@ -36,10 +36,13 @@ import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
+import org.burrow_studios.obelisk.util.function.Function4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class EntityUpdater {
     private EntityUpdater() { }
@@ -68,31 +71,8 @@ public class EntityUpdater {
     public static void updateGroup(@NotNull EntityData data, @NotNull GroupImpl group, @Nullable Long eventId) {
         final JsonObject json = data.toJson();
 
-        Optional.ofNullable(json.get("name"))
-                .map(JsonElement::getAsString)
-                .ifPresent(newName -> {
-                    final String oldName = group.getName();
-                    if (Objects.equals(oldName, newName)) return;
-
-                    group.setName(newName);
-
-                    if (eventId == null) return;
-                    final GroupUpdateNameEvent event = new GroupUpdateNameEvent(eventId, group, oldName, newName);
-                    group.getAPI().getEventHandler().handle(event);
-                });
-
-        Optional.ofNullable(json.get("position"))
-                .map(JsonElement::getAsInt)
-                .ifPresent(newPosition -> {
-                    final int oldPosition = group.getPosition();
-                    if (oldPosition == newPosition) return;
-
-                    group.setPosition(newPosition);
-
-                    if (eventId == null) return;
-                    final GroupUpdatePositionEvent event = new GroupUpdatePositionEvent(eventId, group, oldPosition, newPosition);
-                    group.getAPI().getEventHandler().handle(event);
-                });
+        update(group, json, "name", JsonElement::getAsString, Group::getName, group::setName, eventId, GroupUpdateNameEvent::new);
+        update(group, json, "position", JsonElement::getAsInt, Group::getPosition, group::setPosition, eventId, GroupUpdatePositionEvent::new);
 
         Optional.ofNullable(json.get("members"))
                 .map(JsonElement::getAsJsonArray)
@@ -122,46 +102,9 @@ public class EntityUpdater {
     public static void updateProject(@NotNull EntityData data, @NotNull ProjectImpl project, @Nullable Long eventId) {
         final JsonObject json = data.toJson();
 
-        Optional.ofNullable(json.get("title"))
-                .map(JsonElement::getAsString)
-                .ifPresent(newTitle -> {
-                    final String oldTitle = project.getTitle();
-                    if (Objects.equals(oldTitle, newTitle)) return;
-
-                    project.setTitle(newTitle);
-
-                    if (eventId == null) return;
-                    final ProjectUpdateTitleEvent event = new ProjectUpdateTitleEvent(eventId, project, oldTitle, newTitle);
-                    project.getAPI().getEventHandler().handle(event);
-                });
-
-        Optional.ofNullable(json.get("timings"))
-                .map(JsonElement::getAsJsonObject)
-                .map(ProjectUtils::buildProjectTimings)
-                .ifPresent(newTimings -> {
-                    final Project.Timings oldTimings = project.getTimings();
-                    if (Objects.equals(oldTimings, newTimings)) return;
-
-                    project.setTimings(newTimings);
-
-                    if (eventId == null) return;
-                    final ProjectUpdateTimingsEvent event = new ProjectUpdateTimingsEvent(eventId, project, oldTimings, newTimings);
-                    project.getAPI().getEventHandler().handle(event);
-                });
-
-        Optional.ofNullable(json.get("state"))
-                .map(JsonElement::getAsString)
-                .map(Project.State::valueOf)
-                .ifPresent(newState -> {
-                    final Project.State oldState = project.getState();
-                    if (Objects.equals(oldState, newState)) return;
-
-                    project.setState(newState);
-
-                    if (eventId == null) return;
-                    final ProjectUpdateStateEvent event = new ProjectUpdateStateEvent(eventId, project, oldState, newState);
-                    project.getAPI().getEventHandler().handle(event);
-                });
+        update(project, json, "title", JsonElement::getAsString, Project::getTitle, project::setTitle, eventId, ProjectUpdateTitleEvent::new);
+        update(project, json, "timings", j -> ProjectUtils.buildProjectTimings(j.getAsJsonObject()), Project::getTimings, project::setTimings, eventId, ProjectUpdateTimingsEvent::new);
+        update(project, json, "state", j -> Project.State.valueOf(j.getAsString()), Project::getState, project::setState, eventId, ProjectUpdateStateEvent::new);
 
         Optional.ofNullable(json.get("members"))
                 .map(JsonElement::getAsJsonArray)
@@ -191,32 +134,8 @@ public class EntityUpdater {
     public static void updateTicket(@NotNull EntityData data, @NotNull TicketImpl ticket, @Nullable Long eventId) {
         final JsonObject json = data.toJson();
 
-        Optional.ofNullable(json.get("title"))
-                .map(JsonElement::getAsString)
-                .ifPresent(newTitle -> {
-                    final String oldTitle = ticket.getTitle();
-                    if (Objects.deepEquals(oldTitle, newTitle)) return;
-
-                    ticket.setTitle(newTitle);
-
-                    if (eventId == null) return;
-                    final TicketUpdateTitleEvent event = new TicketUpdateTitleEvent(eventId, ticket, oldTitle, newTitle);
-                    ticket.getAPI().getEventHandler().handle(event);
-                });
-
-        Optional.ofNullable(json.get("state"))
-                .map(JsonElement::getAsString)
-                .map(Ticket.State::valueOf)
-                .ifPresent(newState -> {
-                    final Ticket.State oldState = ticket.getState();
-                    if (Objects.equals(oldState, newState)) return;
-
-                    ticket.setState(newState);
-
-                    if (eventId == null) return;
-                    final TicketUpdateStateEvent event = new TicketUpdateStateEvent(eventId, ticket, oldState, newState);
-                    ticket.getAPI().getEventHandler().handle(event);
-                });
+        update(ticket, json, "title", JsonElement::getAsString, Ticket::getTitle, ticket::setTitle, eventId, TicketUpdateTitleEvent::new);
+        update(ticket, json, "state", j -> Ticket.State.valueOf(j.getAsString()), Ticket::getState, ticket::setState, eventId, TicketUpdateStateEvent::new);
 
         Optional.ofNullable(json.get("tags"))
                 .map(JsonElement::getAsJsonArray)
@@ -267,18 +186,7 @@ public class EntityUpdater {
     public static void updateUser(@NotNull EntityData data, @NotNull UserImpl user, @Nullable Long eventId) {
         final JsonObject json = data.toJson();
 
-        Optional.ofNullable(json.get("name"))
-                .map(JsonElement::getAsString)
-                .ifPresent(newName -> {
-                    final String oldName = user.getName();
-                    if (Objects.equals(oldName, newName)) return;
-
-                    user.setName(newName);
-
-                    if (eventId == null) return;
-                    final UserUpdateNameEvent event = new UserUpdateNameEvent(eventId, user, oldName, newName);
-                    user.getAPI().getEventHandler().handle(event);
-                });
+        update(user, json, "name", JsonElement::getAsString, User::getName, user::setName, eventId, UserUpdateNameEvent::new);
 
         Optional.ofNullable(json.get("discord"))
                 .map(JsonElement::getAsJsonArray)
@@ -330,32 +238,8 @@ public class EntityUpdater {
     public static void updateBoard(@NotNull EntityData data, @NotNull BoardImpl board, @Nullable Long eventId) {
         final JsonObject json = data.toJson();
 
-        Optional.ofNullable(json.get("title"))
-                .map(JsonElement::getAsString)
-                .ifPresent(newTitle -> {
-                    final String oldTitle = board.getTitle();
-                    if (Objects.deepEquals(oldTitle, newTitle)) return;
-
-                    board.setTitle(newTitle);
-
-                    if (eventId == null) return;
-                    final BoardUpdateTitleEvent event = new BoardUpdateTitleEvent(eventId, board, oldTitle, newTitle);
-                    board.getAPI().getEventHandler().handle(event);
-                });
-
-        Optional.ofNullable(json.get("group"))
-                .map(JsonElement::getAsLong)
-                .map(id -> board.getAPI().getGroup(id))
-                .ifPresent(newGroup -> {
-                    final Group oldGroup = board.getGroup();
-                    if (Objects.deepEquals(oldGroup, newGroup)) return;
-
-                    board.setGroup(newGroup);
-
-                    if (eventId == null) return;
-                    final BoardUpdateGroupEvent event = new BoardUpdateGroupEvent(eventId, board, oldGroup, newGroup);
-                    board.getAPI().getEventHandler().handle(event);
-                });
+        update(board, json, "title", JsonElement::getAsString, Board::getTitle, board::setTitle, eventId, BoardUpdateTitleEvent::new);
+        update(board, json, "group", j -> board.getAPI().getGroup(j.getAsLong()), Board::getGroup, group -> board.setGroup(((GroupImpl) group)), eventId, BoardUpdateGroupEvent::new);
     }
 
     public static void updateIssue(@NotNull EntityData data, @NotNull IssueImpl issue) {
@@ -385,32 +269,8 @@ public class EntityUpdater {
                     issue.getAPI().getEventHandler().handle(event);
                 });
 
-        Optional.ofNullable(json.get("title"))
-                .map(JsonElement::getAsString)
-                .ifPresent(newTitle -> {
-                    final String oldTitle = issue.getTitle();
-                    if (Objects.deepEquals(oldTitle, newTitle)) return;
-
-                    issue.setTitle(newTitle);
-
-                    if (eventId == null) return;
-                    final IssueUpdateTitleEvent event = new IssueUpdateTitleEvent(eventId, issue, oldTitle, newTitle);
-                    issue.getAPI().getEventHandler().handle(event);
-                });
-
-        Optional.ofNullable(json.get("state"))
-                .map(JsonElement::getAsString)
-                .map(Issue.State::valueOf)
-                .ifPresent(newState -> {
-                    final Issue.State oldState = issue.getState();
-                    if (Objects.equals(oldState, newState)) return;
-
-                    issue.setState(newState);
-
-                    if (eventId == null) return;
-                    final IssueUpdateStateEvent event = new IssueUpdateStateEvent(eventId, issue, oldState, newState);
-                    issue.getAPI().getEventHandler().handle(event);
-                });
+        update(issue, json, "title", JsonElement::getAsString, Issue::getTitle, issue::setTitle, eventId, IssueUpdateTitleEvent::new);
+        update(issue, json, "state", j -> Issue.State.valueOf(j.getAsString()), Issue::getState, issue::setState, eventId, IssueUpdateStateEvent::new);
 
         Optional.ofNullable(json.get("tags"))
                 .map(JsonElement::getAsJsonArray)
@@ -440,17 +300,32 @@ public class EntityUpdater {
     public static void updateTag(@NotNull EntityData data, @NotNull TagImpl tag, @Nullable Long eventId) {
         final JsonObject json = data.toJson();
 
-        Optional.ofNullable(json.get("name"))
-                .map(JsonElement::getAsString)
-                .ifPresent(newName -> {
-                    final String oldName = tag.getName();
-                    if (Objects.equals(oldName, newName)) return;
+        update(tag, json, "name", JsonElement::getAsString, Tag::getName, tag::setName, eventId, TagUpdateNameEvent::new);
+    }
 
-                    tag.setName(newName);
+    private static <T extends Turtle, E> void update(
+            @NotNull T entity,
+            @NotNull JsonObject json,
+            @NotNull String path,
+            @NotNull Function<JsonElement, E> jsonToObj,
+            @NotNull Function<T, E> oldValProvider,
+            @NotNull Consumer<E> newValConsumer,
+            @Nullable Long eventId,
+            @NotNull Function4<Long, T, E, E, ? extends EntityUpdateEvent<T, E>> eventBuilder
+    ) {
+        final JsonElement element = json.get(path);
 
-                    if (eventId == null) return;
-                    final TagUpdateNameEvent event = new TagUpdateNameEvent(eventId, tag, oldName, newName);
-                    tag.getAPI().getEventHandler().handle(event);
-                });
+        if (element == null) return;
+
+        final E newVal = jsonToObj.apply(element);
+        final E oldVal = oldValProvider.apply(entity);
+
+        if (Objects.deepEquals(oldVal, newVal)) return;
+
+        newValConsumer.accept(newVal);
+
+        if (eventId == null) return;
+        EntityUpdateEvent<T, E> event = eventBuilder.apply(eventId, entity, oldVal, newVal);
+        entity.getAPI().getEventHandler().handle(event);
     }
 }
