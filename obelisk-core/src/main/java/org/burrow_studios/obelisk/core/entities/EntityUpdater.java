@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.core.entities;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.*;
@@ -28,11 +29,9 @@ import org.burrow_studios.obelisk.api.event.entity.ticket.TicketUpdateUsersEvent
 import org.burrow_studios.obelisk.api.event.entity.user.UserUpdateDiscordIdsEvent;
 import org.burrow_studios.obelisk.api.event.entity.user.UserUpdateMinecraftIdsEvent;
 import org.burrow_studios.obelisk.api.event.entity.user.UserUpdateNameEvent;
+import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.core.entities.action.project.ProjectUtils;
-import org.burrow_studios.obelisk.core.entities.impl.GroupImpl;
-import org.burrow_studios.obelisk.core.entities.impl.ProjectImpl;
-import org.burrow_studios.obelisk.core.entities.impl.TicketImpl;
-import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
+import org.burrow_studios.obelisk.core.entities.impl.*;
 import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
@@ -43,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class EntityUpdater {
     private EntityUpdater() { }
@@ -73,26 +73,7 @@ public class EntityUpdater {
 
         update(group, json, "name", JsonElement::getAsString, Group::getName, group::setName, eventId, GroupUpdateNameEvent::new);
         update(group, json, "position", JsonElement::getAsInt, Group::getPosition, group::setPosition, eventId, GroupUpdatePositionEvent::new);
-
-        Optional.ofNullable(json.get("members"))
-                .map(JsonElement::getAsJsonArray)
-                .map(elements -> {
-                    final Set<UserImpl> users = new HashSet<>();
-                    for (JsonElement element : elements)
-                        users.add(group.getAPI().getUser(element.getAsLong()));
-                    return users;
-                })
-                .ifPresent(newMembers -> {
-                    final Set<UserImpl> oldMembers = group.getMembers().getAsImmutableSet();
-
-                    if (oldMembers.equals(newMembers)) return;
-
-                    group.getMembers().overwrite(newMembers);
-
-                    if (eventId == null) return;
-                    final GroupUpdateMembersEvent event = new GroupUpdateMembersEvent(eventId, group, oldMembers, newMembers);
-                    group.getAPI().getEventHandler().handle(event);
-                });
+        updateEntities(group, json, "members", group.getMembers(), eventId, GroupUpdateMembersEvent::new);
     }
 
     public static void updateProject(@NotNull EntityData data, @NotNull ProjectImpl project) {
@@ -104,27 +85,8 @@ public class EntityUpdater {
 
         update(project, json, "title", JsonElement::getAsString, Project::getTitle, project::setTitle, eventId, ProjectUpdateTitleEvent::new);
         update(project, json, "timings", j -> ProjectUtils.buildProjectTimings(j.getAsJsonObject()), Project::getTimings, project::setTimings, eventId, ProjectUpdateTimingsEvent::new);
-        update(project, json, "state", j -> Project.State.valueOf(j.getAsString()), Project::getState, project::setState, eventId, ProjectUpdateStateEvent::new);
-
-        Optional.ofNullable(json.get("members"))
-                .map(JsonElement::getAsJsonArray)
-                .map(elements -> {
-                    final Set<UserImpl> users = new HashSet<>();
-                    for (JsonElement element : elements)
-                        users.add(project.getAPI().getUser(element.getAsLong()));
-                    return users;
-                })
-                .ifPresent(newMembers -> {
-                    final Set<UserImpl> oldMembers = project.getMembers().getAsImmutableSet();
-
-                    if (oldMembers.equals(newMembers)) return;
-
-                    project.getMembers().overwrite(newMembers);
-
-                    if (eventId == null) return;
-                    final ProjectUpdateMembersEvent event = new ProjectUpdateMembersEvent(eventId, project, oldMembers, newMembers);
-                    project.getAPI().getEventHandler().handle(event);
-                });
+        updateEnum(project, json, "state", Project.State.class, project.getState(), project::setState, eventId, ProjectUpdateStateEvent::new);
+        updateEntities(project, json, "members", project.getMembers(), eventId, ProjectUpdateMembersEvent::new);
     }
 
     public static void updateTicket(@NotNull EntityData data, @NotNull TicketImpl ticket) {
@@ -135,48 +97,12 @@ public class EntityUpdater {
         final JsonObject json = data.toJson();
 
         update(ticket, json, "title", JsonElement::getAsString, Ticket::getTitle, ticket::setTitle, eventId, TicketUpdateTitleEvent::new);
-        update(ticket, json, "state", j -> Ticket.State.valueOf(j.getAsString()), Ticket::getState, ticket::setState, eventId, TicketUpdateStateEvent::new);
-
-        Optional.ofNullable(json.get("tags"))
-                .map(JsonElement::getAsJsonArray)
-                .map(elements -> {
-                    ArrayList<String> tags = new ArrayList<>();
-                    for (JsonElement element : elements)
-                        tags.add(element.getAsString());
-                    return tags;
-                })
-                .ifPresent(newTags -> {
-                    final List<String> oldTags = ticket.getTags();
-
-                    if (oldTags.equals(newTags)) return;
-
-                    ticket.getTagsMutable().clear();
-                    ticket.getTagsMutable().addAll(newTags);
-
-                    if (eventId == null) return;
-                    final TicketUpdateTagsEvent event = new TicketUpdateTagsEvent(eventId, ticket, oldTags, newTags);
-                    ticket.getAPI().getEventHandler().handle(event);
-                });
-
-        Optional.ofNullable(json.get("members"))
-                .map(JsonElement::getAsJsonArray)
-                .map(elements -> {
-                    final Set<UserImpl> users = new HashSet<>();
-                    for (JsonElement element : elements)
-                        users.add(ticket.getAPI().getUser(element.getAsLong()));
-                    return users;
-                })
-                .ifPresent(newUsers -> {
-                    final Set<UserImpl> oldUsers = ticket.getUsers().getAsImmutableSet();
-
-                    if (oldUsers.equals(newUsers)) return;
-
-                    ticket.getUsers().overwrite(newUsers);
-
-                    if (eventId == null) return;
-                    final TicketUpdateUsersEvent event = new TicketUpdateUsersEvent(eventId, ticket, oldUsers, newUsers);
-                    ticket.getAPI().getEventHandler().handle(event);
-                });
+        updateEnum(ticket, json, "state", Ticket.State.class, ticket.getState(), ticket::setState, eventId, TicketUpdateStateEvent::new);
+        updateArray(ticket, json, "tags", ArrayList::new, JsonElement::getAsString, ticket.getTags(), tags -> {
+            ticket.getTagsMutable().clear();
+            ticket.getTagsMutable().addAll(tags);
+        }, eventId, TicketUpdateTagsEvent::new);
+        updateEntities(ticket, json, "users", ticket.getUsers(), eventId, TicketUpdateUsersEvent::new);
     }
 
     public static void updateUser(@NotNull EntityData data, @NotNull UserImpl user) {
@@ -187,48 +113,14 @@ public class EntityUpdater {
         final JsonObject json = data.toJson();
 
         update(user, json, "name", JsonElement::getAsString, User::getName, user::setName, eventId, UserUpdateNameEvent::new);
-
-        Optional.ofNullable(json.get("discord"))
-                .map(JsonElement::getAsJsonArray)
-                .map(elements -> {
-                    ArrayList<Long> tags = new ArrayList<>();
-                    for (JsonElement element : elements)
-                        tags.add(element.getAsLong());
-                    return tags;
-                })
-                .ifPresent(newDiscord -> {
-                    final List<Long> oldDiscord = user.getDiscordIds();
-
-                    if (oldDiscord.equals(newDiscord)) return;
-
-                    user.getDiscordIdsMutable().clear();
-                    user.getDiscordIdsMutable().addAll(newDiscord);
-
-                    if (eventId == null) return;
-                    final UserUpdateDiscordIdsEvent event = new UserUpdateDiscordIdsEvent(eventId, user, oldDiscord, newDiscord);
-                    user.getAPI().getEventHandler().handle(event);
-                });
-
-        Optional.ofNullable(json.get("minecraft"))
-                .map(JsonElement::getAsJsonArray)
-                .map(elements -> {
-                    ArrayList<UUID> tags = new ArrayList<>();
-                    for (JsonElement element : elements)
-                        tags.add(UUID.fromString(element.getAsString()));
-                    return tags;
-                })
-                .ifPresent(newMinecraft -> {
-                    final List<UUID> oldMinecraft = user.getMinecraftIds();
-
-                    if (oldMinecraft.equals(newMinecraft)) return;
-
-                    user.getMinecraftIdsMutable().clear();
-                    user.getMinecraftIdsMutable().addAll(newMinecraft);
-
-                    if (eventId == null) return;
-                    final UserUpdateMinecraftIdsEvent event = new UserUpdateMinecraftIdsEvent(eventId, user, oldMinecraft, newMinecraft);
-                    user.getAPI().getEventHandler().handle(event);
-                });
+        updateArray(user, json, "discord", ArrayList::new, JsonElement::getAsLong, user.getDiscordIds(), longs -> {
+            user.getDiscordIdsMutable().clear();
+            user.getDiscordIdsMutable().addAll(longs);
+        }, eventId, UserUpdateDiscordIdsEvent::new);
+        updateArray(user, json, "minecraft", ArrayList::new, j -> UUID.fromString(j.getAsString()), user.getMinecraftIds(), uuids -> {
+            user.getMinecraftIdsMutable().clear();
+            user.getMinecraftIdsMutable().addAll(uuids);
+        }, eventId, UserUpdateMinecraftIdsEvent::new);
     }
 
     public static void updateBoard(@NotNull EntityData data, @NotNull BoardImpl board) {
@@ -249,48 +141,10 @@ public class EntityUpdater {
     public static void updateIssue(@NotNull EntityData data, @NotNull IssueImpl issue, @Nullable Long eventId) {
         final JsonObject json = data.toJson();
 
-        Optional.ofNullable(json.get("assignees"))
-                .map(JsonElement::getAsJsonArray)
-                .map(elements -> {
-                    final Set<UserImpl> users = new HashSet<>();
-                    for (JsonElement element : elements)
-                        users.add(issue.getAPI().getUser(element.getAsLong()));
-                    return users;
-                })
-                .ifPresent(newAssignees -> {
-                    final Set<UserImpl> oldAssignees = issue.getAssignees().getAsImmutableSet();
-
-                    if (oldAssignees.equals(newAssignees)) return;
-
-                    issue.getAssignees().overwrite(newAssignees);
-
-                    if (eventId == null) return;
-                    final IssueUpdateAssigneesEvent event = new IssueUpdateAssigneesEvent(eventId, issue, oldAssignees, newAssignees);
-                    issue.getAPI().getEventHandler().handle(event);
-                });
-
+        updateEntities(issue, json, "assignees", issue.getAssignees(), eventId, IssueUpdateAssigneesEvent::new);
         update(issue, json, "title", JsonElement::getAsString, Issue::getTitle, issue::setTitle, eventId, IssueUpdateTitleEvent::new);
-        update(issue, json, "state", j -> Issue.State.valueOf(j.getAsString()), Issue::getState, issue::setState, eventId, IssueUpdateStateEvent::new);
-
-        Optional.ofNullable(json.get("tags"))
-                .map(JsonElement::getAsJsonArray)
-                .map(elements -> {
-                    final Set<TagImpl> tags = new HashSet<>();
-                    for (JsonElement element : elements)
-                        tags.add(issue.getAPI().getTag(element.getAsLong()));
-                    return tags;
-                })
-                .ifPresent(newTags -> {
-                    final Set<TagImpl> oldTags = issue.getTags().getAsImmutableSet();
-
-                    if (oldTags.equals(newTags)) return;
-
-                    issue.getTags().overwrite(newTags);
-
-                    if (eventId == null) return;
-                    final IssueUpdateTagsEvent event = new IssueUpdateTagsEvent(eventId, issue, oldTags, newTags);
-                    issue.getAPI().getEventHandler().handle(event);
-                });
+        updateEnum(issue, json, "state", Issue.State.class, issue.getState(), issue::setState, eventId, IssueUpdateStateEvent::new);
+        updateEntities(issue, json, "tags", issue.getTags(), eventId, IssueUpdateTagsEvent::new);
     }
 
     public static void updateTag(@NotNull EntityData data, @NotNull TagImpl tag) {
@@ -326,6 +180,83 @@ public class EntityUpdater {
 
         if (eventId == null) return;
         EntityUpdateEvent<T, E> event = eventBuilder.apply(eventId, entity, oldVal, newVal);
+        entity.getAPI().getEventHandler().handle(event);
+    }
+
+    private static <T extends Turtle, E extends Enum<E>> void updateEnum(
+            @NotNull T entity,
+            @NotNull JsonObject json,
+            @NotNull String path,
+            @NotNull Class<E> enumType,
+            @NotNull E oldVal,
+            @NotNull Consumer<E> newValConsumer,
+            @Nullable Long eventId,
+            @NotNull Function4<Long, T, E, E, ? extends EntityUpdateEvent<?, E>> eventBuilder
+    ) {
+        final JsonElement element = json.get(path);
+
+        if (element == null) return;
+
+        final E newVal = Enum.valueOf(enumType, element.getAsString());
+
+        if (Objects.deepEquals(oldVal, newVal)) return;
+
+        newValConsumer.accept(newVal);
+
+        if (eventId == null) return;
+        EntityUpdateEvent<?, E> event = eventBuilder.apply(eventId, entity, oldVal, newVal);
+        entity.getAPI().getEventHandler().handle(event);
+    }
+
+    private static <T extends Turtle, E, C extends Collection<E>> void updateArray(
+            @NotNull T entity,
+            @NotNull JsonObject json,
+            @NotNull String path,
+            @NotNull Supplier<C> collectionSupplier,
+            @NotNull Function<JsonElement, E> elementParser,
+            @NotNull C oldValues,
+            @NotNull Consumer<Collection<? extends E>> newValConsumer,
+            @Nullable Long eventId,
+            @NotNull Function4<Long, T, C, C, ? extends EntityUpdateEvent<T, ?>> eventBuilder
+    ) {
+        final JsonArray array = json.getAsJsonArray(path);
+
+        if (array == null) return;
+
+        final C newValues = collectionSupplier.get();
+        for (JsonElement element : array)
+            newValues.add(elementParser.apply(element));
+
+        if (oldValues.equals(newValues)) return;
+
+        newValConsumer.accept(newValues);
+
+        if (eventId == null) return;
+        EntityUpdateEvent<T, ?> event = eventBuilder.apply(eventId, entity, oldValues, newValues);
+        entity.getAPI().getEventHandler().handle(event);
+    }
+
+    private static <T extends Turtle, E extends TurtleImpl> void updateEntities(
+            @NotNull T entity,
+            @NotNull JsonObject json,
+            @NotNull String path,
+            @NotNull DelegatingTurtleCacheView<E> cacheView,
+            @Nullable Long eventId,
+            @NotNull Function4<Long, T, Set<E>, Set<E>, ? extends EntityUpdateEvent<T, ?>> eventBuilder
+    ) {
+        final JsonArray array = json.getAsJsonArray(path);
+
+        if (array == null) return;
+
+        final Set<E> oldValues = cacheView.getAsImmutableSet();
+        final Set<E> newValues = new HashSet<>();
+        for (JsonElement element : array)
+            newValues.add(cacheView.getCache().get(element.getAsLong(), cacheView.getContentType()));
+
+        cacheView.overwrite(newValues);
+
+        if (eventId == null) return;
+        EntityUpdateEvent<T, ?> event = eventBuilder.apply(eventId, entity, oldValues, newValues);
         entity.getAPI().getEventHandler().handle(event);
     }
 }
