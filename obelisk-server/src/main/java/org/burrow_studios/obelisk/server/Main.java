@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.server;
 
+import org.burrow_studios.obelisk.server.util.logging.LogUtil;
 import org.burrow_studios.obelisk.util.ResourceTools;
 
 import java.io.File;
@@ -31,6 +32,8 @@ public class Main {
         if (VERSION == null)
             throw new AssertionError("Unknown version");
         System.out.printf(" version %s...%n", VERSION);
+
+        LogUtil.init();
 
         ObeliskServer server = new ObeliskServer();
 
