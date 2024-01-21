@@ -7,11 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public final class IssueUpdateTagsEvent extends IssueUpdateEvent<Set<Tag>> {
+public final class IssueUpdateTagsEvent extends IssueUpdateEvent<Set<? extends Tag>> {
     private final @NotNull Set<Tag>   addedTags;
     private final @NotNull Set<Tag> removedTags;
 
-    public IssueUpdateTagsEvent(long id, @NotNull Issue entity, @NotNull Set<Tag> oldValue, @NotNull Set<Tag> newValue) {
+    public IssueUpdateTagsEvent(long id, @NotNull Issue entity, @NotNull Set<? extends Tag> oldValue, @NotNull Set<? extends Tag> newValue) {
         super(id, entity, oldValue, newValue);
         this.addedTags = newValue.stream()
                 .filter(tag -> !oldValue.contains(tag))

@@ -7,11 +7,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public final class IssueUpdateAssigneesEvent extends IssueUpdateEvent<Set<User>> {
+public final class IssueUpdateAssigneesEvent extends IssueUpdateEvent<Set<? extends User>> {
     private final @NotNull Set<User>   addedAssignees;
     private final @NotNull Set<User> removedAssignees;
 
-    public IssueUpdateAssigneesEvent(long id, @NotNull Issue entity, @NotNull Set<User> oldValue, @NotNull Set<User> newValue) {
+    public IssueUpdateAssigneesEvent(long id, @NotNull Issue entity, @NotNull Set<? extends User> oldValue, @NotNull Set<? extends User> newValue) {
         super(id, entity, oldValue, newValue);
         this.addedAssignees = newValue.stream()
                 .filter(assignee -> !oldValue.contains(assignee))

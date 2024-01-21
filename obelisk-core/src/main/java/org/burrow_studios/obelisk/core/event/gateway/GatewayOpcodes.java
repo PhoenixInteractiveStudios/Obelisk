@@ -9,10 +9,7 @@ import org.burrow_studios.obelisk.api.event.entity.board.issue.*;
 import org.burrow_studios.obelisk.api.event.entity.board.tag.TagCreateEvent;
 import org.burrow_studios.obelisk.api.event.entity.board.tag.TagDeleteEvent;
 import org.burrow_studios.obelisk.api.event.entity.board.tag.TagUpdateNameEvent;
-import org.burrow_studios.obelisk.api.event.entity.group.GroupCreateEvent;
-import org.burrow_studios.obelisk.api.event.entity.group.GroupDeleteEvent;
-import org.burrow_studios.obelisk.api.event.entity.group.GroupUpdateMembersEvent;
-import org.burrow_studios.obelisk.api.event.entity.group.GroupUpdateNameEvent;
+import org.burrow_studios.obelisk.api.event.entity.group.*;
 import org.burrow_studios.obelisk.api.event.entity.project.*;
 import org.burrow_studios.obelisk.api.event.entity.ticket.*;
 import org.burrow_studios.obelisk.api.event.entity.user.*;
@@ -33,7 +30,7 @@ public final class GatewayOpcodes {
             .add(101, GroupDeleteEvent.class)
             .add(102, GroupUpdateMembersEvent.class)
             .add(103, GroupUpdateNameEvent.class)
-            .add(104, GroupUpdateNameEvent.class)
+            .add(104, GroupUpdatePositionEvent.class)
             // PROJECT
             .add(110, ProjectCreateEvent.class)
             .add(111, ProjectDeleteEvent.class)

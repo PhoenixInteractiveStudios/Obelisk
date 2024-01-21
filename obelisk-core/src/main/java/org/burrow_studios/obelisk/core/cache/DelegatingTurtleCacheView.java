@@ -8,13 +8,14 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetView<T> {
     private final TurtleCache<? super T> cache;
-    private final Set<Long> ids = ConcurrentHashMap.newKeySet();
+    private Set<Long> ids = ConcurrentHashMap.newKeySet();
     private final Class<T> contentType;
 
     public DelegatingTurtleCacheView(@NotNull TurtleCache<? super T> cache, Class<T> contentType) {
@@ -36,6 +37,13 @@ public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetVie
         return ids.stream()
                 // remove 'ghost entities' as they would probably cause API errors
                 .filter(id -> cache.get(id, contentType) != null)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    public @NotNull Set<T> getAsImmutableSet() {
+        return ids.stream()
+                .map(id -> cache.get(id, contentType))
+                .filter(Objects::nonNull)
                 .collect(Collectors.toUnmodifiableSet());
     }
 
@@ -134,5 +142,18 @@ public class DelegatingTurtleCacheView<T extends Turtle> implements TurtleSetVie
 
     public void clear() {
         this.ids.clear();
+    }
+
+    public void overwrite(Set<T> content) {
+        final Set<Long> newIds = ConcurrentHashMap.newKeySet();
+        for (T entity : content)
+            newIds.add(entity.getId());
+        this.ids = newIds;
+    }
+
+    public void overwriteIds(Set<Long> ids) {
+        final Set<Long> newIds = ConcurrentHashMap.newKeySet();
+        newIds.addAll(ids);
+        this.ids = newIds;
     }
 }
