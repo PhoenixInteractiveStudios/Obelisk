@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.server.db;
 
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
 import org.burrow_studios.obelisk.core.net.TimeoutContext;
@@ -32,13 +33,21 @@ public class EntityProvider implements DataProvider {
     private final     TagHandler     tagHandler;
     private final   IssueHandler   issueHandler;
 
-    public EntityProvider(@NotNull ObeliskServer server) {
-        // TODO
-        final String host     = "null";
-        final int    port     = 3306;
-        final String database = "null";
-        final String user     = "null";
-        final String pass     = "null";
+    public EntityProvider(@NotNull ObeliskServer server) throws DatabaseException {
+        final String host, database, user, pass;
+        final int port;
+
+        try {
+            JsonObject dbConfig = server.getConfig().getAsJsonObject("db");
+
+            host     = dbConfig.get("host").getAsString();
+            port     = dbConfig.get("port").getAsInt();
+            database = dbConfig.get("database").getAsString();
+            user     = dbConfig.get("user").getAsString();
+            pass     = dbConfig.get("pass").getAsString();
+        } catch (Exception e) {
+            throw new RuntimeException("Encountered an unexpected exception when attempting to read database credentials. Please check formatting and validity.", e);
+        }
 
         this.server = server;
         this.database = new EntityDatabase(host, port, database, user, pass);

@@ -30,9 +30,11 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
     public EntityDatabase(@NotNull String host, int port, @NotNull String database, @NotNull String user, @NotNull String pass) throws DatabaseException {
         final String url = URL.formatted(host, port, database);
 
+        DriverManager.setLoginTimeout(8);
+
         try {
             this.connection = DriverManager.getConnection(url, user, pass);
-            this.connection.createStatement().execute("tables");
+            this.execute("tables");
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
@@ -63,6 +65,10 @@ final class EntityDatabase implements GroupDB, ProjectDB, TicketDB, UserDB, Boar
 
     private @NotNull ResultSet executeQuery(@NotNull String key) throws SQLException, DatabaseException {
         return this.connection.createStatement().executeQuery(getStatement(key));
+    }
+
+    private void execute(@NotNull String key) throws SQLException, DatabaseException {
+        this.connection.createStatement().execute(getStatement(key));
     }
 
     /* - - - - - - - - - - */

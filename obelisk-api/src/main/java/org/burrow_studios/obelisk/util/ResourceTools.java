@@ -38,7 +38,7 @@ public class ResourceTools {
         }
     }
 
-    private @Nullable InputStream getResource(@NotNull String name) {
+    public @Nullable InputStream getResource(@NotNull String name) {
         return classLoader.getResourceAsStream(name);
     }
 }

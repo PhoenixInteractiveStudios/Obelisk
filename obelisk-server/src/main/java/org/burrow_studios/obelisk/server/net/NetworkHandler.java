@@ -20,6 +20,14 @@ public class NetworkHandler {
     public NetworkHandler(@NotNull ObeliskServer server) throws IOException, NetworkException {
         this.server = server;
 
+        final int apiPort, socketPort;
+        try {
+            apiPort = this.server.getConfig().get("api_port").getAsInt();
+            socketPort = this.server.getConfig().get("socket_port").getAsInt();
+        } catch (Exception e) {
+            throw new RuntimeException("Encountered an unexpected exception when attempting to read network config. Please check formatting and validity.", e);
+        }
+
         final SessionHandler sessionHandler = new SessionHandler(this);
         final   GroupHandler   groupHandler = new   GroupHandler(this);
         final ProjectHandler projectHandler = new ProjectHandler(this);
@@ -29,7 +37,7 @@ public class NetworkHandler {
         final     TagHandler     tagHandler = new     TagHandler(this);
         final   IssueHandler   issueHandler = new   IssueHandler(this);
 
-        this.apiHandler = new SunServerImpl(this)
+        this.apiHandler = new SunServerImpl(this, apiPort)
                 // Session lifecycle
                 .addEndpoint(Endpoints.LOGIN     , sessionHandler::onLogin)
                 .addEndpoint(Endpoints.LOGOUT    , sessionHandler::onLogout)
@@ -88,7 +96,7 @@ public class NetworkHandler {
                 .addEndpoint(Endpoints.Board.Issue.DELETE      , issueHandler::onDelete)
                 .addEndpoint(Endpoints.Board.Issue.EDIT        , issueHandler::onEdit);
 
-        this.eventDispatcher = new EventDispatcher(this, /* TODO */ 8346);
+        this.eventDispatcher = new EventDispatcher(this, socketPort);
     }
 
     public @NotNull ObeliskServer getServer() {

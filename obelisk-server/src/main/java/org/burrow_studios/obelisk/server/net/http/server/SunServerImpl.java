@@ -11,6 +11,7 @@ import org.burrow_studios.obelisk.server.net.http.Response;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.URI;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -18,10 +19,11 @@ import java.util.stream.Collectors;
 public class SunServerImpl extends APIHandler implements HttpHandler {
     private final HttpServer server;
 
-    public SunServerImpl(@NotNull NetworkHandler networkHandler) throws IOException {
+    public SunServerImpl(@NotNull NetworkHandler networkHandler, int port) throws IOException {
         super(networkHandler);
         this.server = HttpServer.create();
         this.server.createContext("/", this);
+        this.server.bind(new InetSocketAddress(port), 0);
         this.server.start();
     }
 
