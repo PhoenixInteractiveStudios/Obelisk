@@ -1,7 +1,5 @@
 package org.burrow_studios.obelisk.core;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import org.burrow_studios.obelisk.api.Obelisk;
 import org.burrow_studios.obelisk.api.entities.Turtle;
 import org.burrow_studios.obelisk.core.cache.TurtleCache;
@@ -34,21 +32,10 @@ public class ObeliskImpl implements Obelisk {
     private final TurtleCache<IssueImpl>     issueCache = new TurtleCache<>(this);
     private final TurtleCache<TagImpl>         tagCache = new TurtleCache<>(this);
 
-    private final long subjectId;
-    private final String token;
-
     ObeliskImpl(
-            @NotNull String token,
             @NotNull Function<ObeliskImpl, EventHandlerImpl> eventHandlerSupplier,
             @NotNull Function<ObeliskImpl, DataProvider> dataProviderSupplier
     ) {
-        this.token = token;
-        try {
-            this.subjectId = Long.parseLong(JWT.decode(token).getSubject());
-        } catch (JWTDecodeException | NullPointerException | NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid token");
-        }
-
         this.eventHandler = eventHandlerSupplier.apply(this);
         this.dataProvider = dataProviderSupplier.apply(this);
     }
@@ -59,14 +46,6 @@ public class ObeliskImpl implements Obelisk {
 
     public @NotNull DataProvider getDataProvider() {
         return dataProvider;
-    }
-
-    public long getSubjectId() {
-        return subjectId;
-    }
-
-    public @NotNull String getToken() {
-        return token;
     }
 
     /* - ENTITIES - */

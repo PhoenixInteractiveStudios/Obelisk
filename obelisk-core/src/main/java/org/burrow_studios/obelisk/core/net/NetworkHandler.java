@@ -9,6 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
+import org.burrow_studios.obelisk.core.net.http.AuthLevel;
 import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
 import org.burrow_studios.obelisk.core.net.http.Method;
 import org.burrow_studios.obelisk.core.net.http.Endpoints;
@@ -33,11 +34,21 @@ public class NetworkHandler implements DataProvider {
     private final ConcurrentHashMap<Long, Request> pendingRequests = new ConcurrentHashMap<>();
     private final SocketAdapter socketAdapter;
     private final HttpClient httpClient;
+    private final String identityToken;
+    private final long subjectId;
     private String sessionToken;
     final Gson gson;
 
-    public NetworkHandler(@NotNull ObeliskImpl api) {
+    public NetworkHandler(@NotNull ObeliskImpl api, @NotNull String identityToken) {
         this.api = api;
+
+        this.identityToken = identityToken;
+        try {
+            this.subjectId = Long.parseLong(JWT.decode(identityToken).getSubject());
+        } catch (JWTDecodeException | NullPointerException | NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid token");
+        }
+
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeNulls()
@@ -59,7 +70,6 @@ public class NetworkHandler implements DataProvider {
         if (this.sessionToken == null)
             return CompletableFuture.completedFuture(null);
 
-        final long sub = this.api.getSubjectId();
         final long id  = this.requestIdGenerator.newId();
         final TimeoutContext timeout = TimeoutContext.DEFAULT;
 
@@ -72,7 +82,7 @@ public class NetworkHandler implements DataProvider {
                 return CompletableFuture.completedFuture(null);
 
             final CompiledEndpoint endpoint = Endpoints.LOGOUT.builder()
-                    .withArg(sub)
+                    .withArg(this.subjectId)
                     .withArg(sessionId)
                     .compile();
             final Request request = new Request(this, id, endpoint, null, timeout);
@@ -91,9 +101,10 @@ public class NetworkHandler implements DataProvider {
             this.logout().get();
         } catch (Exception ignored) { }
 
-        final long sub = this.api.getSubjectId();
         final long id  = this.requestIdGenerator.newId();
-        final CompiledEndpoint endpoint = Endpoints.LOGIN.builder().withArg(sub).compile();
+        final CompiledEndpoint endpoint = Endpoints.LOGIN.builder()
+                .withArg(this.subjectId)
+                .compile();
         final TimeoutContext   timeout  = TimeoutContext.DEFAULT;
         final Request request = new Request(this, id, endpoint, null, timeout);
 
@@ -183,7 +194,11 @@ public class NetworkHandler implements DataProvider {
 
         builder.timeout(request.getTimeout().asDuration());
 
-        builder.header("Authorization", "Bearer " + api.getToken());
+        final AuthLevel privilege = request.getEndpoint().endpoint().getPrivilege();
+        if (privilege == AuthLevel.IDENTITY)
+            builder.header("Authorization", "Bearer " + identityToken);
+        if (privilege == AuthLevel.SESSION)
+            builder.header("Authorization", "Bearer " + sessionToken);
 
         final Method method = request.getEndpoint().method();
         if (content != null) {

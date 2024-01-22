@@ -36,17 +36,17 @@ public class ObeliskBuilderImpl implements ObeliskBuilder {
 
     @Override
     public @NotNull ObeliskImpl build() throws IllegalArgumentException {
-        if (token == null)
+        // token is only required for the NetworkHandler
+        if (token == null && dataProviderSupplier == null)
             throw new IllegalArgumentException("Token may not be null");
 
         if (eventHandlerSupplier == null)
             eventHandlerSupplier = EventHandlerImpl::new;
 
         if (dataProviderSupplier == null)
-            dataProviderSupplier = NetworkHandler::new;
+            dataProviderSupplier = api -> new NetworkHandler(api, token);
 
         return new ObeliskImpl(
-                token,
                 eventHandlerSupplier,
                 dataProviderSupplier
         );
