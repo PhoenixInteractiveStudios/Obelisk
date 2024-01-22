@@ -17,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 
 public final class ObeliskServer {
     private final Gson gson;
@@ -67,7 +68,8 @@ public final class ObeliskServer {
 
     void stop() {
         try {
-            this.gson.toJson(this.config, new FileWriter(this.configFile, false));
+            String configJson = this.gson.toJson(this.config);
+            Files.writeString(this.configFile.toPath(), configJson, StandardOpenOption.WRITE);
         } catch (IOException e) {
             // TODO: log
         }
