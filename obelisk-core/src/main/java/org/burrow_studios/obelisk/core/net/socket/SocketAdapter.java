@@ -15,10 +15,10 @@ import org.burrow_studios.obelisk.core.entities.EntityLifecycleHelper;
 import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.event.gateway.GatewayOpcodes;
 import org.burrow_studios.obelisk.core.net.NetworkHandler;
-import org.burrow_studios.obelisk.core.net.socket.crypto.EncryptionException;
-import org.burrow_studios.obelisk.core.net.socket.crypto.SimpleSymmetricEncryption;
+import org.burrow_studios.obelisk.common.crypto.EncryptionException;
+import org.burrow_studios.obelisk.common.crypto.SimpleSymmetricEncryption;
 import org.burrow_studios.obelisk.core.source.EventProvider;
-import org.burrow_studios.obelisk.util.TurtleGenerator;
+import org.burrow_studios.obelisk.common.turtle.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.InetSocketAddress;

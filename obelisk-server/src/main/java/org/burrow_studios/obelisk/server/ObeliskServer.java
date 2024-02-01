@@ -11,7 +11,7 @@ import org.burrow_studios.obelisk.server.db.EntityProvider;
 import org.burrow_studios.obelisk.server.event.EventManager;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
 import org.burrow_studios.obelisk.server.permissions.PermissionManager;
-import org.burrow_studios.obelisk.util.ResourceTools;
+import org.burrow_studios.obelisk.common.util.ResourceTools;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;

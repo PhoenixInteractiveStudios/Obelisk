@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.server.util.logging;
 
+import org.burrow_studios.obelisk.common.logging.SimpleFormatter;
 import org.burrow_studios.obelisk.server.Main;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +16,7 @@ public class LogUtil {
     private LogUtil() { }
 
     public static void init() throws IOException {
-        SimpleFormatter formatter = new SimpleFormatter();
+        org.burrow_studios.obelisk.common.logging.SimpleFormatter formatter = new SimpleFormatter();
 
         Logger rootLogger = Logger.getLogger("");
 

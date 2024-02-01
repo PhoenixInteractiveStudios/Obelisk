@@ -35,7 +35,7 @@ import org.burrow_studios.obelisk.core.entities.impl.*;
 import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
-import org.burrow_studios.obelisk.util.function.Function4;
+import org.burrow_studios.obelisk.common.function.Function4;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

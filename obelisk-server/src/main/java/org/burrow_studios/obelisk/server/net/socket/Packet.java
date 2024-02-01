@@ -1,7 +1,7 @@
 package org.burrow_studios.obelisk.server.net.socket;
 
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.util.TurtleGenerator;
+import org.burrow_studios.obelisk.common.turtle.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
 
 /** A piece of outgoing data */

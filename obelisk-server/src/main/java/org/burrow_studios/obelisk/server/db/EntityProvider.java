@@ -13,7 +13,7 @@ import org.burrow_studios.obelisk.core.source.Response;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.db.entity.*;
 import org.burrow_studios.obelisk.server.db.handlers.*;
-import org.burrow_studios.obelisk.util.TurtleGenerator;
+import org.burrow_studios.obelisk.common.turtle.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
