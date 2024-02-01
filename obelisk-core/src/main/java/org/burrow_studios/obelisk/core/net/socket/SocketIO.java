@@ -1,8 +1,8 @@
 package org.burrow_studios.obelisk.core.net.socket;
 
-import org.burrow_studios.obelisk.core.net.socket.crypto.EncryptionException;
-import org.burrow_studios.obelisk.core.net.socket.crypto.EncryptionHandler;
-import org.burrow_studios.obelisk.util.function.ExceptionalConsumer;
+import org.burrow_studios.obelisk.common.crypto.EncryptionException;
+import org.burrow_studios.obelisk.common.crypto.Encryption;
+import org.burrow_studios.obelisk.common.function.ExceptionalConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +25,7 @@ public class SocketIO extends Thread {
     private DataInputStream  in;
     private DataOutputStream out;
 
-    private @NotNull EncryptionHandler crypto;
+    private @NotNull Encryption crypto;
 
     private volatile boolean listen = true;
     /** @see #receive() */
@@ -49,12 +49,12 @@ public class SocketIO extends Thread {
         this.address = address;
         this.socket = socket;
 
-        this.crypto = EncryptionHandler.NONE;
+        this.crypto = Encryption.NONE;
 
         this.setDaemon(true);
     }
 
-    public void setCrypto(@NotNull EncryptionHandler crypto) {
+    public void setCrypto(@NotNull Encryption crypto) {
         this.crypto = crypto;
     }
 

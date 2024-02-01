@@ -7,7 +7,7 @@ import org.burrow_studios.obelisk.api.event.entity.EntityDeleteEvent;
 import org.burrow_studios.obelisk.api.event.entity.EntityEvent;
 import org.burrow_studios.obelisk.api.event.entity.EntityUpdateEvent;
 import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
-import org.burrow_studios.obelisk.core.util.JsonUtil;
+import org.burrow_studios.obelisk.common.util.JsonUtil;
 import org.jetbrains.annotations.NotNull;
 
 /** Responsible for de-serializing {@link GatewayEvent GatewayEvents} */

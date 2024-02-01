@@ -7,7 +7,7 @@ import org.burrow_studios.obelisk.core.source.Request;
 import org.burrow_studios.obelisk.core.source.Response;
 import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
 import org.burrow_studios.obelisk.core.source.DataProvider;
-import org.burrow_studios.obelisk.util.function.ExceptionalBiFunction;
+import org.burrow_studios.obelisk.common.function.ExceptionalBiFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

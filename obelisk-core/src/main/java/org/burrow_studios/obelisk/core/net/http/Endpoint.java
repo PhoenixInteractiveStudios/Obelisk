@@ -1,6 +1,6 @@
 package org.burrow_studios.obelisk.core.net.http;
 
-import org.burrow_studios.obelisk.util.function.ExceptionalFunction;
+import org.burrow_studios.obelisk.common.function.ExceptionalFunction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;

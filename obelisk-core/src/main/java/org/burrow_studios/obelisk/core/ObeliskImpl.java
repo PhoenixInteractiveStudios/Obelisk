@@ -14,7 +14,7 @@ import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
 import org.burrow_studios.obelisk.core.event.EventHandlerImpl;
 import org.burrow_studios.obelisk.core.source.DataProvider;
-import org.burrow_studios.obelisk.core.util.Finder;
+import org.burrow_studios.obelisk.common.util.Finder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

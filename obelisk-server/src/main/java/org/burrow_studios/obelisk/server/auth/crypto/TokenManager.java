@@ -6,10 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import org.burrow_studios.obelisk.core.util.crypto.PassGen;
+import org.burrow_studios.obelisk.common.crypto.PassGen;
 import org.burrow_studios.obelisk.server.auth.Authenticator;
 import org.burrow_studios.obelisk.server.auth.db.AuthDB;
-import org.burrow_studios.obelisk.util.TurtleGenerator;
+import org.burrow_studios.obelisk.common.turtle.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

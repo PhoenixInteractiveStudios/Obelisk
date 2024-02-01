@@ -15,7 +15,7 @@ import org.burrow_studios.obelisk.server.db.EntityProvider;
 import org.burrow_studios.obelisk.server.db.NoSuchEntryException;
 import org.burrow_studios.obelisk.server.db.RequestHandler;
 import org.burrow_studios.obelisk.server.db.entity.ProjectDB;
-import org.burrow_studios.obelisk.util.TurtleGenerator;
+import org.burrow_studios.obelisk.common.turtle.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
