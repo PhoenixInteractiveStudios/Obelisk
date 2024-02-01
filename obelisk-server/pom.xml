@@ -35,7 +35,7 @@
     <dependencies>
         <dependency>
             <groupId>org.burrow-studios</groupId>
-            <artifactId>obelisk-core</artifactId>
+            <artifactId>obelisk-api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
