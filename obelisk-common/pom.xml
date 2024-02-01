@@ -4,21 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.burrow-studios</groupId>
-    <artifactId>obelisk</artifactId>
+    <groupId>org.burrow_studios.obelisk</groupId>
+    <artifactId>obelisk-common</artifactId>
     <version>1.0.0-alpha.1</version>
-    <packaging>pom</packaging>
 
-    <name>Obelisk</name>
-    <description>Burrow Studios API backend</description>
-    <url>https://github.com/BurrowStudios/Obelisk</url>
-
-
-    <modules>
-        <module>obelisk-api</module>
-        <module>obelisk-core</module>
-        <module>obelisk-server</module>
-    </modules>
+    <name>Obelisk Common Library</name>
+    <description>Some utilities commonly used in multiple Obelisk services and components</description>
 
 
     <licenses>
@@ -40,13 +31,6 @@
             <url>https://turtleboi.de</url>
         </developer>
     </developers>
-
-
-    <scm>
-        <connection>scm:git:git://github.com/BurrowStudios/Obelisk.git</connection>
-        <developerConnection>scm:git:ssh://github.com:BurrowStudios/Obelisk.git</developerConnection>
-        <url>http://github.com/BurrowStudios/Obelisk</url>
-    </scm>
 
 
     <properties>
@@ -105,13 +89,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>23.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10</version>
+            <version>24.0.1</version>
         </dependency>
 
         <dependency>
@@ -119,14 +97,6 @@
             <artifactId>junit-jupiter</artifactId>
             <version>5.9.2</version>
             <scope>test</scope>
-        </dependency>
-
-
-        <!-- TEMPORARY -->
-        <dependency>
-            <groupId>org.burrow_studios.obelisk</groupId>
-            <artifactId>obelisk-common</artifactId>
-            <version>1.0.0-alpha.1</version>
         </dependency>
     </dependencies>
 </project>
