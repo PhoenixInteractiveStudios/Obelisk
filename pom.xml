@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <name>Obelisk</name>
-    <description>Burrow Studios monolithic API backend</description>
+    <description>Burrow Studios API backend</description>
     <url>https://github.com/BurrowStudios/Obelisk</url>
 
 
