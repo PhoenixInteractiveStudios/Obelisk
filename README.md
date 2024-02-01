@@ -11,19 +11,7 @@
 
 # Obelisk
 
-Obelisk is the monolithic backend for the Burrow Studios API.
-
-### Scopes
-
-Since the originally planned architecture (microservice-based) has been temporarily abandoned to minimize initial
-development time and effort, this project encompasses nearly all scopes of the planned services.
-
-- RESTful API
-- Socket-based event manager
-- Authentication & Authorization
-- User & permission management
-- Issue Tracker infrastructure
-- Synchronized cross-platform chat
+Obelisk is the backend for the Burrow Studios API.
 
 ### ⚠️ Early development notice ⚠️
 
