@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.burrow-studios.obelisk</groupId>
-    <artifactId>obelisk-api</artifactId>
+    <artifactId>commons-http</artifactId>
     <version>1.0.0-alpha.1</version>
 
-    <name>Obelisk API</name>
-    <description>Burrow Studios API client library</description>
-    <url>https://github.com/BurrowStudios/Obelisk/obelisk-api</url>
+    <name>Obelisk Common Library HTTP components</name>
+    <description>Shared implementation of the HTTP client &amp; server for multiple services / components</description>
+    <url>https://github.com/BurrowStudios/Obelisk/commons-http-client</url>
 
 
     <licenses>
@@ -32,13 +32,6 @@
             <url>https://turtleboi.de</url>
         </developer>
     </developers>
-
-
-    <scm>
-        <connection>scm:git:git://github.com/BurrowStudios/Obelisk.git</connection>
-        <developerConnection>scm:git:ssh://github.com:BurrowStudios/Obelisk.git</developerConnection>
-        <url>http://github.com/BurrowStudios/Obelisk</url>
-    </scm>
 
 
     <properties>
@@ -95,33 +88,21 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>24.0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.auth0</groupId>
-            <artifactId>java-jwt</artifactId>
-            <version>4.4.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.burrow-studios.obelisk</groupId>
             <artifactId>commons</artifactId>
             <version>1.0.0-alpha.1</version>
         </dependency>
 
         <dependency>
-            <groupId>org.burrow-studios.obelisk</groupId>
-            <artifactId>commons-http</artifactId>
-            <version>1.0.0-alpha.1</version>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>4.4.0</version>
         </dependency>
     </dependencies>
 </project>

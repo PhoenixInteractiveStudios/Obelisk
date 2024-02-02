@@ -1,5 +1,5 @@
-[build]: https://github.com/BurrowStudios/Obelisk/actions/workflows/build-common.yaml
-[build-shield]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-common.yaml
+[build]: https://github.com/BurrowStudios/Obelisk/actions/workflows/build-commons.yaml
+[build-shield]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-commons.yaml
 
 [![build-shield][]][build]
 

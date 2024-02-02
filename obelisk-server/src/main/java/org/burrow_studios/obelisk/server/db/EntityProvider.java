@@ -1,11 +1,12 @@
 package org.burrow_studios.obelisk.server.db;
 
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.commons.http.CompiledEndpoint;
+import org.burrow_studios.obelisk.commons.http.Endpoint;
+import org.burrow_studios.obelisk.commons.turtle.TurtleGenerator;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
 import org.burrow_studios.obelisk.core.net.TimeoutContext;
-import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
-import org.burrow_studios.obelisk.core.net.http.Endpoint;
 import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.burrow_studios.obelisk.core.source.DataProvider;
 import org.burrow_studios.obelisk.core.source.Request;
@@ -13,7 +14,6 @@ import org.burrow_studios.obelisk.core.source.Response;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.db.entity.*;
 import org.burrow_studios.obelisk.server.db.handlers.*;
-import org.burrow_studios.obelisk.commons.turtle.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
@@ -89,7 +89,7 @@ public class EntityProvider implements DataProvider {
     @Override
     public @NotNull Request submitRequest(@NotNull ActionImpl<?> action) {
         final CompiledEndpoint compiledEndpoint = action.getEndpoint();
-        final         Endpoint         endpoint = compiledEndpoint.endpoint();
+        final         Endpoint endpoint = compiledEndpoint.endpoint();
 
         // GROUP
         if (endpoint.equals(Endpoints.Group.GET_ALL))

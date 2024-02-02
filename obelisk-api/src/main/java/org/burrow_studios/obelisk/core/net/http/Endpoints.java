@@ -1,5 +1,8 @@
 package org.burrow_studios.obelisk.core.net.http;
 
+import org.burrow_studios.obelisk.commons.http.AuthLevel;
+import org.burrow_studios.obelisk.commons.http.Endpoint;
+import org.burrow_studios.obelisk.commons.http.Method;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
