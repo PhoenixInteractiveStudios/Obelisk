@@ -113,8 +113,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.burrow_studios.obelisk</groupId>
-            <artifactId>obelisk-common</artifactId>
+            <groupId>org.burrow-studios.obelisk</groupId>
+            <artifactId>commons</artifactId>
             <version>1.0.0-alpha.1</version>
         </dependency>
     </dependencies>

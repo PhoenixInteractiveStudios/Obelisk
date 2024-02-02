@@ -1,6 +1,6 @@
 package org.burrow_studios.obelisk.core.entities.checks.board;
 
-import org.burrow_studios.obelisk.common.util.validation.Validation;
+import org.burrow_studios.obelisk.commons.util.validation.Validation;
 
 public class IssueChecks {
     private IssueChecks() { }

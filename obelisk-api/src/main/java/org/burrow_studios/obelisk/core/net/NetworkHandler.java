@@ -18,7 +18,7 @@ import org.burrow_studios.obelisk.core.net.socket.SocketAdapter;
 import org.burrow_studios.obelisk.core.source.DataProvider;
 import org.burrow_studios.obelisk.core.source.Request;
 import org.burrow_studios.obelisk.core.source.Response;
-import org.burrow_studios.obelisk.common.turtle.TimeBasedIdGenerator;
+import org.burrow_studios.obelisk.commons.turtle.TimeBasedIdGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.http.HttpClient;

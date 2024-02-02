@@ -1,7 +1,7 @@
 package org.burrow_studios.obelisk.server;
 
 import org.burrow_studios.obelisk.server.util.logging.LogUtil;
-import org.burrow_studios.obelisk.common.util.ResourceTools;
+import org.burrow_studios.obelisk.commons.util.ResourceTools;
 
 import java.io.File;
 import java.net.URISyntaxException;
