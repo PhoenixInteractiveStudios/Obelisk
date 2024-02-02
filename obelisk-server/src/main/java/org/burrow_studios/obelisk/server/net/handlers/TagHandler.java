@@ -3,7 +3,7 @@ package org.burrow_studios.obelisk.server.net.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.commons.http.server.Request;
+import org.burrow_studios.obelisk.commons.http.server.HTTPRequest;
 import org.burrow_studios.obelisk.commons.http.server.ResponseBuilder;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.InternalServerErrorException;
@@ -26,7 +26,7 @@ public class TagHandler {
         this.networkHandler = networkHandler;
     }
 
-    public void onGetAll(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGetAll(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         JsonArray json = new JsonArray();
         for (long id : getAPI().getTags().getIdsAsImmutaleSet())
             json.add(id);
@@ -35,7 +35,7 @@ public class TagHandler {
         response.setBody(json);
     }
 
-    public void onGet(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGet(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long tagId = request.getSegmentLong(3);
 
         final TagImpl issue = getAPI().getTag(tagId);
@@ -46,7 +46,7 @@ public class TagHandler {
         response.setBody(issue.toJson());
     }
 
-    public void onCreate(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onCreate(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         Optional<JsonObject> body = request.optionalBody()
                 .map(JsonElement::getAsJsonObject);
 
@@ -84,7 +84,7 @@ public class TagHandler {
         response.setBody(result);
     }
 
-    public void onDelete(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onDelete(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long tagId = request.getSegmentLong(3);
         final TagImpl tag = getAPI().getTag(tagId);
 
@@ -99,7 +99,7 @@ public class TagHandler {
         response.setCode(204);
     }
 
-    public void onEdit(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onEdit(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long tagId = request.getSegmentLong(3);
 
         Optional<JsonObject> body = request.optionalBody()

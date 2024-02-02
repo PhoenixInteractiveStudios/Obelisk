@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.board.Issue;
-import org.burrow_studios.obelisk.commons.http.server.Request;
+import org.burrow_studios.obelisk.commons.http.server.HTTPRequest;
 import org.burrow_studios.obelisk.commons.http.server.ResponseBuilder;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.InternalServerErrorException;
@@ -30,7 +30,7 @@ public class IssueHandler {
         this.networkHandler = networkHandler;
     }
 
-    public void onGetAll(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGetAll(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         JsonArray json = new JsonArray();
         for (long id : getAPI().getIssues().getIdsAsImmutaleSet())
             json.add(id);
@@ -39,7 +39,7 @@ public class IssueHandler {
         response.setBody(json);
     }
 
-    public void onGet(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGet(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long issueId = request.getSegmentLong(3);
 
         final IssueImpl issue = getAPI().getIssue(issueId);
@@ -50,7 +50,7 @@ public class IssueHandler {
         response.setBody(issue.toJson());
     }
 
-    public void onCreate(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onCreate(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         Optional<JsonObject> body = request.optionalBody()
                 .map(JsonElement::getAsJsonObject);
 
@@ -120,7 +120,7 @@ public class IssueHandler {
         response.setBody(result);
     }
 
-    public void onAddAssignee(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onAddAssignee(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long issueId = request.getSegmentLong(3);
         final long  userId = request.getSegmentLong(5);
 
@@ -139,7 +139,7 @@ public class IssueHandler {
         response.setCode(204);
     }
 
-    public void onDeleteAssignee(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onDeleteAssignee(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long issueId = request.getSegmentLong(3);
         final long  userId = request.getSegmentLong(5);
 
@@ -160,7 +160,7 @@ public class IssueHandler {
         response.setCode(204);
     }
 
-    public void onAddTag(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onAddTag(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long issueId = request.getSegmentLong(3);
         final long   tagId = request.getSegmentLong(5);
 
@@ -179,7 +179,7 @@ public class IssueHandler {
         response.setCode(204);
     }
 
-    public void onDeleteTag(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onDeleteTag(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long issueId = request.getSegmentLong(3);
         final long   tagId = request.getSegmentLong(5);
 
@@ -200,7 +200,7 @@ public class IssueHandler {
         response.setCode(204);
     }
 
-    public void onDelete(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onDelete(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long issueId = request.getSegmentLong(3);
         final IssueImpl issue = getAPI().getIssue(issueId);
 
@@ -215,7 +215,7 @@ public class IssueHandler {
         response.setCode(204);
     }
 
-    public void onEdit(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onEdit(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long issueId = request.getSegmentLong(3);
 
         Optional<JsonObject> body = request.optionalBody()

@@ -3,7 +3,7 @@ package org.burrow_studios.obelisk.server.net.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.commons.http.server.Request;
+import org.burrow_studios.obelisk.commons.http.server.HTTPRequest;
 import org.burrow_studios.obelisk.commons.http.server.ResponseBuilder;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.InternalServerErrorException;
@@ -27,7 +27,7 @@ public class GroupHandler {
         this.networkHandler = networkHandler;
     }
 
-    public void onGetAll(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGetAll(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         JsonArray json = new JsonArray();
         for (long id : getAPI().getGroups().getIdsAsImmutaleSet())
             json.add(id);
@@ -36,7 +36,7 @@ public class GroupHandler {
         response.setBody(json);
     }
 
-    public void onGet(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGet(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long groupId = request.getSegmentLong(1);
 
         final GroupImpl group = getAPI().getGroup(groupId);
@@ -47,7 +47,7 @@ public class GroupHandler {
         response.setBody(group.toJson());
     }
 
-    public void onCreate(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onCreate(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         Optional<JsonObject> body = request.optionalBody()
                 .map(JsonElement::getAsJsonObject);
 
@@ -93,7 +93,7 @@ public class GroupHandler {
         response.setBody(result);
     }
 
-    public void onAddMember(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onAddMember(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long groupId = request.getSegmentLong(1);
         final long  userId = request.getSegmentLong(3);
 
@@ -112,7 +112,7 @@ public class GroupHandler {
         response.setCode(204);
     }
 
-    public void onDeleteMember(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onDeleteMember(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long groupId = request.getSegmentLong(1);
         final long  userId = request.getSegmentLong(3);
 
@@ -133,7 +133,7 @@ public class GroupHandler {
         response.setCode(204);
     }
 
-    public void onDelete(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onDelete(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long groupId = request.getSegmentLong(1);
         final GroupImpl group = getAPI().getGroup(groupId);
 
@@ -148,7 +148,7 @@ public class GroupHandler {
         response.setCode(204);
     }
 
-    public void onEdit(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onEdit(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long groupId = request.getSegmentLong(1);
 
         Optional<JsonObject> body = request.optionalBody()

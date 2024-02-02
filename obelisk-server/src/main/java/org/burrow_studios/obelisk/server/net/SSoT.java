@@ -2,10 +2,10 @@ package org.burrow_studios.obelisk.server.net;
 
 import org.burrow_studios.obelisk.commons.http.CompiledEndpoint;
 import org.burrow_studios.obelisk.commons.http.Endpoint;
+import org.burrow_studios.obelisk.commons.http.Endpoints;
 import org.burrow_studios.obelisk.commons.util.ArrayUtil;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
-import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.burrow_studios.obelisk.core.source.DataProvider;
 import org.burrow_studios.obelisk.core.source.EventProvider;
 import org.burrow_studios.obelisk.core.source.Request;
