@@ -1,0 +1,29 @@
+name: Build API client (obelisk-api)
+
+on:
+  push:
+    branches:
+      - "development"
+    paths:
+      - "obelisk-api"
+  pull_request:
+    branches:
+      - "development"
+    paths:
+      - "obelisk-api"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build with Maven
+      run: mvn -B package --file obelisk-api/pom.xml
