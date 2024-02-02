@@ -10,6 +10,7 @@
 
     <name>Obelisk Common Library</name>
     <description>Some utilities commonly used in multiple Obelisk services and components</description>
+    <url>https://github.com/BurrowStudios/Obelisk/obelisk-common</url>
 
 
     <licenses>
