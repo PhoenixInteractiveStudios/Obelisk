@@ -20,11 +20,11 @@ API clients.
 [build-server]: https://github.com/BurrowStudios/Obelisk/actions/workflows/build-server.yaml
 [build-server-shield]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-server.yaml
 
-| Project         | Relative Path                       | Status                                   | Description                                                              |
-|-----------------|-------------------------------------|------------------------------------------|--------------------------------------------------------------------------|
-| Commons Library | [`obelisk-api/`](obelisk-common)    | [![build-common-shield][]][build-common] | Some utilities commonly used in multiple Obelisk services and components |
-| API client      | [`obelisk-api/`](obelisk-api)       | [![build-api-shield][]][build-api]       | Burrow Studios API client library                                        |
-| Server          | [`obelisk-server/`](obelisk-server) | [![build-server-shield][]][build-server] | Monolithic backend server (legacy)                                       |
+| Project         | Layer                                          | Relative Path                       | Status                                   | Description                                                              |
+|-----------------|------------------------------------------------|-------------------------------------|------------------------------------------|--------------------------------------------------------------------------|
+| Commons Library |                                                | [`obelisk-api/`](obelisk-common)    | [![build-common-shield][]][build-common] | Some utilities commonly used in multiple Obelisk services and components |
+| API client      | Application                                    | [`obelisk-api/`](obelisk-api)       | [![build-api-shield][]][build-api]       | Burrow Studios API client library                                        |
+| Server          | Interface, Communication, Service& Persistence | [`obelisk-server/`](obelisk-server) | [![build-server-shield][]][build-server] | Monolithic backend server (legacy)                                       |
 
 ### Architecture
 
