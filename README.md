@@ -15,6 +15,8 @@ API clients.
 
 [build-common]: https://github.com/BurrowStudios/Obelisk/actions/workflows/build-common.yaml
 [build-common-shield]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-common.yaml
+[build-shelly]: https://github.com/BurrowStudios/Obelisk/actions/workflows/build-shelly.yaml
+[build-shelly-shield]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-shelly.yaml
 [build-api]: https://github.com/BurrowStudios/Obelisk/actions/workflows/build-api.yaml
 [build-api-shield]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-api.yaml
 [build-server]: https://github.com/BurrowStudios/Obelisk/actions/workflows/build-server.yaml
@@ -24,7 +26,7 @@ API clients.
 |-----------------|------------------------------------------------|-------------------------------------|------------------------------------------|-------------------------------------------------------------------------------------|
 | Commons Library |                                                | [`obelisk-common/`](obelisk-common) | [![build-common-shield][]][build-common] | Some utilities commonly used in multiple Obelisk services and components            |
 | Message Broker  | Communication                                  | [`message-broker/`](message-broker) | Incomplete                               | Template setup for the [RabbitMQ](https://www.rabbitmq.com/) backend message broker |
-| Shelly          | Interface                                      | [`Shelly/`](Shelly)                 | Not implemented                          | Authentication & Authorization service                                              |
+| Shelly          | Interface                                      | [`Shelly/`](Shelly)                 | [![build-shelly-shield][]][build-shelly] | Authentication & Authorization service                                              |
 | API client      | Application                                    | [`obelisk-api/`](obelisk-api)       | [![build-api-shield][]][build-api]       | Burrow Studios API client library                                                   |
 | Server          | Interface, Communication, Service& Persistence | [`obelisk-server/`](obelisk-server) | [![build-server-shield][]][build-server] | Monolithic backend server (legacy)                                                  |
 
