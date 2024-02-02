@@ -1,0 +1,104 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><element><id>UMLState</id><coordinates><x>330</x><y>290</y><w>300</w><h>70</h></coordinates><panel_attributes>bg=orange
+layer=-1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLState</id><coordinates><x>350</x><y>310</y><w>100</w><h>30</h></coordinates><panel_attributes>API
+/REST / HTTP/</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLState</id><coordinates><x>510</x><y>310</y><w>100</w><h>30</h></coordinates><panel_attributes>Event Service
+/Sockets/</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLState</id><coordinates><x>270</x><y>170</y><w>420</w><h>60</h></coordinates><panel_attributes>bg=yellow
+layer=0
+fontsize=18
+Application</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>400</x><y>220</y><w>30</w><h>50</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes><additional_attributes>10;30;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>380</x><y>260</y><w>30</w><h>70</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>UMLState</id><coordinates><x>190</x><y>280</y><w>100</w><h>80</h></coordinates><panel_attributes>bg=red
+layer=0
+valign=top
+Auth</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLState</id><coordinates><x>200</x><y>310</y><w>60</w><h>40</h></coordinates><panel_attributes>Session
+Manager</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>280</x><y>310</y><w>90</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;70;10</additional_attributes></element><element><id>Relation</id><coordinates><x>250</x><y>330</y><w>100</w><h>30</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes><additional_attributes>10;10;80;10</additional_attributes></element><element><id>UMLState</id><coordinates><x>500</x><y>410</y><w>120</w><h>60</h></coordinates><panel_attributes>bg=orange
+Message Broker
+/RabbitMQ/</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>550</x><y>330</y><w>30</w><h>100</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;80</additional_attributes></element><element><id>Relation</id><coordinates><x>650</x><y>230</y><w>150</w><h>70</h></coordinates><panel_attributes>lt=..
+r2=Application\nLayer
+m2=Interface\nLayer</panel_attributes><additional_attributes>10;30;130;30</additional_attributes></element><element><id>UMLState</id><coordinates><x>310</x><y>540</y><w>80</w><h>40</h></coordinates><panel_attributes>User
+Service</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLState</id><coordinates><x>300</x><y>660</y><w>100</w><h>40</h></coordinates><panel_attributes>bg=orange
+halign=left
+          MySQL</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>310</x><y>670</y><w>20</w><h>20</h></coordinates><panel_attributes>_umletcode=
+fg='black';
+bg='#222222';
+drawArc(0,0,width,height*2/5,0,180,true) //Parameters (x, y, width, height, start, extent, open)
+bg='bg';
+drawArc(0,0,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+fg='#929292';
+bg='#222222';
+drawRectangle(0,(height+0.5)/5,width,(height)*3/5-1)  //Parameters (x, y, width, height)
+fg='black'
+drawLine(0,height/5,0,height*4/5) //Parameters (x1, y1, x2, y2)
+drawLine(width,height/5,width,height*4/5) //Parameters (x1, y1, x2, y2)
+bg='bg';
+drawArc(0,height*1/5,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+drawArc(0,height*2/5,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+bg='#222222'
+drawArc(0,height*3/5,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLState</id><coordinates><x>600</x><y>540</y><w>80</w><h>40</h></coordinates><panel_attributes>Issue
+Tracker</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLState</id><coordinates><x>410</x><y>660</y><w>100</w><h>40</h></coordinates><panel_attributes>bg=orange
+halign=left
+          MongoDB</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>420</x><y>670</y><w>20</w><h>20</h></coordinates><panel_attributes>_umletcode=
+fg='black';
+bg='#222222';
+drawArc(0,0,width,height*2/5,0,180,true) //Parameters (x, y, width, height, start, extent, open)
+bg='bg';
+drawArc(0,0,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+fg='#929292';
+bg='#222222';
+drawRectangle(0,(height+0.5)/5,width,(height)*3/5-1)  //Parameters (x, y, width, height)
+fg='black'
+drawLine(0,height/5,0,height*4/5) //Parameters (x1, y1, x2, y2)
+drawLine(width,height/5,width,height*4/5) //Parameters (x1, y1, x2, y2)
+bg='bg';
+drawArc(0,height*1/5,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+drawArc(0,height*2/5,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+bg='#222222'
+drawArc(0,height*3/5,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLState</id><coordinates><x>500</x><y>540</y><w>80</w><h>50</h></coordinates><panel_attributes>Chat
+Service</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLState</id><coordinates><x>520</x><y>660</y><w>100</w><h>40</h></coordinates><panel_attributes>bg=orange
+halign=left
+          Cassandra</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>530</x><y>670</y><w>20</w><h>20</h></coordinates><panel_attributes>_umletcode=
+fg='black';
+bg='#222222';
+drawArc(0,0,width,height*2/5,0,180,true) //Parameters (x, y, width, height, start, extent, open)
+bg='bg';
+drawArc(0,0,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+fg='#929292';
+bg='#222222';
+drawRectangle(0,(height+0.5)/5,width,(height)*3/5-1)  //Parameters (x, y, width, height)
+fg='black'
+drawLine(0,height/5,0,height*4/5) //Parameters (x1, y1, x2, y2)
+drawLine(width,height/5,width,height*4/5) //Parameters (x1, y1, x2, y2)
+bg='bg';
+drawArc(0,height*1/5,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+drawArc(0,height*2/5,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+bg='#222222'
+drawArc(0,height*3/5,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLState</id><coordinates><x>400</x><y>540</y><w>80</w><h>40</h></coordinates><panel_attributes>Moderation
+Service</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>230</x><y>350</y><w>30</w><h>330</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;310;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>650</x><y>370</y><w>150</w><h>50</h></coordinates><panel_attributes>lt=..
+m2=Communication\nLayer</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>Relation</id><coordinates><x>560</x><y>490</y><w>240</w><h>50</h></coordinates><panel_attributes>lt=..
+m2=Service\nLayer</panel_attributes><additional_attributes>10;10;220;10</additional_attributes></element><element><id>Relation</id><coordinates><x>650</x><y>610</y><w>150</w><h>50</h></coordinates><panel_attributes>lt=..
+m2=Persistence\nLayer</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>370</x><y>250</y><w>60</w><h>20</h></coordinates><panel_attributes>valign=center
+🔑 TLS</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>380</x><y>220</y><w>30</w><h>50</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;30;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>400</x><y>260</y><w>30</w><h>70</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>180</x><y>250</y><w>210</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;190;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>550</x><y>250</y><w>20</w><h>20</h></coordinates><panel_attributes>valign=center
+🔑</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>550</x><y>260</y><w>30</w><h>70</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>420</x><y>250</y><w>150</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>Relation</id><coordinates><x>430</x><y>570</y><w>30</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>550</x><y>580</y><w>30</w><h>100</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>520</x><y>460</y><w>30</w><h>100</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes><additional_attributes>10;80;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>380</x><y>370</y><w>190</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;170;10</additional_attributes></element><element><id>Relation</id><coordinates><x>240</x><y>370</y><w>150</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>Relation</id><coordinates><x>440</x><y>610</y><w>130</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;110;10</additional_attributes></element><element><id>Relation</id><coordinates><x>240</x><y>610</y><w>120</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;100;10</additional_attributes></element><element><id>Relation</id><coordinates><x>340</x><y>570</y><w>30</w><h>110</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;90;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>350</x><y>610</y><w>100</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;80;10</additional_attributes></element><element><id>Relation</id><coordinates><x>250</x><y>310</y><w>60</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;40;10</additional_attributes></element><element><id>Relation</id><coordinates><x>430</x><y>450</y><w>30</w><h>90</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes><additional_attributes>10;70;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>370</x><y>330</y><w>30</w><h>210</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes><additional_attributes>10;10;10;190</additional_attributes></element><element><id>Relation</id><coordinates><x>380</x><y>490</y><w>70</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;50;10</additional_attributes></element><element><id>UMLState</id><coordinates><x>290</x><y>520</y><w>410</w><h>80</h></coordinates><panel_attributes>bg=orange
+layer=-1</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLState</id><coordinates><x>400</x><y>420</y><w>80</w><h>40</h></coordinates><panel_attributes>bg=orange
+Event
+Handler</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>470</x><y>430</y><w>50</w><h>30</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes><additional_attributes>10;10;30;10</additional_attributes></element><element><id>Relation</id><coordinates><x>240</x><y>490</y><w>150</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;130;10</additional_attributes></element><element><id>Relation</id><coordinates><x>470</x><y>550</y><w>50</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>30;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>640</x><y>250</y><w>20</w><h>20</h></coordinates><panel_attributes>valign=center
+🔑</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>560</x><y>250</y><w>100</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;80;10</additional_attributes></element><element><id>Relation</id><coordinates><x>640</x><y>220</y><w>30</w><h>50</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;30;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>550</x><y>260</y><w>120</w><h>300</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;280;10;230;100;230;100;10</additional_attributes></element><element><id>Relation</id><coordinates><x>560</x><y>370</y><w>100</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;80;10</additional_attributes></element><element><id>Relation</id><coordinates><x>440</x><y>490</y><w>100</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;80;10</additional_attributes></element><element><id>Relation</id><coordinates><x>550</x><y>220</y><w>30</w><h>50</h></coordinates><panel_attributes>lt=-&gt;&gt;&gt;</panel_attributes><additional_attributes>10;30;10;10</additional_attributes></element><element><id>UMLState</id><coordinates><x>190</x><y>660</y><w>100</w><h>40</h></coordinates><panel_attributes>bg=orange
+halign=left
+          SQLite</panel_attributes><additional_attributes></additional_attributes></element><element><id>Text</id><coordinates><x>200</x><y>670</y><w>20</w><h>20</h></coordinates><panel_attributes>_umletcode=
+fg='black';
+bg='#222222';
+drawArc(0,0,width,height*2/5,0,180,true) //Parameters (x, y, width, height, start, extent, open)
+bg='bg';
+drawArc(0,0,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+fg='#929292';
+bg='#222222';
+drawRectangle(0,(height+0.5)/5,width,(height)*3/5-1)  //Parameters (x, y, width, height)
+fg='black'
+drawLine(0,height/5,0,height*4/5) //Parameters (x1, y1, x2, y2)
+drawLine(width,height/5,width,height*4/5) //Parameters (x1, y1, x2, y2)
+bg='bg';
+drawArc(0,height*1/5,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+drawArc(0,height*2/5,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+bg='#222222'
+drawArc(0,height*3/5,width,height*2/5,180,180,true)  //Parameters (x, y, width, height, start, extent, open)
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>180</x><y>370</y><w>70</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;50;10</additional_attributes></element><element><id>Relation</id><coordinates><x>180</x><y>490</y><w>70</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;50;10</additional_attributes></element><element><id>Relation</id><coordinates><x>180</x><y>610</y><w>70</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;50;10</additional_attributes></element><element><id>Relation</id><coordinates><x>530</x><y>490</y><w>40</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;20;10</additional_attributes></element><element><id>Relation</id><coordinates><x>560</x><y>570</y><w>100</w><h>80</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;60;80;60;80;10</additional_attributes></element><element><id>Relation</id><coordinates><x>480</x><y>620</y><w>90</w><h>60</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;40;10;10;70;10</additional_attributes></element><element><id>Relation</id><coordinates><x>560</x><y>610</y><w>90</w><h>30</h></coordinates><panel_attributes>lt=..</panel_attributes><additional_attributes>10;10;70;10</additional_attributes></element><element><id>Relation</id><coordinates><x>570</x><y>550</y><w>50</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;&lt;-</panel_attributes><additional_attributes>10;10;30;10</additional_attributes></element></diagram>

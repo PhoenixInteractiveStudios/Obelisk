@@ -26,6 +26,13 @@ API clients.
 | API client      | [`obelisk-api/`](obelisk-api)       | [![build-api-shield][]][build-api]       | Burrow Studios API client library                                        |
 | Server          | [`obelisk-server/`](obelisk-server) | [![build-server-shield][]][build-server] | Monolithic backend server (legacy)                                       |
 
+### Architecture
+
+The repository is currently still in the process of migrating into a monorepo (splitting up modules into separate
+projects) and thus, the architecture is still a bit fuzzy. This is the current plan for a less monolithic architecture:
+
+![](res/architecture.png)
+
 ### ⚠️ Early development notice ⚠️
 
 Please note that this application is still in early development and not officially supported until the first release.
