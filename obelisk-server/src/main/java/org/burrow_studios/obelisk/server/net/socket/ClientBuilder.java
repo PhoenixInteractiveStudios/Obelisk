@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.core.event.gateway.GatewayOpcodes;
 import org.burrow_studios.obelisk.core.net.socket.NetworkException;
 import org.burrow_studios.obelisk.core.net.socket.SocketIO;
-import org.burrow_studios.obelisk.common.crypto.EncryptionException;
-import org.burrow_studios.obelisk.common.crypto.SimpleSymmetricEncryption;
+import org.burrow_studios.obelisk.commons.crypto.EncryptionException;
+import org.burrow_studios.obelisk.commons.crypto.SimpleSymmetricEncryption;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

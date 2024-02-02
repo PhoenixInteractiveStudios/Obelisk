@@ -1,8 +1,8 @@
 package org.burrow_studios.obelisk.core.net.socket;
 
-import org.burrow_studios.obelisk.common.crypto.EncryptionException;
-import org.burrow_studios.obelisk.common.crypto.Encryption;
-import org.burrow_studios.obelisk.common.function.ExceptionalConsumer;
+import org.burrow_studios.obelisk.commons.crypto.EncryptionException;
+import org.burrow_studios.obelisk.commons.crypto.Encryption;
+import org.burrow_studios.obelisk.commons.function.ExceptionalConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

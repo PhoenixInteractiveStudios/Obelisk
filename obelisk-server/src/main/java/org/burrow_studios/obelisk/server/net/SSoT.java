@@ -8,7 +8,7 @@ import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.burrow_studios.obelisk.core.source.DataProvider;
 import org.burrow_studios.obelisk.core.source.EventProvider;
 import org.burrow_studios.obelisk.core.source.Request;
-import org.burrow_studios.obelisk.common.util.ArrayUtil;
+import org.burrow_studios.obelisk.commons.util.ArrayUtil;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.jetbrains.annotations.NotNull;
 

@@ -13,7 +13,7 @@ import org.burrow_studios.obelisk.server.db.EntityProvider;
 import org.burrow_studios.obelisk.server.db.NoSuchEntryException;
 import org.burrow_studios.obelisk.server.db.RequestHandler;
 import org.burrow_studios.obelisk.server.db.entity.GroupDB;
-import org.burrow_studios.obelisk.common.turtle.TurtleGenerator;
+import org.burrow_studios.obelisk.commons.turtle.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

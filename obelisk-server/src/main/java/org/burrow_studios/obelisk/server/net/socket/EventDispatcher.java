@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.burrow_studios.obelisk.core.net.socket.NetworkException;
 import org.burrow_studios.obelisk.server.net.NetworkHandler;
-import org.burrow_studios.obelisk.common.turtle.TurtleGenerator;
+import org.burrow_studios.obelisk.commons.turtle.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

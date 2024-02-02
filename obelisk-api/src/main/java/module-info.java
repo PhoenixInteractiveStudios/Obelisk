@@ -1,5 +1,5 @@
 module obelisk.api {
-    requires obelisk.common;
+    requires obelisk.commons;
     requires org.jetbrains.annotations;
     requires com.google.gson;
     requires java.logging;
