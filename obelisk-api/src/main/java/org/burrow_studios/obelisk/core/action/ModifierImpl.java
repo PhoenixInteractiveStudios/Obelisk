@@ -4,9 +4,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.Modifier;
 import org.burrow_studios.obelisk.api.entities.Turtle;
+import org.burrow_studios.obelisk.commons.http.CompiledEndpoint;
 import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
-import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;

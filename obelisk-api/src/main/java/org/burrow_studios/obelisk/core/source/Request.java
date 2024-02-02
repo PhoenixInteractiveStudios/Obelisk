@@ -1,8 +1,8 @@
 package org.burrow_studios.obelisk.core.source;
 
 import com.google.gson.JsonElement;
+import org.burrow_studios.obelisk.commons.http.CompiledEndpoint;
 import org.burrow_studios.obelisk.core.net.TimeoutContext;
-import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

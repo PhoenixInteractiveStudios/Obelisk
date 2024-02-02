@@ -7,12 +7,14 @@ on:
     paths:
       - "obelisk-api"
       - "commons"
+      - "commons-http"
   pull_request:
     branches:
       - "development"
     paths:
       - "obelisk-api"
       - "commons"
+      - "commons-http"
 
 jobs:
   build:

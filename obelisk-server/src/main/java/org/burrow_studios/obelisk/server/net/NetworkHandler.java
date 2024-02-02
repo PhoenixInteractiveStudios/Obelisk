@@ -1,11 +1,12 @@
 package org.burrow_studios.obelisk.server.net;
 
+import org.burrow_studios.obelisk.commons.http.server.Authorizer;
+import org.burrow_studios.obelisk.commons.http.server.HTTPServer;
+import org.burrow_studios.obelisk.commons.http.server.SunServerImpl;
 import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.burrow_studios.obelisk.core.net.socket.NetworkException;
 import org.burrow_studios.obelisk.server.ObeliskServer;
-import org.burrow_studios.obelisk.server.net.http.APIHandler;
-import org.burrow_studios.obelisk.server.net.http.handlers.*;
-import org.burrow_studios.obelisk.server.net.http.server.SunServerImpl;
+import org.burrow_studios.obelisk.server.net.handlers.*;
 import org.burrow_studios.obelisk.server.net.socket.EventDispatcher;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,7 +15,7 @@ import java.io.IOException;
 public class NetworkHandler {
     private final ObeliskServer server;
 
-    private final APIHandler      apiHandler;
+    private final HTTPServer      apiHandler;
     private final EventDispatcher eventDispatcher;
 
     public NetworkHandler(@NotNull ObeliskServer server) throws IOException, NetworkException {
@@ -31,13 +32,18 @@ public class NetworkHandler {
         final SessionHandler sessionHandler = new SessionHandler(this);
         final   GroupHandler   groupHandler = new   GroupHandler(this);
         final ProjectHandler projectHandler = new ProjectHandler(this);
-        final  TicketHandler  ticketHandler = new  TicketHandler(this);
+        final TicketHandler ticketHandler = new  TicketHandler(this);
         final    UserHandler    userHandler = new    UserHandler(this);
         final   BoardHandler   boardHandler = new   BoardHandler(this);
-        final     TagHandler     tagHandler = new     TagHandler(this);
-        final   IssueHandler   issueHandler = new   IssueHandler(this);
+        final TagHandler tagHandler = new     TagHandler(this);
+        final IssueHandler issueHandler = new   IssueHandler(this);
 
-        this.apiHandler = new SunServerImpl(this, apiPort)
+        final Authorizer authorizer = Authorizer.of(
+                token -> getServer().getAuthenticator().getTokenManager().decodeIdentityToken(token),
+                token -> getServer().getAuthenticator().getTokenManager().decodeSessionToken(token)
+        );
+
+        this.apiHandler = new SunServerImpl(authorizer, apiPort)
                 // Session lifecycle
                 .addEndpoint(Endpoints.LOGIN     , sessionHandler::onLogin)
                 .addEndpoint(Endpoints.LOGOUT    , sessionHandler::onLogout)
@@ -103,7 +109,7 @@ public class NetworkHandler {
         return server;
     }
 
-    public @NotNull APIHandler getApiHandler() {
+    public @NotNull HTTPServer getApiHandler() {
         return apiHandler;
     }
 

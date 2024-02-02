@@ -1,18 +1,16 @@
-name: Build Shelly
+name: Build Commons Library (obelisk-common)
 
 on:
   push:
     branches:
       - "development"
     paths:
-      - "Shelly"
       - "commons"
       - "commons-http"
   pull_request:
     branches:
       - "development"
     paths:
-      - "Shelly"
       - "commons"
       - "commons-http"
 
@@ -30,4 +28,4 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn -B package --file Shelly/pom.xml
+      run: mvn -B package --file commons-http/pom.xml

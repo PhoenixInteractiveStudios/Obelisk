@@ -2,8 +2,8 @@ package org.burrow_studios.obelisk.core.action;
 
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Turtle;
+import org.burrow_studios.obelisk.commons.http.CompiledEndpoint;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
-import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
 import org.jetbrains.annotations.NotNull;
 
 public final class DeleteActionImpl<T extends Turtle> extends ActionImpl<Void> implements DeleteAction<T> {

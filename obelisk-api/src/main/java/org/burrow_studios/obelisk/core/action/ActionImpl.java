@@ -2,12 +2,12 @@ package org.burrow_studios.obelisk.core.action;
 
 import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.api.action.Action;
+import org.burrow_studios.obelisk.commons.function.ExceptionalBiFunction;
+import org.burrow_studios.obelisk.commons.http.CompiledEndpoint;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
+import org.burrow_studios.obelisk.core.source.DataProvider;
 import org.burrow_studios.obelisk.core.source.Request;
 import org.burrow_studios.obelisk.core.source.Response;
-import org.burrow_studios.obelisk.core.net.http.CompiledEndpoint;
-import org.burrow_studios.obelisk.core.source.DataProvider;
-import org.burrow_studios.obelisk.commons.function.ExceptionalBiFunction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
