@@ -2,12 +2,13 @@ package org.burrow_studios.obelisk.commons.http.server;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.commons.http.HTTPResponse;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** A helper class to create {@link Response Responses}. As opposed to the resulting Response, this class is mutable. */
+/** A helper class to create {@link HTTPResponse Responses}. As opposed to the resulting Response, this class is mutable. */
 public class ResponseBuilder {
     private int code;
     private final ConcurrentHashMap<String, String> headers;
@@ -26,15 +27,15 @@ public class ResponseBuilder {
     }
 
     /**
-     * Creates a result {@link Response} this builder was configured to create.
+     * Creates a result {@link HTTPResponse} this builder was configured to create.
      * @throws IllegalArgumentException if no status code has been specified yet.
      * @see #setCode(int)
      */
-    public @NotNull Response build() throws IllegalArgumentException {
+    public @NotNull HTTPResponse build() throws IllegalArgumentException {
         if (code == -1)
             throw new IllegalArgumentException("Missing status code");
 
-        return new Response(
+        return new HTTPResponse(
                 code,
                 Map.copyOf(headers),
                 body

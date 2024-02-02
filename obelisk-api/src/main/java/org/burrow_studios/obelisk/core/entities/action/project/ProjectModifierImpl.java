@@ -7,7 +7,7 @@ import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.ProjectChecks;
 import org.burrow_studios.obelisk.core.entities.impl.ProjectImpl;
-import org.burrow_studios.obelisk.core.net.http.Endpoints;
+import org.burrow_studios.obelisk.commons.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public class ProjectModifierImpl extends ModifierImpl<Project, ProjectImpl> implements ProjectModifier {

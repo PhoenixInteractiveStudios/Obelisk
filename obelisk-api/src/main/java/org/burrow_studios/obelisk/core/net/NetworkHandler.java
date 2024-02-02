@@ -7,13 +7,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.commons.http.AuthLevel;
 import org.burrow_studios.obelisk.commons.http.CompiledEndpoint;
-import org.burrow_studios.obelisk.commons.http.Method;
+import org.burrow_studios.obelisk.commons.http.Endpoints;
+import org.burrow_studios.obelisk.commons.http.HTTPResponse;
+import org.burrow_studios.obelisk.commons.http.TimeoutContext;
+import org.burrow_studios.obelisk.commons.http.client.HTTPClient;
 import org.burrow_studios.obelisk.commons.turtle.TimeBasedIdGenerator;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
-import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.burrow_studios.obelisk.core.net.socket.NetworkException;
 import org.burrow_studios.obelisk.core.net.socket.SocketAdapter;
 import org.burrow_studios.obelisk.core.source.DataProvider;
@@ -21,10 +22,6 @@ import org.burrow_studios.obelisk.core.source.Request;
 import org.burrow_studios.obelisk.core.source.Response;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.*;
 
@@ -33,16 +30,13 @@ public class NetworkHandler implements DataProvider {
     private final TimeBasedIdGenerator requestIdGenerator = TimeBasedIdGenerator.get();
     private final ConcurrentHashMap<Long, Request> pendingRequests = new ConcurrentHashMap<>();
     private final SocketAdapter socketAdapter;
-    private final HttpClient httpClient;
-    private final String identityToken;
+    private final HTTPClient httpClient;
     private final long subjectId;
-    private String sessionToken;
     final Gson gson;
 
     public NetworkHandler(@NotNull ObeliskImpl api, @NotNull String identityToken) {
         this.api = api;
 
-        this.identityToken = identityToken;
         try {
             this.subjectId = Long.parseLong(JWT.decode(identityToken).getSubject());
         } catch (JWTDecodeException | NullPointerException | NumberFormatException e) {
@@ -54,9 +48,7 @@ public class NetworkHandler implements DataProvider {
                 .serializeNulls()
                 .create();
         this.socketAdapter = new SocketAdapter(this);
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(8))
-                .build();
+        this.httpClient = new HTTPClient(identityToken, null);
 
         try {
             this.login();
@@ -67,16 +59,16 @@ public class NetworkHandler implements DataProvider {
     }
 
     private CompletableFuture<Response> logout() {
-        if (this.sessionToken == null)
+        if (this.httpClient.getSessionToken() == null)
             return CompletableFuture.completedFuture(null);
 
         final long id  = this.requestIdGenerator.newId();
         final TimeoutContext timeout = TimeoutContext.DEFAULT;
 
         try {
-            final String sessionId = JWT.decode(this.sessionToken).getId();
+            final String sessionId = JWT.decode(this.httpClient.getSessionToken()).getId();
 
-            this.sessionToken = null;
+            this.httpClient.setSessionToken(null);
 
             if (sessionId == null)
                 return CompletableFuture.completedFuture(null);
@@ -91,7 +83,7 @@ public class NetworkHandler implements DataProvider {
 
             return request.getFuture();
         } catch (JWTDecodeException ignored) {
-            this.sessionToken = null;
+            this.httpClient.setSessionToken(null);
             return CompletableFuture.completedFuture(null);
         }
     }
@@ -116,12 +108,14 @@ public class NetworkHandler implements DataProvider {
             if (response.getCode() != 200)
                 throw new RuntimeException("Unexpected login response");
 
-            this.sessionToken = Optional.of(response)
+            String sessionToken = Optional.of(response)
                     .map(Response::getContent)
                     .map(JsonElement::getAsJsonObject)
                     .map(json -> json.get("token"))
                     .map(JsonElement::getAsString)
                     .orElseThrow(() -> new RuntimeException("Unexpected login response"));
+
+            this.httpClient.setSessionToken(sessionToken);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new RuntimeException(e);
         }
@@ -149,7 +143,7 @@ public class NetworkHandler implements DataProvider {
             final String host = json.get("host").getAsString();
             final int    port = json.get("port").getAsInt();
 
-            final DecodedJWT token = JWT.decode(this.sessionToken);
+            final DecodedJWT token = JWT.decode(this.httpClient.getSessionToken());
             final String sub = token.getSubject();
             final String sid = token.getId();
             final String sok = token.getClaim("sok").asString();
@@ -184,53 +178,23 @@ public class NetworkHandler implements DataProvider {
     }
 
     private void send(@NotNull Request request) {
-        final CompletableFuture<Response> requestFuture = request.getFuture();
-        final JsonElement content = request.getContent();
-        final long id = request.getId();
-
-        final HttpRequest.Builder builder = HttpRequest.newBuilder();
-
-        builder.uri(request.getEndpoint().asURI());
-
-        builder.timeout(request.getTimeout().asDuration());
-
-        final AuthLevel privilege = request.getEndpoint().endpoint().getPrivilege();
-        if (privilege == AuthLevel.IDENTITY)
-            builder.header("Authorization", "Bearer " + identityToken);
-        if (privilege == AuthLevel.SESSION)
-            builder.header("Authorization", "Bearer " + sessionToken);
-
-        final Method method = request.getEndpoint().method();
-        if (content != null) {
-            builder.method(method.name(), HttpRequest.BodyPublishers.ofString(gson.toJson(content)));
-            builder.header("Content-Type", "application/json");
-        } else {
-            builder.method(method.name(), HttpRequest.BodyPublishers.noBody());
-        }
-
-        HttpRequest httpRequest = builder.build();
-
-        this.httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString())
-                .handle((httpResponse, throwable) -> {
-                    if (throwable == null) {
-                        Response response = makeResponse(httpResponse, request);
-                        requestFuture.complete(response);
-                    } else {
-                        requestFuture.completeExceptionally(throwable);
-                    }
-
-                    this.pendingRequests.remove(id);
-                    return null;
-                });
+        CompletableFuture<HTTPResponse> callback = this.httpClient.send(request.getEndpoint(), request.getContent(), request.getTimeout());
+        callback.handle((httpResponse, throwable) -> {
+            if (httpResponse != null)
+                request.getFuture().complete(makeResponse(httpResponse, request));
+            if (throwable != null)
+                request.getFuture().completeExceptionally(throwable);
+            return null;
+        });
     }
 
-    private @NotNull Response makeResponse(@NotNull HttpResponse<String> httpResponse, @NotNull Request request) {
+    private @NotNull Response makeResponse(@NotNull HTTPResponse httpResponse, @NotNull Request request) {
         if (!request.getProvider().equals(this))
             throw new IllegalArgumentException("Request must be to this provider");
 
         final String bodyStr = httpResponse.body();
         final JsonElement body = bodyStr == null ? null : gson.fromJson(bodyStr, JsonElement.class);
 
-        return new Response(this, request.getId(), httpResponse.statusCode(), body);
+        return new Response(this, request.getId(), httpResponse.code(), body);
     }
 }

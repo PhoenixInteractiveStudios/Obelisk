@@ -1,6 +1,6 @@
 package org.burrow_studios.obelisk.commons.http.server.exceptions;
 
-import org.burrow_studios.obelisk.commons.http.server.Response;
+import org.burrow_studios.obelisk.commons.http.HTTPResponse;
 
 public abstract class RequestHandlerException extends Exception {
     public RequestHandlerException() { }
@@ -17,5 +17,5 @@ public abstract class RequestHandlerException extends Exception {
         super(cause);
     }
 
-    public abstract Response asResponse();
+    public abstract HTTPResponse asResponse();
 }

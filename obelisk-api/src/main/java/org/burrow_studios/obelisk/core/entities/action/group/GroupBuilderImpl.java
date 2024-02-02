@@ -9,7 +9,7 @@ import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.BuilderImpl;
 import org.burrow_studios.obelisk.core.entities.checks.GroupChecks;
 import org.burrow_studios.obelisk.core.entities.impl.GroupImpl;
-import org.burrow_studios.obelisk.core.net.http.Endpoints;
+import org.burrow_studios.obelisk.commons.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public class GroupBuilderImpl extends BuilderImpl<Group> implements GroupBuilder {

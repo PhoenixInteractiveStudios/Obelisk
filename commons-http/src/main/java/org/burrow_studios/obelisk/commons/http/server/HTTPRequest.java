@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-public record Request(
+public record HTTPRequest(
         @NotNull HTTPServer handler,
         @NotNull Endpoint endpoint,
         @NotNull String path,

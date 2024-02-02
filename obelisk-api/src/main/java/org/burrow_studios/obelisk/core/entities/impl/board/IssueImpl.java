@@ -15,7 +15,7 @@ import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.board.issue.IssueModifierImpl;
 import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
 import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
-import org.burrow_studios.obelisk.core.net.http.Endpoints;
+import org.burrow_studios.obelisk.commons.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;

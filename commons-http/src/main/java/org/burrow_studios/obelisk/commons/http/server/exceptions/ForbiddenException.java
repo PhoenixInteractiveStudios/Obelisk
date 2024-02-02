@@ -1,7 +1,7 @@
 package org.burrow_studios.obelisk.commons.http.server.exceptions;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import org.burrow_studios.obelisk.commons.http.server.Response;
+import org.burrow_studios.obelisk.commons.http.HTTPResponse;
 import org.burrow_studios.obelisk.commons.http.server.ResponseBuilder;
 
 public class ForbiddenException extends RequestHandlerException {
@@ -14,7 +14,7 @@ public class ForbiddenException extends RequestHandlerException {
     }
 
     @Override
-    public Response asResponse() {
+    public HTTPResponse asResponse() {
         return new ResponseBuilder()
                 .setCode(403)
                 .build();

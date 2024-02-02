@@ -8,7 +8,7 @@ import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.UserChecks;
 import org.burrow_studios.obelisk.core.entities.impl.UserImpl;
-import org.burrow_studios.obelisk.core.net.http.Endpoints;
+import org.burrow_studios.obelisk.commons.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;

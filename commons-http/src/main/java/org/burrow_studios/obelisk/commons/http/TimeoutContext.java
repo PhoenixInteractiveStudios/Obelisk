@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.core.net;
+package org.burrow_studios.obelisk.commons.http;
 
 import org.jetbrains.annotations.NotNull;
 

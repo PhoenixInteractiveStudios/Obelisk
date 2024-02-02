@@ -1,7 +1,7 @@
 package org.burrow_studios.obelisk.commons.http.server.exceptions;
 
 import org.burrow_studios.obelisk.commons.http.Method;
-import org.burrow_studios.obelisk.commons.http.server.Response;
+import org.burrow_studios.obelisk.commons.http.HTTPResponse;
 import org.burrow_studios.obelisk.commons.http.server.ResponseBuilder;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +31,7 @@ public class IllegalMethodException extends RequestHandlerException {
     }
 
     @Override
-    public Response asResponse() {
+    public HTTPResponse asResponse() {
         return new ResponseBuilder()
                 .setCode(405)
                 .setHeader("Allow", String.join(", ", getAllowedStr()))

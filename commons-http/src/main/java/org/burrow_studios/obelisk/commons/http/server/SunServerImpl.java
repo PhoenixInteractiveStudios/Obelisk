@@ -4,6 +4,7 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.burrow_studios.obelisk.commons.http.Method;
+import org.burrow_studios.obelisk.commons.http.HTTPResponse;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -50,7 +51,7 @@ public final class SunServerImpl extends HTTPServer {
 
         final String body = new String(exchange.getRequestBody().readAllBytes());
 
-        final Response response = this.handle(method, uri.getPath(), headers, body);
+        final HTTPResponse response = this.handle(method, uri.getPath(), headers, body);
 
         final Headers responseHeaders = exchange.getResponseHeaders();
         response.headers().forEach(responseHeaders::add);
