@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.commons.http.Endpoint;
 import org.burrow_studios.obelisk.commons.http.Method;
+import org.burrow_studios.obelisk.commons.http.HTTPResponse;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.RequestHandlerException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +53,7 @@ public abstract class HTTPServer {
     }
 
     /** Interpret &amp; authorize an incoming request and relay it to the responsible {@link EndpointHandler}. */
-    protected final @NotNull Response handle(@NotNull Method method, @NotNull String path, @NotNull Map<String, String> headers, @Nullable String bodyStr) {
+    protected final @NotNull HTTPResponse handle(@NotNull Method method, @NotNull String path, @NotNull Map<String, String> headers, @Nullable String bodyStr) {
         final String[] segments = path.substring(1).split("/");
 
         Endpoint endpoint = null;
@@ -134,7 +135,7 @@ public abstract class HTTPServer {
         }
 
         try {
-            final Request request = new Request(this, endpoint, path, segments, headers, token, body);
+            final HTTPRequest request = new HTTPRequest(this, endpoint, path, segments, headers, token, body);
             final ResponseBuilder builder = new ResponseBuilder();
 
             handler.handle(request, builder);

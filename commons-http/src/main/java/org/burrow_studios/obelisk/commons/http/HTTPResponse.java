@@ -1,11 +1,11 @@
-package org.burrow_studios.obelisk.commons.http.server;
+package org.burrow_studios.obelisk.commons.http;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
-public record Response(
+public record HTTPResponse(
         int code,
         @NotNull Map<String, String> headers,
         @Nullable String body

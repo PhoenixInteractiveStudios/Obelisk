@@ -7,7 +7,7 @@ import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.board.TagChecks;
 import org.burrow_studios.obelisk.core.entities.impl.board.TagImpl;
-import org.burrow_studios.obelisk.core.net.http.Endpoints;
+import org.burrow_studios.obelisk.commons.http.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public class TagModifierImpl extends ModifierImpl<Tag, TagImpl> implements TagModifier {

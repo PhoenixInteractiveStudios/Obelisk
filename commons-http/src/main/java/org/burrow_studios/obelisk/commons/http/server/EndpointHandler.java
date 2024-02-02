@@ -5,5 +5,5 @@ import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
 public interface EndpointHandler {
-    void handle(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException;
+    void handle(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException;
 }
