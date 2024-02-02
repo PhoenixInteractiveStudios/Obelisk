@@ -52,9 +52,31 @@
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+            <!-- Write version into resource file -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>meta.properties</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
 
     <dependencies>
+        <dependency>
+            <groupId>org.burrow-studios.obelisk</groupId>
+            <artifactId>commons</artifactId>
+            <version>1.0.0-alpha.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.burrow-studios.obelisk</groupId>
+            <artifactId>commons-http</artifactId>
+            <version>1.0.0-alpha.1</version>
+        </dependency>
+
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
