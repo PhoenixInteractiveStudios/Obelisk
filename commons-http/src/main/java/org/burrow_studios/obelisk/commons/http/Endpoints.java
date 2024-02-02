@@ -16,6 +16,12 @@ public final class Endpoints {
 
     public static final Endpoint GET_SOCKET = new Endpoint(Method.GET, "/socket", AuthLevel.NONE);
 
+    /** Shelly-specific endpoints (Internal use only) */
+    public static final class Shelly {
+        public static final Endpoint GET_PUBLIC_IDENTITY_KEY = new Endpoint(Method.GET, "/keys/identity/:long", AuthLevel.NONE);
+        public static final Endpoint GET_PUBLIC_SESSION_KEY  = new Endpoint(Method.GET, "/keys/session"       , AuthLevel.NONE);
+    }
+
     public static final class Group {
         public static final Endpoint GET_ALL    = new Endpoint(Method.GET   , "/groups"                    , AuthLevel.SESSION);
         public static final Endpoint GET        = new Endpoint(Method.GET   , "/groups/:long"              , AuthLevel.SESSION);

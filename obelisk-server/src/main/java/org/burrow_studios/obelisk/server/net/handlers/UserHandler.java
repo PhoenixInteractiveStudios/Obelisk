@@ -3,7 +3,7 @@ package org.burrow_studios.obelisk.server.net.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.commons.http.server.Request;
+import org.burrow_studios.obelisk.commons.http.server.HTTPRequest;
 import org.burrow_studios.obelisk.commons.http.server.ResponseBuilder;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.InternalServerErrorException;
@@ -29,7 +29,7 @@ public class UserHandler {
         this.networkHandler = networkHandler;
     }
 
-    public void onGetAll(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGetAll(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         JsonArray json = new JsonArray();
         for (long id : getAPI().getUsers().getIdsAsImmutaleSet())
             json.add(id);
@@ -38,7 +38,7 @@ public class UserHandler {
         response.setBody(json);
     }
 
-    public void onGet(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGet(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long userId = request.getSegmentLong(1);
 
         final UserImpl user = getAPI().getUser(userId);
@@ -49,7 +49,7 @@ public class UserHandler {
         response.setBody(user.toJson());
     }
 
-    public void onCreate(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onCreate(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         Optional<JsonObject> body = request.optionalBody()
                 .map(JsonElement::getAsJsonObject);
 
@@ -93,7 +93,7 @@ public class UserHandler {
         response.setBody(result);
     }
 
-    public void onDelete(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onDelete(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long userId = request.getSegmentLong(1);
         final UserImpl user = getAPI().getUser(userId);
 
@@ -108,7 +108,7 @@ public class UserHandler {
         response.setCode(204);
     }
 
-    public void onEdit(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onEdit(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long userId = request.getSegmentLong(1);
 
         Optional<JsonObject> body = request.optionalBody()

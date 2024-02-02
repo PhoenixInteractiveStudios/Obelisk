@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.Ticket;
-import org.burrow_studios.obelisk.commons.http.server.Request;
+import org.burrow_studios.obelisk.commons.http.server.HTTPRequest;
 import org.burrow_studios.obelisk.commons.http.server.ResponseBuilder;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.InternalServerErrorException;
@@ -30,7 +30,7 @@ public class TicketHandler {
         this.networkHandler = networkHandler;
     }
 
-    public void onGetAll(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGetAll(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         JsonArray json = new JsonArray();
         for (long id : getAPI().getTickets().getIdsAsImmutaleSet())
             json.add(id);
@@ -39,7 +39,7 @@ public class TicketHandler {
         response.setBody(json);
     }
 
-    public void onGet(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGet(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long ticketId = request.getSegmentLong(1);
 
         final TicketImpl ticket = getAPI().getTicket(ticketId);
@@ -50,7 +50,7 @@ public class TicketHandler {
         response.setBody(ticket.toJson());
     }
 
-    public void onCreate(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onCreate(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         Optional<JsonObject> body = request.optionalBody()
                 .map(JsonElement::getAsJsonObject);
 
@@ -103,7 +103,7 @@ public class TicketHandler {
         response.setBody(result);
     }
 
-    public void onAddUser(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onAddUser(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long ticketId = request.getSegmentLong(1);
         final long   userId = request.getSegmentLong(3);
 
@@ -122,7 +122,7 @@ public class TicketHandler {
         response.setCode(204);
     }
 
-    public void onDeleteUser(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onDeleteUser(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long ticketId = request.getSegmentLong(1);
         final long   userId = request.getSegmentLong(3);
 
@@ -143,7 +143,7 @@ public class TicketHandler {
         response.setCode(204);
     }
 
-    public void onDelete(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onDelete(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long ticketId = request.getSegmentLong(1);
         final TicketImpl ticket = getAPI().getTicket(ticketId);
 
@@ -158,7 +158,7 @@ public class TicketHandler {
         response.setCode(204);
     }
 
-    public void onEdit(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onEdit(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         final long ticketId = request.getSegmentLong(1);
 
         Optional<JsonObject> body = request.optionalBody()

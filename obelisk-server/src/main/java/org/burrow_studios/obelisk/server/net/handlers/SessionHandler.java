@@ -2,7 +2,7 @@ package org.burrow_studios.obelisk.server.net.handlers;
 
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.commons.http.AuthLevel;
-import org.burrow_studios.obelisk.commons.http.server.Request;
+import org.burrow_studios.obelisk.commons.http.server.HTTPRequest;
 import org.burrow_studios.obelisk.commons.http.server.ResponseBuilder;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.ForbiddenException;
 import org.burrow_studios.obelisk.commons.http.server.exceptions.RequestHandlerException;
@@ -19,7 +19,7 @@ public class SessionHandler {
         this.networkHandler = networkHandler;
     }
 
-    public void onLogin(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onLogin(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         // this method should not be invoked without checking authorization first
         assert request.endpoint().getPrivilege() == AuthLevel.IDENTITY;
         assert request.token() != null;
@@ -38,7 +38,7 @@ public class SessionHandler {
         response.setCode(200);
     }
 
-    public void onLogout(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException, DatabaseException {
+    public void onLogout(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException, DatabaseException {
         // this method should not be invoked without checking authorization first
         assert request.endpoint().getPrivilege() == AuthLevel.SESSION;
         assert request.token() != null;
@@ -57,7 +57,7 @@ public class SessionHandler {
         response.setCode(204);
     }
 
-    public void onLogoutAll(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onLogoutAll(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         // this method should not be invoked without checking authorization first
         assert request.endpoint().getPrivilege() == AuthLevel.SESSION;
         assert request.token() != null;
@@ -75,7 +75,7 @@ public class SessionHandler {
         response.setCode(204);
     }
 
-    public void onGetSocket(@NotNull Request request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGetSocket(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
         JsonObject body = new JsonObject();
         body.addProperty("host", "api.burrow-studios.org");
         body.addProperty("port", 8346);

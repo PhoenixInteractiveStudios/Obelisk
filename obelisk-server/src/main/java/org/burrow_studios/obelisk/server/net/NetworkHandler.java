@@ -1,9 +1,9 @@
 package org.burrow_studios.obelisk.server.net;
 
+import org.burrow_studios.obelisk.commons.http.Endpoints;
 import org.burrow_studios.obelisk.commons.http.server.Authorizer;
 import org.burrow_studios.obelisk.commons.http.server.HTTPServer;
 import org.burrow_studios.obelisk.commons.http.server.SunServerImpl;
-import org.burrow_studios.obelisk.core.net.http.Endpoints;
 import org.burrow_studios.obelisk.core.net.socket.NetworkException;
 import org.burrow_studios.obelisk.server.ObeliskServer;
 import org.burrow_studios.obelisk.server.net.handlers.*;
@@ -32,11 +32,11 @@ public class NetworkHandler {
         final SessionHandler sessionHandler = new SessionHandler(this);
         final   GroupHandler   groupHandler = new   GroupHandler(this);
         final ProjectHandler projectHandler = new ProjectHandler(this);
-        final TicketHandler ticketHandler = new  TicketHandler(this);
+        final  TicketHandler  ticketHandler = new  TicketHandler(this);
         final    UserHandler    userHandler = new    UserHandler(this);
         final   BoardHandler   boardHandler = new   BoardHandler(this);
-        final TagHandler tagHandler = new     TagHandler(this);
-        final IssueHandler issueHandler = new   IssueHandler(this);
+        final     TagHandler     tagHandler = new     TagHandler(this);
+        final   IssueHandler   issueHandler = new   IssueHandler(this);
 
         final Authorizer authorizer = Authorizer.of(
                 token -> getServer().getAuthenticator().getTokenManager().decodeIdentityToken(token),
