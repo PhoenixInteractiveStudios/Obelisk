@@ -6,11 +6,13 @@ on:
       - "development"
     paths:
       - "obelisk-server"
+      - "obelisk-common"
   pull_request:
     branches:
       - "development"
     paths:
       - "obelisk-server"
+      - "obelisk-common"
 
 jobs:
   build:
