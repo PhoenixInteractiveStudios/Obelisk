@@ -2,6 +2,8 @@
 
 These are the internal events that are used in backend communication.
 
+Entity events are brokered over the `entity_events_exchange` topic exchange.
+
 Internal events are not guaranteed to represent [Gateway events](/docs/Events.md) 1:1.
 
 ## Group Events
