@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.burrow-studios.obelisk</groupId>
-    <artifactId>commons</artifactId>
+    <artifactId>obelisk-commons</artifactId>
     <version>1.0.0-alpha.1</version>
 
     <name>Obelisk Common Library</name>

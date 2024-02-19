@@ -50,7 +50,7 @@
 
         <dependency>
             <groupId>org.burrow-studios.obelisk</groupId>
-            <artifactId>commons</artifactId>
+            <artifactId>obelisk-commons</artifactId>
             <version>1.0.0-alpha.1</version>
         </dependency>
 
