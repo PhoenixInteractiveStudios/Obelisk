@@ -6,15 +6,13 @@ on:
       - "development"
     paths:
       - "obelisk-api"
-      - "commons"
-      - "commons-http"
+      - "obelisk-commons"
   pull_request:
     branches:
       - "development"
     paths:
       - "obelisk-api"
-      - "commons"
-      - "commons-http"
+      - "obelisk-commons"
 
 jobs:
   build:

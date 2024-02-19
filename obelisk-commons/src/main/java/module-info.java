@@ -1,10 +1,10 @@
 module obelisk.commons {
-    requires org.jetbrains.annotations;
-    requires java.logging;
-    requires com.google.gson;
     requires com.auth0.jwt;
-    requires jdk.httpserver;
+    requires com.google.gson;
+    requires java.logging;
     requires java.net.http;
+    requires jdk.httpserver;
+    requires org.jetbrains.annotations;
 
     exports org.burrow_studios.obelisk.commons.crypto;
     exports org.burrow_studios.obelisk.commons.function;

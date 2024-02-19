@@ -6,15 +6,13 @@ on:
       - "development"
     paths:
       - "Shelly"
-      - "commons"
-      - "commons-http"
+      - "obelisk-commons"
   pull_request:
     branches:
       - "development"
     paths:
       - "Shelly"
-      - "commons"
-      - "commons-http"
+      - "obelisk-commons"
 
 jobs:
   build:
