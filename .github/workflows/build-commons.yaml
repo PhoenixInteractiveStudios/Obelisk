@@ -5,12 +5,12 @@ on:
     branches:
       - "development"
     paths:
-      - "commons"
+      - "obelisk-commons"
   pull_request:
     branches:
       - "development"
     paths:
-      - "commons"
+      - "obelisk-commons"
 
 jobs:
   build:
@@ -26,4 +26,4 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn -B package --file commons/pom.xml
+      run: mvn -B package --file obelisk-commons/pom.xml
