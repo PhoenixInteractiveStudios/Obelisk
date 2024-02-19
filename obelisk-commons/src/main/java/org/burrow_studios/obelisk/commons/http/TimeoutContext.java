@@ -18,15 +18,27 @@ public final class TimeoutContext {
         this.fixed = fixed;
     }
 
+    /**
+     * Returns true if this TimeoutContext is fixed (not relative) and the timestamp has already been surpassed. If this
+     * TimeoutContext is relative, this method will always return {@code true}.
+     */
     public boolean isElapsed() {
         if (!fixed) return true;
         return System.currentTimeMillis() > time;
     }
 
+    /**
+     * Returns this TimeoutContext as a fixed timestamp. If this TimeoutContext is relative, the returned timestamp will
+     * be the current time plus the relative timeout.
+     */
     public long asDeadline() {
         return fixed ? time : (System.currentTimeMillis() + time);
     }
 
+    /**
+     * Returns this TimeoutContext as a relative timeout. If this TimeoutContext is fixed, the returned timestamp will
+     * be the relative time to that fixed timestamp.
+     */
     public long asTimeout() {
         return fixed ? (time - System.currentTimeMillis()) : time;
     }
