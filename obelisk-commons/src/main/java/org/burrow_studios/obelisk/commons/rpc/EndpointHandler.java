@@ -1,6 +1,6 @@
 package org.burrow_studios.obelisk.commons.rpc;
 
-import org.burrow_studios.obelisk.commons.http.server.exceptions.RequestHandlerException;
+import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface

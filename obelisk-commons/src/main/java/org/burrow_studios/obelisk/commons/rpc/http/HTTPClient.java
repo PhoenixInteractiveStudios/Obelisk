@@ -1,21 +1,20 @@
-package org.burrow_studios.obelisk.commons.http.client;
+package org.burrow_studios.obelisk.commons.rpc.http;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import org.burrow_studios.obelisk.commons.http.*;
+import org.burrow_studios.obelisk.commons.rpc.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class HTTPClient {
+public class HTTPClient implements RPCClient {
     static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .serializeNulls()
@@ -23,10 +22,14 @@ public class HTTPClient {
 
     private final HttpClient httpClient;
 
+    private final @NotNull String host;
+
     private @Nullable String identityToken;
     private @Nullable String sessionToken;
 
-    public HTTPClient(@Nullable String identityToken, @Nullable String sessionToken) {
+    public HTTPClient(@NotNull String host, @Nullable String identityToken, @Nullable String sessionToken) {
+        this.host = host;
+
         this.identityToken = identityToken;
         this.sessionToken  = sessionToken;
 
@@ -35,22 +38,25 @@ public class HTTPClient {
                 .build();
     }
 
-    public @NotNull CompletableFuture<HTTPResponse> send(@NotNull CompiledEndpoint endpoint, @Nullable JsonElement content, @NotNull TimeoutContext timeout) {
+    @Override
+    public @NotNull CompletableFuture<RPCResponse> send(@NotNull RPCRequest request) throws IOException {
         final HttpRequest.Builder builder = HttpRequest.newBuilder();
 
-        builder.uri(endpoint.asURI());
+        builder.uri(URI.create(host + request.getPath()));
 
-        builder.timeout(timeout.asDuration());
+        // TODO: timeout
 
+        /*
         final AuthLevel privilege = endpoint.endpoint().getPrivilege();
         if (privilege == AuthLevel.IDENTITY)
             builder.header("Authorization", "Bearer " + identityToken);
         if (privilege == AuthLevel.SESSION)
             builder.header("Authorization", "Bearer " + sessionToken);
+        */
 
-        final Method method = endpoint.method();
-        if (content != null) {
-            builder.method(method.name(), HttpRequest.BodyPublishers.ofString(GSON.toJson(content)));
+        final Method method = request.getMethod();
+        if (request.getBody() != null) {
+            builder.method(method.name(), HttpRequest.BodyPublishers.ofString(GSON.toJson(request.getBody())));
             builder.header("Content-Type", "application/json");
         } else {
             builder.method(method.name(), HttpRequest.BodyPublishers.noBody());
@@ -58,12 +64,12 @@ public class HTTPClient {
 
         HttpRequest httpRequest = builder.build();
 
-        CompletableFuture<HTTPResponse> callback = new CompletableFuture<>();
+        CompletableFuture<RPCResponse> callback = new CompletableFuture<>();
 
         this.httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString())
                 .handle((httpResponse, throwable) -> {
                     try {
-                        handleResponse(callback, httpResponse, throwable);
+                        handleResponse(callback, request, httpResponse, throwable);
                     } catch (Exception e) {
                         callback.completeExceptionally(e);
                     }
@@ -73,19 +79,29 @@ public class HTTPClient {
         return callback;
     }
 
-    private static void handleResponse(@NotNull CompletableFuture<HTTPResponse> callback, HttpResponse<String> httpResponse, Throwable throwable) {
+    private static void handleResponse(@NotNull CompletableFuture<RPCResponse> callback, @NotNull RPCRequest request, HttpResponse<String> httpResponse, Throwable throwable) {
         if (throwable == null) {
-            // re-map headers to single strings per header value (HttpResponse only provides lists)
-            Map<String, String> headers = new LinkedHashMap<>();
-            httpResponse.headers().map().forEach((key, val) -> {
-                headers.put(key, String.join(", ", val));
-            });
+            RPCResponse.Builder builder = new RPCResponse.Builder(request);
 
-            // build response
-            HTTPResponse response = new HTTPResponse(httpResponse.statusCode(), headers, httpResponse.body());
+            // headers
+            httpResponse.headers().map().forEach((key, val) -> builder.setHeaders(key, val));
+
+            // status
+            Status status = null;
+            for (Status value : Status.values()) {
+                if (value.getCode() != httpResponse.statusCode()) continue;
+                status = value;
+                break;
+            }
+            if (status == null)
+                throw new IllegalArgumentException("Unknown status code: " + httpResponse.statusCode());
+            builder.setStatus(status);
+
+            // body
+            builder.setBody(httpResponse.body());
 
             // answer callback
-            callback.complete(response);
+            callback.complete(builder.build());
         } else {
             callback.completeExceptionally(throwable);
         }

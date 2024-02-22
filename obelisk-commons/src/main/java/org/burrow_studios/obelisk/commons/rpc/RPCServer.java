@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.commons.rpc;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -84,6 +85,8 @@ public abstract class RPCServer<T extends RPCServer<T>> {
             RPCResponse.Builder builder = new RPCResponse.Builder(request);
             handler.handle(request, builder);
             return builder.build();
+        } catch (RequestHandlerException e) {
+            return e.asResponse(request);
         } catch (Exception e) {
             return new RPCResponse.Builder(request)
                     .setStatus(Status.INTERNAL_SERVER_ERROR)
