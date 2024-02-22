@@ -1,8 +1,10 @@
-package org.burrow_studios.obelisk.commons.http.server.exceptions;
+package org.burrow_studios.obelisk.commons.rpc.exceptions;
 
-import org.burrow_studios.obelisk.commons.http.Method;
-import org.burrow_studios.obelisk.commons.http.HTTPResponse;
-import org.burrow_studios.obelisk.commons.http.server.ResponseBuilder;
+import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.commons.rpc.Method;
+import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
+import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
+import org.burrow_studios.obelisk.commons.rpc.Status;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -31,10 +33,15 @@ public class IllegalMethodException extends RequestHandlerException {
     }
 
     @Override
-    public HTTPResponse asResponse() {
-        return new ResponseBuilder()
-                .setCode(405)
-                .setHeader("Allow", String.join(", ", getAllowedStr()))
+    public RPCResponse asResponse(@NotNull RPCRequest request) {
+        JsonObject json = new JsonObject();
+        json.addProperty("code", 405);
+        json.addProperty("description", "Method Not Allowed");
+        json.addProperty("message", getMessage());
+
+        return new RPCResponse.Builder(request)
+                .setStatus(Status.METHOD_NOT_ALLOWED)
+                .setBody(json)
                 .build();
     }
 }

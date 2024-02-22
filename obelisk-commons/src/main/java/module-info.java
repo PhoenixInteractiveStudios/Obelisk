@@ -13,7 +13,6 @@ module obelisk.commons {
     exports org.burrow_studios.obelisk.commons.util;
     exports org.burrow_studios.obelisk.commons.util.validation;
 
-    exports org.burrow_studios.obelisk.commons.http;
-    exports org.burrow_studios.obelisk.commons.http.client;
-    exports org.burrow_studios.obelisk.commons.http.server;
+    exports org.burrow_studios.obelisk.commons.rpc;
+    exports org.burrow_studios.obelisk.commons.rpc.http;
 }

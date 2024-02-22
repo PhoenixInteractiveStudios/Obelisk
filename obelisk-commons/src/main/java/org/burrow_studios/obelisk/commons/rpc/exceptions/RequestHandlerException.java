@@ -1,6 +1,8 @@
-package org.burrow_studios.obelisk.commons.http.server.exceptions;
+package org.burrow_studios.obelisk.commons.rpc.exceptions;
 
-import org.burrow_studios.obelisk.commons.http.HTTPResponse;
+import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
+import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class RequestHandlerException extends Exception {
     public RequestHandlerException() { }
@@ -17,5 +19,5 @@ public abstract class RequestHandlerException extends Exception {
         super(cause);
     }
 
-    public abstract HTTPResponse asResponse();
+    public abstract RPCResponse asResponse(@NotNull RPCRequest request);
 }

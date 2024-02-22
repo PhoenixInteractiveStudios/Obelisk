@@ -5,6 +5,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public final class RPCResponse {
     private final @NotNull RPCRequest request;
@@ -48,6 +52,24 @@ public final class RPCResponse {
         return this.headers.deepCopy();
     }
 
+    public @NotNull Map<String, String> getHeaderMap() {
+        Map<String, String> map = new LinkedHashMap<>();
+        JsonObject headers = this.getHeaders();
+        for (String name : headers.keySet()) {
+            JsonElement value = headers.get(name);
+
+            if (value instanceof JsonArray arr) {
+                List<String> values = new ArrayList<>(arr.size());
+                for (JsonElement element : arr)
+                    values.add(element.getAsString());
+                map.put(name, String.join(", ", values));
+            } else {
+                map.put(name, value.getAsString());
+            }
+        }
+        return Map.copyOf(map);
+    }
+
     public @NotNull Status getStatus() {
         return this.status;
     }
@@ -56,6 +78,14 @@ public final class RPCResponse {
         if (this.body == null)
             return null;
         return this.body.deepCopy();
+    }
+
+    public @Nullable String getBodyString() {
+        if (this.body == null)
+            return null;
+        if (this.body instanceof JsonNull)
+            return "null";
+        return RPCServer.GSON.toJson(body);
     }
 
     public @NotNull JsonObject toJson() {

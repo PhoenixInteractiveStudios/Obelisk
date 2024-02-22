@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.commons.http;
+package org.burrow_studios.obelisk.commons.rpc;
 
 import org.jetbrains.annotations.NotNull;
 
