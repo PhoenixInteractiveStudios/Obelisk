@@ -2,7 +2,10 @@ package org.burrow_studios.obelisk.commons.rpc.amqp;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.rabbitmq.client.*;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Delivery;
 import org.burrow_studios.obelisk.commons.rpc.Method;
 import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
 import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
@@ -89,5 +92,11 @@ public class AMQPServer extends RPCServer<AMQPServer> {
 
         channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProperties, rawResponse);
         channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+    }
+
+    @Override
+    public void close() throws IOException {
+        // TODO: await pending requests?
+        this.connection.close();
     }
 }

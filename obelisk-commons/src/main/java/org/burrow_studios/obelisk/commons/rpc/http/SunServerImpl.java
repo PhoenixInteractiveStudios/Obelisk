@@ -3,15 +3,13 @@ package org.burrow_studios.obelisk.commons.rpc.http;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import org.burrow_studios.obelisk.commons.rpc.Method;
-import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
-import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
-import org.burrow_studios.obelisk.commons.rpc.RPCServer;
+import org.burrow_studios.obelisk.commons.rpc.*;
 import org.burrow_studios.obelisk.commons.turtle.TimeBasedIdGenerator;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 /** A simple HTTP {@link RPCServer} implementation utilizing the lightweight {@link HttpServer} that is shipped with the JDK. */
 public final class SunServerImpl extends RPCServer<SunServerImpl> {
@@ -74,5 +72,11 @@ public final class SunServerImpl extends RPCServer<SunServerImpl> {
         // response body
         if (responseBody != null)
             exchange.getResponseBody().write(responseBody.getBytes());
+    }
+
+    @Override
+    public void close() {
+        // TODO: await pending requests?
+        this.server.stop((int) TimeoutContext.DEFAULT.asTimeout(TimeUnit.SECONDS));
     }
 }
