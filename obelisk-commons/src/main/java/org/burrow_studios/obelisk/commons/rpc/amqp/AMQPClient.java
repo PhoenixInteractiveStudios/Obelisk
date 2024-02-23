@@ -1,7 +1,5 @@
 package org.burrow_studios.obelisk.commons.rpc.amqp;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.rabbitmq.client.*;
@@ -19,22 +17,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
 public class AMQPClient implements RPCClient {
-    private static final Gson GSON = new GsonBuilder()
-            .setPrettyPrinting()
-            .serializeNulls()
-            .create();
-
     private final Connection connection;
     private final Channel channel;
 
     public AMQPClient(@NotNull String host, int port, @NotNull String user, @NotNull String pass) throws IOException, TimeoutException {
-        ConnectionFactory connectionFactory = new ConnectionFactory();
-        connectionFactory.setHost(host);
-        connectionFactory.setPort(port);
-        connectionFactory.setUsername(user);
-        connectionFactory.setPassword(pass);
-
-        this.connection = connectionFactory.newConnection();
+        this.connection = AMQPConnections.getConnection(host, port, user, pass);
         this.channel    = this.connection.createChannel();
     }
 
@@ -49,7 +36,7 @@ public class AMQPClient implements RPCClient {
                 .build();
 
         final JsonObject requestJson = request.toJson();
-        final String     requestStr  = GSON.toJson(requestJson);
+        final String     requestStr  = AMQPUtils.GSON.toJson(requestJson);
         final byte[]     requestRaw  = requestStr.getBytes(StandardCharsets.UTF_8);
 
         channel.basicPublish("", "REQUEST_QUEUE_NAME", properties, requestRaw);
@@ -79,7 +66,7 @@ public class AMQPClient implements RPCClient {
 
         final byte[]     responseRaw  = delivery.getBody();
         final String     responseStr  = new String(responseRaw, StandardCharsets.UTF_8);
-        final JsonObject responseJson = GSON.fromJson(responseStr, JsonObject.class);
+        final JsonObject responseJson = AMQPUtils.GSON.fromJson(responseStr, JsonObject.class);
 
         // response headers
         final JsonObject headers = responseJson.getAsJsonObject("headers");
