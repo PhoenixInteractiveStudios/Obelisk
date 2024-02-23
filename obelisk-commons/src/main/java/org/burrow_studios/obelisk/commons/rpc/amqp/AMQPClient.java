@@ -23,9 +23,15 @@ public class AMQPClient implements RPCClient {
     private final Connection connection;
     private final Channel channel;
 
-    public AMQPClient(@NotNull String host, int port, @NotNull String user, @NotNull String pass) throws IOException, TimeoutException {
+    private final String exchange;
+    private final String queue;
+
+    public AMQPClient(@NotNull String host, int port, @NotNull String user, @NotNull String pass, @NotNull String exchange, @NotNull String queue) throws IOException, TimeoutException {
         this.connection = AMQPConnections.getConnection(host, port, user, pass);
         this.channel    = this.connection.createChannel();
+
+        this.exchange = exchange;
+        this.queue = queue;
     }
 
     @Override
@@ -42,7 +48,7 @@ public class AMQPClient implements RPCClient {
         final String     requestStr  = AMQPUtils.GSON.toJson(requestJson);
         final byte[]     requestRaw  = requestStr.getBytes(StandardCharsets.UTF_8);
 
-        channel.basicPublish("", "REQUEST_QUEUE_NAME", properties, requestRaw);
+        channel.basicPublish(exchange, queue, properties, requestRaw);
 
         CompletableFuture<RPCResponse> future = new CompletableFuture<>();
 
