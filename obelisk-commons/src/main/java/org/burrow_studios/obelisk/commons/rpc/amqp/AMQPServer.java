@@ -22,16 +22,19 @@ public class AMQPServer extends RPCServer<AMQPServer> {
     private final Connection connection;
     private final Channel channel;
 
-    public AMQPServer(@NotNull String host, int port, @NotNull String user, @NotNull String pass) throws IOException, TimeoutException {
+    private final String exchange;
+    private final String queue;
+
+    public AMQPServer(@NotNull String host, int port, @NotNull String user, @NotNull String pass, @NotNull String exchange, @NotNull String queue) throws IOException, TimeoutException {
         this.connection = AMQPConnections.getConnection(host, port, user, pass);
         this.channel    = this.connection.createChannel();
 
-        this.channel.queueDeclare("QUEUE_NAME", false, false, false, null);
-        this.channel.queuePurge("QUEUE_NAME");
+        this.exchange = exchange;
+        this.queue = queue;
 
         this.channel.basicQos(1);
-
-        this.channel.basicConsume("QUEUE_NAME", false, (consumerTag, delivery) -> {
+        this.channel.queueDeclare(queue, false, false, false, null);
+        this.channel.basicConsume(queue, false, (consumerTag, delivery) -> {
             try {
                 this.handle(consumerTag, delivery);
             } catch (Exception e) {
@@ -90,7 +93,7 @@ public class AMQPServer extends RPCServer<AMQPServer> {
 
         final byte[] rawResponse = AMQPUtils.GSON.toJson(responseJson).getBytes(StandardCharsets.UTF_8);
 
-        channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProperties, rawResponse);
+        channel.basicPublish(exchange, delivery.getProperties().getReplyTo(), replyProperties, rawResponse);
         channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
     }
 
