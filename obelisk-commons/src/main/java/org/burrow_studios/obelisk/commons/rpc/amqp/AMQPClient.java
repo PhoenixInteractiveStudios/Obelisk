@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
@@ -36,10 +35,12 @@ public class AMQPClient implements RPCClient {
 
     @Override
     public @NotNull CompletableFuture<RPCResponse> send(@NotNull RPCRequest request) throws IOException {
-        final String corrId = UUID.randomUUID().toString();
+        final String corrId = String.valueOf(request.getId());
 
         String replyQueueName = channel.queueDeclare().getQueue();
         AMQP.BasicProperties properties = new AMQP.BasicProperties.Builder()
+                .contentType("application/json")
+                .contentEncoding("UTF-8")
                 .replyTo(replyQueueName)
                 .correlationId(corrId)
                 .build();

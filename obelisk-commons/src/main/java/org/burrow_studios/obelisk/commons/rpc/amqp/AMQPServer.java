@@ -89,6 +89,8 @@ public class AMQPServer extends RPCServer<AMQPServer> {
 
         AMQP.BasicProperties replyProperties = new AMQP.BasicProperties.Builder()
                 .correlationId(delivery.getProperties().getCorrelationId())
+                .contentType("application/json")
+                .contentEncoding("UTF-8")
                 .build();
 
         final byte[] rawResponse = AMQPUtils.GSON.toJson(responseJson).getBytes(StandardCharsets.UTF_8);
