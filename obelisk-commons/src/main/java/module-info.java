@@ -5,6 +5,7 @@ module obelisk.commons {
     requires java.net.http;
     requires jdk.httpserver;
     requires org.jetbrains.annotations;
+    requires org.yaml.snakeyaml;
 
     exports org.burrow_studios.obelisk.commons.crypto;
     exports org.burrow_studios.obelisk.commons.function;
