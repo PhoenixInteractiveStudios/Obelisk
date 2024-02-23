@@ -118,4 +118,9 @@ public class HTTPClient implements RPCClient {
     public @Nullable String getSessionToken() {
         return sessionToken;
     }
+
+    @Override
+    public void close() {
+        // do nothing
+    }
 }

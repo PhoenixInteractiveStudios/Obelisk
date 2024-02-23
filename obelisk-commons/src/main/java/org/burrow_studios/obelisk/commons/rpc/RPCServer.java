@@ -5,12 +5,13 @@ import com.google.gson.GsonBuilder;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class RPCServer<T extends RPCServer<T>> {
+public abstract class RPCServer<T extends RPCServer<T>> implements Closeable {
     static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .serializeNulls()
