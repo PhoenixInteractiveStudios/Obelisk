@@ -16,6 +16,12 @@ abstract sealed class RPCExchangeBuilder<T extends RPCExchangeBuilder<T>> permit
 
     protected RPCExchangeBuilder() { }
 
+    public final T setHeaders(@NotNull String key, @NotNull JsonArray val) {
+        for (JsonElement element : val)
+            this.addHeader(key, element.getAsString());
+        return (T) this;
+    }
+
     public final T setHeaders(@NotNull String key, @NotNull List<String> val) {
         for (String str : val)
             this.addHeader(key, str);

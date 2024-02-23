@@ -1,6 +1,7 @@
 module obelisk.commons {
     requires com.auth0.jwt;
     requires com.google.gson;
+    requires com.rabbitmq.client;
     requires java.logging;
     requires java.net.http;
     requires jdk.httpserver;
