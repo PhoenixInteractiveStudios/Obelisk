@@ -3,40 +3,41 @@ package org.burrow_studios.obelisk.core.action;
 import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.commons.function.ExceptionalBiFunction;
-import org.burrow_studios.obelisk.commons.http.CompiledEndpoint;
+import org.burrow_studios.obelisk.commons.rpc.Method;
+import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
+import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
-import org.burrow_studios.obelisk.core.source.DataProvider;
-import org.burrow_studios.obelisk.core.source.Request;
-import org.burrow_studios.obelisk.core.source.Response;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 public class ActionImpl<T> implements Action<T> {
     protected final @NotNull ObeliskImpl api;
-    private final @NotNull CompiledEndpoint endpoint;
-    private final @NotNull ExceptionalBiFunction<Request, Response, T, ? extends Exception> mapper;
+    private final @NotNull ExceptionalBiFunction<RPCRequest, RPCResponse, T, ? extends Exception> mapper;
+
+    private final @NotNull Method method;
+    private final @NotNull String uri;
 
     public ActionImpl(
             @NotNull ObeliskImpl api,
-            @NotNull CompiledEndpoint endpoint,
-            @NotNull ExceptionalBiFunction<Request, Response, T, ? extends Exception> mapper
+            @NotNull Method method,
+            @NotNull String uri,
+            @NotNull ExceptionalBiFunction<RPCRequest, RPCResponse, T, ? extends Exception> mapper
     ) {
         this.api = api;
-        this.endpoint = endpoint;
+        this.method = method;
+        this.uri = uri;
         this.mapper = mapper;
     }
 
     public ActionImpl(
             @NotNull ObeliskImpl api,
             @NotNull T returnValue,
-            @NotNull CompiledEndpoint endpoint
+            @NotNull Method method,
+            @NotNull String uri
     ) {
-        this(api, endpoint, (request, response) -> returnValue);
+        this(api, method, uri, (request, response) -> returnValue);
     }
 
     @Override
@@ -44,8 +45,12 @@ public class ActionImpl<T> implements Action<T> {
         return this.api;
     }
 
-    public final @NotNull CompiledEndpoint getEndpoint() {
-        return endpoint;
+    public final @NotNull RPCRequest.Builder requestBuilder() {
+        RPCRequest.Builder builder = new RPCRequest.Builder();
+        builder.setMethod(method);
+        builder.setPath(uri);
+        builder.setBody(getContent());
+        return builder;
     }
 
     public @Nullable JsonElement getContent() {
@@ -59,15 +64,11 @@ public class ActionImpl<T> implements Action<T> {
 
     @Override
     public final @NotNull CompletableFuture<T> submit() {
-        final DataProvider source  = this.api.getDataProvider();
-        final Request      request = source.submitRequest(this);
-
-        return request.getFuture().handle((response, throwable) -> {
+        return this.api.getDataProvider().submitRequest(this, (request1, response) -> {
             try {
-                return this.mapper.apply(request, response);
+                return mapper.apply(request1, response);
             } catch (Exception e) {
-                // TODO: handle
-                throw new RuntimeException(e);
+                throw new CompletionException(e);
             }
         });
     }

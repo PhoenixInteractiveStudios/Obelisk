@@ -7,16 +7,14 @@ import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.ProjectChecks;
 import org.burrow_studios.obelisk.core.entities.impl.ProjectImpl;
-import org.burrow_studios.obelisk.commons.http.Endpoints;
+import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public class ProjectModifierImpl extends ModifierImpl<Project, ProjectImpl> implements ProjectModifier {
     public ProjectModifierImpl(@NotNull ProjectImpl project) {
         super(
                 project,
-                Endpoints.Project.EDIT.builder()
-                        .withArg(project.getId())
-                        .compile(),
+                Endpoints.Project.EDIT.builder(project.getId()).getPath(),
                 EntityUpdater::updateProject
         );
     }

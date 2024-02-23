@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.Builder;
 import org.burrow_studios.obelisk.api.entities.Turtle;
-import org.burrow_studios.obelisk.commons.http.CompiledEndpoint;
+import org.burrow_studios.obelisk.commons.rpc.Method;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.jetbrains.annotations.NotNull;
@@ -18,12 +18,12 @@ public abstract class BuilderImpl<T extends Turtle> extends ActionImpl<T> implem
     public BuilderImpl(
             @NotNull ObeliskImpl api,
             @NotNull Class<T> type,
-            @NotNull CompiledEndpoint endpoint,
+            @NotNull String uri,
             @NotNull BiFunction<ObeliskImpl, EntityData, T> func
     ) {
-        super(api, endpoint, (request, response) -> {
+        super(api, Method.POST, uri, (request, response) -> {
             // TODO: checks (error responses)
-            final JsonObject content = response.getContent().getAsJsonObject();
+            final JsonObject content = response.getBody().getAsJsonObject();
             EntityData trustedData = new EntityData();
 
             final @NotNull T entity = func.apply(api, trustedData);

@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
+import java.util.concurrent.CompletableFuture;
 
 public final class RPCRequest {
     private final long id;
@@ -14,6 +15,8 @@ public final class RPCRequest {
     private final @NotNull Method method;
     private final @NotNull JsonObject headers;
     private final @Nullable JsonElement body;
+
+    private final @NotNull CompletableFuture<RPCResponse> future;
 
     private final @NotNull JsonObject json;
 
@@ -34,6 +37,8 @@ public final class RPCRequest {
         this.json.add("headers", this.headers);
         if (this.body != null)
             this.json.add("body", this.body);
+
+        this.future = new CompletableFuture<>();
     }
 
     public long getId() {
@@ -70,6 +75,10 @@ public final class RPCRequest {
         return this.json.deepCopy();
     }
 
+    public @NotNull CompletableFuture<RPCResponse> getFuture() {
+        return this.future;
+    }
+
     /** A helper class to create {@link RPCRequest Requests}. As opposed to the resulting Request, this class is mutable. */
     public static final class Builder extends RPCExchangeBuilder<Builder> {
         private Method method;
@@ -77,9 +86,17 @@ public final class RPCRequest {
 
         public Builder() { }
 
+        public Method getMethod() {
+            return method;
+        }
+
         public Builder setMethod(@NotNull Method method) {
             this.method = method;
             return this;
+        }
+
+        public String getPath() {
+            return path;
         }
 
         public Builder setPath(@NotNull String path) {

@@ -10,7 +10,7 @@ import org.burrow_studios.obelisk.core.action.BuilderImpl;
 import org.burrow_studios.obelisk.core.entities.checks.board.IssueChecks;
 import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
 import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
-import org.burrow_studios.obelisk.commons.http.Endpoints;
+import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public class IssueBuilderImpl extends BuilderImpl<Issue> implements IssueBuilder {
@@ -18,7 +18,7 @@ public class IssueBuilderImpl extends BuilderImpl<Issue> implements IssueBuilder
         super(
                 board.getAPI(),
                 Issue.class,
-                Endpoints.Board.Issue.CREATE.builder().withArg(board.getId()).compile(),
+                Endpoints.Board.Issue.CREATE.builder(board.getId()).getPath(),
                 IssueImpl::new
         );
     }

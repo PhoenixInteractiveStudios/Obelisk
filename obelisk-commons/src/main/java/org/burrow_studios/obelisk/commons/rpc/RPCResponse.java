@@ -34,6 +34,8 @@ public final class RPCResponse {
         this.json.add("headers", this.headers);
         if (this.body != null)
             this.json.add("body", this.body);
+
+        this.request.getFuture().complete(this);
     }
 
     public @NotNull RPCRequest getRequest() {

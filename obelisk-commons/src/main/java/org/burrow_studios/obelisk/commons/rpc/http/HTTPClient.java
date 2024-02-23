@@ -64,7 +64,7 @@ public class HTTPClient implements RPCClient {
 
         HttpRequest httpRequest = builder.build();
 
-        CompletableFuture<RPCResponse> callback = new CompletableFuture<>();
+        CompletableFuture<RPCResponse> callback = request.getFuture();
 
         this.httpClient.sendAsync(httpRequest, HttpResponse.BodyHandlers.ofString())
                 .handle((httpResponse, throwable) -> {

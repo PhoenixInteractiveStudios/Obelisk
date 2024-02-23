@@ -11,7 +11,7 @@ import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.BuilderImpl;
 import org.burrow_studios.obelisk.core.entities.checks.board.BoardChecks;
 import org.burrow_studios.obelisk.core.entities.impl.board.BoardImpl;
-import org.burrow_studios.obelisk.commons.http.Endpoints;
+import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public class BoardBuilderImpl extends BuilderImpl<Board> implements BoardBuilder {
@@ -19,7 +19,7 @@ public class BoardBuilderImpl extends BuilderImpl<Board> implements BoardBuilder
         super(
                 api,
                 Board.class,
-                Endpoints.Board.CREATE.builder().compile(),
+                Endpoints.Board.CREATE.builder().getPath(),
                 BoardImpl::new
         );
     }

@@ -5,13 +5,14 @@ import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Group;
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.commons.rpc.Method;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
 import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.group.GroupModifierImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
-import org.burrow_studios.obelisk.commons.http.Endpoints;
+import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 import static org.burrow_studios.obelisk.core.entities.BuildHelper.buildDelegatingCacheView;
@@ -70,9 +71,7 @@ public final class GroupImpl extends TurtleImpl implements Group {
                 this.getAPI(),
                 Group.class,
                 this.getId(),
-                Endpoints.Group.DELETE.builder()
-                        .withArg(getId())
-                        .compile()
+                Endpoints.Group.DELETE.builder(getId()).getPath()
         );
     }
 
@@ -97,21 +96,15 @@ public final class GroupImpl extends TurtleImpl implements Group {
 
     @Override
     public @NotNull ActionImpl<Group> addMember(@NotNull User user) {
-        return new ActionImpl<>(this.api, this,
-                Endpoints.Group.ADD_MEMBER.builder()
-                        .withArg(getId())
-                        .withArg(user.getId())
-                        .compile()
+        return new ActionImpl<>(this.api, this, Method.PUT,
+                Endpoints.Group.ADD_MEMBER.builder(getId(), user.getId()).getPath()
         );
     }
 
     @Override
     public @NotNull ActionImpl<Group> removeMember(@NotNull User user) {
-        return new ActionImpl<>(this.api, this,
-                Endpoints.Group.DEL_MEMBER.builder()
-                        .withArg(getId())
-                        .withArg(user.getId())
-                        .compile()
+        return new ActionImpl<>(this.api, this, Method.DELETE,
+                Endpoints.Group.DEL_MEMBER.builder(getId(), user.getId()).getPath()
         );
     }
 
