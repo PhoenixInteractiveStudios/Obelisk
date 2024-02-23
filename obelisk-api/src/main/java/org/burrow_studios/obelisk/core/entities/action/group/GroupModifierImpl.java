@@ -7,16 +7,14 @@ import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.GroupChecks;
 import org.burrow_studios.obelisk.core.entities.impl.GroupImpl;
-import org.burrow_studios.obelisk.commons.http.Endpoints;
+import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public class GroupModifierImpl extends ModifierImpl<Group, GroupImpl> implements GroupModifier {
     public GroupModifierImpl(@NotNull GroupImpl group) {
         super(
                 group,
-                Endpoints.Group.EDIT.builder()
-                        .withArg(group.getId())
-                        .compile(),
+                Endpoints.Group.EDIT.builder(group.getId()).getPath(),
                 EntityUpdater::updateGroup
         );
     }

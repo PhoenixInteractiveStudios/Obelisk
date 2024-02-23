@@ -9,7 +9,7 @@ import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.BuilderImpl;
 import org.burrow_studios.obelisk.core.entities.checks.ProjectChecks;
 import org.burrow_studios.obelisk.core.entities.impl.ProjectImpl;
-import org.burrow_studios.obelisk.commons.http.Endpoints;
+import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public class ProjectBuilderImpl extends BuilderImpl<Project> implements ProjectBuilder {
@@ -17,7 +17,7 @@ public class ProjectBuilderImpl extends BuilderImpl<Project> implements ProjectB
         super(
                 api,
                 Project.class,
-                Endpoints.Project.CREATE.builder().compile(),
+                Endpoints.Project.CREATE.builder().getPath(),
                 ProjectImpl::new
         );
     }

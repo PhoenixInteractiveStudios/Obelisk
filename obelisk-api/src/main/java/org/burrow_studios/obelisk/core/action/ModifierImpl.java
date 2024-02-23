@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.Modifier;
 import org.burrow_studios.obelisk.api.entities.Turtle;
-import org.burrow_studios.obelisk.commons.http.CompiledEndpoint;
+import org.burrow_studios.obelisk.commons.rpc.Method;
 import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.impl.TurtleImpl;
 import org.jetbrains.annotations.NotNull;
@@ -17,12 +17,12 @@ public abstract class ModifierImpl<T extends Turtle, I extends TurtleImpl> exten
 
     public ModifierImpl(
             @NotNull I entity,
-            @NotNull CompiledEndpoint endpoint,
+            @NotNull String uri,
             @NotNull BiConsumer<EntityData, I> updater
     ) {
-        super(entity.getAPI(), endpoint, (request, response) -> {
+        super(entity.getAPI(), Method.PATCH, uri, (request, response) -> {
             // TODO: handle errors
-            final JsonObject content = response.getContent().getAsJsonObject();
+            final JsonObject content = response.getBody().getAsJsonObject();
             final EntityData updateData = new EntityData(content);
 
             updater.accept(updateData, entity);

@@ -6,13 +6,14 @@ import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.entities.User;
+import org.burrow_studios.obelisk.commons.rpc.Method;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
 import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.core.cache.DelegatingTurtleCacheView;
 import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.ticket.TicketModifierImpl;
-import org.burrow_studios.obelisk.commons.http.Endpoints;
+import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -86,9 +87,7 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
                 this.getAPI(),
                 Ticket.class,
                 this.getId(),
-                Endpoints.Ticket.DELETE.builder()
-                        .withArg(getId())
-                        .compile()
+                Endpoints.Ticket.DELETE.builder(getId()).getPath()
         );
     }
 
@@ -126,21 +125,15 @@ public final class TicketImpl extends TurtleImpl implements Ticket {
 
     @Override
     public @NotNull ActionImpl<Ticket> addUser(@NotNull User user) {
-        return new ActionImpl<>(this.api, this,
-                Endpoints.Ticket.ADD_USER.builder()
-                        .withArg(getId())
-                        .withArg(user.getId())
-                        .compile()
+        return new ActionImpl<>(this.api, this, Method.PUT,
+                Endpoints.Ticket.ADD_USER.builder(getId(), user.getId()).getPath()
         );
     }
 
     @Override
     public @NotNull ActionImpl<Ticket> removeUser(@NotNull User user) {
-        return new ActionImpl<>(this.api, this,
-                Endpoints.Ticket.DEL_USER.builder()
-                        .withArg(getId())
-                        .withArg(user.getId())
-                        .compile()
+        return new ActionImpl<>(this.api, this, Method.DELETE,
+                Endpoints.Ticket.DEL_USER.builder(getId(), user.getId()).getPath()
         );
     }
 }

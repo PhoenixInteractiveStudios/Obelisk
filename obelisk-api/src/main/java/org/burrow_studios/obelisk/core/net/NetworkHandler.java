@@ -7,28 +7,25 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.commons.http.CompiledEndpoint;
-import org.burrow_studios.obelisk.commons.http.Endpoints;
-import org.burrow_studios.obelisk.commons.http.HTTPResponse;
-import org.burrow_studios.obelisk.commons.http.TimeoutContext;
-import org.burrow_studios.obelisk.commons.http.client.HTTPClient;
+import org.burrow_studios.obelisk.commons.rpc.*;
+import org.burrow_studios.obelisk.commons.rpc.http.HTTPClient;
 import org.burrow_studios.obelisk.commons.turtle.TimeBasedIdGenerator;
 import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.ActionImpl;
 import org.burrow_studios.obelisk.core.net.socket.NetworkException;
 import org.burrow_studios.obelisk.core.net.socket.SocketAdapter;
 import org.burrow_studios.obelisk.core.source.DataProvider;
-import org.burrow_studios.obelisk.core.source.Request;
-import org.burrow_studios.obelisk.core.source.Response;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.*;
+import java.util.function.BiFunction;
 
 public class NetworkHandler implements DataProvider {
     private final ObeliskImpl api;
     private final TimeBasedIdGenerator requestIdGenerator = TimeBasedIdGenerator.get();
-    private final ConcurrentHashMap<Long, Request> pendingRequests = new ConcurrentHashMap<>();
+    private final Set<RPCRequest> pendingRequests = ConcurrentHashMap.newKeySet();
     private final SocketAdapter socketAdapter;
     private final HTTPClient httpClient;
     private final long subjectId;
@@ -48,7 +45,7 @@ public class NetworkHandler implements DataProvider {
                 .serializeNulls()
                 .create();
         this.socketAdapter = new SocketAdapter(this);
-        this.httpClient = new HTTPClient(identityToken, null);
+        this.httpClient = new HTTPClient("https://api.burrow-studios.org/v1", identityToken, null);
 
         try {
             this.login();
@@ -58,12 +55,11 @@ public class NetworkHandler implements DataProvider {
         }
     }
 
-    private CompletableFuture<Response> logout() {
+    private CompletableFuture<RPCResponse> logout() {
         if (this.httpClient.getSessionToken() == null)
             return CompletableFuture.completedFuture(null);
 
-        final long id  = this.requestIdGenerator.newId();
-        final TimeoutContext timeout = TimeoutContext.DEFAULT;
+        final long id = this.requestIdGenerator.newId();
 
         try {
             final String sessionId = JWT.decode(this.httpClient.getSessionToken()).getId();
@@ -73,15 +69,9 @@ public class NetworkHandler implements DataProvider {
             if (sessionId == null)
                 return CompletableFuture.completedFuture(null);
 
-            final CompiledEndpoint endpoint = Endpoints.LOGOUT.builder()
-                    .withArg(this.subjectId)
-                    .withArg(sessionId)
-                    .compile();
-            final Request request = new Request(this, id, endpoint, null, timeout);
+            final RPCRequest request = Endpoints.LOGOUT.builder(this.subjectId, sessionId).build(id);
 
-            this.send(request);
-
-            return request.getFuture();
+            return this.send(request);
         } catch (JWTDecodeException ignored) {
             this.httpClient.setSessionToken(null);
             return CompletableFuture.completedFuture(null);
@@ -93,23 +83,18 @@ public class NetworkHandler implements DataProvider {
             this.logout().get();
         } catch (Exception ignored) { }
 
-        final long id  = this.requestIdGenerator.newId();
-        final CompiledEndpoint endpoint = Endpoints.LOGIN.builder()
-                .withArg(this.subjectId)
-                .compile();
-        final TimeoutContext   timeout  = TimeoutContext.DEFAULT;
-        final Request request = new Request(this, id, endpoint, null, timeout);
-
-        this.send(request);
+        final long id = this.requestIdGenerator.newId();
+        final TimeoutContext timeout = TimeoutContext.DEFAULT;
+        final RPCRequest request = Endpoints.LOGIN.builder(this.subjectId).build(id);
 
         try {
-            Response response = request.getFuture().get(timeout.asTimeout(), TimeUnit.MILLISECONDS);
+            RPCResponse response = this.send(request).get(timeout.asTimeout(), TimeUnit.MILLISECONDS);
 
-            if (response.getCode() != 200)
+            if (response.getStatus() != Status.OK)
                 throw new RuntimeException("Unexpected login response");
 
             String sessionToken = Optional.of(response)
-                    .map(Response::getContent)
+                    .map(RPCResponse::getBody)
                     .map(JsonElement::getAsJsonObject)
                     .map(json -> json.get("token"))
                     .map(JsonElement::getAsString)
@@ -123,20 +108,17 @@ public class NetworkHandler implements DataProvider {
 
     private void connectSocketAdapter() throws NetworkException {
         final long id = this.requestIdGenerator.newId();
-        final CompiledEndpoint endpoint = Endpoints.GET_SOCKET.builder().compile();
         final TimeoutContext timeout = TimeoutContext.DEFAULT;
-        final Request request = new Request(this, id, endpoint, null, timeout);
-
-        this.send(request);
+        final RPCRequest request = Endpoints.GET_SOCKET.builder().build(id);
 
         try {
-            Response response = request.getFuture().get();
+            RPCResponse response = this.send(request).get();
 
-            if (response.getCode() != 200)
+            if (response.getStatus() != Status.OK)
                 throw new RuntimeException("Unexpected response to socket-request");
 
             JsonObject json = Optional.of(response)
-                    .map(Response::getContent)
+                    .map(RPCResponse::getBody)
                     .map(JsonElement::getAsJsonObject)
                     .orElseThrow(() -> new RuntimeException("Unexpected response to socket-request"));
 
@@ -161,40 +143,37 @@ public class NetworkHandler implements DataProvider {
         return this.api;
     }
 
-    public @NotNull Request submitRequest(@NotNull ActionImpl<?> action) {
+    @Override
+    public <T> CompletableFuture<T> submitRequest(@NotNull ActionImpl<?> action, @NotNull BiFunction<RPCRequest, RPCResponse, T> mapper) {
         final long id = this.requestIdGenerator.newId();
 
-        final Request request = new Request(
-                this,
-                id,
-                action.getEndpoint(),
-                action.getContent(),
-                TimeoutContext.DEFAULT
-        );
+        RPCRequest.Builder builder = action.requestBuilder();
+        // TODO: auth?
+        RPCRequest request = builder.build(id);
 
-        this.pendingRequests.put(id, request);
-        this.send(request);
-        return request;
-    }
+        CompletableFuture<T> future = new CompletableFuture<>();
 
-    private void send(@NotNull Request request) {
-        CompletableFuture<HTTPResponse> callback = this.httpClient.send(request.getEndpoint(), request.getContent(), request.getTimeout());
-        callback.handle((httpResponse, throwable) -> {
-            if (httpResponse != null)
-                request.getFuture().complete(makeResponse(httpResponse, request));
+        this.send(request).whenComplete((response, throwable) -> {
+            if (response != null)
+                future.complete(mapper.apply(request, response));
             if (throwable != null)
-                request.getFuture().completeExceptionally(throwable);
-            return null;
+                future.completeExceptionally(throwable);
         });
+
+        return future;
     }
 
-    private @NotNull Response makeResponse(@NotNull HTTPResponse httpResponse, @NotNull Request request) {
-        if (!request.getProvider().equals(this))
-            throw new IllegalArgumentException("Request must be to this provider");
+    public @NotNull CompletableFuture<RPCResponse> send(@NotNull RPCRequest request) {
+        this.pendingRequests.add(request);
 
-        final String bodyStr = httpResponse.body();
-        final JsonElement body = bodyStr == null ? null : gson.fromJson(bodyStr, JsonElement.class);
-
-        return new Response(this, request.getId(), httpResponse.code(), body);
+        try {
+            return this.httpClient.send(request).whenComplete(
+                    // remove from pending requests when complete (regardless of outcome)
+                    (response, throwable) -> this.pendingRequests.remove(request)
+            );
+        } catch (Exception e) {
+            this.pendingRequests.remove(request);
+            return CompletableFuture.failedFuture(e);
+        }
     }
 }

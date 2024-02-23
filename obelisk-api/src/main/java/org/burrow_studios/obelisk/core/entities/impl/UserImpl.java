@@ -9,7 +9,7 @@ import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.DeleteActionImpl;
 import org.burrow_studios.obelisk.core.entities.EntityData;
 import org.burrow_studios.obelisk.core.entities.action.user.UserModifierImpl;
-import org.burrow_studios.obelisk.commons.http.Endpoints;
+import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -75,9 +75,7 @@ public final class UserImpl extends TurtleImpl implements User {
                 this.getAPI(),
                 User.class,
                 this.getId(),
-                Endpoints.User.DELETE.builder()
-                        .withArg(getId())
-                        .compile()
+                Endpoints.User.DELETE.builder(getId()).getPath()
         );
     }
 

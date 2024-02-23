@@ -7,17 +7,14 @@ import org.burrow_studios.obelisk.core.action.ModifierImpl;
 import org.burrow_studios.obelisk.core.entities.EntityUpdater;
 import org.burrow_studios.obelisk.core.entities.checks.board.IssueChecks;
 import org.burrow_studios.obelisk.core.entities.impl.board.IssueImpl;
-import org.burrow_studios.obelisk.commons.http.Endpoints;
+import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.jetbrains.annotations.NotNull;
 
 public class IssueModifierImpl extends ModifierImpl<Issue, IssueImpl> implements IssueModifier {
     public IssueModifierImpl(@NotNull IssueImpl issue) {
         super(
                 issue,
-                Endpoints.Board.Issue.EDIT.builder()
-                        .withArg(issue.getBoard().getId())
-                        .withArg(issue.getId())
-                        .compile(),
+                Endpoints.Board.Issue.EDIT.builder(issue.getBoard().getId(), issue.getId()).getPath(),
                 EntityUpdater::updateIssue
         );
     }

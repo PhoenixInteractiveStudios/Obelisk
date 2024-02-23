@@ -2,10 +2,7 @@ package org.burrow_studios.obelisk.commons.rpc;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HexFormat;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 public final class Endpoint {
@@ -23,7 +20,14 @@ public final class Endpoint {
         return method;
     }
 
-    public @NotNull RPCRequest.Builder requestBuilder(@NotNull String[] params) {
+    public @NotNull RPCRequest.Builder builder(@NotNull Object... params) {
+        String[] str = new String[params.length];
+        for (int i = 0; i < params.length; i++)
+            str[i] = String.valueOf(params[i]);
+        return this.builder(str);
+    }
+
+    public @NotNull RPCRequest.Builder builder(@NotNull String... params) {
         StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i < segments.length; i++) {

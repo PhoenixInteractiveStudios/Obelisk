@@ -10,7 +10,7 @@ import org.burrow_studios.obelisk.core.ObeliskImpl;
 import org.burrow_studios.obelisk.core.action.BuilderImpl;
 import org.burrow_studios.obelisk.core.entities.checks.TicketChecks;
 import org.burrow_studios.obelisk.core.entities.impl.TicketImpl;
-import org.burrow_studios.obelisk.commons.http.Endpoints;
+import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +19,7 @@ public class TicketBuilderImpl extends BuilderImpl<Ticket> implements TicketBuil
         super(
                 api,
                 Ticket.class,
-                Endpoints.Ticket.CREATE.builder().compile(),
+                Endpoints.Ticket.CREATE.builder().getPath(),
                 TicketImpl::new
         );
     }
