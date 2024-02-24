@@ -4,11 +4,17 @@ import org.burrow_studios.obelisk.commons.http.Endpoints;
 import org.burrow_studios.obelisk.commons.http.server.Authorizer;
 import org.burrow_studios.obelisk.commons.http.server.HTTPServer;
 import org.burrow_studios.obelisk.commons.http.server.SunServerImpl;
+import org.burrow_studios.obelisk.commons.rpc.RPCServer;
+import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
+import org.burrow_studios.obelisk.commons.util.ResourceTools;
+import org.burrow_studios.obelisk.commons.yaml.YamlSection;
+import org.burrow_studios.obelisk.commons.yaml.YamlUtil;
 import org.burrow_studios.obelisk.shelly.crypto.TokenManager;
 import org.burrow_studios.obelisk.shelly.database.AuthDB;
 import org.burrow_studios.obelisk.shelly.database.SQLiteAuthDB;
 import org.burrow_studios.obelisk.shelly.net.SessionHandler;
 import org.burrow_studios.obelisk.shelly.net.PubKeyHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -17,11 +23,19 @@ import java.util.logging.Logger;
 public class Shelly {
     private static final Logger LOG = Logger.getLogger("MAIN");
 
+    private final @NotNull YamlSection config;
+    private final @NotNull File configFile = new File(Main.DIR, "config.yaml");
+
     private final AuthDB database;
     private final TokenManager tokenManager;
-    private final HTTPServer server;
+    private final RPCServer<?> server;
 
     Shelly() throws Exception {
+        ResourceTools resourceTools = ResourceTools.get(Main.class);
+        YamlUtil.saveDefault(configFile, resourceTools.getResource("config.yaml"));
+
+        this.config = YamlUtil.load(configFile, YamlSection.class);
+
         LOG.log(Level.INFO, "Starting Database");
         this.database = new SQLiteAuthDB(new File(Main.DIR, "shelly.db"));
 
@@ -29,7 +43,7 @@ public class Shelly {
         this.tokenManager = new TokenManager(this);
 
         LOG.log(Level.INFO, "Starting API server");
-        final      SessionHandler      sessionHandler = new      SessionHandler(this);
+        final SessionHandler sessionHandler = new SessionHandler(this);
         final PubKeyHandler pubKeyHandler = new PubKeyHandler(this);
         this.server = new SunServerImpl(Authorizer.of(
                 tokenManager::decodeIdentityToken,
@@ -59,6 +73,7 @@ public class Shelly {
         LOG.log(Level.WARNING, "Shutting down");
         // TODO
         //server.stop();
+        this.config.save(configFile);
         LOG.log(Level.INFO, "OK bye");
     }
 }
