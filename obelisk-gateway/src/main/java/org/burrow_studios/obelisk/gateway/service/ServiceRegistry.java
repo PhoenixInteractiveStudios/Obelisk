@@ -15,11 +15,10 @@ import org.burrow_studios.obelisk.commons.rpc.http.SunServerImpl;
 import org.burrow_studios.obelisk.commons.util.validation.Validation;
 import org.burrow_studios.obelisk.commons.yaml.YamlPrimitive;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
-import org.burrow_studios.obelisk.gateway.Main;
+import org.burrow_studios.obelisk.gateway.ObeliskGateway;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -27,17 +26,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 
 public class ServiceRegistry implements Closeable {
-    private static final File CONFIG_DIR = new File(Main.DIR, "services/");
-
     private static final String LEGAL_NAME_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final String LEGAL_NAME_DELIMITERS = "-._";
+
+    private final ObeliskGateway gateway;
 
     private final YamlSection config;
     private final RPCServer<?> server;
 
     private final Set<Service> services;
 
-    public ServiceRegistry(@NotNull YamlSection config) throws IOException, TimeoutException {
+    public ServiceRegistry(@NotNull ObeliskGateway gateway, @NotNull YamlSection config) throws IOException, TimeoutException {
+        this.gateway = gateway;
         this.config = config;
 
         this.services = ConcurrentHashMap.newKeySet();
@@ -67,9 +67,11 @@ public class ServiceRegistry implements Closeable {
     @Override
     public void close() throws IOException {
         this.server.close();
+        for (Service service : this.services)
+            service.close();
     }
 
-    private void onPost(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
+    private synchronized void onPost(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
         if (!(request.getBody() instanceof JsonObject requestBody))
             throw new BadRequestException("Missing request body");
 
@@ -179,11 +181,18 @@ public class ServiceRegistry implements Closeable {
             endpoints.add(endpoint);
         }
 
-        final Service service = new Service(this, proxyClient, name, endpoints);
+        final Service service;
+        try {
+            service = new Service(this, proxyClient, name, endpoints);
+        } catch (Exception e) {
+            // undo registration before failing
+            for (Endpoint endpoint : endpoints)
+                this.gateway.getNetworkHandler().unregisterEndpoint(endpoint);
+            throw new InternalServerErrorException();
+        }
 
         this.services.add(service);
 
-        // TODO: register endpoints with exposed RPCServer
         JsonArray routes = new JsonArray();
         for (Endpoint endpoint : endpoints) {
             JsonObject route = new JsonObject();
@@ -203,9 +212,14 @@ public class ServiceRegistry implements Closeable {
         for (Service service : this.services) {
             if (!service.getName().equals(name)) continue;
 
-            // TODO: remove routes
+            for (Endpoint endpoint : service.getEndpoints())
+                gateway.getNetworkHandler().unregisterEndpoint(endpoint);
         }
 
         response.setStatus(Status.NO_CONTENT);
+    }
+
+    public @NotNull ObeliskGateway getGateway() {
+        return gateway;
     }
 }
