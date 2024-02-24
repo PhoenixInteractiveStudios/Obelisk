@@ -138,10 +138,8 @@ public class ServiceRegistry implements Closeable {
             }
         }
 
-        if (proxyClient == null) {
-            // TODO: fail
+        if (proxyClient == null)
             throw new InternalServerErrorException();
-        }
 
         if (!(requestBody.get("routes") instanceof JsonArray routesInfo))
             throw new BadRequestException("Malformed body: Missing routing info");
