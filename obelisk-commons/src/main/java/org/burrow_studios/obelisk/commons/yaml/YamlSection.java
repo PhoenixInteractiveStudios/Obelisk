@@ -2,6 +2,10 @@ package org.burrow_studios.obelisk.commons.yaml;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -42,6 +46,18 @@ public final class YamlSection extends YamlElement {
         members.put(key, value != null ? new YamlPrimitive(value) : YamlNull.INSTANCE);
     }
 
+    public void save(@NotNull Writer writer) {
+        YamlUtil.save(this, writer);
+    }
+
+    public void save(@NotNull OutputStream stream) {
+        YamlUtil.save(this, stream);
+    }
+
+    public void save(@NotNull File file) throws IOException {
+        YamlUtil.save(this, file);
+    }
+
     static @NotNull YamlSection parse(@NotNull Map<String, Object> map) {
         YamlSection section = new YamlSection();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -49,5 +65,13 @@ public final class YamlSection extends YamlElement {
             section.set(entry.getKey(), value);
         }
         return section;
+    }
+
+    @Override
+    Object toObject() {
+        LinkedHashMap<String, Object> objectMap = new LinkedHashMap<>();
+        for (Map.Entry<String, YamlElement> entry : members.entrySet())
+            objectMap.put(entry.getKey(), entry.getValue().toObject());
+        return objectMap;
     }
 }

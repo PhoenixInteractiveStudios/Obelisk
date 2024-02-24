@@ -88,4 +88,9 @@ public final class YamlPrimitive extends YamlElement {
         if (!(obj instanceof YamlPrimitive yaml)) return false;
         return Objects.equals(this.value, yaml.value);
     }
+
+    @Override
+    Object toObject() {
+        return value;
+    }
 }
