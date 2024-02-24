@@ -45,7 +45,7 @@ public final class YamlSection extends YamlElement {
     static @NotNull YamlSection parse(@NotNull Map<String, Object> map) {
         YamlSection section = new YamlSection();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            YamlElement value = YamlElement.parse(entry.getValue());
+            YamlElement value = YamlUtil.parse(entry.getValue());
             section.set(entry.getKey(), value);
         }
         return section;

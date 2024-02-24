@@ -31,7 +31,7 @@ public final class YamlList extends YamlElement implements Iterable<YamlElement>
     static @NotNull YamlList parse(@NotNull List<Object> elements) {
         YamlList list = new YamlList();
         for (Object element : elements)
-            list.add(YamlElement.parse(element));
+            list.add(YamlUtil.parse(element));
         return list;
     }
 }
