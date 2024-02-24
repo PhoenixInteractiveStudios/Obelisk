@@ -67,6 +67,19 @@ public class YamlUtil {
         return type.cast(load(file));
     }
 
+    static void save(@NotNull YamlElement yaml, @NotNull Writer writer) {
+        Object yamlObj = yaml.toObject();
+        YAML.dump(yamlObj, writer);
+    }
+
+    static void save(@NotNull YamlElement yaml, @NotNull OutputStream out) {
+        save(yaml, new OutputStreamWriter(out));
+    }
+
+    static void save(@NotNull YamlElement yaml, @NotNull File file) throws IOException {
+        save(yaml, new FileWriter(file, false));
+    }
+
     public static void saveDefault(@NotNull File file, InputStream resource) throws IOException {
         if (resource == null)
             throw new IllegalArgumentException("Resource is null");

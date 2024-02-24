@@ -14,4 +14,6 @@ public sealed abstract class YamlElement permits YamlList, YamlNull, YamlPrimiti
     public @NotNull YamlPrimitive getAsPrimitive() {
         return (YamlPrimitive) this;
     }
+
+    abstract Object toObject();
 }
