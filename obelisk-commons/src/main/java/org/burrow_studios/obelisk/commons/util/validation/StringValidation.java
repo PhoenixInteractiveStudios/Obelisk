@@ -21,4 +21,22 @@ public final class StringValidation extends Validation<String, StringValidation>
             throw newIAE("{name} may not be blank");
         return this;
     }
+
+    public @NotNull StringValidation checkCharWhitelist(@NotNull String legalChars, @NotNull String legalDelimiters) throws IllegalArgumentException {
+        for (int i = 0; i < value.length(); i++) {
+            if (legalChars.contains(String.valueOf(value.charAt(i))))
+                continue;
+
+            if (i == 0 || i == value.length() - 1)
+                if (legalDelimiters.contains(String.valueOf(value.charAt(i))))
+                    continue;
+
+            throw newIAE("{name} may not contain '" + value.charAt(i) + "'");
+        }
+        return this;
+    }
+
+    public @NotNull StringValidation checkCharWhitelist(@NotNull String legalChars) throws IllegalArgumentException {
+        return this.checkCharWhitelist(legalChars, "");
+    }
 }
