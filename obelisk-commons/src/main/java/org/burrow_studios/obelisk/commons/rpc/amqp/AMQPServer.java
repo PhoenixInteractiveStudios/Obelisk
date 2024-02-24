@@ -6,14 +6,12 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Delivery;
-import org.burrow_studios.obelisk.commons.rpc.Method;
-import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
-import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
-import org.burrow_studios.obelisk.commons.rpc.RPCServer;
+import org.burrow_studios.obelisk.commons.rpc.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
@@ -58,7 +56,18 @@ public class AMQPServer extends RPCServer<AMQPServer> {
         final String methodStr = requestJson.get("method").getAsString();
         final Method method    = Method.valueOf(methodStr);
         requestBuilder.setMethod(method);
-        
+
+        // request time
+        final String  timeStr = requestJson.get("time").getAsString();
+        final Instant time    = Instant.parse(timeStr);
+        requestBuilder.setTime(time);
+
+        // request timeout / deadline
+        final String  timeoutStr     = requestJson.get("timeout").getAsString();
+        final Instant timeoutInstant = Instant.parse(timeoutStr);
+        final TimeoutContext timeout = TimeoutContext.deadline(timeoutInstant);
+        requestBuilder.setTimeout(timeout);
+
         // request headers
         final JsonObject headers = requestJson.getAsJsonObject("headers");
         for (Map.Entry<String, JsonElement> header : headers.entrySet())
@@ -76,6 +85,9 @@ public class AMQPServer extends RPCServer<AMQPServer> {
 
         // response id
         responseJson.addProperty("id", id);
+
+        // response time
+        responseJson.addProperty("time", response.getTime().toString());
 
         // response headers
         responseJson.add("headers", response.getHeaders());

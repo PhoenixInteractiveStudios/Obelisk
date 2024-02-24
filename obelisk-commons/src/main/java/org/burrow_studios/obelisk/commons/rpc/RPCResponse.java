@@ -111,8 +111,10 @@ public final class RPCResponse {
         public @NotNull RPCResponse build() throws IllegalArgumentException {
             if (status == null)
                 throw new IllegalArgumentException("Status must be set");
+            if (time == null)
+                time = Instant.now();
 
-            return new RPCResponse(request, Instant.now(), headers, status, body);
+            return new RPCResponse(request, time, headers, status, body);
         }
     }
 }

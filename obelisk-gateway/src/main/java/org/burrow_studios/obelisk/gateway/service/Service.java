@@ -38,16 +38,18 @@ public class Service implements EndpointHandler, Closeable {
     public void handle(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
         // TODO: authorization checks
 
+        TimeoutContext timeout = request.getTimeout();
+        if (timeout.asTimeout() > TimeoutContext.DEFAULT.asTimeout() * 2)
+            timeout = TimeoutContext.timeout(TimeoutContext.DEFAULT.asTimeout() * 2);
+
         RPCRequest proxyRequest = new RPCRequest.Builder()
                 .setMethod(request.getMethod())
                 .setPath(request.getPath())
                 .setBody(request.getBody())
+                .setTimeout(timeout)
                 .build(request.getId());
 
         try {
-            // TODO: get timeout from request header if present
-            TimeoutContext timeout = TimeoutContext.DEFAULT;
-
             RPCResponse proxyResponse = this.proxyClient.send(proxyRequest).get(timeout.asTimeout(), TimeUnit.MILLISECONDS);
 
             response.setStatus(proxyResponse.getStatus());
