@@ -20,6 +20,22 @@ public final class Endpoint {
         return method;
     }
 
+    public @NotNull String getPath() {
+        StringBuilder builder = new StringBuilder();
+
+        for (Segment segment : segments) {
+            builder.append("/");
+            if (segment instanceof VanillaSegment vSeg)
+                builder.append(vSeg.string());
+            if (segment instanceof ParameterSegment<?> pSeg)
+                builder.append(":").append(pSeg.identifier());
+            // noinspection StatementWithEmptyBody
+            if (segment instanceof EmptySegment eSeg) { }
+        }
+
+        return builder.toString();
+    }
+
     public @NotNull RPCRequest.Builder builder(@NotNull Object... params) {
         String[] str = new String[params.length];
         for (int i = 0; i < params.length; i++)
