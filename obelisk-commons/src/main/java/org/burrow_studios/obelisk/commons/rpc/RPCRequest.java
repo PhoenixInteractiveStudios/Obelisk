@@ -14,17 +14,19 @@ public final class RPCRequest {
     private final @NotNull String path;
     private final @NotNull Method method;
     private final @NotNull JsonObject headers;
+    private final @NotNull TimeoutContext timeout;
     private final @Nullable JsonElement body;
 
     private final @NotNull CompletableFuture<RPCResponse> future;
 
     private final @NotNull JsonObject json;
 
-    public RPCRequest(long id, @NotNull Instant time, @NotNull Method method, @NotNull String path, @NotNull JsonObject headers, @Nullable JsonElement body) {
+    public RPCRequest(long id, @NotNull Instant time, @NotNull Method method, @NotNull String path, @NotNull TimeoutContext timeout, @NotNull JsonObject headers, @Nullable JsonElement body) {
         this.id = id;
         this.time = time;
         this.path = path;
         this.method = method;
+        this.timeout = timeout;
         this.headers = headers.deepCopy();
 
         this.body = body == null ? null : body.deepCopy();
@@ -32,6 +34,7 @@ public final class RPCRequest {
         this.json = new JsonObject();
         this.json.addProperty("id", this.id);
         this.json.addProperty("time", time.toString());
+        this.json.addProperty("timeout", timeout.asInstant().toString());
         this.json.addProperty("method", this.method.name());
         this.json.addProperty("path", this.path);
         this.json.add("headers", this.headers);
@@ -61,6 +64,10 @@ public final class RPCRequest {
         return this.path;
     }
 
+    public @NotNull TimeoutContext getTimeout() {
+        return timeout;
+    }
+
     public @NotNull JsonObject getHeaders() {
         return this.headers.deepCopy();
     }
@@ -83,6 +90,7 @@ public final class RPCRequest {
     public static final class Builder extends RPCExchangeBuilder<Builder> {
         private Method method;
         private String path;
+        private TimeoutContext timeout;
 
         public Builder() { }
 
@@ -90,7 +98,7 @@ public final class RPCRequest {
             return method;
         }
 
-        public Builder setMethod(@NotNull Method method) {
+        public Builder setMethod(Method method) {
             this.method = method;
             return this;
         }
@@ -99,8 +107,17 @@ public final class RPCRequest {
             return path;
         }
 
-        public Builder setPath(@NotNull String path) {
+        public Builder setPath(String path) {
             this.path = path;
+            return this;
+        }
+
+        public TimeoutContext getTimeout() {
+            return this.timeout;
+        }
+
+        public Builder setTimeout(TimeoutContext timeout) {
+            this.timeout = timeout;
             return this;
         }
 
@@ -109,8 +126,12 @@ public final class RPCRequest {
                 throw new IllegalArgumentException("Method must be set");
             if (path == null)
                 throw new IllegalArgumentException("Path must be set");
+            if (time == null)
+                time = Instant.now();
+            if (timeout == null)
+                timeout = TimeoutContext.DEFAULT;
 
-            return new RPCRequest(id, Instant.now(), method, path, headers, body);
+            return new RPCRequest(id, time, method, path, timeout, headers, body);
         }
     }
 }

@@ -56,6 +56,10 @@ public final class TimeoutContext {
         return Duration.of(asTimeout(), ChronoUnit.MILLIS);
     }
 
+    public @NotNull Instant asInstant() {
+        return Instant.ofEpochMilli(this.asDeadline());
+    }
+
     /* - - - */
 
     /** Creates a new context that times out {@code time} amount of {@code unit} after execution. */

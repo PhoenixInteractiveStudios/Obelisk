@@ -7,14 +7,25 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Instant;
 import java.util.List;
 
 @SuppressWarnings("unchecked")
 abstract sealed class RPCExchangeBuilder<T extends RPCExchangeBuilder<T>> permits RPCRequest.Builder, RPCResponse.Builder {
     protected final @NotNull JsonObject headers = new JsonObject();
     protected @Nullable JsonElement body;
+    protected Instant time;
 
     protected RPCExchangeBuilder() { }
+
+    public Instant getTime() {
+        return this.time;
+    }
+
+    public T setTime(Instant time) {
+        this.time = time;
+        return (T) this;
+    }
 
     public final T setHeaders(@NotNull String key, @NotNull JsonArray val) {
         for (JsonElement element : val)
