@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.burrow-studios.obelisk</groupId>
-    <artifactId>Shelly</artifactId>
+    <artifactId>Chramel</artifactId>
     <version>1.0.0-alpha.1</version>
 
-    <name>Shelly</name>
-    <description>Obelisk authentication service</description>
+    <name>Chramel</name>
+    <description>Obelisk authorization service</description>
 
 
     <licenses>
