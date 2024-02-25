@@ -8,6 +8,10 @@ import org.burrow_studios.obelisk.commons.rpc.Status;
 import org.jetbrains.annotations.NotNull;
 
 public class ForbiddenException extends RequestHandlerException {
+    public ForbiddenException() {
+        super();
+    }
+
     public ForbiddenException(String message) {
         super(message);
     }
@@ -21,7 +25,9 @@ public class ForbiddenException extends RequestHandlerException {
         JsonObject json = new JsonObject();
         json.addProperty("code", 403);
         json.addProperty("description", "Forbidden");
-        json.addProperty("message", getMessage());
+
+        if (this.getMessage() != null)
+            json.addProperty("message", getMessage());
 
         return new RPCResponse.Builder(request)
                 .setStatus(Status.FORBIDDEN)

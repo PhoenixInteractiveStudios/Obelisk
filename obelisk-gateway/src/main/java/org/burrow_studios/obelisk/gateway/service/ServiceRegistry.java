@@ -7,6 +7,8 @@ import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.commons.rpc.*;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPClient;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
+import org.burrow_studios.obelisk.commons.rpc.authentication.AuthenticationLevel;
+import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.InternalServerErrorException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
@@ -51,16 +53,18 @@ public class ServiceRegistry implements Closeable {
                     serverConfig.getAsPrimitive("port").getAsInt(),
                     serverConfig.getAsPrimitive("user").getAsString(),
                     serverConfig.getAsPrimitive("pass").getAsString(),
-                    "meta", "service_discovery"
+                    "meta", "service_discovery",
+                    Authenticator.ALLOW_ALL // only exposed internally
             );
             case "http" -> new SunServerImpl(
-                    serverConfig.getAsPrimitive("port").getAsInt()
+                    serverConfig.getAsPrimitive("port").getAsInt(),
+                    Authenticator.ALLOW_ALL // only exposed internally
             );
             default -> throw new IllegalArgumentException("Unsupported server type: " + type.getAsString());
         };
 
-        this.server.addEndpoint(Endpoint.build(Method.POST  , "/services"        ), this::onPost);
-        this.server.addEndpoint(Endpoint.build(Method.DELETE, "/services/:string"), this::onDelete);
+        this.server.addEndpoint(Endpoint.build(Method.POST  , "/services"        , AuthenticationLevel.NONE), this::onPost);
+        this.server.addEndpoint(Endpoint.build(Method.DELETE, "/services/:string", AuthenticationLevel.NONE), this::onDelete);
     }
 
     @Override
@@ -145,7 +149,6 @@ public class ServiceRegistry implements Closeable {
 
         Set<Endpoint> endpoints = new LinkedHashSet<>();
 
-        // TODO: add auth specs
         routes:
         for (JsonElement element : routesInfo) {
             if (!(element instanceof JsonObject routeInfo))
@@ -165,7 +168,15 @@ public class ServiceRegistry implements Closeable {
                 throw new BadRequestException("Malformed body: Malformed routing info");
             final String path = pathInfo.getAsString();
 
-            Endpoint endpoint = Endpoint.build(method, path);
+            if (!(routeInfo.get("auth") instanceof JsonObject authInfo))
+                throw new BadRequestException("Malformed body: Missing auth info");
+
+            if (!(authInfo.get("authentication_level") instanceof JsonPrimitive authLevelInfo))
+                throw new BadRequestException("Malformed body: Malformed auth info");
+            final String authLevelStr = authLevelInfo.getAsString();
+            final AuthenticationLevel authLevel = AuthenticationLevel.valueOf(authLevelStr);
+
+            Endpoint endpoint = Endpoint.build(method, path, authLevel);
 
             for (Service service : this.services) {
                 for (Endpoint serviceEndpoint : service.getEndpoints()) {
