@@ -1,9 +1,16 @@
 package org.burrow_studios.obelisk.gateway;
 
+import org.burrow_studios.obelisk.commons.rpc.Endpoint;
+import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
+import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
+import org.burrow_studios.obelisk.commons.rpc.exceptions.NotFoundException;
+import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
 import org.burrow_studios.obelisk.commons.util.ResourceTools;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
 import org.burrow_studios.obelisk.commons.yaml.YamlUtil;
+import org.burrow_studios.obelisk.gateway.authentication.AuthenticationService;
 import org.burrow_studios.obelisk.gateway.net.NetworkHandler;
+import org.burrow_studios.obelisk.gateway.service.Service;
 import org.burrow_studios.obelisk.gateway.service.ServiceRegistry;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +22,7 @@ public class ObeliskGateway {
     private final @NotNull YamlSection config;
     private final @NotNull File configFile = new File(Main.DIR, "config.yaml");
 
+    private final AuthenticationService authenticationService;
     private final NetworkHandler networkHandler;
     private final ServiceRegistry serviceRegistry;
 
@@ -23,6 +31,8 @@ public class ObeliskGateway {
         YamlUtil.saveDefault(configFile, resourceTools.getResource("config.yaml"));
 
         this.config = YamlUtil.load(configFile, YamlSection.class);
+
+        this.authenticationService = new AuthenticationService(this, config.getAsSection("authentication"));
 
         this.networkHandler  = new  NetworkHandler(this, config.getAsSection("net"));
         this.serviceRegistry = new ServiceRegistry(this, config.getAsSection("registry"));
@@ -34,7 +44,18 @@ public class ObeliskGateway {
         this.serviceRegistry.close();
     }
 
+    public @NotNull AuthenticationService getAuthenticationService() {
+        return authenticationService;
+    }
+
     public @NotNull NetworkHandler getNetworkHandler() {
         return networkHandler;
+    }
+
+    public @NotNull RPCResponse handleInternal(@NotNull Endpoint endpoint, @NotNull RPCRequest request) throws RequestHandlerException {
+        Service service = this.serviceRegistry.getServiceByEndpoint(endpoint);
+        if (service == null)
+            throw new NotFoundException();
+        return service.handleInternal(request);
     }
 }

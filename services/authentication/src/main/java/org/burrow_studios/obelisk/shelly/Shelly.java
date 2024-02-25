@@ -1,8 +1,11 @@
 package org.burrow_studios.obelisk.shelly;
 
+import org.burrow_studios.obelisk.commons.rpc.Endpoint;
 import org.burrow_studios.obelisk.commons.rpc.Endpoints;
+import org.burrow_studios.obelisk.commons.rpc.Method;
 import org.burrow_studios.obelisk.commons.rpc.RPCServer;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
+import org.burrow_studios.obelisk.commons.rpc.authentication.AuthenticationLevel;
 import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
 import org.burrow_studios.obelisk.commons.service.ServiceHook;
 import org.burrow_studios.obelisk.commons.util.ResourceTools;
@@ -11,6 +14,7 @@ import org.burrow_studios.obelisk.commons.yaml.YamlUtil;
 import org.burrow_studios.obelisk.shelly.crypto.TokenManager;
 import org.burrow_studios.obelisk.shelly.database.AuthDB;
 import org.burrow_studios.obelisk.shelly.database.SQLiteAuthDB;
+import org.burrow_studios.obelisk.shelly.net.GatewayAdapter;
 import org.burrow_studios.obelisk.shelly.net.PubKeyHandler;
 import org.burrow_studios.obelisk.shelly.net.SessionHandler;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +47,7 @@ public class Shelly {
         this.tokenManager = new TokenManager(this);
 
         LOG.log(Level.INFO, "Starting API server");
+        final GatewayAdapter gatewayAdapter = new GatewayAdapter(this);
         final SessionHandler sessionHandler = new SessionHandler(this);
         final  PubKeyHandler  pubKeyHandler = new PubKeyHandler(this);
         YamlSection serverConfig = this.config.getAsSection("server");
@@ -62,6 +67,7 @@ public class Shelly {
         this.server.addEndpoint(Endpoints.GET_SOCKET, sessionHandler::onGetSocket);
         this.server.addEndpoint(Endpoints.Shelly.GET_PUBLIC_IDENTITY_KEY, pubKeyHandler::onGetPublicIdentityKey);
         this.server.addEndpoint(Endpoints.Shelly.GET_PUBLIC_SESSION_KEY , pubKeyHandler::onGetPublicSessionKey);
+        this.server.addEndpoint(Endpoint.build(Method.GET, "/authenticate", AuthenticationLevel.NONE), gatewayAdapter::onAuthenticate);
 
         this.serviceHook = new ServiceHook(serverConfig, "Shelly", this.server);
     }
