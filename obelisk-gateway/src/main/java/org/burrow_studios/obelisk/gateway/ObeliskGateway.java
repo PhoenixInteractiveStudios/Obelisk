@@ -9,6 +9,7 @@ import org.burrow_studios.obelisk.commons.util.ResourceTools;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
 import org.burrow_studios.obelisk.commons.yaml.YamlUtil;
 import org.burrow_studios.obelisk.gateway.authentication.AuthenticationService;
+import org.burrow_studios.obelisk.gateway.authorization.AuthorizationService;
 import org.burrow_studios.obelisk.gateway.net.NetworkHandler;
 import org.burrow_studios.obelisk.gateway.service.Service;
 import org.burrow_studios.obelisk.gateway.service.ServiceRegistry;
@@ -23,6 +24,7 @@ public class ObeliskGateway {
     private final @NotNull File configFile = new File(Main.DIR, "config.yaml");
 
     private final AuthenticationService authenticationService;
+    private final AuthorizationService authorizationService;
     private final NetworkHandler networkHandler;
     private final ServiceRegistry serviceRegistry;
 
@@ -33,6 +35,7 @@ public class ObeliskGateway {
         this.config = YamlUtil.load(configFile, YamlSection.class);
 
         this.authenticationService = new AuthenticationService(this, config.getAsSection("authentication"));
+        this.authorizationService  = new  AuthorizationService(this, config.getAsSection("authorization"));
 
         this.networkHandler  = new  NetworkHandler(this, config.getAsSection("net"));
         this.serviceRegistry = new ServiceRegistry(this, config.getAsSection("registry"));
@@ -46,6 +49,10 @@ public class ObeliskGateway {
 
     public @NotNull AuthenticationService getAuthenticationService() {
         return authenticationService;
+    }
+
+    public @NotNull AuthorizationService getAuthorizationService() {
+        return authorizationService;
     }
 
     public @NotNull NetworkHandler getNetworkHandler() {

@@ -41,6 +41,12 @@ public class ServiceHook implements Closeable {
 
                 JsonObject authInfo = new JsonObject();
                 authInfo.addProperty("authentication_level", endpoint.getAuthenticationLevel().name());
+
+                JsonArray intents = new JsonArray();
+                for (String intent : endpoint.getIntents())
+                    intents.add(intent);
+                authInfo.add("intents", intents);
+
                 route.add("auth", authInfo);
 
                 routes.add(route);

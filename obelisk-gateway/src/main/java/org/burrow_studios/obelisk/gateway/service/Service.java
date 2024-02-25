@@ -36,8 +36,6 @@ public class Service implements EndpointHandler, Closeable {
 
     @Override
     public void handle(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        // TODO: authorization checks
-
         TimeoutContext timeout = request.getTimeout();
         if (timeout.asTimeout() > TimeoutContext.DEFAULT.asTimeout() * 2)
             timeout = TimeoutContext.timeout(TimeoutContext.DEFAULT.asTimeout() * 2);
