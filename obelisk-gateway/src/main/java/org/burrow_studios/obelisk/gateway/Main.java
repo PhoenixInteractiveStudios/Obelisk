@@ -1,7 +1,7 @@
 package org.burrow_studios.obelisk.gateway;
 
+import org.burrow_studios.obelisk.commons.logging.LogTools;
 import org.burrow_studios.obelisk.commons.util.ResourceTools;
-import org.burrow_studios.obelisk.gateway.util.logging.LogUtil;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -33,7 +33,7 @@ public class Main {
             throw new AssertionError("Unknown version");
         System.out.printf(" version %s...%n", VERSION);
 
-        LogUtil.init();
+        LogTools.get(new File(Main.DIR, "logs")).init();
 
         ObeliskGateway gateway = new ObeliskGateway();
 
