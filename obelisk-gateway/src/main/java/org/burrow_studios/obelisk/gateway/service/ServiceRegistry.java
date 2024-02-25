@@ -51,8 +51,7 @@ public class ServiceRegistry implements Closeable {
                     serverConfig.getAsPrimitive("port").getAsInt(),
                     serverConfig.getAsPrimitive("user").getAsString(),
                     serverConfig.getAsPrimitive("pass").getAsString(),
-                    serverConfig.getAsPrimitive("exchange").getAsString(),
-                    serverConfig.getAsPrimitive("queue").getAsString()
+                    "meta", "service_discovery"
             );
             case "http" -> new SunServerImpl(
                     serverConfig.getAsPrimitive("port").getAsInt()
