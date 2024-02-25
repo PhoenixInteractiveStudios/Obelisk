@@ -10,48 +10,28 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class RPCResponse {
+public final class RPCResponse extends RPCExchange {
     private final @NotNull RPCRequest request;
-    private final @NotNull Instant time;
-    private final @NotNull JsonObject headers;
     private final @NotNull Status status;
-    private final @Nullable JsonElement body;
-
-    private final @NotNull JsonObject json;
 
     public RPCResponse(@NotNull RPCRequest request, @NotNull Instant time, @NotNull JsonObject headers, @NotNull Status status, @Nullable JsonElement body) {
+        super(time, headers, body);
+
         this.request = request;
-        this.time = time;
-        this.headers = headers.deepCopy();
         this.status = status;
 
-        this.body = body == null ? null : body.deepCopy();
-
-        this.json = new JsonObject();
-        this.json.addProperty("id", request.getId());
-        this.json.addProperty("time", time.toString());
         this.json.addProperty("status", status.name());
-        this.json.add("headers", this.headers);
-        if (this.body != null)
-            this.json.add("body", this.body);
 
         this.request.getFuture().complete(this);
     }
 
+    @Override
+    public long getId() {
+        return this.request.getId();
+    }
+
     public @NotNull RPCRequest getRequest() {
         return this.request;
-    }
-
-    public @NotNull Instant getTime() {
-        return this.time;
-    }
-
-    public long getMillis() {
-        return this.time.toEpochMilli();
-    }
-
-    public @NotNull JsonObject getHeaders() {
-        return this.headers.deepCopy();
     }
 
     public @NotNull Map<String, String> getHeaderMap() {
@@ -76,22 +56,12 @@ public final class RPCResponse {
         return this.status;
     }
 
-    public @Nullable JsonElement getBody() {
-        if (this.body == null)
-            return null;
-        return this.body.deepCopy();
-    }
-
     public @Nullable String getBodyString() {
         if (this.body == null)
             return null;
         if (this.body instanceof JsonNull)
             return "null";
         return RPCServer.GSON.toJson(body);
-    }
-
-    public @NotNull JsonObject toJson() {
-        return this.json.deepCopy();
     }
 
     /** A helper class to create {@link RPCResponse Responses}. As opposed to the resulting Response, this class is mutable. */

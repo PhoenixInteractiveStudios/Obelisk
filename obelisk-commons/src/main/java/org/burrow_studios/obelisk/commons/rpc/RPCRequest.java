@@ -8,52 +8,31 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
 
-public final class RPCRequest {
+public final class RPCRequest extends RPCExchange {
     private final long id;
-    private final @NotNull Instant time;
     private final @NotNull String path;
     private final @NotNull Method method;
-    private final @NotNull JsonObject headers;
     private final @NotNull TimeoutContext timeout;
-    private final @Nullable JsonElement body;
 
     private final @NotNull CompletableFuture<RPCResponse> future;
 
-    private final @NotNull JsonObject json;
-
     public RPCRequest(long id, @NotNull Instant time, @NotNull Method method, @NotNull String path, @NotNull TimeoutContext timeout, @NotNull JsonObject headers, @Nullable JsonElement body) {
+        super(time, headers, body);
         this.id = id;
-        this.time = time;
         this.path = path;
         this.method = method;
         this.timeout = timeout;
-        this.headers = headers.deepCopy();
 
-        this.body = body == null ? null : body.deepCopy();
-
-        this.json = new JsonObject();
-        this.json.addProperty("id", this.id);
-        this.json.addProperty("time", time.toString());
         this.json.addProperty("timeout", timeout.asInstant().toString());
         this.json.addProperty("method", this.method.name());
         this.json.addProperty("path", this.path);
-        this.json.add("headers", this.headers);
-        if (this.body != null)
-            this.json.add("body", this.body);
 
         this.future = new CompletableFuture<>();
     }
 
+    @Override
     public long getId() {
         return this.id;
-    }
-
-    public @NotNull Instant getTime() {
-        return this.time;
-    }
-
-    public long getMillis() {
-        return this.time.toEpochMilli();
     }
 
     public @NotNull Method getMethod() {
@@ -66,20 +45,6 @@ public final class RPCRequest {
 
     public @NotNull TimeoutContext getTimeout() {
         return timeout;
-    }
-
-    public @NotNull JsonObject getHeaders() {
-        return this.headers.deepCopy();
-    }
-
-    public @Nullable JsonElement getBody() {
-        if (this.body == null)
-            return null;
-        return this.body.deepCopy();
-    }
-
-    public @NotNull JsonObject toJson() {
-        return this.json.deepCopy();
     }
 
     public @NotNull CompletableFuture<RPCResponse> getFuture() {
