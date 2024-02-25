@@ -1,10 +1,11 @@
 package org.burrow_studios.obelisk.shelly.net;
 
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.commons.http.server.HTTPRequest;
-import org.burrow_studios.obelisk.commons.http.server.ResponseBuilder;
-import org.burrow_studios.obelisk.commons.http.server.exceptions.InternalServerErrorException;
-import org.burrow_studios.obelisk.commons.http.server.exceptions.RequestHandlerException;
+import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
+import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
+import org.burrow_studios.obelisk.commons.rpc.Status;
+import org.burrow_studios.obelisk.commons.rpc.exceptions.InternalServerErrorException;
+import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
 import org.burrow_studios.obelisk.shelly.Shelly;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,8 +19,9 @@ public class PubKeyHandler {
         this.shelly = shelly;
     }
 
-    public void onGetPublicIdentityKey(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
-        final long subject = request.getSegmentLong(1);
+    public void onGetPublicIdentityKey(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
+        final String subjectStr = request.getPath().split("/")[1];
+        final long   subject    = Long.parseLong(subjectStr);
 
         final JsonObject responseJson = new JsonObject();
 
@@ -34,10 +36,10 @@ public class PubKeyHandler {
         }
 
         response.setBody(responseJson);
-        response.setCode(200);
+        response.setStatus(Status.OK);
     }
 
-    public void onGetPublicSessionKey(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGetPublicSessionKey(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
         final JsonObject responseJson = new JsonObject();
 
         try {
@@ -51,6 +53,6 @@ public class PubKeyHandler {
         }
 
         response.setBody(responseJson);
-        response.setCode(200);
+        response.setStatus(Status.OK);
     }
 }

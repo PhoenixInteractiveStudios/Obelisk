@@ -1,11 +1,11 @@
 package org.burrow_studios.obelisk.shelly.net;
 
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.commons.http.AuthLevel;
-import org.burrow_studios.obelisk.commons.http.server.HTTPRequest;
-import org.burrow_studios.obelisk.commons.http.server.ResponseBuilder;
-import org.burrow_studios.obelisk.commons.http.server.exceptions.ForbiddenException;
-import org.burrow_studios.obelisk.commons.http.server.exceptions.RequestHandlerException;
+import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
+import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
+import org.burrow_studios.obelisk.commons.rpc.Status;
+import org.burrow_studios.obelisk.commons.rpc.exceptions.ForbiddenException;
+import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
 import org.burrow_studios.obelisk.shelly.Shelly;
 import org.burrow_studios.obelisk.shelly.crypto.TokenManager;
 import org.burrow_studios.obelisk.shelly.database.DatabaseException;
@@ -18,15 +18,16 @@ public class SessionHandler {
         this.shelly = shelly;
     }
 
-    public void onLogin(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onLogin(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
         // this method should not be invoked without checking authorization first
         assert request.endpoint().getPrivilege() == AuthLevel.IDENTITY;
         assert request.token() != null;
 
         final TokenManager tokenManager = getTokenManager();
 
-        final long subject  = request.getSegmentLong(1);
-        final long identity = Long.parseLong(request.token().getId());
+        final String subjectStr = request.getPath().split("/")[1];
+        final long   subject    = Long.parseLong(subjectStr);
+        final long   identity   = Long.parseLong(request.token().getId());
 
         final String sessionToken = tokenManager.newSessionToken(identity, subject);
 
@@ -34,16 +35,18 @@ public class SessionHandler {
         responseJson.addProperty("session", sessionToken);
 
         response.setBody(responseJson);
-        response.setCode(200);
+        response.setStatus(Status.OK);
     }
 
-    public void onLogout(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException, DatabaseException {
+    public void onLogout(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException, DatabaseException {
         // this method should not be invoked without checking authorization first
         assert request.endpoint().getPrivilege() == AuthLevel.SESSION;
         assert request.token() != null;
 
-        final long subject  = request.getSegmentLong(1);
-        final long session  = request.getSegmentLong(2);
+        final String[] pathSegments = request.getPath().split("/");
+
+        final long subject  = Long.parseLong(pathSegments[1]);
+        final long session  = Long.parseLong(pathSegments[2]);
         final long identity = Long.parseLong(request.token().getKeyId());
 
         // validate subject
@@ -53,16 +56,17 @@ public class SessionHandler {
 
         this.shelly.getDatabase().invalidateSession(session, identity);
 
-        response.setCode(204);
+        response.setStatus(Status.NO_CONTENT);
     }
 
-    public void onLogoutAll(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onLogoutAll(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
         // this method should not be invoked without checking authorization first
         assert request.endpoint().getPrivilege() == AuthLevel.SESSION;
         assert request.token() != null;
 
-        final long subject = request.getSegmentLong(1);
-        final long identity = Long.parseLong(request.token().getKeyId());
+        final String subjectStr = request.getPath().split("/")[1];
+        final long   subject    = Long.parseLong(subjectStr);
+        final long   identity   = Long.parseLong(request.token().getKeyId());
 
         // validate subject
         final long tokenSubject = Long.parseLong(request.token().getSubject());
@@ -71,15 +75,15 @@ public class SessionHandler {
 
         this.shelly.getDatabase().invalidateAllSessions(identity);
 
-        response.setCode(204);
+        response.setStatus(Status.NO_CONTENT);
     }
 
-    public void onGetSocket(@NotNull HTTPRequest request, @NotNull ResponseBuilder response) throws RequestHandlerException {
+    public void onGetSocket(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
         JsonObject body = new JsonObject();
         body.addProperty("host", "api.burrow-studios.org");
         body.addProperty("port", 8346);
 
-        response.setCode(200);
+        response.setStatus(Status.OK);
         response.setBody(body);
     }
 
