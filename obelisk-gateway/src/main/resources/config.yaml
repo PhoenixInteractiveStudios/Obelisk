@@ -5,9 +5,13 @@ net:
 # Configuration of the service registry
 registry:
   server:
-    # Can either be AMQP or HTTP. AMQP also needs the keys host, port, user and pass, while HTTP only need port
+    # Can either be AMQP or HTTP. AMQP also needs the keys host, port, user and pass, while HTTP only needs port
     type: AMQP
     host: "localhost"
     port: 5672
     user: "gateway"
     pass: ""
+
+# Authentication endpoint specs; The authentication service is responsible for creating the route
+authentication:
+  endpoint: "/authorize"

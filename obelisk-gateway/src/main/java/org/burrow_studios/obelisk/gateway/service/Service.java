@@ -49,11 +49,15 @@ public class Service implements EndpointHandler, Closeable {
                 .setTimeout(timeout)
                 .build(request.getId());
 
-        try {
-            RPCResponse proxyResponse = this.proxyClient.send(proxyRequest).get(timeout.asTimeout(), TimeUnit.MILLISECONDS);
+        RPCResponse proxyResponse = this.handleInternal(proxyRequest);
 
-            response.setStatus(proxyResponse.getStatus());
-            response.setBody(proxyResponse.getBody());
+        response.setStatus(proxyResponse.getStatus());
+        response.setBody(proxyResponse.getBody());
+    }
+
+    public @NotNull RPCResponse handleInternal(@NotNull RPCRequest request) throws RequestHandlerException {
+        try {
+            return this.proxyClient.send(request).get(request.getTimeout().asTimeout(), TimeUnit.MILLISECONDS);
         } catch (CancellationException | ExecutionException | InterruptedException e) {
             throw new BadGatewayException();
         } catch (TimeoutException e) {

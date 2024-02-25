@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.commons.rpc.authentication;
 
 import org.burrow_studios.obelisk.commons.rpc.exceptions.ForbiddenException;
+import org.burrow_studios.obelisk.commons.rpc.exceptions.InternalServerErrorException;
 import org.jetbrains.annotations.NotNull;
 
 @FunctionalInterface
@@ -13,5 +14,5 @@ public interface Authenticator {
             throw new ForbiddenException();
     };
 
-    void authenticate(@NotNull String token, @NotNull AuthenticationLevel level) throws ForbiddenException;
+    void authenticate(@NotNull String token, @NotNull AuthenticationLevel level) throws InternalServerErrorException, ForbiddenException;
 }

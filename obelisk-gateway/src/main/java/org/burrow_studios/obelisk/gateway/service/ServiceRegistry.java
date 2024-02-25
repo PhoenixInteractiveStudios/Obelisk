@@ -19,6 +19,7 @@ import org.burrow_studios.obelisk.commons.yaml.YamlPrimitive;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
 import org.burrow_studios.obelisk.gateway.ObeliskGateway;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -36,13 +37,13 @@ public class ServiceRegistry implements Closeable {
     private final YamlSection config;
     private final RPCServer<?> server;
 
-    private final Set<Service> services;
+    private final ConcurrentHashMap<String, Service> services;
 
     public ServiceRegistry(@NotNull ObeliskGateway gateway, @NotNull YamlSection config) throws IOException, TimeoutException {
         this.gateway = gateway;
         this.config = config;
 
-        this.services = ConcurrentHashMap.newKeySet();
+        this.services = new ConcurrentHashMap<>();
 
         YamlSection serverConfig = config.getAsSection("server");
         YamlPrimitive type = serverConfig.getAsPrimitive("type");
@@ -70,7 +71,7 @@ public class ServiceRegistry implements Closeable {
     @Override
     public void close() throws IOException {
         this.server.close();
-        for (Service service : this.services)
+        for (Service service : this.services.values())
             service.close();
     }
 
@@ -178,7 +179,7 @@ public class ServiceRegistry implements Closeable {
 
             Endpoint endpoint = Endpoint.build(method, path, authLevel);
 
-            for (Service service : this.services) {
+            for (Service service : this.services.values()) {
                 for (Endpoint serviceEndpoint : service.getEndpoints()) {
                     if (!serviceEndpoint.equals(endpoint)) continue;
                     // CONFLICT! The existing route will be respected
@@ -199,7 +200,7 @@ public class ServiceRegistry implements Closeable {
             throw new InternalServerErrorException();
         }
 
-        this.services.add(service);
+        this.services.put(name, service);
 
         JsonArray routes = new JsonArray();
         for (Endpoint endpoint : endpoints) {
@@ -217,9 +218,8 @@ public class ServiceRegistry implements Closeable {
     private void onDelete(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
         final String name = request.getPath().split("/")[1];
 
-        for (Service service : this.services) {
-            if (!service.getName().equals(name)) continue;
-
+        Service service = this.services.get(name);
+        if (service != null) {
             for (Endpoint endpoint : service.getEndpoints())
                 gateway.getNetworkHandler().unregisterEndpoint(endpoint);
         }
@@ -229,5 +229,13 @@ public class ServiceRegistry implements Closeable {
 
     public @NotNull ObeliskGateway getGateway() {
         return gateway;
+    }
+
+    public @Nullable Service getServiceByEndpoint(@NotNull Endpoint endpoint) {
+        for (Service service : this.services.values())
+            for (Endpoint serviceEndpoint : service.getEndpoints())
+                if (serviceEndpoint.equals(endpoint))
+                    return service;
+        return null;
     }
 }

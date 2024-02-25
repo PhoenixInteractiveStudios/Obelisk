@@ -6,6 +6,7 @@ import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.commons.rpc.authentication.AuthenticationLevel;
 import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.ForbiddenException;
+import org.burrow_studios.obelisk.commons.rpc.exceptions.InternalServerErrorException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
 import org.jetbrains.annotations.NotNull;
 
@@ -113,7 +114,7 @@ public abstract class RPCServer<T extends RPCServer<T>> implements Closeable {
 
             try {
                 authenticator.authenticate(authToken, authLevel);
-            } catch (ForbiddenException e) {
+            } catch (ForbiddenException | InternalServerErrorException e) {
                 return e.asResponse(request);
             }
         }
