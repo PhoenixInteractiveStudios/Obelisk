@@ -16,5 +16,8 @@ module obelisk.commons {
     exports org.burrow_studios.obelisk.commons.util.validation;
 
     exports org.burrow_studios.obelisk.commons.rpc;
+    exports org.burrow_studios.obelisk.commons.rpc.amqp;
     exports org.burrow_studios.obelisk.commons.rpc.http;
+    exports org.burrow_studios.obelisk.commons.rpc.authentication;
+    exports org.burrow_studios.obelisk.commons.rpc.exceptions;
 }

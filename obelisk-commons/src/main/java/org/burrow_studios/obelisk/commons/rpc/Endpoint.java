@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.commons.rpc;
 
+import org.burrow_studios.obelisk.commons.rpc.authentication.AuthenticationLevel;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -10,10 +11,12 @@ public final class Endpoint {
 
     private final @NotNull Method method;
     private final @NotNull Segment[] segments;
+    private final @NotNull AuthenticationLevel authenticationLevel;
 
-    Endpoint(@NotNull Method method, @NotNull Segment[] segments) {
+    Endpoint(@NotNull Method method, @NotNull Segment[] segments, @NotNull AuthenticationLevel authenticationLevel) {
         this.method = method;
         this.segments = segments;
+        this.authenticationLevel = authenticationLevel;
     }
 
     public @NotNull Method getMethod() {
@@ -34,6 +37,10 @@ public final class Endpoint {
         }
 
         return builder.toString();
+    }
+
+    public @NotNull AuthenticationLevel getAuthenticationLevel() {
+        return this.authenticationLevel;
     }
 
     public @NotNull RPCRequest.Builder builder(@NotNull Object... params) {
@@ -80,7 +87,7 @@ public final class Endpoint {
         return Arrays.equals(endpoint.segments, this.segments);
     }
 
-    public static @NotNull Endpoint build(@NotNull Method method, @NotNull String path) {
+    public static @NotNull Endpoint build(@NotNull Method method, @NotNull String path, @NotNull AuthenticationLevel authenticationLevel) {
         String[] pathSegments = path.substring(1).split("/");
 
         ArrayList<Segment> segments = new ArrayList<>();
@@ -99,13 +106,13 @@ public final class Endpoint {
             segments.add(segment);
         }
 
-        return new Endpoint(method, segments.toArray(Segment[]::new));
+        return new Endpoint(method, segments.toArray(Segment[]::new), authenticationLevel);
     }
 
     private static void validateSegment(@NotNull String segment) throws IllegalArgumentException {
         char[] chars = segment.toCharArray();
         for (int i = 0; i < chars.length; i++) {
-            if (LEGAL_CHARS_PATH.contains(chars[i] + ""))
+            if (LEGAL_CHARS_PATH.contains(String.valueOf(chars[i])))
                 continue;
 
             if (chars[i] == '%') {

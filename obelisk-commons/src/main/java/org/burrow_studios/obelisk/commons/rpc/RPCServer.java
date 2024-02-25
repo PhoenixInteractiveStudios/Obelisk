@@ -2,6 +2,10 @@ package org.burrow_studios.obelisk.commons.rpc;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonPrimitive;
+import org.burrow_studios.obelisk.commons.rpc.authentication.AuthenticationLevel;
+import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
+import org.burrow_studios.obelisk.commons.rpc.exceptions.ForbiddenException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +24,11 @@ public abstract class RPCServer<T extends RPCServer<T>> implements Closeable {
 
     /** Maps expected endpoints to their respective handlers. This serves as lookup during request processing. */
     private final ConcurrentHashMap<Endpoint, EndpointHandler> handlers = new ConcurrentHashMap<>();
+    private final Authenticator authenticator;
+
+    public RPCServer(@NotNull Authenticator authenticator) {
+        this.authenticator = authenticator;
+    }
 
     /**
      * Registers an {@link EndpointHandler} as the responsible handler for a specific {@link Endpoint}.
@@ -73,10 +82,11 @@ public abstract class RPCServer<T extends RPCServer<T>> implements Closeable {
 
             if (!methods.isEmpty()) {
                 // there seem to be other methods
-                return new RPCResponse.Builder(request)
-                        .setStatus(Status.METHOD_NOT_ALLOWED)
-                        .setHeader("Allow", String.join(", ", methods))
-                        .build();
+                RPCResponse.Builder builder = new RPCResponse.Builder(request)
+                        .setStatus(Status.METHOD_NOT_ALLOWED);
+                for (String method : methods)
+                    builder.addHeader("Allow", method);
+                return builder.build();
             }
 
             // path does not exist on the server at all
@@ -85,7 +95,28 @@ public abstract class RPCServer<T extends RPCServer<T>> implements Closeable {
                     .build();
         }
 
-        // TODO: auth
+        final AuthenticationLevel authLevel = endpoint.getAuthenticationLevel();
+        if (authLevel != AuthenticationLevel.NONE) {
+            if (!(request.getHeaders().get("WWW-Authenticate") instanceof JsonPrimitive authHeader))
+                return new RPCResponse.Builder(request)
+                        .setStatus(Status.UNAUTHORIZED)
+                        .build();
+
+            final String authHeaderStr = authHeader.getAsString();
+
+            if (!authHeaderStr.startsWith("Bearer "))
+                return new RPCResponse.Builder(request)
+                        .setStatus(Status.FORBIDDEN)
+                        .build();
+
+            final String authToken = authHeaderStr.substring("Bearer ".length());
+
+            try {
+                authenticator.authenticate(authToken, authLevel);
+            } catch (ForbiddenException e) {
+                return e.asResponse(request);
+            }
+        }
 
         try {
             RPCResponse.Builder builder = new RPCResponse.Builder(request);

@@ -4,7 +4,9 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.burrow_studios.obelisk.commons.rpc.*;
+import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
 import org.burrow_studios.obelisk.commons.turtle.TimeBasedIdGenerator;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -18,7 +20,9 @@ public final class SunServerImpl extends RPCServer<SunServerImpl> {
 
     private final TimeBasedIdGenerator requestIds = TimeBasedIdGenerator.get();
 
-    public SunServerImpl(int port) throws IOException {
+    public SunServerImpl(int port, @NotNull Authenticator authenticator) throws IOException {
+        super(authenticator);
+
         this.server = HttpServer.create();
         this.server.createContext("/", exchange -> {
             try {

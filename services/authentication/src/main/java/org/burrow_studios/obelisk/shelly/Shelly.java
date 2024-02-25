@@ -3,6 +3,7 @@ package org.burrow_studios.obelisk.shelly;
 import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.burrow_studios.obelisk.commons.rpc.RPCServer;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
+import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
 import org.burrow_studios.obelisk.commons.service.ServiceHook;
 import org.burrow_studios.obelisk.commons.util.ResourceTools;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
@@ -51,14 +52,16 @@ public class Shelly {
                 serverConfig.getAsPrimitive("user").getAsString(),
                 serverConfig.getAsPrimitive("pass").getAsString(),
                 serverConfig.getAsPrimitive("exchange").getAsString(),
-                serverConfig.getAsPrimitive("queue").getAsString()
-        )
-                .addEndpoint(Endpoints.LOGIN     , sessionHandler::onLogin)
-                .addEndpoint(Endpoints.LOGOUT    , sessionHandler::onLogout)
-                .addEndpoint(Endpoints.LOGOUT_ALL, sessionHandler::onLogoutAll)
-                .addEndpoint(Endpoints.GET_SOCKET, sessionHandler::onGetSocket)
-                .addEndpoint(Endpoints.Shelly.GET_PUBLIC_IDENTITY_KEY, pubKeyHandler::onGetPublicIdentityKey)
-                .addEndpoint(Endpoints.Shelly.GET_PUBLIC_SESSION_KEY , pubKeyHandler::onGetPublicSessionKey);
+                serverConfig.getAsPrimitive("queue").getAsString(),
+                Authenticator.ALLOW_ALL // The gateway client does not need to be authenticated
+        );
+
+        this.server.addEndpoint(Endpoints.LOGIN     , sessionHandler::onLogin);
+        this.server.addEndpoint(Endpoints.LOGOUT    , sessionHandler::onLogout);
+        this.server.addEndpoint(Endpoints.LOGOUT_ALL, sessionHandler::onLogoutAll);
+        this.server.addEndpoint(Endpoints.GET_SOCKET, sessionHandler::onGetSocket);
+        this.server.addEndpoint(Endpoints.Shelly.GET_PUBLIC_IDENTITY_KEY, pubKeyHandler::onGetPublicIdentityKey);
+        this.server.addEndpoint(Endpoints.Shelly.GET_PUBLIC_SESSION_KEY , pubKeyHandler::onGetPublicSessionKey);
 
         this.serviceHook = new ServiceHook(serverConfig, "Shelly", this.server);
     }

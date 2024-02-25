@@ -3,6 +3,7 @@ package org.burrow_studios.obelisk.gateway.net;
 import org.burrow_studios.obelisk.commons.rpc.Endpoint;
 import org.burrow_studios.obelisk.commons.rpc.EndpointHandler;
 import org.burrow_studios.obelisk.commons.rpc.RPCServer;
+import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
 import org.burrow_studios.obelisk.commons.rpc.http.SunServerImpl;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
 import org.burrow_studios.obelisk.gateway.ObeliskGateway;
@@ -17,7 +18,7 @@ public class NetworkHandler implements Closeable {
 
     public NetworkHandler(@NotNull ObeliskGateway gateway, @NotNull YamlSection config) throws IOException {
         this.gateway = gateway;
-        this.server = new SunServerImpl(config.getAsPrimitive("port").getAsInt());
+        this.server = new SunServerImpl(config.getAsPrimitive("port").getAsInt(), /* TODO */ Authenticator.DENY_ALL);
     }
 
     public void registerEndpoint(@NotNull Endpoint endpoint, @NotNull EndpointHandler handler) throws IllegalArgumentException {
