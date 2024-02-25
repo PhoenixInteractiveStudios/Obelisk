@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.chramel.net;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.chramel.Chramel;
@@ -7,6 +9,7 @@ import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
 import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
 import org.burrow_studios.obelisk.commons.rpc.Status;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.BadRequestException;
+import org.burrow_studios.obelisk.commons.rpc.exceptions.ForbiddenException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
 import org.burrow_studios.obelisk.commons.util.validation.Validation;
 import org.jetbrains.annotations.NotNull;
@@ -29,21 +32,27 @@ public class GatewayAdapter {
             throw new BadRequestException("Malformed body: Missing application info");
         final long application = applicationInfo.getAsLong();
 
-        if (!(requestBody.get("intent") instanceof JsonPrimitive intentInfo))
+        if (!(requestBody.get("intents") instanceof JsonArray intentInfo))
             throw new BadRequestException("Malformed body: Missing intent info");
-        final String intent = intentInfo.getAsString();
 
-        try {
-            Validation.of("Intent", intent)
-                    .checkNonNull()
-                    .checkNotBlank()
-                    .checkCharWhitelist(LEGAL_INTENT_CHARS, LEGAL_INTENT_DELIMITERS);
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException("Illegal intent");
+        for (JsonElement element : intentInfo) {
+            String intent = element.getAsString();
+
+            try {
+                Validation.of("Intent", intent)
+                        .checkNonNull()
+                        .checkNotBlank()
+                        .checkCharWhitelist(LEGAL_INTENT_CHARS, LEGAL_INTENT_DELIMITERS);
+            } catch (IllegalArgumentException e) {
+                throw new BadRequestException("Illegal intent: " + intent);
+            }
+
+            boolean b = this.chramel.getDatabase().hasIntent(application, intent);
+
+            if (!b)
+                throw new ForbiddenException();
         }
 
-        boolean b = this.chramel.getDatabase().hasIntent(application, intent);
-
-        response.setStatus(b ? Status.NO_CONTENT : Status.FORBIDDEN);
+        response.setStatus(Status.NO_CONTENT);
     }
 }

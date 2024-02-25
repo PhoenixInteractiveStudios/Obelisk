@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.commons.rpc.authentication.AuthenticationLevel;
 import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
+import org.burrow_studios.obelisk.commons.rpc.authorization.Authorizer;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.ForbiddenException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.InternalServerErrorException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
@@ -26,9 +27,11 @@ public abstract class RPCServer<T extends RPCServer<T>> implements Closeable {
     /** Maps expected endpoints to their respective handlers. This serves as lookup during request processing. */
     private final ConcurrentHashMap<Endpoint, EndpointHandler> handlers = new ConcurrentHashMap<>();
     private final Authenticator authenticator;
+    private final Authorizer authorizer;
 
-    public RPCServer(@NotNull Authenticator authenticator) {
+    public RPCServer(@NotNull Authenticator authenticator, @NotNull Authorizer authorizer) {
         this.authenticator = authenticator;
+        this.authorizer = authorizer;
     }
 
     /**
@@ -114,6 +117,7 @@ public abstract class RPCServer<T extends RPCServer<T>> implements Closeable {
 
             try {
                 authenticator.authenticate(authToken, authLevel);
+                authorizer.authorize(authToken, endpoint.getIntents());
             } catch (ForbiddenException | InternalServerErrorException e) {
                 return e.asResponse(request);
             }

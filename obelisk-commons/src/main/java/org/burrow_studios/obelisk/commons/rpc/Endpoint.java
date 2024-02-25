@@ -12,11 +12,13 @@ public final class Endpoint {
     private final @NotNull Method method;
     private final @NotNull Segment[] segments;
     private final @NotNull AuthenticationLevel authenticationLevel;
+    private final @NotNull String[] intents;
 
-    Endpoint(@NotNull Method method, @NotNull Segment[] segments, @NotNull AuthenticationLevel authenticationLevel) {
+    Endpoint(@NotNull Method method, @NotNull Segment[] segments, @NotNull AuthenticationLevel authenticationLevel, @NotNull String[] intents) {
         this.method = method;
         this.segments = segments;
         this.authenticationLevel = authenticationLevel;
+        this.intents = intents;
     }
 
     public @NotNull Method getMethod() {
@@ -41,6 +43,10 @@ public final class Endpoint {
 
     public @NotNull AuthenticationLevel getAuthenticationLevel() {
         return this.authenticationLevel;
+    }
+
+    public String[] getIntents() {
+        return intents.clone();
     }
 
     public @NotNull RPCRequest.Builder builder(@NotNull Object... params) {
@@ -84,10 +90,12 @@ public final class Endpoint {
         if (!(obj instanceof Endpoint endpoint)) return false;
 
         if (endpoint.method != this.method) return false;
-        return Arrays.equals(endpoint.segments, this.segments);
+        if (!Arrays.equals(endpoint.segments, this.segments)) return false;
+        if (endpoint.authenticationLevel != this.authenticationLevel) return false;
+        return Arrays.equals(endpoint.intents, this.intents);
     }
 
-    public static @NotNull Endpoint build(@NotNull Method method, @NotNull String path, @NotNull AuthenticationLevel authenticationLevel) {
+    public static @NotNull Endpoint build(@NotNull Method method, @NotNull String path, @NotNull AuthenticationLevel authenticationLevel, @NotNull String... intents) {
         String[] pathSegments = path.substring(1).split("/");
 
         ArrayList<Segment> segments = new ArrayList<>();
@@ -106,7 +114,7 @@ public final class Endpoint {
             segments.add(segment);
         }
 
-        return new Endpoint(method, segments.toArray(Segment[]::new), authenticationLevel);
+        return new Endpoint(method, segments.toArray(Segment[]::new), authenticationLevel, intents);
     }
 
     private static void validateSegment(@NotNull String segment) throws IllegalArgumentException {

@@ -9,6 +9,7 @@ import org.burrow_studios.obelisk.commons.rpc.RPCServer;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
 import org.burrow_studios.obelisk.commons.rpc.authentication.AuthenticationLevel;
 import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
+import org.burrow_studios.obelisk.commons.rpc.authorization.Authorizer;
 import org.burrow_studios.obelisk.commons.service.ServiceHook;
 import org.burrow_studios.obelisk.commons.util.ResourceTools;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
@@ -48,7 +49,8 @@ public class Chramel {
                 serverConfig.getAsPrimitive("pass").getAsString(),
                 serverConfig.getAsPrimitive("exchange").getAsString(),
                 serverConfig.getAsPrimitive("queue").getAsString(),
-                Authenticator.ALLOW_ALL // The gateway client does not need to be authenticated
+                Authenticator.ALLOW_ALL, // The gateway client does not need to be authenticated
+                Authorizer.ALLOW_ALL     // ... or authorized
         );
 
         this.server.addEndpoint(Endpoint.build(Method.GET, "/authorize", AuthenticationLevel.NONE), gatewayAdapter::onAuthorize);

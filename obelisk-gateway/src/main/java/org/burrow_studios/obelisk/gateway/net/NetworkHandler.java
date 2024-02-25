@@ -17,7 +17,8 @@ public class NetworkHandler implements Closeable {
         this.gateway = gateway;
         this.server = new SunServerImpl(
                 config.getAsPrimitive("port").getAsInt(),
-                gateway.getAuthenticationService()
+                gateway.getAuthenticationService(),
+                gateway.getAuthorizationService()
         );
     }
 

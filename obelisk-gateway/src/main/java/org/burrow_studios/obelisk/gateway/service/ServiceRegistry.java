@@ -9,6 +9,7 @@ import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPClient;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
 import org.burrow_studios.obelisk.commons.rpc.authentication.AuthenticationLevel;
 import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
+import org.burrow_studios.obelisk.commons.rpc.authorization.Authorizer;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.InternalServerErrorException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
@@ -23,6 +24,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,11 +57,13 @@ public class ServiceRegistry implements Closeable {
                     serverConfig.getAsPrimitive("user").getAsString(),
                     serverConfig.getAsPrimitive("pass").getAsString(),
                     "meta", "service_discovery",
-                    Authenticator.ALLOW_ALL // only exposed internally
+                    // only exposed internally
+                    Authenticator.ALLOW_ALL, Authorizer.ALLOW_ALL
             );
             case "http" -> new SunServerImpl(
                     serverConfig.getAsPrimitive("port").getAsInt(),
-                    Authenticator.ALLOW_ALL // only exposed internally
+                    // only exposed internally
+                    Authenticator.ALLOW_ALL, Authorizer.ALLOW_ALL
             );
             default -> throw new IllegalArgumentException("Unsupported server type: " + type.getAsString());
         };
@@ -177,7 +181,19 @@ public class ServiceRegistry implements Closeable {
             final String authLevelStr = authLevelInfo.getAsString();
             final AuthenticationLevel authLevel = AuthenticationLevel.valueOf(authLevelStr);
 
-            Endpoint endpoint = Endpoint.build(method, path, authLevel);
+            String[] intents = {};
+            JsonElement intentInfo = authInfo.get("intents");
+            if (intentInfo != null) {
+                if (!(intentInfo instanceof JsonArray intentArr))
+                    throw new BadRequestException("Malformed body: Malformed intent info");
+
+                ArrayList<String> intentList = new ArrayList<>();
+                for (JsonElement intent : intentArr)
+                    intentList.add(intent.getAsString());
+                intents = intentList.toArray(String[]::new);
+            }
+
+            Endpoint endpoint = Endpoint.build(method, path, authLevel, intents);
 
             for (Service service : this.services.values()) {
                 for (Endpoint serviceEndpoint : service.getEndpoints()) {

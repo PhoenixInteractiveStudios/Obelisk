@@ -14,4 +14,8 @@ registry:
 
 # Authentication endpoint specs; The authentication service is responsible for creating the route
 authentication:
+  endpoint: "/authenticate"
+
+# Authorization endpoint specs; The authorization service is responsible for creating the route
+authorization:
   endpoint: "/authorize"
