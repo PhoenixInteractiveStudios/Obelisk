@@ -9,6 +9,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class RPCServer<T extends RPCServer<T>> implements Closeable {
@@ -37,6 +38,10 @@ public abstract class RPCServer<T extends RPCServer<T>> implements Closeable {
     public final @NotNull RPCServer<T> removeEndpoint(@NotNull Endpoint endpoint) {
         this.handlers.remove(endpoint);
         return this;
+    }
+
+    public final @NotNull Set<Endpoint> getEndpoints() {
+        return this.handlers.keySet();
     }
 
     protected final @NotNull RPCResponse handle(@NotNull RPCRequest request) throws IOException {
