@@ -4,5 +4,5 @@ server:
   port: 8348
   user: "shelly"
   pass: ""
-  exchange: "auth_exchange"
-  queue: "auth_requests"
+  exchange: "authentication_exchange"
+  queue: "authentication_requests"
