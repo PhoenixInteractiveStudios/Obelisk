@@ -1,7 +1,5 @@
-package org.burrow_studios.obelisk.shelly.util.logging;
+package org.burrow_studios.obelisk.commons.logging;
 
-import org.burrow_studios.obelisk.commons.logging.SimpleFormatter;
-import org.burrow_studios.obelisk.shelly.Main;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -12,10 +10,20 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.logging.*;
 
-public class LogUtil {
-    private LogUtil() { }
+public final class LogTools {
+    private final File dir;
 
-    public static void init() throws IOException {
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private LogTools(@NotNull File dir) {
+        this.dir = dir;
+        this.dir.mkdirs();
+    }
+
+    public static @NotNull LogTools get(@NotNull File logDir) {
+        return new LogTools(logDir);
+    }
+
+    public void init() throws IOException {
         SimpleFormatter formatter = new SimpleFormatter();
 
         Logger rootLogger = Logger.getLogger("");
@@ -31,30 +39,23 @@ public class LogUtil {
         }
     }
 
-    public static @NotNull FileHandler getFileHandler(@NotNull Formatter formatter) throws IOException {
+    public @NotNull FileHandler getFileHandler(@NotNull Formatter formatter) throws IOException {
         String datePrefix = new SimpleDateFormat("yyyy-MM-dd").format(Date.from(Instant.now()));
 
         // retrieve all existing log files from today
-        File[] files = getLogDir().listFiles((dir, name) -> name.matches("^\\d\\d\\d\\d-\\d\\d-\\d\\d_\\d+\\.log$") && name.startsWith(datePrefix));
+        File[] files = this.dir.listFiles((dir, name) -> name.matches("^\\d\\d\\d\\d-\\d\\d-\\d\\d_\\d+\\.log$") && name.startsWith(datePrefix));
         if (files == null)
-            throw new NotDirectoryException(getLogDir().getName());
+            throw new NotDirectoryException(this.dir.getName());
 
         String fileName = datePrefix + "_" + files.length + ".log";
 
         // create File
-        File logFile = new File(getLogDir(), fileName);
+        File logFile = new File(this.dir, fileName);
 
 
         // create FileHandler
         FileHandler fileHandler = new FileHandler(logFile.getPath(), true);
         fileHandler.setFormatter(formatter);
         return fileHandler;
-    }
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    public static File getLogDir() {
-        File file = new File(Main.DIR, "logs");
-        file.mkdir();
-        return file;
     }
 }
