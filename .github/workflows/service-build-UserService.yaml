@@ -1,17 +1,17 @@
-name: Build Bruno
+name: Build UserService
 
 on:
   push:
     branches:
       - "development"
     paths:
-      - "services/IssueTracker"
+      - "services/UserService"
       - "obelisk-commons"
   pull_request:
     branches:
       - "development"
     paths:
-      - "services/IssueTracker"
+      - "services/UserService"
       - "obelisk-commons"
 
 jobs:
@@ -28,4 +28,4 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: mvn -B package --file services/IssueTracker/pom.xml
+      run: mvn -B package --file services/UserService/pom.xml
