@@ -1,0 +1,1 @@
+DELETE FROM `group_members` WHERE `group` = ? AND `user` = ?;
