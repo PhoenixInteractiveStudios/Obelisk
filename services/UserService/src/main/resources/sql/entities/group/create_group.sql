@@ -1,0 +1,1 @@
+INSERT INTO `groups` (`id`, `name`, `position`) VALUES (?, ?, ?);

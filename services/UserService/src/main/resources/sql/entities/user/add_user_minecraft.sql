@@ -1,0 +1,1 @@
+INSERT INTO `user_minecraft` (`user`, `minecraft`) VALUES (?, ?);
