@@ -1,1 +1,0 @@
-INSERT INTO `issue_assignees` (`issue`, `user`) VALUES (?, ?);

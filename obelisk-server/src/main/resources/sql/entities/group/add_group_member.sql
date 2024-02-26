@@ -1,1 +1,0 @@
-INSERT INTO `group_members` (`group`, `user`) VALUES (?, ?);

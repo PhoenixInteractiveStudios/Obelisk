@@ -1,1 +1,0 @@
-SELECT `name`, `time` FROM `project_timings` WHERE `project` = ?;

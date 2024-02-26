@@ -1,1 +1,0 @@
-UPDATE `tags` SET `name` = ? WHERE `board` = ? AND `id` = ?;

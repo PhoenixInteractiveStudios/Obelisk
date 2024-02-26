@@ -1,1 +1,0 @@
-UPDATE `groups` SET `name` = ? WHERE `id` = ?;

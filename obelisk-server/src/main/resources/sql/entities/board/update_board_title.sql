@@ -1,1 +1,0 @@
-UPDATE `boards` SET `title` = ? WHERE `id` = ?;

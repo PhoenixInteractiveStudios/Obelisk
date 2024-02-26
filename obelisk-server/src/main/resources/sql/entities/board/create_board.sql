@@ -1,1 +1,0 @@
-INSERT INTO `boards` (`id`, `title`, `group_id`) VALUES (?, ?, ?);

@@ -1,1 +1,0 @@
-SELECT `discord` FROM `user_discord` WHERE `user` = ?;

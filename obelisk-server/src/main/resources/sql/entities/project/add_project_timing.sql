@@ -1,1 +1,0 @@
-INSERT INTO `project_timings` (`project`, `name`, `time`) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE `time` = ?;

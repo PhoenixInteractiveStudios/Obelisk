@@ -1,1 +1,0 @@
-UPDATE `projects` SET `state` = ? WHERE `id` = ?;

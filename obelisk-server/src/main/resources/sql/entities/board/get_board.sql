@@ -1,1 +1,0 @@
-SELECT * FROM `boards` WHERE `id` = ?;

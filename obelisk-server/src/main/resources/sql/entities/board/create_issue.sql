@@ -1,1 +1,0 @@
-INSERT INTO `issues` (`id`, `board`, `author`, `title`, `state`) VALUES (?, ?, ?, ?, ?);

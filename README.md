@@ -39,7 +39,6 @@ API clients.
 | Bruno           | Service                                        | [`services/IssueTracker`](services/IssueTracker)     | [![service-build-IssueTracker-shield][]][service-build-IssueTracker]     | Issue-Tracker-System (ITS)                                                          |
 | UserService     | Service                                        | [`services/UserService`](services/UserService)       | [![service-build-UserService-shield][]][service-build-UserService]       | User & Group management                                                             |
 | API client      | Application                                    | [`obelisk-api/`](obelisk-api)                        | [![build-api-shield][]][build-api]                                       | Burrow Studios API client library                                                   |
-| Server          | Interface, Communication, Service& Persistence | [`obelisk-server/`](obelisk-server)                  | [![build-server-shield][]][build-server]                                 | Monolithic backend server (legacy)                                                  |
 
 ### Architecture
 

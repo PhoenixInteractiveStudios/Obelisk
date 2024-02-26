@@ -1,1 +1,0 @@
-SELECT `tag` FROM `ticket_tags` WHERE `ticket` = ?;
