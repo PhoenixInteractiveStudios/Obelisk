@@ -240,7 +240,7 @@ public class BoardDB implements Database {
                         eq("board", board),
                         eq("_id", id)
                 ),
-                set("pull", new Document("assignees", assignee))
+                set("$pull", new Document("assignees", assignee))
         );
 
         if (result.getMatchedCount() == 0)
@@ -274,7 +274,7 @@ public class BoardDB implements Database {
                         eq("board", board),
                         eq("_id", id)
                 ),
-                set("pull", new Document("tags", tag))
+                set("$pull", new Document("tags", tag))
         );
 
         if (result.getMatchedCount() == 0)
