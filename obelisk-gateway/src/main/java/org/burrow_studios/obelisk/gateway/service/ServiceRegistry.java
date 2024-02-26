@@ -232,7 +232,7 @@ public class ServiceRegistry implements Closeable {
     }
 
     private void onDelete(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String name = request.getPath().split("/")[1];
+        final String name = request.getPathSegment(1);
 
         Service service = this.services.get(name);
         if (service != null) {

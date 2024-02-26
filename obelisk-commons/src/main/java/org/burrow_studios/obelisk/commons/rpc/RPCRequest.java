@@ -7,12 +7,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 public final class RPCRequest extends RPCExchange {
     private final long id;
     private final @NotNull String path;
     private final @NotNull Method method;
     private final @NotNull TimeoutContext timeout;
+
+    private final @NotNull String[] pathSegments;
 
     private final @NotNull CompletableFuture<RPCResponse> future;
 
@@ -22,6 +25,11 @@ public final class RPCRequest extends RPCExchange {
         this.path = path;
         this.method = method;
         this.timeout = timeout;
+
+        if (!path.startsWith("/"))
+            throw new IllegalArgumentException("Path is missing leading '/'");
+
+        this.pathSegments = path.substring(1).split("/");
 
         this.json.addProperty("timeout", timeout.asInstant().toString());
         this.json.addProperty("method", this.method.name());
@@ -50,6 +58,23 @@ public final class RPCRequest extends RPCExchange {
     public @NotNull CompletableFuture<RPCResponse> getFuture() {
         return this.future;
     }
+
+    /* - - - - - - - - - - */
+    /* UTILITY METHODS */
+
+    public @NotNull String getPathSegment(int index) throws ArrayIndexOutOfBoundsException {
+        return this.pathSegments[index];
+    }
+
+    public <T> @NotNull T getPathSegment(int index, @NotNull Function<String, T> mapper) throws ArrayIndexOutOfBoundsException {
+        return mapper.apply(this.getPathSegment(index));
+    }
+
+    public long getPathSegmentAsLong(int index) throws ArrayIndexOutOfBoundsException {
+        return Long.parseLong(this.getPathSegment(index));
+    }
+
+    /* - - - - - - - - - - */
 
     /** A helper class to create {@link RPCRequest Requests}. As opposed to the resulting Request, this class is mutable. */
     public static final class Builder extends RPCExchangeBuilder<Builder> {

@@ -21,8 +21,7 @@ public class SessionHandler {
     public void onLogin(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
         final TokenManager tokenManager = getTokenManager();
 
-        final String subjectStr = request.getPath().split("/")[1];
-        final long   subject    = Long.parseLong(subjectStr);
+        final long subject = request.getPathSegmentAsLong(1);
 
         if (!(request.getBody() instanceof JsonObject requestBody))
             throw new BadRequestException("Missing request body");
@@ -38,10 +37,8 @@ public class SessionHandler {
     }
 
     public void onLogout(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException, DatabaseException {
-        final String[] pathSegments = request.getPath().split("/");
-
-        final long subject = Long.parseLong(pathSegments[1]);
-        final long session = Long.parseLong(pathSegments[2]);
+        final long subject = request.getPathSegmentAsLong(1);
+        final long session = request.getPathSegmentAsLong(2);
 
         if (!(request.getBody() instanceof JsonObject requestBody))
             throw new BadRequestException("Missing request body");
@@ -53,8 +50,7 @@ public class SessionHandler {
     }
 
     public void onLogoutAll(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String subjectStr = request.getPath().split("/")[1];
-        final long   subject    = Long.parseLong(subjectStr);
+        final long subject = request.getPathSegmentAsLong(1);
 
         if (!(request.getBody() instanceof JsonObject requestBody))
             throw new BadRequestException("Missing request body");

@@ -28,8 +28,7 @@ public class IssueHandler {
     }
 
     public void onGetAll(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String boardIdStr = request.getPath().split("/")[1];
-        final long   boardId    = Long.parseLong(boardIdStr);
+        final long   boardId    = request.getPathSegmentAsLong(1);
 
         final JsonArray responseBody = new JsonArray();
         final Set<Long> issueIds;
@@ -47,9 +46,8 @@ public class IssueHandler {
     }
 
     public void onGet(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long boardId = Long.parseLong(pathSegments[1]);
-        final long issueId = Long.parseLong(pathSegments[3]);
+        final long boardId = request.getPathSegmentAsLong(1);
+        final long issueId = request.getPathSegmentAsLong(3);
 
         try {
             final JsonObject responseBody = getDatabase().getIssue(boardId, issueId);
@@ -62,8 +60,7 @@ public class IssueHandler {
     }
 
     public void onCreate(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String boardIdStr = request.getPath().split("/")[1];
-        final long   boardId    = Long.parseLong(boardIdStr);
+        final long boardId = request.getPathSegmentAsLong(1);
 
         if (!(request.getBody() instanceof JsonObject requestBody))
             throw new BadRequestException("Missing request body");
@@ -95,10 +92,9 @@ public class IssueHandler {
     }
 
     public void onAddAssignee(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long boardId = Long.parseLong(pathSegments[1]);
-        final long issueId = Long.parseLong(pathSegments[3]);
-        final long  userId = Long.parseLong(pathSegments[5]);
+        final long boardId = request.getPathSegmentAsLong(1);
+        final long issueId = request.getPathSegmentAsLong(3);
+        final long  userId = request.getPathSegmentAsLong(5);
 
         try {
             getDatabase().addIssueAssignee(boardId, issueId, userId);
@@ -110,10 +106,9 @@ public class IssueHandler {
     }
 
     public void onDelAssignee(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long boardId = Long.parseLong(pathSegments[1]);
-        final long issueId = Long.parseLong(pathSegments[3]);
-        final long  userId = Long.parseLong(pathSegments[5]);
+        final long boardId = request.getPathSegmentAsLong(1);
+        final long issueId = request.getPathSegmentAsLong(3);
+        final long  userId = request.getPathSegmentAsLong(5);
 
         try {
             getDatabase().removeIssueAssignee(boardId, issueId, userId);
@@ -125,10 +120,9 @@ public class IssueHandler {
     }
 
     public void onAddTag(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long boardId = Long.parseLong(pathSegments[1]);
-        final long issueId = Long.parseLong(pathSegments[3]);
-        final long   tagId = Long.parseLong(pathSegments[5]);
+        final long boardId = request.getPathSegmentAsLong(1);
+        final long issueId = request.getPathSegmentAsLong(3);
+        final long   tagId = request.getPathSegmentAsLong(5);
 
         try {
             getDatabase().addIssueTag(boardId, issueId, tagId);
@@ -140,10 +134,9 @@ public class IssueHandler {
     }
 
     public void onDelTag(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long boardId = Long.parseLong(pathSegments[1]);
-        final long issueId = Long.parseLong(pathSegments[3]);
-        final long   tagId = Long.parseLong(pathSegments[5]);
+        final long boardId = request.getPathSegmentAsLong(1);
+        final long issueId = request.getPathSegmentAsLong(3);
+        final long   tagId = request.getPathSegmentAsLong(5);
 
         try {
             getDatabase().removeIssueTag(boardId, issueId, tagId);
@@ -155,9 +148,8 @@ public class IssueHandler {
     }
 
     public void onDelete(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long boardId = Long.parseLong(pathSegments[1]);
-        final long issueId = Long.parseLong(pathSegments[3]);
+        final long boardId = request.getPathSegmentAsLong(1);
+        final long issueId = request.getPathSegmentAsLong(3);
 
         getDatabase().deleteIssue(boardId, issueId);
 
@@ -165,9 +157,8 @@ public class IssueHandler {
     }
 
     public void onEdit(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long boardId = Long.parseLong(pathSegments[1]);
-        final long issueId = Long.parseLong(pathSegments[3]);
+        final long boardId = request.getPathSegmentAsLong(1);
+        final long issueId = request.getPathSegmentAsLong(3);
 
         if (!(request.getBody() instanceof JsonObject requestBody))
             throw new BadRequestException("Missing request body");
