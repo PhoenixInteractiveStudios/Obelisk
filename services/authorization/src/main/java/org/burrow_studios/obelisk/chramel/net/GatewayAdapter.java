@@ -25,8 +25,7 @@ public class GatewayAdapter {
     }
 
     public void onAuthorize(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        if (!(request.getBody() instanceof JsonObject requestBody))
-            throw new BadRequestException("Missing request body");
+        final JsonObject requestBody = request.bodyHelper().requireBody(JsonObject.class);
 
         if (!(requestBody.get("application") instanceof JsonPrimitive applicationInfo))
             throw new BadRequestException("Malformed body: Missing application info");

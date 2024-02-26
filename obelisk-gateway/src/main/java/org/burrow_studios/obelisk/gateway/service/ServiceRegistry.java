@@ -80,12 +80,7 @@ public class ServiceRegistry implements Closeable {
     }
 
     private synchronized void onPost(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        if (!(request.getBody() instanceof JsonObject requestBody))
-            throw new BadRequestException("Missing request body");
-
-        if (!(requestBody.get("name") instanceof JsonPrimitive nameInfo))
-            throw new BadRequestException("Malformed body: missing name");
-        final String name = nameInfo.getAsString();
+        final String name = request.bodyHelper().requireElementAsString("name");
 
         // name validation
         try {
@@ -103,8 +98,7 @@ public class ServiceRegistry implements Closeable {
 
         RPCClient proxyClient = null;
 
-        if (!(requestBody.get("connection") instanceof JsonObject connectionInfo))
-            throw new BadRequestException("Malformed body: Missing connection info");
+        JsonObject connectionInfo = request.bodyHelper().requireElement("connection", JsonElement::getAsJsonObject);
 
         if (server instanceof AMQPServer) {
             // AMQP mode
@@ -149,8 +143,7 @@ public class ServiceRegistry implements Closeable {
         if (proxyClient == null)
             throw new InternalServerErrorException();
 
-        if (!(requestBody.get("routes") instanceof JsonArray routesInfo))
-            throw new BadRequestException("Malformed body: Missing routing info");
+        JsonArray routesInfo = request.bodyHelper().requireElement("routes", JsonElement::getAsJsonArray);
 
         Set<Endpoint> endpoints = new LinkedHashSet<>();
 

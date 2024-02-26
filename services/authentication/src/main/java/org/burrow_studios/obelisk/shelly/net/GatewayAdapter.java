@@ -23,8 +23,7 @@ public class GatewayAdapter {
     }
 
     public void onAuthenticate(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        if (!(request.getBody() instanceof JsonObject requestBody))
-            throw new BadRequestException("Missing request body");
+        final JsonObject requestBody = request.bodyHelper().requireBody(JsonObject.class);
 
         if (!(requestBody.get("token") instanceof JsonPrimitive tokenInfo))
             throw new BadRequestException("Malformed body: Missing token info");

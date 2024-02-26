@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
 import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
 import org.burrow_studios.obelisk.commons.rpc.Status;
-import org.burrow_studios.obelisk.commons.rpc.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
 import org.burrow_studios.obelisk.shelly.Shelly;
 import org.burrow_studios.obelisk.shelly.crypto.TokenManager;
@@ -23,9 +22,7 @@ public class SessionHandler {
 
         final long subject = request.getPathSegmentAsLong(1);
 
-        if (!(request.getBody() instanceof JsonObject requestBody))
-            throw new BadRequestException("Missing request body");
-        long identity = requestBody.get("identity").getAsLong();
+        final long identity = request.bodyHelper().requireElementAsLong("identity");
 
         final String sessionToken = tokenManager.newSessionToken(identity, subject);
 
@@ -40,9 +37,7 @@ public class SessionHandler {
         final long subject = request.getPathSegmentAsLong(1);
         final long session = request.getPathSegmentAsLong(2);
 
-        if (!(request.getBody() instanceof JsonObject requestBody))
-            throw new BadRequestException("Missing request body");
-        long identity = requestBody.get("identity").getAsLong();
+        final long identity = request.bodyHelper().requireElementAsLong("identity");
 
         this.shelly.getDatabase().invalidateSession(session, identity);
 
@@ -52,9 +47,7 @@ public class SessionHandler {
     public void onLogoutAll(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
         final long subject = request.getPathSegmentAsLong(1);
 
-        if (!(request.getBody() instanceof JsonObject requestBody))
-            throw new BadRequestException("Missing request body");
-        long identity = requestBody.get("identity").getAsLong();
+        final long identity = request.bodyHelper().requireElementAsLong("identity");
 
         this.shelly.getDatabase().invalidateAllSessions(identity);
 

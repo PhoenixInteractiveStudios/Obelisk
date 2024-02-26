@@ -3,15 +3,14 @@ package org.burrow_studios.obelisk.bruno.net;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.bruno.Bruno;
 import org.burrow_studios.obelisk.bruno.database.Database;
 import org.burrow_studios.obelisk.bruno.database.IssueState;
 import org.burrow_studios.obelisk.bruno.exceptions.NoSuchEntryException;
+import org.burrow_studios.obelisk.commons.function.ExceptionalFunction;
 import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
 import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
 import org.burrow_studios.obelisk.commons.rpc.Status;
-import org.burrow_studios.obelisk.commons.rpc.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.NotFoundException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
 import org.burrow_studios.obelisk.commons.turtle.TurtleGenerator;
@@ -22,6 +21,8 @@ import java.util.Set;
 public class IssueHandler {
     private final TurtleGenerator idGenerator = TurtleGenerator.get("Bruno");
     private final Bruno bruno;
+
+    private static final ExceptionalFunction<JsonElement, IssueState, ? extends Exception> STATE_MAPPER = json -> IssueState.valueOf(json.getAsString());
 
     public IssueHandler(@NotNull Bruno bruno) {
         this.bruno = bruno;
@@ -62,25 +63,9 @@ public class IssueHandler {
     public void onCreate(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
         final long boardId = request.getPathSegmentAsLong(1);
 
-        if (!(request.getBody() instanceof JsonObject requestBody))
-            throw new BadRequestException("Missing request body");
-
-        if (!(requestBody.get("author") instanceof JsonPrimitive authorInfo) || !authorInfo.isNumber())
-            throw new BadRequestException("Malformed request body: Malformed author info");
-        final long author = authorInfo.getAsLong();
-
-        if (!(requestBody.get("title") instanceof JsonPrimitive titleInfo))
-            throw new BadRequestException("Malformed request body: Malformed title info");
-        final String title = titleInfo.getAsString();
-
-        if (!(requestBody.get("state") instanceof JsonPrimitive stateInfo))
-            throw new BadRequestException("Malformed request body: Malformed state info");
-        final IssueState state;
-        try {
-            state = IssueState.valueOf(stateInfo.getAsString());
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException("Malformed request body: Illegal state value");
-        }
+        final long       author = request.bodyHelper().requireElementAsLong("author");
+        final String     title  = request.bodyHelper().requireElementAsString("title");
+        final IssueState state  = request.bodyHelper().requireElement("state", STATE_MAPPER);
 
         final long id = idGenerator.newId();
         getDatabase().createIssue(boardId, id, author, title, state);
@@ -160,33 +145,12 @@ public class IssueHandler {
         final long boardId = request.getPathSegmentAsLong(1);
         final long issueId = request.getPathSegmentAsLong(3);
 
-        if (!(request.getBody() instanceof JsonObject requestBody))
-            throw new BadRequestException("Missing request body");
-
-        final JsonElement titleInfo = requestBody.get("title");
-        if (titleInfo != null) {
-            if (!(titleInfo instanceof JsonPrimitive json))
-                throw new BadRequestException("Malformed request body: Malformed title info");
-
-            final String title = json.getAsString();
-
+        request.bodyHelper().optionalElementAsString("title").ifPresent(title -> {
             getDatabase().updateIssueTitle(boardId, issueId, title);
-        }
-
-        final JsonElement stateInfo = requestBody.get("state");
-        if (stateInfo != null) {
-            if (!(stateInfo instanceof JsonPrimitive json))
-                throw new BadRequestException("Malformed request body: Malformed state info");
-
-            final IssueState state;
-            try {
-                state = IssueState.valueOf(json.getAsString());
-            } catch (IllegalArgumentException e) {
-                throw new BadRequestException("Malformed request body: Illegal state value");
-            }
-
+        });
+        request.bodyHelper().optionalElement("state", STATE_MAPPER).ifPresent(state -> {
             getDatabase().updateIssueState(boardId, issueId, state);
-        }
+        });
 
         final JsonObject responseBody = getDatabase().getBoard(boardId);
 
