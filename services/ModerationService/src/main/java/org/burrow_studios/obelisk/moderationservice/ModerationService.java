@@ -5,6 +5,7 @@ import org.burrow_studios.obelisk.commons.rpc.RPCServer;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
 import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
 import org.burrow_studios.obelisk.commons.rpc.authorization.Authorizer;
+import org.burrow_studios.obelisk.commons.service.ServiceHook;
 import org.burrow_studios.obelisk.commons.util.ResourceTools;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
 import org.burrow_studios.obelisk.commons.yaml.YamlUtil;
@@ -27,6 +28,7 @@ public class ModerationService {
 
     private final Database database;
     private final RPCServer<?> server;
+    private final ServiceHook serviceHook;
 
     ModerationService() throws Exception {
         ResourceTools resourceTools = ResourceTools.get(Main.class);
@@ -76,10 +78,13 @@ public class ModerationService {
         this.server.addEndpoint(Endpoints.Ticket.DEL_USER, ticketHandler::onDelUser);
         this.server.addEndpoint(Endpoints.Ticket.DELETE  , ticketHandler::onDelete);
         this.server.addEndpoint(Endpoints.Ticket.EDIT    , ticketHandler::onEdit);
+
+        this.serviceHook = new ServiceHook(serverConfig, "ModerationService", this.server);
     }
 
     void stop() throws Exception {
         LOG.log(Level.WARNING, "Shutting down");
+        this.serviceHook.close();
         this.server.close();
         this.database.close();
         this.config.save(configFile);
