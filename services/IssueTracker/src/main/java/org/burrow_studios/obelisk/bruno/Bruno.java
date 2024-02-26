@@ -4,6 +4,7 @@ import org.burrow_studios.obelisk.commons.rpc.RPCServer;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
 import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
 import org.burrow_studios.obelisk.commons.rpc.authorization.Authorizer;
+import org.burrow_studios.obelisk.commons.service.ServiceHook;
 import org.burrow_studios.obelisk.commons.util.ResourceTools;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
 import org.burrow_studios.obelisk.commons.yaml.YamlUtil;
@@ -20,6 +21,7 @@ public class Bruno {
     private final @NotNull File configFile = new File(Main.DIR, "config.yaml");
 
     private final RPCServer<?> server;
+    private final ServiceHook serviceHook;
 
     Bruno() throws Exception {
         ResourceTools resourceTools = ResourceTools.get(Main.class);
@@ -39,10 +41,13 @@ public class Bruno {
                 Authenticator.ALLOW_ALL, // The gateway client does not need to be authenticated
                 Authorizer.ALLOW_ALL     // ... or authorized
         );
+
+        this.serviceHook = new ServiceHook(serverConfig, "Bruno", this.server);
     }
 
     void stop() throws Exception {
         LOG.log(Level.WARNING, "Shutting down");
+        this.serviceHook.close();
         this.server.close();
         this.config.save(configFile);
         LOG.log(Level.INFO, "OK bye");
