@@ -16,6 +16,7 @@ public final class RPCRequest extends RPCExchange {
     private final @NotNull TimeoutContext timeout;
 
     private final @NotNull String[] pathSegments;
+    private final @NotNull RequestBodyHelper bodyHelper;
 
     private final @NotNull CompletableFuture<RPCResponse> future;
 
@@ -30,6 +31,7 @@ public final class RPCRequest extends RPCExchange {
             throw new IllegalArgumentException("Path is missing leading '/'");
 
         this.pathSegments = path.substring(1).split("/");
+        this.bodyHelper = new RequestBodyHelper(this);
 
         this.json.addProperty("timeout", timeout.asInstant().toString());
         this.json.addProperty("method", this.method.name());
@@ -72,6 +74,10 @@ public final class RPCRequest extends RPCExchange {
 
     public long getPathSegmentAsLong(int index) throws ArrayIndexOutOfBoundsException {
         return Long.parseLong(this.getPathSegment(index));
+    }
+
+    public @NotNull RequestBodyHelper bodyHelper() {
+        return this.bodyHelper;
     }
 
     /* - - - - - - - - - - */
