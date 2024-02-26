@@ -8,7 +8,7 @@ import java.net.URISyntaxException;
 
 public class Main {
     static {
-        System.out.print("Starting Shelly");
+        System.out.print("Starting Obelisk UserService");
     }
 
     /** Static application version. */
