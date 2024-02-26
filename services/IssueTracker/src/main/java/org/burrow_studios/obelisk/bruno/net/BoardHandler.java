@@ -37,8 +37,7 @@ public class BoardHandler {
     }
 
     public void onGet(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String boardIdStr = request.getPath().split("/")[1];
-        final long   boardId    = Long.parseLong(boardIdStr);
+        final long boardId = request.getPathSegmentAsLong(1);
 
         try {
             final JsonObject responseBody = getDatabase().getBoard(boardId);
@@ -72,8 +71,7 @@ public class BoardHandler {
     }
 
     public void onDelete(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String boardIdStr = request.getPath().split("/")[1];
-        final long   boardId    = Long.parseLong(boardIdStr);
+        final long boardId = request.getPathSegmentAsLong(1);
 
         getDatabase().deleteBoard(boardId);
 
@@ -81,8 +79,7 @@ public class BoardHandler {
     }
 
     public void onEdit(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String boardIdStr = request.getPath().split("/")[1];
-        final long   boardId    = Long.parseLong(boardIdStr);
+        final long boardId = request.getPathSegmentAsLong(1);
 
         if (!(request.getBody() instanceof JsonObject requestBody))
             throw new BadRequestException("Missing request body");

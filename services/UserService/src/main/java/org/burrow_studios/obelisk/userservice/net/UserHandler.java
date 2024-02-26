@@ -38,8 +38,7 @@ public class UserHandler {
     }
 
     public void onGet(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String userIdStr = request.getPath().split("/")[1];
-        final long   userId    = Long.parseLong(userIdStr);
+        final long userId = request.getPathSegmentAsLong(1);
 
         try {
             final JsonObject responseBody = getDatabase().getUser(userId);
@@ -69,9 +68,8 @@ public class UserHandler {
     }
 
     public void onAddDiscord(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long userId    = Long.parseLong(pathSegments[1]);
-        final long snowflake = Long.parseLong(pathSegments[3]);
+        final long userId    = request.getPathSegmentAsLong(1);
+        final long snowflake = request.getPathSegmentAsLong(3);
 
         getDatabase().addUserDiscordId(userId, snowflake);
 
@@ -79,9 +77,8 @@ public class UserHandler {
     }
 
     public void onDelDiscord(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long userId    = Long.parseLong(pathSegments[1]);
-        final long snowflake = Long.parseLong(pathSegments[3]);
+        final long userId    = request.getPathSegmentAsLong(1);
+        final long snowflake = request.getPathSegmentAsLong(3);
 
         getDatabase().removeUserDiscordId(userId, snowflake);
 
@@ -89,9 +86,8 @@ public class UserHandler {
     }
 
     public void onAddMinecraft(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long userId = Long.parseLong(pathSegments[1]);
-        final UUID uuid   = UUID.fromString(pathSegments[3]);
+        final long userId = request.getPathSegmentAsLong(1);
+        final UUID uuid   = request.getPathSegment(3, UUID::fromString);
 
         getDatabase().addUserMinecraftId(userId, uuid);
 
@@ -99,9 +95,8 @@ public class UserHandler {
     }
 
     public void onDelMinecraft(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long userId = Long.parseLong(pathSegments[1]);
-        final UUID uuid   = UUID.fromString(pathSegments[3]);
+        final long userId = request.getPathSegmentAsLong(1);
+        final UUID uuid   = request.getPathSegment(3, UUID::fromString);
 
         getDatabase().removeUserMinecraftId(userId, uuid);
 
@@ -109,8 +104,7 @@ public class UserHandler {
     }
 
     public void onDelete(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String userIdStr = request.getPath().split("/")[1];
-        final long   userId    = Long.parseLong(userIdStr);
+        final long userId = request.getPathSegmentAsLong(1);
 
         getDatabase().deleteUser(userId);
 
@@ -118,8 +112,7 @@ public class UserHandler {
     }
 
     public void onEdit(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String userIdStr = request.getPath().split("/")[1];
-        final long   userId    = Long.parseLong(userIdStr);
+        final long userId = request.getPathSegmentAsLong(1);
 
         if (!(request.getBody() instanceof JsonObject requestBody))
             throw new BadRequestException("Missing request body");

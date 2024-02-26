@@ -20,8 +20,7 @@ public class PubKeyHandler {
     }
 
     public void onGetPublicIdentityKey(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String subjectStr = request.getPath().split("/")[1];
-        final long   subject    = Long.parseLong(subjectStr);
+        final long subject = request.getPathSegmentAsLong(1);
 
         final JsonObject responseJson = new JsonObject();
 

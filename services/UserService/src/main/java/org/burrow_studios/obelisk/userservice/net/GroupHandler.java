@@ -37,8 +37,7 @@ public class GroupHandler {
     }
 
     public void onGet(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String groupIdStr = request.getPath().split("/")[1];
-        final long   groupId    = Long.parseLong(groupIdStr);
+        final long groupId = request.getPathSegmentAsLong(1);
 
         try {
             final JsonObject responseBody = getDatabase().getGroup(groupId);
@@ -72,9 +71,8 @@ public class GroupHandler {
     }
 
     public void onAddMember(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long groupId = Long.parseLong(pathSegments[1]);
-        final long  userId = Long.parseLong(pathSegments[3]);
+        final long groupId = request.getPathSegmentAsLong(1);
+        final long  userId = request.getPathSegmentAsLong(3);
 
         getDatabase().addGroupMember(groupId, userId);
 
@@ -82,9 +80,8 @@ public class GroupHandler {
     }
 
     public void onDelMember(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long groupId = Long.parseLong(pathSegments[1]);
-        final long  userId = Long.parseLong(pathSegments[3]);
+        final long groupId = request.getPathSegmentAsLong(1);
+        final long  userId = request.getPathSegmentAsLong(3);
 
         getDatabase().removeGroupMember(groupId, userId);
 
@@ -92,8 +89,7 @@ public class GroupHandler {
     }
 
     public void onDelete(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String groupIdStr = request.getPath().split("/")[1];
-        final long   groupId    = Long.parseLong(groupIdStr);
+        final long groupId = request.getPathSegmentAsLong(1);
 
         getDatabase().deleteGroup(groupId);
 
@@ -101,8 +97,7 @@ public class GroupHandler {
     }
 
     public void onEdit(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String groupIdStr = request.getPath().split("/")[1];
-        final long   groupId    = Long.parseLong(groupIdStr);
+        final long groupId = request.getPathSegmentAsLong(1);
 
         if (!(request.getBody() instanceof JsonObject requestBody))
             throw new BadRequestException("Missing request body");

@@ -27,8 +27,7 @@ public class TagHandler {
     }
 
     public void onGetAll(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String boardIdStr = request.getPath().split("/")[1];
-        final long   boardId    = Long.parseLong(boardIdStr);
+        final long   boardId    = request.getPathSegmentAsLong(1);
 
         final JsonArray responseBody = new JsonArray();
         final Set<Long> tagIds;
@@ -46,9 +45,8 @@ public class TagHandler {
     }
 
     public void onGet(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long boardId = Long.parseLong(pathSegments[1]);
-        final long   tagId = Long.parseLong(pathSegments[3]);
+        final long boardId = request.getPathSegmentAsLong(1);
+        final long   tagId = request.getPathSegmentAsLong(3);
 
         try {
             final JsonObject responseBody = getDatabase().getTag(boardId, tagId);
@@ -61,8 +59,7 @@ public class TagHandler {
     }
 
     public void onCreate(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String boardIdStr = request.getPath().split("/")[1];
-        final long   boardId    = Long.parseLong(boardIdStr);
+        final long   boardId    = request.getPathSegmentAsLong(1);
 
         if (!(request.getBody() instanceof JsonObject requestBody))
             throw new BadRequestException("Missing request body");
@@ -81,9 +78,8 @@ public class TagHandler {
     }
 
     public void onDelete(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long boardId = Long.parseLong(pathSegments[1]);
-        final long   tagId = Long.parseLong(pathSegments[3]);
+        final long boardId = request.getPathSegmentAsLong(1);
+        final long   tagId = request.getPathSegmentAsLong(3);
 
         getDatabase().deleteTag(boardId, tagId);
 
@@ -91,9 +87,8 @@ public class TagHandler {
     }
 
     public void onEdit(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
-        final String[] pathSegments = request.getPath().split("/");
-        final long boardId = Long.parseLong(pathSegments[1]);
-        final long   tagId = Long.parseLong(pathSegments[3]);
+        final long boardId = request.getPathSegmentAsLong(1);
+        final long   tagId = request.getPathSegmentAsLong(3);
 
         if (!(request.getBody() instanceof JsonObject requestBody))
             throw new BadRequestException("Missing request body");
