@@ -1,5 +1,9 @@
 package org.burrow_studios.obelisk.bruno;
 
+import org.burrow_studios.obelisk.commons.rpc.RPCServer;
+import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
+import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
+import org.burrow_studios.obelisk.commons.rpc.authorization.Authorizer;
 import org.burrow_studios.obelisk.commons.util.ResourceTools;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
 import org.burrow_studios.obelisk.commons.yaml.YamlUtil;
@@ -15,15 +19,31 @@ public class Bruno {
     private final @NotNull YamlSection config;
     private final @NotNull File configFile = new File(Main.DIR, "config.yaml");
 
+    private final RPCServer<?> server;
+
     Bruno() throws Exception {
         ResourceTools resourceTools = ResourceTools.get(Main.class);
         YamlUtil.saveDefault(configFile, resourceTools.getResource("config.yaml"));
 
         this.config = YamlUtil.load(configFile, YamlSection.class);
+
+        LOG.log(Level.INFO, "Starting API server");
+        YamlSection serverConfig = this.config.getAsSection("server");
+        this.server = new AMQPServer(
+                serverConfig.getAsPrimitive("host").getAsString(),
+                serverConfig.getAsPrimitive("port").getAsInt(),
+                serverConfig.getAsPrimitive("user").getAsString(),
+                serverConfig.getAsPrimitive("pass").getAsString(),
+                serverConfig.getAsPrimitive("exchange").getAsString(),
+                serverConfig.getAsPrimitive("queue").getAsString(),
+                Authenticator.ALLOW_ALL, // The gateway client does not need to be authenticated
+                Authorizer.ALLOW_ALL     // ... or authorized
+        );
     }
 
     void stop() throws Exception {
         LOG.log(Level.WARNING, "Shutting down");
+        this.server.close();
         this.config.save(configFile);
         LOG.log(Level.INFO, "OK bye");
     }

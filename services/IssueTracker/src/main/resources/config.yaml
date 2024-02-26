@@ -1,0 +1,8 @@
+# AMQP server properties
+server:
+  host: "localhost"
+  port: 8348
+  user: "bruno"
+  pass: ""
+  exchange: "issue_tracker_exchange"
+  queue: "issue_tracker_requests"
