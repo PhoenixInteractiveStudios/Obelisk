@@ -1,3 +1,10 @@
+db:
+  host: "localhost"
+  port: 27017
+  user: "bruno"
+  pass: ""
+  database: "bruno"
+
 # AMQP server properties
 server:
   host: "localhost"
