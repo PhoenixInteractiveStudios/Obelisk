@@ -58,6 +58,7 @@
                 <filtering>true</filtering>
                 <includes>
                     <include>meta.properties</include>
+                    <include>config.yaml</include>
                 </includes>
             </resource>
         </resources>
