@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.api.entities;
 
 import org.burrow_studios.obelisk.api.Obelisk;
+import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
 import org.burrow_studios.obelisk.api.action.Modifier;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +24,16 @@ public interface Turtle {
      */
     @NotNull Obelisk getAPI();
 
+    /**
+     * Creates a modifier {@link Action} for this entity.
+     * @return Action that provides this entity on completion.
+     */
     @NotNull Modifier<? extends Turtle> modify();
 
+    /**
+     * Creates a deletion {@link Action} for this entity. If successful, this action will cause the server-side database
+     * to delete all record of this user and any references to them (if possible without compromising other data).
+     * @return Deletion action.
+     */
     @NotNull DeleteAction<? extends Turtle> delete();
 }

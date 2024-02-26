@@ -6,14 +6,25 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.Function;
 
+/**
+ * Represents an API endpoint. Each endpoint has a {@link Method} and a path (as part of the resource identifier).
+ * <p> This class also handles some high-level authentication and authorization logic in the form of an
+ * {@link AuthenticationLevel} and zero or more intents, which are required to access this endpoint.
+ */
 public final class Endpoint {
+    /** Characters that can be used in an endpoint path. */
     private static final String LEGAL_CHARS_PATH = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~!$&'()*+,;=:@";
 
+    /** Request method */
     private final @NotNull Method method;
+    /** The request path, split into {@link Segment Segments}. */
     private final @NotNull Segment[] segments;
+    /** Required level of authentication to access this endpoint. This is used for server-side checks. */
     private final @NotNull AuthenticationLevel authenticationLevel;
+    /** Required intents that are required to access this endpoint. This is used for server-side checks. */
     private final @NotNull String[] intents;
 
+    /** Private constructor. Called by {@link Endpoint#build(Method, String, AuthenticationLevel, String...)}. */
     Endpoint(@NotNull Method method, @NotNull Segment[] segments, @NotNull AuthenticationLevel authenticationLevel, @NotNull String[] intents) {
         this.method = method;
         this.segments = segments;
@@ -21,10 +32,18 @@ public final class Endpoint {
         this.intents = intents;
     }
 
+    /**
+     * Returns the request method of this endpoint.
+     * @return Request method.
+     */
     public @NotNull Method getMethod() {
         return method;
     }
 
+    /**
+     * Returns a String, representing the path of this endpoint.
+     * @return Request path.
+     */
     public @NotNull String getPath() {
         StringBuilder builder = new StringBuilder();
 
@@ -41,14 +60,30 @@ public final class Endpoint {
         return builder.toString();
     }
 
+    /**
+     * Returns the required level of authentication to access this endpoint. This is used for server-side checks.
+     * @return Required authentication level.
+     * @see AuthenticationLevel
+     */
     public @NotNull AuthenticationLevel getAuthenticationLevel() {
         return this.authenticationLevel;
     }
 
+    /**
+     * Return an array of intents required to access this endpoint. This is used for server-side checks.
+     * @return Required intents.
+     */
     public String[] getIntents() {
         return intents.clone();
     }
 
+    /**
+     * Creates a new {@link RPCRequest.Builder request builder} based on this endpoint. If this endpoint contained
+     * parameterized segments, the {@code params} parameter should be used to pass any arguments to these segments,
+     * indexed in parallel to the respective segments.
+     * @param params Arguments for parameterized segments; Parallel indices.
+     * @return Builder for a reuest to this endpoint.
+     */
     public @NotNull RPCRequest.Builder builder(@NotNull Object... params) {
         String[] str = new String[params.length];
         for (int i = 0; i < params.length; i++)
@@ -56,6 +91,13 @@ public final class Endpoint {
         return this.builder(str);
     }
 
+    /**
+     * Creates a new {@link RPCRequest.Builder request builder} based on this endpoint. If this endpoint contained
+     * parameterized segments, the {@code params} parameter should be used to pass any arguments to these segments,
+     * indexed in parallel to the respective segments.
+     * @param params Arguments for parameterized segments; Parallel indices.
+     * @return Builder for a reuest to this endpoint.
+     */
     public @NotNull RPCRequest.Builder builder(@NotNull String... params) {
         StringBuilder builder = new StringBuilder();
 
@@ -74,6 +116,13 @@ public final class Endpoint {
                 .setPath(builder.toString());
     }
 
+    /**
+     * Checks whether the provided path segments match this endpoint. This includes type-matching for parameterized
+     * segments. If this endpoint matches the given segments, it indicates that any {@link EndpointHandler} assigned to
+     * this Endpoint may be invoked with a {@link RPCRequest request} to the path of these segments.
+     * @param segments Array of path segments to match.
+     * @return {@code true} if this Endpoint matches the provided segments.
+     */
     public boolean match(@NotNull String[] segments) {
         if (this.segments.length != segments.length) return false;
 
