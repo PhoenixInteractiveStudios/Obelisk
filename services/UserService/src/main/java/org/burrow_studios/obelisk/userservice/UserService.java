@@ -5,6 +5,7 @@ import org.burrow_studios.obelisk.commons.rpc.RPCServer;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
 import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
 import org.burrow_studios.obelisk.commons.rpc.authorization.Authorizer;
+import org.burrow_studios.obelisk.commons.service.ServiceHook;
 import org.burrow_studios.obelisk.commons.util.ResourceTools;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
 import org.burrow_studios.obelisk.commons.yaml.YamlUtil;
@@ -27,6 +28,7 @@ public class UserService {
 
     private final EntityDatabase database;
     private final RPCServer<?> server;
+    private final ServiceHook serviceHook;
 
     UserService() throws Exception {
         ResourceTools resourceTools = ResourceTools.get(Main.class);
@@ -73,10 +75,13 @@ public class UserService {
         this.server.addEndpoint(Endpoints.User.CREATE , userHandler::onCreate);
         this.server.addEndpoint(Endpoints.User.DELETE , userHandler::onDelete);
         this.server.addEndpoint(Endpoints.User.EDIT   , userHandler::onEdit);
+
+        this.serviceHook = new ServiceHook(serverConfig, "UserService", this.server);
     }
 
     void stop() throws Exception {
         LOG.log(Level.WARNING, "Shutting down");
+        this.serviceHook.close();
         this.server.close();
         this.database.close();
         this.config.save(configFile);
