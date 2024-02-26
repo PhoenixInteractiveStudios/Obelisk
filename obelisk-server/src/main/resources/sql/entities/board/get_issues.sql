@@ -1,1 +1,0 @@
-SELECT `id` FROM `issues` WHERE `board` = ?;

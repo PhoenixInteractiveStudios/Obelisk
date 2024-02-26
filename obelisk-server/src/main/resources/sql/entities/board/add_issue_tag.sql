@@ -1,1 +1,0 @@
-INSERT INTO `issue_tags` (`issue`, `tag`) VALUES (?, ?);

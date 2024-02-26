@@ -1,1 +1,0 @@
-DELETE FROM `issue_assignees` WHERE `issue` = ? AND `user` = ?;
