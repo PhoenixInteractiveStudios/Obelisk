@@ -8,7 +8,7 @@ import java.net.URISyntaxException;
 
 public class Main {
     static {
-        System.out.print("Starting Obelisk Server");
+        System.out.print("Starting Obelisk Gateway");
     }
 
     /** Static application version. */
