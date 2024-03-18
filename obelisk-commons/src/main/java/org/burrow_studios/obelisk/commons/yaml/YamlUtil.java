@@ -4,9 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -84,13 +82,7 @@ public class YamlUtil {
         if (resource == null)
             throw new IllegalArgumentException("Resource is null");
 
-        if (!file.exists()) {
-            boolean created = file.createNewFile();
-
-            if (!created)
-                throw new IOException("File could not be created");
-
+        if (!file.exists())
             Files.copy(resource, file.toPath());
-        }
     }
 }

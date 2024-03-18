@@ -29,8 +29,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServiceRegistry implements Closeable {
+    private static final Logger LOG = Logger.getLogger(ServiceRegistry.class.getSimpleName());
+
     private static final String LEGAL_NAME_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private static final String LEGAL_NAME_DELIMITERS = "-._";
 
@@ -50,6 +54,8 @@ public class ServiceRegistry implements Closeable {
         YamlSection serverConfig = config.getAsSection("server");
         YamlPrimitive type = serverConfig.getAsPrimitive("type");
 
+        LOG.log(Level.INFO, "Attempting to start server of type '" + type.getAsString() + "'.");
+
         this.server = switch (type.getAsString().toLowerCase()) {
             case "amqp" -> new AMQPServer(
                     serverConfig.getAsPrimitive("host").getAsString(),
@@ -68,15 +74,19 @@ public class ServiceRegistry implements Closeable {
             default -> throw new IllegalArgumentException("Unsupported server type: " + type.getAsString());
         };
 
+        LOG.log(Level.INFO, "Server online. Creating endpoints...");
+
         this.server.addEndpoint(Endpoint.build(Method.POST  , "/services"        , AuthenticationLevel.NONE), this::onPost);
         this.server.addEndpoint(Endpoint.build(Method.DELETE, "/services/:string", AuthenticationLevel.NONE), this::onDelete);
     }
 
     @Override
     public void close() throws IOException {
+        LOG.log(Level.WARNING, "Shutting down");
         this.server.close();
         for (Service service : this.services.values())
             service.close();
+        LOG.log(Level.INFO, "OK bye");
     }
 
     private synchronized void onPost(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {

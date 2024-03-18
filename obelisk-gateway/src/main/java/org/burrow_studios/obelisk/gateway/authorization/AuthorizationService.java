@@ -18,7 +18,13 @@ import org.burrow_studios.obelisk.commons.yaml.YamlSection;
 import org.burrow_studios.obelisk.gateway.ObeliskGateway;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class AuthorizationService implements Authorizer {
+    private static final Logger LOG = Logger.getLogger("authorization");
+
     private final TimeBasedIdGenerator idGenerator = TimeBasedIdGenerator.get();
 
     private final ObeliskGateway gateway;
@@ -58,9 +64,13 @@ public class AuthorizationService implements Authorizer {
 
             if (!response.getStatus().isSuccess()) return;
         } catch (RequestHandlerException e) {
-            // TODO: log
+            LOG.log(Level.WARNING, "Encountered a RequestHandlerException when attempting to pass an authorization request to the backend service", e);
             throw new InternalServerErrorException();
         }
+
+        String id = decodedJWT.getId();
+
+        LOG.log(Level.FINE, "Request failed authorization for intents: " + Arrays.toString(intents) + " from token " + id + " (not validated)");
 
         throw new ForbiddenException();
     }

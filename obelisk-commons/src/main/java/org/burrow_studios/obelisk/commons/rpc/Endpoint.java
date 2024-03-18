@@ -144,6 +144,11 @@ public final class Endpoint {
         return Arrays.equals(endpoint.intents, this.intents);
     }
 
+    @Override
+    public String toString() {
+        return "Endpoint[" + this.method.name() + " " + this.getPath() + "]";
+    }
+
     public static @NotNull Endpoint build(@NotNull Method method, @NotNull String path, @NotNull AuthenticationLevel authenticationLevel, @NotNull String... intents) {
         String[] pathSegments = path.substring(1).split("/");
 

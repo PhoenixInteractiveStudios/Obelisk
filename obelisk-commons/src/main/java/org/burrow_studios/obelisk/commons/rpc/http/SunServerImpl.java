@@ -84,4 +84,8 @@ public final class SunServerImpl extends RPCServer<SunServerImpl> {
         // TODO: await pending requests?
         this.server.stop((int) TimeoutContext.DEFAULT.asTimeout(TimeUnit.SECONDS));
     }
+
+    public int getPort() {
+        return this.server.getAddress().getPort();
+    }
 }

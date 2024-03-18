@@ -18,8 +18,12 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ObeliskGateway {
+    private static final Logger LOG = Logger.getLogger("MAIN");
+
     private final @NotNull YamlSection config;
     private final @NotNull File configFile = new File(Main.DIR, "config.yaml");
 
@@ -29,22 +33,32 @@ public class ObeliskGateway {
     private final ServiceRegistry serviceRegistry;
 
     ObeliskGateway() throws IOException, TimeoutException {
+        LOG.log(Level.INFO, "Loading config");
+
         ResourceTools resourceTools = ResourceTools.get(Main.class);
         YamlUtil.saveDefault(configFile, resourceTools.getResource("config.yaml"));
 
         this.config = YamlUtil.load(configFile, YamlSection.class);
 
+        LOG.log(Level.INFO, "Enabling authentication");
         this.authenticationService = new AuthenticationService(this, config.getAsSection("authentication"));
+        LOG.log(Level.INFO, "Enabling authorization");
         this.authorizationService  = new  AuthorizationService(this, config.getAsSection("authorization"));
 
+        LOG.log(Level.INFO, "Initiating NetworkHandler");
         this.networkHandler  = new  NetworkHandler(this, config.getAsSection("net"));
+        LOG.log(Level.INFO, "Initiating ServiceRegistry");
         this.serviceRegistry = new ServiceRegistry(this, config.getAsSection("registry"));
+
+        LOG.log(Level.INFO, "Startup complete!");
     }
 
     void stop() throws IOException {
+        LOG.log(Level.WARNING, "Shutting down");
         this.config.save(configFile);
         this.networkHandler.close();
         this.serviceRegistry.close();
+        LOG.log(Level.INFO, "OK bye");
     }
 
     public @NotNull AuthenticationService getAuthenticationService() {

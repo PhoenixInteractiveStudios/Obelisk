@@ -1,7 +1,12 @@
 package org.burrow_studios.obelisk.gateway.authentication;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.google.gson.JsonObject;
-import org.burrow_studios.obelisk.commons.rpc.*;
+import org.burrow_studios.obelisk.commons.rpc.Endpoint;
+import org.burrow_studios.obelisk.commons.rpc.Method;
+import org.burrow_studios.obelisk.commons.rpc.RPCRequest;
+import org.burrow_studios.obelisk.commons.rpc.RPCResponse;
 import org.burrow_studios.obelisk.commons.rpc.authentication.AuthenticationLevel;
 import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.ForbiddenException;
@@ -12,7 +17,12 @@ import org.burrow_studios.obelisk.commons.yaml.YamlSection;
 import org.burrow_studios.obelisk.gateway.ObeliskGateway;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class AuthenticationService implements Authenticator {
+    private static final Logger LOG = Logger.getLogger("authentication");
+
     private final TimeBasedIdGenerator idGenerator = TimeBasedIdGenerator.get();
 
     private final ObeliskGateway gateway;
@@ -44,8 +54,16 @@ public class AuthenticationService implements Authenticator {
 
             if (!response.getStatus().isSuccess()) return;
         } catch (RequestHandlerException e) {
-            // TODO: log
+            LOG.log(Level.WARNING, "Encountered a RequestHandlerException when attempting to pass an authentication request to the backend service", e);
             throw new InternalServerErrorException();
+        }
+
+        try {
+            String id = JWT.decode(token).getId();
+
+            LOG.log(Level.FINE, "Request failed authentication for level " + level.name() + " from token " + id + " (not validated)");
+        } catch (JWTDecodeException e) {
+            LOG.log(Level.FINE, "Request failed authentication for level " + level.name() + " from invalid token");
         }
 
         throw new ForbiddenException();
