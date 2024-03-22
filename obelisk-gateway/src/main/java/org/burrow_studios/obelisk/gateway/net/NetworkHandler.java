@@ -22,10 +22,10 @@ public class NetworkHandler implements Closeable {
 
         LOG.log(Level.INFO, "Starting server");
         this.server = new SunServerImpl(
-                config.getAsPrimitive("port").getAsInt(),
-                gateway.getAuthenticationService(),
-                gateway.getAuthorizationService()
+                config.getAsPrimitive("port").getAsInt()
         );
+        this.server.setAuthenticator(gateway.getAuthenticationService());
+        this.server.setAuthorizer(gateway.getAuthorizationService());
 
         LOG.log(Level.INFO, "Listening on port " + server.getPort());
     }

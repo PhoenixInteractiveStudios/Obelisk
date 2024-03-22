@@ -3,8 +3,6 @@ package org.burrow_studios.obelisk.moderationservice;
 import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.burrow_studios.obelisk.commons.rpc.RPCServer;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
-import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
-import org.burrow_studios.obelisk.commons.rpc.authorization.Authorizer;
 import org.burrow_studios.obelisk.commons.service.ServiceHook;
 import org.burrow_studios.obelisk.commons.util.ResourceTools;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
@@ -55,9 +53,7 @@ public class ModerationService {
                 serverConfig.getAsPrimitive("user").getAsString(),
                 serverConfig.getAsPrimitive("pass").getAsString(),
                 serverConfig.getAsPrimitive("exchange").getAsString(),
-                serverConfig.getAsPrimitive("queue").getAsString(),
-                Authenticator.ALLOW_ALL, // The gateway client does not need to be authenticated
-                Authorizer.ALLOW_ALL     // ... or authorized
+                serverConfig.getAsPrimitive("queue").getAsString()
         );
 
         final ProjectHandler projectHandler = new ProjectHandler(this);

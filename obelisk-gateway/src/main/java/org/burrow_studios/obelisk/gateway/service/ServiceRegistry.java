@@ -8,8 +8,6 @@ import org.burrow_studios.obelisk.commons.rpc.*;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPClient;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
 import org.burrow_studios.obelisk.commons.rpc.authentication.AuthenticationLevel;
-import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
-import org.burrow_studios.obelisk.commons.rpc.authorization.Authorizer;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.InternalServerErrorException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
@@ -62,14 +60,10 @@ public class ServiceRegistry implements Closeable {
                     serverConfig.getAsPrimitive("port").getAsInt(),
                     serverConfig.getAsPrimitive("user").getAsString(),
                     serverConfig.getAsPrimitive("pass").getAsString(),
-                    "meta", "service_discovery",
-                    // only exposed internally
-                    Authenticator.ALLOW_ALL, Authorizer.ALLOW_ALL
+                    "meta", "service_discovery"
             );
             case "http" -> new SunServerImpl(
-                    serverConfig.getAsPrimitive("port").getAsInt(),
-                    // only exposed internally
-                    Authenticator.ALLOW_ALL, Authorizer.ALLOW_ALL
+                    serverConfig.getAsPrimitive("port").getAsInt()
             );
             default -> throw new IllegalArgumentException("Unsupported server type: " + type.getAsString());
         };

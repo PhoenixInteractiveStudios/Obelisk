@@ -10,10 +10,12 @@ import org.burrow_studios.obelisk.commons.rpc.exceptions.ForbiddenException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.InternalServerErrorException;
 import org.burrow_studios.obelisk.commons.rpc.exceptions.RequestHandlerException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,12 +28,19 @@ public abstract class RPCServer<T extends RPCServer<T>> implements Closeable {
 
     /** Maps expected endpoints to their respective handlers. This serves as lookup during request processing. */
     private final ConcurrentHashMap<Endpoint, EndpointHandler> handlers = new ConcurrentHashMap<>();
-    private final Authenticator authenticator;
-    private final Authorizer authorizer;
+    private @NotNull Authenticator authenticator = Authenticator.ALLOW_ALL;
+    private @NotNull Authorizer    authorizer    = Authorizer.ALLOW_ALL;
 
-    public RPCServer(@NotNull Authenticator authenticator, @NotNull Authorizer authorizer) {
-        this.authenticator = authenticator;
-        this.authorizer = authorizer;
+    public RPCServer() { }
+
+    public final @NotNull RPCServer<T> setAuthenticator(@Nullable Authenticator authenticator) {
+        this.authenticator = Objects.requireNonNullElse(authenticator, Authenticator.ALLOW_ALL);
+        return this;
+    }
+
+    public final @NotNull RPCServer<T> setAuthorizer(@Nullable Authorizer authorizer) {
+        this.authorizer = Objects.requireNonNullElse(authorizer, Authorizer.ALLOW_ALL);
+        return this;
     }
 
     /**

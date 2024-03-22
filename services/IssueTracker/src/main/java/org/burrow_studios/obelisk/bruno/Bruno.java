@@ -8,8 +8,6 @@ import org.burrow_studios.obelisk.bruno.net.TagHandler;
 import org.burrow_studios.obelisk.commons.rpc.Endpoints;
 import org.burrow_studios.obelisk.commons.rpc.RPCServer;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
-import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
-import org.burrow_studios.obelisk.commons.rpc.authorization.Authorizer;
 import org.burrow_studios.obelisk.commons.service.ServiceHook;
 import org.burrow_studios.obelisk.commons.util.ResourceTools;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
@@ -55,9 +53,7 @@ public class Bruno {
                 serverConfig.getAsPrimitive("user").getAsString(),
                 serverConfig.getAsPrimitive("pass").getAsString(),
                 serverConfig.getAsPrimitive("exchange").getAsString(),
-                serverConfig.getAsPrimitive("queue").getAsString(),
-                Authenticator.ALLOW_ALL, // The gateway client does not need to be authenticated
-                Authorizer.ALLOW_ALL     // ... or authorized
+                serverConfig.getAsPrimitive("queue").getAsString()
         );
 
         final BoardHandler boardHandler = new BoardHandler(this);

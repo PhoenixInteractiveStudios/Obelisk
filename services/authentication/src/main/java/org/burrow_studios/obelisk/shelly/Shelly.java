@@ -6,8 +6,6 @@ import org.burrow_studios.obelisk.commons.rpc.Method;
 import org.burrow_studios.obelisk.commons.rpc.RPCServer;
 import org.burrow_studios.obelisk.commons.rpc.amqp.AMQPServer;
 import org.burrow_studios.obelisk.commons.rpc.authentication.AuthenticationLevel;
-import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
-import org.burrow_studios.obelisk.commons.rpc.authorization.Authorizer;
 import org.burrow_studios.obelisk.commons.service.ServiceHook;
 import org.burrow_studios.obelisk.commons.util.ResourceTools;
 import org.burrow_studios.obelisk.commons.yaml.YamlSection;
@@ -58,9 +56,7 @@ public class Shelly {
                 serverConfig.getAsPrimitive("user").getAsString(),
                 serverConfig.getAsPrimitive("pass").getAsString(),
                 serverConfig.getAsPrimitive("exchange").getAsString(),
-                serverConfig.getAsPrimitive("queue").getAsString(),
-                Authenticator.ALLOW_ALL, // The gateway client does not need to be authenticated
-                Authorizer.ALLOW_ALL     // ... or authorized
+                serverConfig.getAsPrimitive("queue").getAsString()
         );
 
         LOG.log(Level.INFO, "API server online. Creating endpoints...");

@@ -7,8 +7,6 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Delivery;
 import org.burrow_studios.obelisk.commons.rpc.*;
-import org.burrow_studios.obelisk.commons.rpc.authentication.Authenticator;
-import org.burrow_studios.obelisk.commons.rpc.authorization.Authorizer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -31,11 +29,9 @@ public class AMQPServer extends RPCServer<AMQPServer> {
             @NotNull String user,
             @NotNull String pass,
             @NotNull String exchange,
-            @NotNull String queue,
-            @NotNull Authenticator authenticator,
-            @NotNull Authorizer authorizer
+            @NotNull String queue
     ) throws IOException, TimeoutException {
-        super(authenticator, authorizer);
+        super();
 
         this.connection = AMQPConnections.getConnection(host, port, user, pass);
         this.channel    = this.connection.createChannel();
