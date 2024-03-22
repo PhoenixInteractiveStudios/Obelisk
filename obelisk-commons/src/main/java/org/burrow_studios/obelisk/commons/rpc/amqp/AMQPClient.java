@@ -31,6 +31,8 @@ public class AMQPClient implements RPCClient {
 
         this.exchange = exchange;
         this.queue = queue;
+
+        this.channel.exchangeDeclare(this.exchange, "topic");
     }
 
     @Override

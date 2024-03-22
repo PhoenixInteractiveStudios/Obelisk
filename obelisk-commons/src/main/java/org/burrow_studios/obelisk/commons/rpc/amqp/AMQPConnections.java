@@ -20,7 +20,14 @@ class AMQPConnections {
 
     public static Connection getConnection(@NotNull String host, int port, @NotNull String user, @NotNull String pass) throws IOException, TimeoutException {
         Client client = new Client(host, port, user, pass.hashCode());
-        ConnectionFactory factory = factories.computeIfAbsent(client, client1 -> new ConnectionFactory());
+        ConnectionFactory factory = factories.computeIfAbsent(client, c -> {
+            ConnectionFactory f = new ConnectionFactory();
+            f.setHost(host);
+            f.setPort(port);
+            f.setUsername(user);
+            f.setPassword(pass);
+            return f;
+        });
         return factory.newConnection();
     }
 }

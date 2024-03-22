@@ -8,7 +8,7 @@ db:
 # AMQP server properties
 server:
   host: "localhost"
-  port: 8348
+  port: 5672
   user: "bruno"
   pass: ""
   exchange: "issue_tracker_exchange"

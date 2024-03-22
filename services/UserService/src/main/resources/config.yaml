@@ -1,7 +1,7 @@
 # AMQP server properties
 server:
   host: "localhost"
-  port: 8348
+  port: 5672
   user: "user_service"
   pass: ""
   exchange: "user_exchange"

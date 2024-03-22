@@ -63,6 +63,8 @@ public class Shelly {
                 Authorizer.ALLOW_ALL     // ... or authorized
         );
 
+        LOG.log(Level.INFO, "API server online. Creating endpoints...");
+
         this.server.addEndpoint(Endpoints.LOGIN     , sessionHandler::onLogin);
         this.server.addEndpoint(Endpoints.LOGOUT    , sessionHandler::onLogout);
         this.server.addEndpoint(Endpoints.LOGOUT_ALL, sessionHandler::onLogoutAll);
@@ -71,7 +73,10 @@ public class Shelly {
         this.server.addEndpoint(Endpoints.Shelly.GET_PUBLIC_SESSION_KEY , pubKeyHandler::onGetPublicSessionKey);
         this.server.addEndpoint(Endpoint.build(Method.GET, "/authenticate", AuthenticationLevel.NONE), gatewayAdapter::onAuthenticate);
 
+        LOG.log(Level.INFO, "Registering ServiceHook");
         this.serviceHook = new ServiceHook(serverConfig, "Shelly", this.server);
+
+        LOG.log(Level.INFO, "Startup complete!");
     }
 
     public AuthDB getDatabase() {
