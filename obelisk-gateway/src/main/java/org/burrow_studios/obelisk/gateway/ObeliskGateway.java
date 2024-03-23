@@ -24,15 +24,34 @@ import java.util.logging.Logger;
 public class ObeliskGateway {
     private static final Logger LOG = Logger.getLogger("MAIN");
 
-    private final @NotNull YamlSection config;
+    private YamlSection config;
     private final @NotNull File configFile = new File(Main.DIR, "config.yaml");
 
-    private final AuthenticationService authenticationService;
-    private final AuthorizationService authorizationService;
-    private final NetworkHandler networkHandler;
-    private final ServiceRegistry serviceRegistry;
+    private AuthenticationService authenticationService;
+    private AuthorizationService authorizationService;
+    private NetworkHandler networkHandler;
+    private ServiceRegistry serviceRegistry;
 
-    ObeliskGateway() throws IOException, TimeoutException {
+    ObeliskGateway() throws Exception {
+        try {
+            this.init();
+        } catch (Throwable t) {
+            LOG.log(Level.SEVERE, "Failed to initialize! Attempting to abort gracefully to prevent zombie state...");
+
+            // try to shut down network handler to prevent "zombie state" (since the sun HttpServer uses non-daemon threads for some reason)
+            try {
+                this.stop();
+            } catch (Exception e) {
+                LOG.log(Level.SEVERE, "Unable to fail gracefully", e);
+            }
+
+            throw t;
+        }
+
+        LOG.log(Level.INFO, "Startup complete!");
+    }
+
+    private void init() throws IOException, TimeoutException {
         LOG.log(Level.INFO, "Loading config");
 
         ResourceTools resourceTools = ResourceTools.get(Main.class);
@@ -49,15 +68,16 @@ public class ObeliskGateway {
         this.networkHandler  = new  NetworkHandler(this, config.getAsSection("net"));
         LOG.log(Level.INFO, "Initiating ServiceRegistry");
         this.serviceRegistry = new ServiceRegistry(this, config.getAsSection("registry"));
-
-        LOG.log(Level.INFO, "Startup complete!");
     }
 
     void stop() throws IOException {
         LOG.log(Level.WARNING, "Shutting down");
-        this.config.save(configFile);
-        this.networkHandler.close();
-        this.serviceRegistry.close();
+        if (this.config != null)
+            this.config.save(configFile);
+        if (this.networkHandler != null)
+            this.networkHandler.close();
+        if (this.serviceRegistry != null)
+            this.serviceRegistry.close();
         LOG.log(Level.INFO, "OK bye");
     }
 
