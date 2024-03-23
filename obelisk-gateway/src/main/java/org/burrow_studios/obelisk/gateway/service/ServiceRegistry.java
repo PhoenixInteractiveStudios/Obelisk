@@ -86,6 +86,8 @@ public class ServiceRegistry implements Closeable {
     private synchronized void onPost(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
         final String name = request.bodyHelper().requireElementAsString("name");
 
+        LOG.log(Level.INFO, "Post request for service '" + name + "'.");
+
         // name validation
         try {
             Validation.of("Service name", name)
@@ -230,6 +232,8 @@ public class ServiceRegistry implements Closeable {
 
     private void onDelete(@NotNull RPCRequest request, @NotNull RPCResponse.Builder response) throws RequestHandlerException {
         final String name = request.getPathSegment(1);
+
+        LOG.log(Level.INFO, "Delete request for service '" + name + "'.");
 
         Service service = this.services.get(name);
         if (service != null) {

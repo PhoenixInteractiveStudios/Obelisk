@@ -41,6 +41,7 @@ public class AMQPServer extends RPCServer<AMQPServer> {
 
         this.channel.basicQos(1);
         this.channel.queueDeclare(queue, false, false, false, null);
+        this.channel.exchangeDeclare(this.exchange, "topic");
         this.channel.basicConsume(queue, false, (consumerTag, delivery) -> {
             try {
                 this.handle(consumerTag, delivery);
