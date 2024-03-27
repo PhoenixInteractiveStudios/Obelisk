@@ -16,9 +16,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class AMQPClient implements RPCClient {
+public class AMQPClient extends RPCClient {
     private final Connection connection;
     private final Channel channel;
 
@@ -55,9 +56,10 @@ public class AMQPClient implements RPCClient {
 
         CompletableFuture<RPCResponse> future = new CompletableFuture<>();
 
-        channel.basicConsume(replyQueueName, true, (consumerTag, delivery) -> {
+        // register callback
+        final String consumerTag = channel.basicConsume(replyQueueName, true, (cTag, delivery) -> {
             try {
-                this.handleResponse(future, request, corrId, consumerTag, delivery);
+                this.handleResponse(future, request, corrId, cTag, delivery);
             } catch (Exception e) {
                 future.completeExceptionally(e);
             }
@@ -65,6 +67,19 @@ public class AMQPClient implements RPCClient {
             if (!future.isDone())
                 future.completeExceptionally(new InterruptedException());
         });
+
+        // schedule timeout
+        scheduler.schedule(() -> {
+            if (future.isDone()) return;
+
+            future.completeExceptionally(new TimeoutException());
+
+            try {
+                channel.basicCancel(consumerTag);
+            } catch (IOException ignored) {
+                // TODO: log
+            }
+        }, request.getTimeout().asTimeout(), TimeUnit.MILLISECONDS);
 
         return future;
     }

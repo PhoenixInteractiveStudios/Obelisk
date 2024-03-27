@@ -13,8 +13,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-public class HTTPClient implements RPCClient {
+public class HTTPClient extends RPCClient {
     static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .serializeNulls()
@@ -75,6 +77,14 @@ public class HTTPClient implements RPCClient {
                     }
                     return null;
                 });
+
+
+        // schedule timeout
+        scheduler.schedule(() -> {
+            if (callback.isDone()) return;
+
+            callback.completeExceptionally(new TimeoutException());
+        }, request.getTimeout().asTimeout(), TimeUnit.MILLISECONDS);
 
         return callback;
     }
