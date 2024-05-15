@@ -1,1 +1,0 @@
-SELECT `minecraft` FROM `user_minecraft` WHERE `user` = ?;

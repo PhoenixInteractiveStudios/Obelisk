@@ -1,8 +1,0 @@
-# AMQP server properties
-server:
-  host: "localhost"
-  port: 5672
-  user: "shelly"
-  pass: "shelly"
-  exchange: "authentication_exchange"
-  queue: "authentication_requests"

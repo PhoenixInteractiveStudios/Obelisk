@@ -1,8 +1,0 @@
-# AMQP server properties
-server:
-  host: "localhost"
-  port: 5672
-  user: "chramel"
-  pass: ""
-  exchange: "authorization_exchange"
-  queue: "authorization_requests"
