@@ -2,11 +2,15 @@ package org.burrow_studios.obelisk.api.entities;
 
 import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.api.action.DeleteAction;
+import org.burrow_studios.obelisk.api.action.entity.ticket.TicketModifier;
 import org.burrow_studios.obelisk.api.cache.EntitySet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface Ticket extends IEntity {
+    @Override
+    @NotNull TicketModifier modify();
+
     @Override
     @NotNull DeleteAction<Ticket> delete();
 
