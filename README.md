@@ -3,8 +3,22 @@
 [release]: https://github.com/BurrowStudios/Obelisk/releases
 [release-shield]: https://img.shields.io/github/release/BurrowStudios/Obelisk.svg
 
+[build-shield-api]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-api.yaml?label=API
+[build-shield-core]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-core.yaml?label=Core
+[build-shield-util]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-util.yaml?label=Utils
+[build-shield-client]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-client.yaml?label=Client
+[build-shield-monolith]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-monolith.yaml?label=Monolith
+
 [![license-shield][]][license]
 [![release-shield][]][release]
+
+#### Build status
+
+![build-shield-api]
+![build-shield-core]
+![build-shield-util]
+![build-shield-client]
+![build-shield-monolith]
 
 # Obelisk
 
