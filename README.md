@@ -9,6 +9,9 @@
 [build-shield-client]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-client.yaml?label=Client
 [build-shield-monolith]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-monolith.yaml?label=Monolith
 
+<!--suppress CheckImageSize, HtmlRequiredAltAttribute -->
+<img align="right" src=".github/BurrowStudios.png" height="200" width="200">
+
 [![license-shield][]][license]
 [![release-shield][]][release]
 
