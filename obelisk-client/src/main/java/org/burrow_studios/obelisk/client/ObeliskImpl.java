@@ -5,6 +5,8 @@ import org.burrow_studios.obelisk.api.action.entity.minecraft.DiscordAccountBuil
 import org.burrow_studios.obelisk.api.action.entity.project.ProjectBuilder;
 import org.burrow_studios.obelisk.api.action.entity.ticket.TicketBuilder;
 import org.burrow_studios.obelisk.api.action.entity.user.UserBuilder;
+import org.burrow_studios.obelisk.client.config.AuthConfig;
+import org.burrow_studios.obelisk.client.config.HttpConfig;
 import org.burrow_studios.obelisk.core.AbstractObelisk;
 import org.burrow_studios.obelisk.util.EnumLatch;
 import org.jetbrains.annotations.NotNull;
@@ -13,10 +15,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class ObeliskImpl extends AbstractObelisk {
+    private final AuthConfig authConfig;
+    private final HttpConfig httpConfig;
     private final EnumLatch<Status> status;
 
-    public ObeliskImpl() {
+    public ObeliskImpl(@NotNull AuthConfig authConfig, @NotNull HttpConfig httpConfig) {
         this.status = new EnumLatch<>(Status.PRE_INIT);
+
+        this.authConfig = authConfig;
+        this.httpConfig = httpConfig;
     }
 
     @Override
