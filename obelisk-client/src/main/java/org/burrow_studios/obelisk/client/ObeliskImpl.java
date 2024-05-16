@@ -21,6 +21,7 @@ import java.util.concurrent.TimeoutException;
 public class ObeliskImpl extends AbstractObelisk {
     private final AuthConfig authConfig;
     private final HttpConfig httpConfig;
+    private final EntityBuilder entityBuilder;
     private final EnumLatch<Status> status;
     private HTTPClient httpClient;
     private URI gatewayUrl;
@@ -30,6 +31,8 @@ public class ObeliskImpl extends AbstractObelisk {
 
         this.authConfig = authConfig;
         this.httpConfig = httpConfig;
+
+        this.entityBuilder = new EntityBuilder(this);
     }
 
     public void login() {
@@ -66,6 +69,14 @@ public class ObeliskImpl extends AbstractObelisk {
 
     public @NotNull Status getStatus() {
         return this.status.get();
+    }
+
+    public @NotNull HTTPClient getHttpClient() {
+        return this.httpClient;
+    }
+
+    public @NotNull EntityBuilder getEntityBuilder() {
+        return this.entityBuilder;
     }
 
     @Override

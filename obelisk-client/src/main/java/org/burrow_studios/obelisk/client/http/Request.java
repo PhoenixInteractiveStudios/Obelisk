@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.client.http;
 
 import com.google.gson.JsonElement;
 import org.burrow_studios.obelisk.api.action.TimeoutContext;
+import org.burrow_studios.obelisk.client.action.ActionImpl;
 import org.burrow_studios.obelisk.core.http.Route;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -12,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class Request<T> {
+    private final ActionImpl<T> action;
     private final Consumer<? super T> onSuccess;
     private final Consumer<? super Throwable> onFailure;
     private final Route.Compiled route;
@@ -23,6 +25,7 @@ public class Request<T> {
     private final AtomicBoolean cancelled = new AtomicBoolean(false);
 
     public Request(
+            @NotNull ActionImpl<T> action,
             @NotNull Consumer<? super T> onSuccess,
             @NotNull Consumer<? super Throwable> onFailure,
             @NotNull Route.Compiled route,
@@ -30,6 +33,7 @@ public class Request<T> {
             @NotNull Map<String, String> headers,
             @NotNull TimeoutContext timeout
     ) {
+        this.action = action;
         this.onSuccess = onSuccess;
         this.onFailure = onFailure;
         this.route = route;
