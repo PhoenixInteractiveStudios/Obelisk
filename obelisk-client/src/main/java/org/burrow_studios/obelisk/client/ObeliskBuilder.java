@@ -40,7 +40,11 @@ public class ObeliskBuilder {
                 throw new IllegalArgumentException("Invalid gateway URI syntax", e);
             }
 
-        return new ObeliskImpl(authConfig, httpConfig);
+        ObeliskImpl obelisk = new ObeliskImpl(authConfig, httpConfig);
+
+        obelisk.login();
+
+        return obelisk;
     }
 
     public @NotNull ObeliskBuilder setHost(String host) {
