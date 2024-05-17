@@ -42,6 +42,10 @@ public class Request<T> {
         this.timeout = timeout;
     }
 
+    public void handleResponse(@NotNull Response response) {
+        this.action.handleResponse(this, response);
+    }
+
     public void onSuccess(T result) {
         if (done.getAndSet(true)) return;
 
