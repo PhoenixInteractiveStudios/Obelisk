@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.monolith.http;
 
 import com.google.gson.JsonElement;
 import com.sun.net.httpserver.HttpExchange;
+import org.burrow_studios.obelisk.core.http.Method;
 import org.burrow_studios.obelisk.core.http.Path;
 import org.burrow_studios.obelisk.core.http.Route;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,10 @@ public class Request {
 
     public @NotNull Route.Compiled getRoute() {
         return this.route;
+    }
+
+    public @NotNull Method getMethod() {
+        return this.getRoute().getBase().getMethod();
     }
 
     public @NotNull Path getPath() {
