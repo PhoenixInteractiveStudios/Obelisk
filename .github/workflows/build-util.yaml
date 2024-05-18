@@ -5,12 +5,12 @@ on:
     branches:
       - "development"
     paths:
-      - "obelisk-util"
+      - "obelisk-util/**"
   pull_request:
     branches:
       - "development"
     paths:
-      - "obelisk-util"
+      - "obelisk-util/**"
 
 jobs:
   build:

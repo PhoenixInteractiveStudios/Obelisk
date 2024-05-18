@@ -5,18 +5,18 @@ on:
     branches:
       - "development"
     paths:
-      - "obelisk-api"
-      - "obelisk-core"
-      - "obelisk-util"
-      - "obelisk-monolith"
+      - "obelisk-api/**"
+      - "obelisk-core/**"
+      - "obelisk-util/**"
+      - "obelisk-monolith/**"
   pull_request:
     branches:
       - "development"
     paths:
-      - "obelisk-api"
-      - "obelisk-core"
-      - "obelisk-util"
-      - "obelisk-monolith"
+      - "obelisk-api/**"
+      - "obelisk-core/**"
+      - "obelisk-util/**"
+      - "obelisk-monolith/**"
 
 jobs:
   build:
