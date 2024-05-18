@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.client;
 
+import org.burrow_studios.obelisk.api.Status;
 import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.client.action.entity.discord.DiscordAccountBuilderImpl;
 import org.burrow_studios.obelisk.client.action.entity.minecraft.MinecraftAccountBuilderImpl;
@@ -10,24 +11,20 @@ import org.burrow_studios.obelisk.client.config.AuthConfig;
 import org.burrow_studios.obelisk.client.config.HttpConfig;
 import org.burrow_studios.obelisk.client.http.HTTPClient;
 import org.burrow_studios.obelisk.core.AbstractObelisk;
-import org.burrow_studios.obelisk.util.EnumLatch;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class ObeliskImpl extends AbstractObelisk {
     private final AuthConfig authConfig;
     private final HttpConfig httpConfig;
     private final EntityBuilder entityBuilder;
-    private final EnumLatch<Status> status;
     private HTTPClient httpClient;
     private URI gatewayUrl;
 
     public ObeliskImpl(@NotNull AuthConfig authConfig, @NotNull HttpConfig httpConfig) {
-        this.status = new EnumLatch<>(Status.PRE_INIT);
+        super();
 
         this.authConfig = authConfig;
         this.httpConfig = httpConfig;
@@ -67,38 +64,12 @@ public class ObeliskImpl extends AbstractObelisk {
         return null;
     }
 
-    public @NotNull Status getStatus() {
-        return this.status.get();
-    }
-
     public @NotNull HTTPClient getHttpClient() {
         return this.httpClient;
     }
 
     public @NotNull EntityBuilder getEntityBuilder() {
         return this.entityBuilder;
-    }
-
-    @Override
-    public void awaitReady() throws InterruptedException {
-        this.status.await(Status.READY);
-    }
-
-    @Override
-    public void awaitReady(long timeout, @NotNull TimeUnit unit) throws InterruptedException, TimeoutException {
-        if (this.status.await(Status.READY, timeout, unit))
-            throw new TimeoutException();
-    }
-
-    @Override
-    public void awaitShutdown() throws InterruptedException {
-        this.status.await(Status.STOPPED);
-    }
-
-    @Override
-    public void awaitShutdown(long timeout, @NotNull TimeUnit unit) throws InterruptedException, TimeoutException {
-        if (this.status.await(Status.STOPPED, timeout, unit))
-            throw new TimeoutException();
     }
 
     @Override

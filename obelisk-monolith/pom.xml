@@ -82,6 +82,13 @@
             <version>1.0-alpha.1</version>
         </dependency>
 
+        <!-- Shared utilities -->
+        <dependency>
+            <groupId>org.burrow_studios.obelisk</groupId>
+            <artifactId>obelisk-util</artifactId>
+            <version>1.0-alpha.1</version>
+        </dependency>
+
         <!-- Annotations (@NotNull and the like) -->
         <dependency>
             <groupId>org.jetbrains</groupId>

@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.client;
+package org.burrow_studios.obelisk.api;
 
 public enum Status {
     /** Local initialization. Network connections have yet to be established. */

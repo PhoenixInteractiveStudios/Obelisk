@@ -14,6 +14,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public interface Obelisk {
+    @NotNull Status getStatus();
+
     void awaitReady() throws InterruptedException;
 
     void awaitReady(long timeout, @NotNull TimeUnit unit) throws InterruptedException, TimeoutException;

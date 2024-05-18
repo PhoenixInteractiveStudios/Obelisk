@@ -1,10 +1,15 @@
 package org.burrow_studios.obelisk.core;
 
 import org.burrow_studios.obelisk.api.Obelisk;
+import org.burrow_studios.obelisk.api.Status;
 import org.burrow_studios.obelisk.core.cache.EntityCache;
 import org.burrow_studios.obelisk.core.entities.*;
+import org.burrow_studios.obelisk.util.EnumLatch;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public abstract class AbstractObelisk implements Obelisk {
     private final @NotNull EntityCache<AbstractUser> userCache;
@@ -14,13 +19,43 @@ public abstract class AbstractObelisk implements Obelisk {
     private final @NotNull EntityCache<AbstractDiscordAccount> discordAccountCache;
     private final @NotNull EntityCache<AbstractMinecraftAccount> minecraftAccountCache;
 
+    protected final @NotNull EnumLatch<Status> status;
+
     protected AbstractObelisk() {
+        this.status = new EnumLatch<>(Status.PRE_INIT);
+
         this.userCache = new EntityCache<>(this, AbstractUser.class);
         this.ticketCache = new EntityCache<>(this, AbstractTicket.class);
         this.projectCache = new EntityCache<>(this, AbstractProject.class);
 
         this.discordAccountCache = new EntityCache<>(this, AbstractDiscordAccount.class);
         this.minecraftAccountCache = new EntityCache<>(this, AbstractMinecraftAccount.class);
+    }
+
+    public final @NotNull Status getStatus() {
+        return this.status.get();
+    }
+
+    @Override
+    public final void awaitReady() throws InterruptedException {
+        this.status.await(Status.READY);
+    }
+
+    @Override
+    public final void awaitReady(long timeout, @NotNull TimeUnit unit) throws InterruptedException, TimeoutException {
+        if (this.status.await(Status.READY, timeout, unit))
+            throw new TimeoutException();
+    }
+
+    @Override
+    public final void awaitShutdown() throws InterruptedException {
+        this.status.await(Status.STOPPED);
+    }
+
+    @Override
+    public final void awaitShutdown(long timeout, @NotNull TimeUnit unit) throws InterruptedException, TimeoutException {
+        if (this.status.await(Status.STOPPED, timeout, unit))
+            throw new TimeoutException();
     }
 
     @Override
