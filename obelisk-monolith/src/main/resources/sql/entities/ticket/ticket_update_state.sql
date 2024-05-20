@@ -1,0 +1,1 @@
+UPDATE `tickets` SET `state` = ? WHERE `id` = ?;
