@@ -1,14 +1,14 @@
 package org.burrow_studios.obelisk.monolith.entities;
 
-import org.burrow_studios.obelisk.api.action.Action;
-import org.burrow_studios.obelisk.api.action.DeleteAction;
-import org.burrow_studios.obelisk.api.action.entity.project.ProjectModifier;
-import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.core.cache.OrderedEntitySetView;
 import org.burrow_studios.obelisk.core.entities.AbstractProject;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
+import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectDeleteAction;
+import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectModifier;
+import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectUserAddAction;
+import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectUserRemoveAction;
 import org.jetbrains.annotations.NotNull;
 
 public class BackendProject extends AbstractProject {
@@ -23,26 +23,22 @@ public class BackendProject extends AbstractProject {
     }
 
     @Override
-    public @NotNull ProjectModifier modify() {
-        // TODO
-        return null;
+    public @NotNull DatabaseProjectModifier modify() {
+        return new DatabaseProjectModifier(this);
     }
 
     @Override
-    public @NotNull DeleteAction<Project> delete() {
-        // TODO
-        return null;
+    public @NotNull DatabaseProjectDeleteAction delete() {
+        return new DatabaseProjectDeleteAction(this);
     }
 
     @Override
-    public @NotNull Action<Void> addUser(@NotNull User user) {
-        // TODO
-        return null;
+    public @NotNull DatabaseProjectUserAddAction addUser(@NotNull User user) {
+        return new DatabaseProjectUserAddAction(this, user);
     }
 
     @Override
-    public @NotNull Action<Void> removeUser(@NotNull User user) {
-        // TODO
-        return null;
+    public @NotNull DatabaseProjectUserRemoveAction removeUser(@NotNull User user) {
+        return new DatabaseProjectUserRemoveAction(this, user);
     }
 }

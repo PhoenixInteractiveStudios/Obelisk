@@ -1,13 +1,12 @@
 package org.burrow_studios.obelisk.monolith.entities;
 
-import org.burrow_studios.obelisk.api.action.DeleteAction;
-import org.burrow_studios.obelisk.api.action.entity.user.UserModifier;
-import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.core.cache.OrderedEntitySetView;
 import org.burrow_studios.obelisk.core.entities.AbstractDiscordAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractMinecraftAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
+import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserDeleteAction;
+import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserModifier;
 import org.jetbrains.annotations.NotNull;
 
 public class BackendUser extends AbstractUser {
@@ -22,14 +21,12 @@ public class BackendUser extends AbstractUser {
     }
 
     @Override
-    public @NotNull UserModifier modify() {
-        // TODO
-        return null;
+    public @NotNull DatabaseUserModifier modify() {
+        return new DatabaseUserModifier(this);
     }
 
     @Override
-    public @NotNull DeleteAction<User> delete() {
-        // TODO
-        return null;
+    public @NotNull DatabaseUserDeleteAction delete() {
+        return new DatabaseUserDeleteAction(this);
     }
 }

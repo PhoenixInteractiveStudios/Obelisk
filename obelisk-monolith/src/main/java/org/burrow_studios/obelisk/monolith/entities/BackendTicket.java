@@ -1,14 +1,14 @@
 package org.burrow_studios.obelisk.monolith.entities;
 
-import org.burrow_studios.obelisk.api.action.Action;
-import org.burrow_studios.obelisk.api.action.DeleteAction;
-import org.burrow_studios.obelisk.api.action.entity.ticket.TicketModifier;
-import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.core.cache.OrderedEntitySetView;
 import org.burrow_studios.obelisk.core.entities.AbstractTicket;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
+import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketDeleteAction;
+import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketModifier;
+import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketUserAddAction;
+import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketUserRemoveAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,26 +24,22 @@ public class BackendTicket extends AbstractTicket {
     }
 
     @Override
-    public @NotNull TicketModifier modify() {
-        // TODO
-        return null;
+    public @NotNull DatabaseTicketModifier modify() {
+        return new DatabaseTicketModifier(this);
     }
 
     @Override
-    public @NotNull DeleteAction<Ticket> delete() {
-        // TODO
-        return null;
+    public @NotNull DatabaseTicketDeleteAction delete() {
+        return new DatabaseTicketDeleteAction(this);
     }
 
     @Override
-    public @NotNull Action<Void> addUser(@NotNull User user) {
-        // TODO
-        return null;
+    public @NotNull DatabaseTicketUserAddAction addUser(@NotNull User user) {
+        return new DatabaseTicketUserAddAction(this, user);
     }
 
     @Override
-    public @NotNull Action<Void> removeUser(@NotNull User user) {
-        // TODO
-        return null;
+    public @NotNull DatabaseTicketUserRemoveAction removeUser(@NotNull User user) {
+        return new DatabaseTicketUserRemoveAction(this, user);
     }
 }

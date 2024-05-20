@@ -1,11 +1,10 @@
 package org.burrow_studios.obelisk.monolith.entities;
 
-import org.burrow_studios.obelisk.api.action.DeleteAction;
-import org.burrow_studios.obelisk.api.action.entity.discord.MinecraftAccountModifier;
-import org.burrow_studios.obelisk.api.entities.MinecraftAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractMinecraftAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
+import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountDeleteAction;
+import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,14 +22,12 @@ public class BackendMinecraftAccount extends AbstractMinecraftAccount {
     }
 
     @Override
-    public @NotNull MinecraftAccountModifier modify() {
-        // TODO
-        return null;
+    public @NotNull DatabaseMinecraftAccountModifier modify() {
+        return new DatabaseMinecraftAccountModifier(this);
     }
 
     @Override
-    public @NotNull DeleteAction<MinecraftAccount> delete() {
-        // TODO
-        return null;
+    public @NotNull DatabaseMinecraftAccountDeleteAction delete() {
+        return new DatabaseMinecraftAccountDeleteAction(this);
     }
 }

@@ -1,11 +1,11 @@
 package org.burrow_studios.obelisk.monolith;
 
-import org.burrow_studios.obelisk.api.action.entity.discord.MinecraftAccountBuilder;
-import org.burrow_studios.obelisk.api.action.entity.minecraft.DiscordAccountBuilder;
-import org.burrow_studios.obelisk.api.action.entity.project.ProjectBuilder;
-import org.burrow_studios.obelisk.api.action.entity.ticket.TicketBuilder;
-import org.burrow_studios.obelisk.api.action.entity.user.UserBuilder;
 import org.burrow_studios.obelisk.core.AbstractObelisk;
+import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountBuilder;
+import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountBuilder;
+import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectBuilder;
+import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketBuilder;
+import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserBuilder;
 import org.burrow_studios.obelisk.monolith.db.DatabaseAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -27,32 +27,27 @@ public class ObeliskMonolith extends AbstractObelisk {
     }
 
     @Override
-    public @NotNull UserBuilder createUser() {
-        // TODO
-        return null;
+    public @NotNull DatabaseUserBuilder createUser() {
+        return new DatabaseUserBuilder(this);
     }
 
     @Override
-    public @NotNull TicketBuilder createTicket() {
-        // TODO
-        return null;
+    public @NotNull DatabaseTicketBuilder createTicket() {
+        return new DatabaseTicketBuilder(this);
     }
 
     @Override
-    public @NotNull ProjectBuilder createProject() {
-        // TODO
-        return null;
+    public @NotNull DatabaseProjectBuilder createProject() {
+        return new DatabaseProjectBuilder(this);
     }
 
     @Override
-    public @NotNull DiscordAccountBuilder createDiscordAccount() {
-        // TODO
-        return null;
+    public @NotNull DatabaseDiscordAccountBuilder createDiscordAccount() {
+        return new DatabaseDiscordAccountBuilder(this);
     }
 
     @Override
-    public @NotNull MinecraftAccountBuilder createMinecraftAccount() {
-        // TODO
-        return null;
+    public @NotNull DatabaseMinecraftAccountBuilder createMinecraftAccount() {
+        return new DatabaseMinecraftAccountBuilder(this);
     }
 }
