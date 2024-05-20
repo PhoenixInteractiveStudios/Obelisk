@@ -1,5 +1,8 @@
 package org.burrow_studios.obelisk.monolith.db.impl;
 
+import org.burrow_studios.obelisk.core.cache.OrderedEntitySetView;
+import org.burrow_studios.obelisk.core.entities.AbstractDiscordAccount;
+import org.burrow_studios.obelisk.core.entities.AbstractMinecraftAccount;
 import org.burrow_studios.obelisk.monolith.Main;
 import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountBuilder;
 import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountDeleteAction;
@@ -19,6 +22,7 @@ import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
 import org.burrow_studios.obelisk.monolith.db.SQLDB;
 import org.burrow_studios.obelisk.monolith.entities.*;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
+import org.burrow_studios.obelisk.monolith.exceptions.NoSuchEntryException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +31,10 @@ import org.sqlite.SQLiteConfig;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class ActionableDatabase implements IActionableDatabase, Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(ActionableDatabase.class);
@@ -79,24 +86,74 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
 
     @Override
     public BackendUser onUserGet(@NotNull DatabaseUserGetAction action) throws DatabaseException {
-        // TODO
-        return null;
+        try (
+                PreparedStatement stmt0 = this.database.preparedStatement("user/user_get");
+                PreparedStatement stmt1 = this.database.preparedStatement("user/discord_get");
+                PreparedStatement stmt2 = this.database.preparedStatement("user/minecraft_get");
+        ) {
+            stmt0.setLong(1, action.getId());
+            stmt1.setLong(1, action.getId());
+            stmt2.setLong(1, action.getId());
+
+            ResultSet  res = stmt0.executeQuery();
+            ResultSet dRes = stmt1.executeQuery();
+            ResultSet mRes = stmt2.executeQuery();
+
+            if (!res.next())
+                throw new NoSuchEntryException();
+
+            return EntityProvider.getUser(action.getAPI(), action.getId(), res, dRes, mRes);
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
     public BackendUser onUserBuild(@NotNull DatabaseUserBuilder builder) throws DatabaseException {
-        // TODO
-        return null;
+        long id = 0; // TODO: generate id
+
+        OrderedEntitySetView<AbstractDiscordAccount>   discord   = new OrderedEntitySetView<>(builder.getAPI().getDiscordAccounts(),   AbstractDiscordAccount.class);
+        OrderedEntitySetView<AbstractMinecraftAccount> minecraft = new OrderedEntitySetView<>(builder.getAPI().getMinecraftAccounts(), AbstractMinecraftAccount.class);
+
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_create")) {
+            stmt.setLong(1, id);
+            stmt.setString(2, builder.getName());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return new BackendUser(builder.getAPI(), id, builder.getName(), discord, minecraft);
     }
 
     @Override
     public void onUserModify(@NotNull DatabaseUserModifier modifier) throws DatabaseException {
-        // TODO
+        String oldName = modifier.getEntity().getName();
+        String newName = modifier.getName();
+
+        if (!Objects.equals(oldName, newName)) {
+            try (PreparedStatement stmt = this.database.preparedStatement("user/user_update_name")) {
+                stmt.setString(1, newName);
+
+                stmt.setLong(2, modifier.getEntity().getId());
+
+                stmt.execute();
+            } catch (SQLException e) {
+                throw new DatabaseException(e);
+            }
+        }
     }
 
     @Override
     public void onUserDelete(@NotNull DatabaseUserDeleteAction deleteAction) throws DatabaseException {
-        // TODO
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_delete")) {
+            stmt.setLong(1, deleteAction.getId());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
