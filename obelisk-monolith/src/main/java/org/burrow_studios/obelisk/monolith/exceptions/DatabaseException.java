@@ -1,6 +1,6 @@
 package org.burrow_studios.obelisk.monolith.exceptions;
 
-public class DatabaseException extends RuntimeException {
+public class DatabaseException extends Exception {
     public DatabaseException() {
         super();
     }
