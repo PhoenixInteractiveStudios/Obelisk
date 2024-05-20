@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class DatabaseAdapter {
-    private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Set<IActionableDatabase> listeners = ConcurrentHashMap.newKeySet();
 
     public <T> @NotNull CompletableFuture<T> submit(@NotNull DatabaseAction<T> action) {
