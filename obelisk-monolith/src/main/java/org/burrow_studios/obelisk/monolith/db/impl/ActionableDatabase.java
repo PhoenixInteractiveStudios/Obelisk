@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.monolith.db.impl;
 
+import org.burrow_studios.obelisk.monolith.Main;
 import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountBuilder;
 import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountDeleteAction;
 import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountGetAction;
@@ -15,11 +16,67 @@ import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserDelete
 import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserGetAction;
 import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserModifier;
 import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
+import org.burrow_studios.obelisk.monolith.db.SQLDB;
 import org.burrow_studios.obelisk.monolith.entities.*;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sqlite.SQLiteConfig;
 
-public class ActionableDatabase implements IActionableDatabase {
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+
+public class ActionableDatabase implements IActionableDatabase, Closeable {
+    private static final Logger LOG = LoggerFactory.getLogger(ActionableDatabase.class);
+
+    private final SQLDB database;
+
+    public ActionableDatabase(@NotNull File file) throws DatabaseException {
+        String url = String.format("jdbc:sqlite:%s", file.getAbsolutePath());
+
+        SQLiteConfig config = new SQLiteConfig();
+        config.enforceForeignKeys(true);
+
+        LOG.info("Initializing database connection to {}", url);
+        try {
+            database = new SQLDB(url, config.toProperties(), SQLDB.resourceFunction(Main.class, "/sql/entities/"));
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        LOG.info("Creating tables");
+        try {
+            this.database.execute("users/table");
+
+            this.database.execute("discord/table");
+            this.database.execute("discord/table_users");
+
+            this.database.execute("minecraft/table");
+            this.database.execute("minecraft/table_users");
+
+            this.database.execute("ticket/table");
+            this.database.execute("ticket/table_users");
+
+            this.database.execute("project/table");
+            this.database.execute("project/table_members");
+        } catch (SQLException e) {
+            throw new DatabaseException("Could not create tables", e);
+        }
+
+        LOG.info("Database is online");
+    }
+
+    @Override
+    public void close() throws IOException {
+        LOG.warn("Shutting down");
+        this.database.close();
+    }
+
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - */
+
     @Override
     public BackendUser onUserGet(@NotNull DatabaseUserGetAction action) throws DatabaseException {
         // TODO
