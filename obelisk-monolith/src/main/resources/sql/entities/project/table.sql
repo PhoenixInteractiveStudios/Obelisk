@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS `projects`(
+    `id` BIGINT(20) NOT NULL PRIMARY KEY,
+    `title` TEXT NOT NULL,
+    `state` TEXT NOT NULL
+);

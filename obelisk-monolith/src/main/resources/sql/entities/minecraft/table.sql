@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS `minecraft`(
+    `id` BIGINT(20) NOT NULL PRIMARY KEY,
+    `uuid` TEXT NOT NULL UNIQUE,
+    `name` TEXT
+);
