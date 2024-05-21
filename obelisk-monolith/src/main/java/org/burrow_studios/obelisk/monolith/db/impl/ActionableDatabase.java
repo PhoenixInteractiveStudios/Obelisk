@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.monolith.db.impl;
 
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.Ticket;
+import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.core.cache.OrderedEntitySetView;
 import org.burrow_studios.obelisk.core.entities.AbstractDiscordAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractMinecraftAccount;
@@ -377,24 +378,80 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
 
     @Override
     public BackendDiscordAccount onDiscordAccountGet(@NotNull DatabaseDiscordAccountGetAction action) throws DatabaseException {
-        // TODO
-        return null;
+        try (
+                PreparedStatement stmt0 = this.database.preparedStatement("discord/discord_get");
+                PreparedStatement stmt1 = this.database.preparedStatement("discord/user_get");
+        ) {
+            stmt0.setLong(1, action.getId());
+            stmt1.setLong(1, action.getId());
+
+            ResultSet  res = stmt0.executeQuery();
+            ResultSet uRes = stmt1.executeQuery();
+
+            if (!res.next())
+                throw new NoSuchEntryException();
+
+            return EntityProvider.getDiscordAccount(action.getAPI(), action.getId(), res, uRes);
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
     public BackendDiscordAccount onDiscordAccountBuild(@NotNull DatabaseDiscordAccountBuilder builder) throws DatabaseException {
-        // TODO
-        return null;
+        long id = 0; // TODO: generate id
+
+        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_create")) {
+            stmt.setLong(1, id);
+            stmt.setLong(2, builder.getSnowflake());
+            stmt.setString(3, builder.getName());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        if (builder.getUser() != null) {
+            // TODO: create link
+        }
+
+        return new BackendDiscordAccount(builder.getAPI(), id, builder.getSnowflake(), builder.getName(), ((AbstractUser) builder.getUser()));
     }
 
     @Override
     public void onDiscordAccountModify(@NotNull DatabaseDiscordAccountModifier modifier) throws DatabaseException {
-        // TODO
+        String oldName = modifier.getEntity().getCachedName();
+        String newName = modifier.getName();
+
+        if (!Objects.equals(oldName, newName)) {
+            try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_update_name")) {
+                stmt.setString(1, newName);
+
+                stmt.setLong(2, modifier.getEntity().getId());
+
+                stmt.execute();
+            } catch (SQLException e) {
+                throw new DatabaseException(e);
+            }
+        }
+
+        User oldUser = modifier.getEntity().getUser();
+        User newUser = modifier.getUser();
+
+        if (!Objects.equals(oldUser, newUser)) {
+            // TODO: create link
+        }
     }
 
     @Override
     public void onDiscordAccountDelete(@NotNull DatabaseDiscordAccountDeleteAction deleteAction) throws DatabaseException {
-        // TODO
+        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_delete")) {
+            stmt.setLong(1, deleteAction.getId());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
