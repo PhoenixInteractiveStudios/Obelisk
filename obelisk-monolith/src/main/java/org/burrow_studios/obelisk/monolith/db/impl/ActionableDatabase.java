@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.monolith.db.impl;
 
+import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.core.cache.OrderedEntitySetView;
 import org.burrow_studios.obelisk.core.entities.AbstractDiscordAccount;
@@ -268,34 +269,110 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
 
     @Override
     public BackendProject onProjectGet(@NotNull DatabaseProjectGetAction action) throws DatabaseException {
-        // TODO
-        return null;
+        try (
+                PreparedStatement stmt0 = this.database.preparedStatement("project/project_get");
+                PreparedStatement stmt1 = this.database.preparedStatement("project/users_get");
+        ) {
+            stmt0.setLong(1, action.getId());
+            stmt1.setLong(1, action.getId());
+
+            ResultSet  res = stmt0.executeQuery();
+            ResultSet mRes = stmt1.executeQuery();
+
+            if (!res.next())
+                throw new NoSuchEntryException();
+
+            return EntityProvider.getProject(action.getAPI(), action.getId(), res, mRes);
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
     public BackendProject onProjectBuild(@NotNull DatabaseProjectBuilder builder) throws DatabaseException {
-        // TODO
-        return null;
+        long id = 0; // TODO: generate id
+
+        OrderedEntitySetView<AbstractUser> members = new OrderedEntitySetView<>(builder.getAPI().getUsers(), AbstractUser.class);
+
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_create")) {
+            stmt.setLong(1, id);
+            stmt.setString(2, builder.getTitle());
+            stmt.setString(3, builder.getState().name());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return new BackendProject(builder.getAPI(), id, builder.getTitle(), builder.getState(), members);
     }
 
     @Override
     public void onProjectModify(@NotNull DatabaseProjectModifier modifier) throws DatabaseException {
-        // TODO
+        String oldTitle = modifier.getEntity().getTitle();
+        String newTitle = modifier.getTitle();
+
+        if (!Objects.equals(oldTitle, newTitle)) {
+            try (PreparedStatement stmt = this.database.preparedStatement("project/project_update_title")) {
+                stmt.setString(1, newTitle);
+
+                stmt.setLong(2, modifier.getEntity().getId());
+
+                stmt.execute();
+            } catch (SQLException e) {
+                throw new DatabaseException(e);
+            }
+        }
+
+        Project.State oldState = modifier.getEntity().getState();
+        Project.State newState = modifier.getState();
+
+        if (!Objects.equals(oldState, newState)) {
+            try (PreparedStatement stmt = this.database.preparedStatement("project/project_update_state")) {
+                stmt.setString(1, newState.name());
+
+                stmt.setLong(2, modifier.getEntity().getId());
+
+                stmt.execute();
+            } catch (SQLException e) {
+                throw new DatabaseException(e);
+            }
+        }
     }
 
     @Override
     public void onProjectDelete(@NotNull DatabaseProjectDeleteAction deleteAction) throws DatabaseException {
-        // TODO
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_delete")) {
+            stmt.setLong(1, deleteAction.getId());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
     public void onProjectUserAdd(@NotNull DatabaseProjectUserAddAction action) throws DatabaseException {
-        // TODO
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_members_add")) {
+            stmt.setLong(1, action.getProject().getId());
+            stmt.setLong(2, action.getUser().getId());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
     public void onProjectUserRemove(@NotNull DatabaseProjectUserRemoveAction action) throws DatabaseException {
-        // TODO
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_members_remove")) {
+            stmt.setLong(1, action.getProject().getId());
+            stmt.setLong(2, action.getUser().getId());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override

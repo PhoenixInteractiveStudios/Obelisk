@@ -1,15 +1,13 @@
 package org.burrow_studios.obelisk.monolith.db.impl;
 
+import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.core.cache.OrderedEntitySetView;
 import org.burrow_studios.obelisk.core.entities.AbstractDiscordAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractMinecraftAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
-import org.burrow_studios.obelisk.monolith.entities.BackendDiscordAccount;
-import org.burrow_studios.obelisk.monolith.entities.BackendMinecraftAccount;
-import org.burrow_studios.obelisk.monolith.entities.BackendTicket;
-import org.burrow_studios.obelisk.monolith.entities.BackendUser;
+import org.burrow_studios.obelisk.monolith.entities.*;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.burrow_studios.obelisk.monolith.exceptions.NoSuchEntryException;
 import org.jetbrains.annotations.NotNull;
@@ -91,5 +89,37 @@ public class EntityProvider {
         }
 
         return ticket;
+    }
+
+    public static @NotNull BackendProject getProject(@NotNull ObeliskMonolith obelisk, long id, @NotNull ResultSet res, @NotNull ResultSet mRes) throws SQLException, DatabaseException {
+        OrderedEntitySetView<AbstractUser> members = new OrderedEntitySetView<>(obelisk.getUsers(), AbstractUser.class);
+
+        if (!res.next())
+            throw new NoSuchEntryException();
+
+        String        title = res.getString("title");
+        Project.State state = Project.State.valueOf(res.getString("state"));
+
+        BackendProject project = new BackendProject(obelisk, id, title, state, members);
+
+        while (mRes.next()) {
+            final long   userId   = mRes.getLong("id");
+            final String userName = mRes.getString("name");
+
+            AbstractUser user = obelisk.getUser(userId);
+
+            if (user == null) {
+                OrderedEntitySetView<AbstractDiscordAccount>   discordAccounts   = new OrderedEntitySetView<>(obelisk.getDiscordAccounts(),   AbstractDiscordAccount.class);
+                OrderedEntitySetView<AbstractMinecraftAccount> minecraftAccounts = new OrderedEntitySetView<>(obelisk.getMinecraftAccounts(), AbstractMinecraftAccount.class);
+
+                // TODO: queue background job to fill discord & minecraft
+
+                user = new BackendUser(obelisk, userId, userName, discordAccounts, minecraftAccounts);
+            }
+
+            members.add(user);
+        }
+
+        return project;
     }
 }
