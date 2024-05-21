@@ -1,8 +1,10 @@
 package org.burrow_studios.obelisk.monolith.db.impl;
 
+import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.core.cache.OrderedEntitySetView;
 import org.burrow_studios.obelisk.core.entities.AbstractDiscordAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractMinecraftAccount;
+import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.Main;
 import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountBuilder;
 import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountDeleteAction;
@@ -158,34 +160,110 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
 
     @Override
     public BackendTicket onTicketGet(@NotNull DatabaseTicketGetAction action) throws DatabaseException {
-        // TODO
-        return null;
+        try (
+                PreparedStatement stmt0 = this.database.preparedStatement("ticket/ticket_get");
+                PreparedStatement stmt1 = this.database.preparedStatement("ticket/users_get");
+        ) {
+            stmt0.setLong(1, action.getId());
+            stmt1.setLong(1, action.getId());
+
+            ResultSet  res = stmt0.executeQuery();
+            ResultSet uRes = stmt1.executeQuery();
+
+            if (!res.next())
+                throw new NoSuchEntryException();
+
+            return EntityProvider.getTicket(action.getAPI(), action.getId(), res, uRes);
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
     public BackendTicket onTicketBuild(@NotNull DatabaseTicketBuilder builder) throws DatabaseException {
-        // TODO
-        return null;
+        long id = 0; // TODO: generate id
+
+        OrderedEntitySetView<AbstractUser> users = new OrderedEntitySetView<>(builder.getAPI().getUsers(), AbstractUser.class);
+
+        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_create")) {
+            stmt.setLong(1, id);
+            stmt.setString(2, builder.getTitle());
+            stmt.setString(3, builder.getState().name());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return new BackendTicket(builder.getAPI(), id, builder.getTitle(), builder.getState(), users);
     }
 
     @Override
     public void onTicketModify(@NotNull DatabaseTicketModifier modifier) throws DatabaseException {
-        // TODO
+        String oldTitle = modifier.getEntity().getTitle();
+        String newTitle = modifier.getTitle();
+
+        if (!Objects.equals(oldTitle, newTitle)) {
+            try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_update_title")) {
+                stmt.setString(1, newTitle);
+
+                stmt.setLong(2, modifier.getEntity().getId());
+
+                stmt.execute();
+            } catch (SQLException e) {
+                throw new DatabaseException(e);
+            }
+        }
+
+        Ticket.State oldState = modifier.getEntity().getState();
+        Ticket.State newState = modifier.getState();
+
+        if (!Objects.equals(oldState, newState)) {
+            try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_update_state")) {
+                stmt.setString(1, newState.name());
+
+                stmt.setLong(2, modifier.getEntity().getId());
+
+                stmt.execute();
+            } catch (SQLException e) {
+                throw new DatabaseException(e);
+            }
+        }
     }
 
     @Override
     public void onTicketDelete(@NotNull DatabaseTicketDeleteAction deleteAction) throws DatabaseException {
-        // TODO
+        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_delete")) {
+            stmt.setLong(1, deleteAction.getId());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
     public void onTicketUserAdd(@NotNull DatabaseTicketUserAddAction action) throws DatabaseException {
-        // TODO
+        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_users_add")) {
+            stmt.setLong(1, action.getTicket().getId());
+            stmt.setLong(2, action.getUser().getId());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
     public void onTicketUserRemove(@NotNull DatabaseTicketUserRemoveAction action) throws DatabaseException {
-        // TODO
+        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_users_remove")) {
+            stmt.setLong(1, action.getTicket().getId());
+            stmt.setLong(2, action.getUser().getId());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
