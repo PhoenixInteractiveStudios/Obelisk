@@ -150,4 +150,32 @@ public class EntityProvider {
 
         return new BackendDiscordAccount(obelisk, id, snowflake, cachedName, user);
     }
+
+    public static @NotNull BackendMinecraftAccount getMinecraftAccount(@NotNull ObeliskMonolith obelisk, long id, @NotNull ResultSet res, @NotNull ResultSet uRes) throws SQLException, DatabaseException {
+        if (!res.next())
+            throw new NoSuchEntryException();
+
+        UUID   uuid       = UUID.fromString(res.getString("uuid"));
+        String cachedName = res.getString("name");
+
+        AbstractUser user = null;
+
+        if (uRes.next()) {
+            final long   userId   = uRes.getLong("id");
+            final String userName = uRes.getString("name");
+
+            user = obelisk.getUser(userId);
+
+            if (user == null) {
+                OrderedEntitySetView<AbstractDiscordAccount>   discordAccounts   = new OrderedEntitySetView<>(obelisk.getDiscordAccounts(),   AbstractDiscordAccount.class);
+                OrderedEntitySetView<AbstractMinecraftAccount> minecraftAccounts = new OrderedEntitySetView<>(obelisk.getMinecraftAccounts(), AbstractMinecraftAccount.class);
+
+                // TODO: queue background job to fill discord & minecraft
+
+                user = new BackendUser(obelisk, userId, userName, discordAccounts, minecraftAccounts);
+            }
+        }
+
+        return new BackendMinecraftAccount(obelisk, id, uuid, cachedName, user);
+    }
 }
