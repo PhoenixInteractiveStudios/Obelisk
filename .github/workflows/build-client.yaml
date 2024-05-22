@@ -17,6 +17,7 @@ on:
       - "obelisk-core/**"
       - "obelisk-util/**"
       - "obelisk-client/**"
+  workflow_dispatch:
 
 jobs:
   build:

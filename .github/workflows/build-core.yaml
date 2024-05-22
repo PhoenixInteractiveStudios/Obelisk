@@ -13,6 +13,7 @@ on:
     paths:
       - "obelisk-api/**"
       - "obelisk-core/**"
+  workflow_dispatch:
 
 jobs:
   build:
