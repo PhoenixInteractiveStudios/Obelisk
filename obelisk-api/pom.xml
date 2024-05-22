@@ -78,6 +78,11 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <additionalOptions>
+                        <additionalOption>-Xdoclint:none</additionalOption>
+                    </additionalOptions>
+                </configuration>
             </plugin>
         </plugins>
     </build>
