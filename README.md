@@ -25,7 +25,7 @@
 
 # Obelisk
 
-Obelisk is the Burrow Studios API. This repository servers as a monorepo for all projects that form the backend and any
+Obelisk is the Burrow Studios API. This repository serves as a monorepo for all projects that form the backend and any
 API clients.
 
 ### ⚠️ Early development notice ⚠️
