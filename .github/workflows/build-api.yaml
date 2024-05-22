@@ -27,4 +27,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build API Module
-        run: mvn -B package --file obelisk-api/pom.xml --batch-mode
+        run: mvn -B package --file obelisk-api/pom.xml

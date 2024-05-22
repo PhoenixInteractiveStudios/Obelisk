@@ -39,4 +39,4 @@ jobs:
       - name: Install Core Module
         run: mvn -B clean install --file obelisk-core/pom.xml
       - name: Build Client Module
-        run: mvn -B package --file obelisk-client/pom.xml --batch-mode
+        run: mvn -B package --file obelisk-client/pom.xml

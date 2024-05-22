@@ -27,4 +27,4 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build Util Module
-        run: mvn -B package --file obelisk-util/pom.xml --batch-mode
+        run: mvn -B package --file obelisk-util/pom.xml
