@@ -26,5 +26,5 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-      - name: Build with Maven
-        run: mvn -B package --file obelisk-util/pom.xml --also-make --batch-mode
+      - name: Build Util Module
+        run: mvn -B package --file obelisk-util/pom.xml --batch-mode

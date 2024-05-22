@@ -32,5 +32,11 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-      - name: Build with Maven
-        run: mvn -B package --file obelisk-monolith/pom.xml --also-make --batch-mode
+      - name: Install Utils Module
+        run: mvn -B clean install --file obelisk-util/pom.xml
+      - name: Install API Module
+        run: mvn -B clean install --file obelisk-api/pom.xml
+      - name: Install Core Module
+        run: mvn -B clean install --file obelisk-core/pom.xml
+      - name: Build Monolith Module
+        run: mvn -B package --file obelisk-monolith/pom.xml --batch-mode
