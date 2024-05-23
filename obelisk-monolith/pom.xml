@@ -88,7 +88,7 @@
                 <directory>src/main/resources/sql</directory>
                 <targetPath>sql</targetPath>
                 <includes>
-                    <include>*.sql</include>
+                    <include>**/*.sql</include>
                 </includes>
             </resource>
         </resources>
