@@ -60,7 +60,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
 
         LOG.info("Creating tables");
         try {
-            this.database.execute("users/table");
+            this.database.execute("user/table");
 
             this.database.execute("discord/table");
             this.database.execute("discord/table_users");
