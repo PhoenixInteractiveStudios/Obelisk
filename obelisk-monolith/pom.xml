@@ -83,6 +83,14 @@
                 </includes>
             </resource>
 
+            <!-- Logging configuration -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>logback.xml</include>
+                </includes>
+            </resource>
+
             <!-- SQL statements -->
             <resource>
                 <directory>src/main/resources/sql</directory>
