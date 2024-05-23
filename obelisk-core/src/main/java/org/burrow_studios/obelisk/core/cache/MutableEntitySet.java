@@ -10,4 +10,6 @@ public interface MutableEntitySet<E extends AbstractEntity> extends EntitySet<E>
     void remove(@NotNull E entity);
 
     void remove(long id);
+
+    void clear();
 }

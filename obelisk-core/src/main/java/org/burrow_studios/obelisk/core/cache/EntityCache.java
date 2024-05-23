@@ -92,4 +92,10 @@ public final class EntityCache<E extends AbstractEntity> implements EntitySet<E>
         this.views.forEach(view -> view.forget(id));
         this.data.remove(id);
     }
+
+    @Override
+    public void clear() {
+        this.views.forEach(IEntitySetView::clear);
+        this.data.clear();
+    }
 }

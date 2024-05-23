@@ -101,4 +101,9 @@ public final class EntitySetView<E extends AbstractEntity> implements EntitySet<
     public void forget(long id) {
         this.remove(id);
     }
+
+    @Override
+    public void clear() {
+        this.data.clear();
+    }
 }
