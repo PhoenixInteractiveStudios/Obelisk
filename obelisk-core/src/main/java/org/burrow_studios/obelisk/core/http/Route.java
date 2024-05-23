@@ -12,6 +12,7 @@ public class Route {
     }
 
     public static class User {
+        public static final Route LIST_USERS  = new Route(GET, "users");
         public static final Route GET_USER    = new Route(GET, "users/{user_id}");
         public static final Route CREATE_USER = new Route(POST, "users");
         public static final Route DELETE_USER = new Route(DELETE, "users/{user_id}");
@@ -19,6 +20,7 @@ public class Route {
     }
 
     public static class Discord {
+        public static final Route LIST_DISCORD_ACCOUNTS  = new Route(GET, "accounts/discord");
         public static final Route GET_DISCORD_ACCOUNT    = new Route(GET, "accounts/discord/{discord_account_id}");
         public static final Route CREATE_DISCORD_ACCOUNT = new Route(POST, "accounts/discord");
         public static final Route DELETE_DISCORD_ACCOUNT = new Route(DELETE, "accounts/discord/{discord_account_id}");
@@ -26,6 +28,7 @@ public class Route {
     }
 
     public static class Minecraft {
+        public static final Route LIST_MINECRAFT_ACCOUNTS  = new Route(GET, "accounts/minecraft");
         public static final Route GET_MINECRAFT_ACCOUNT    = new Route(GET, "accounts/minecraft/{minecraft_account_id}");
         public static final Route CREATE_MINECRAFT_ACCOUNT = new Route(POST, "accounts/minecraft");
         public static final Route DELETE_MINECRAFT_ACCOUNT = new Route(DELETE, "accounts/minecraft/{minecraft_account_id}");
@@ -33,6 +36,7 @@ public class Route {
     }
 
     public static class Ticket {
+        public static final Route LIST_TICKETS  = new Route(GET, "tickets");
         public static final Route GET_TICKET    = new Route(GET, "tickets/{ticket_id}");
         public static final Route CREATE_TICKET = new Route(POST, "tickets");
         public static final Route DELETE_TICKET = new Route(DELETE, "tickets/{ticket_id}");
@@ -42,6 +46,7 @@ public class Route {
     }
 
     public static class Project {
+        public static final Route LIST_PROJECTS  = new Route(GET, "projects");
         public static final Route GET_PROJECT    = new Route(GET, "projects/{project_id}");
         public static final Route CREATE_PROJECT = new Route(POST, "projects");
         public static final Route DELETE_PROJECT = new Route(DELETE, "projects/{project_id}");
