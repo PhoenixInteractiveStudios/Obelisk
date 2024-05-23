@@ -9,22 +9,29 @@ import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserBuilde
 import org.burrow_studios.obelisk.monolith.db.DatabaseAdapter;
 import org.burrow_studios.obelisk.monolith.db.impl.ActionableDatabase;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
+import org.burrow_studios.obelisk.monolith.http.HTTPServer;
+import org.burrow_studios.obelisk.util.EnvUtil;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 
 public class ObeliskMonolith extends AbstractObelisk {
     private static final Logger LOG = LoggerFactory.getLogger(ObeliskMonolith.class);
 
     private final DatabaseAdapter databaseAdapter;
+    private final HTTPServer apiServer;
 
-    public ObeliskMonolith() throws DatabaseException {
+    public ObeliskMonolith() throws DatabaseException, IOException {
         super();
 
         this.databaseAdapter = new DatabaseAdapter();
         this.databaseAdapter.registerDatabase(new ActionableDatabase(new File(Main.DIR, "entities.db")));
+
+        this.apiServer = new HTTPServer(EnvUtil.getInt("API_PORT", 80));
+        this.apiServer.start();
     }
 
     public @NotNull DatabaseAdapter getDatabaseAdapter() {
