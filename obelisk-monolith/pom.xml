@@ -74,6 +74,15 @@
 
 
         <resources>
+            <!-- Write version into resource file -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>meta.properties</include>
+                </includes>
+            </resource>
+
             <!-- SQL statements -->
             <resource>
                 <directory>src/main/resources/sql</directory>
