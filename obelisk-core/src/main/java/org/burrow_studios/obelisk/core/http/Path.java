@@ -2,6 +2,8 @@ package org.burrow_studios.obelisk.core.http;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Function;
+
 public class Path {
     /** Characters that can be used in an endpoint path. */
     private static final String LEGAL_CHARS_PATH = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~!$&'()*+,;=:@";
@@ -53,5 +55,9 @@ public class Path {
         }
 
         return true;
+    }
+
+    public <T> T parsePathSegment(int index, @NotNull Function<String, T> func) {
+        return func.apply(this.segments[index]);
     }
 }

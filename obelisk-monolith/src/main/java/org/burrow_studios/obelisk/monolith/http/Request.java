@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.function.Function;
 
 public class Request {
     private final HttpExchange rawExchange;
@@ -47,5 +48,9 @@ public class Request {
 
     public @NotNull Map<String, String> getHeaders() {
         return Collections.unmodifiableMap(this.headers);
+    }
+
+    public <T> T parsePathSegment(int index, @NotNull Function<String, T> func) {
+        return this.getRoute().getPath().parsePathSegment(index, func);
     }
 }
