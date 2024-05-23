@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.api;
 
+import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.api.action.entity.discord.MinecraftAccountBuilder;
 import org.burrow_studios.obelisk.api.action.entity.minecraft.DiscordAccountBuilder;
 import org.burrow_studios.obelisk.api.action.entity.project.ProjectBuilder;
@@ -43,6 +44,26 @@ public interface Obelisk {
     @NotNull EntitySet<? extends MinecraftAccount> getMinecraftAccounts();
 
     @Nullable MinecraftAccount getMinecraftAccount(long id);
+
+    @NotNull Action<? extends EntitySet<? extends User>> retrieveUsers();
+
+    @NotNull Action<? extends EntitySet<? extends Ticket>> retrieveTickets();
+
+    @NotNull Action<? extends EntitySet<? extends Project>> retrieveProjects();
+
+    @NotNull Action<? extends EntitySet<? extends DiscordAccount>> retrieveDiscordAccounts();
+
+    @NotNull Action<? extends EntitySet<? extends MinecraftAccount>> retrieveMinecraftAccounts();
+
+    @NotNull Action<? extends User> retrieveUser(long id);
+
+    @NotNull Action<? extends Ticket> retrieveTicket(long id);
+
+    @NotNull Action<? extends Project> retrieveProject(long id);
+
+    @NotNull Action<? extends DiscordAccount> retrieveDiscordAccount(long id);
+
+    @NotNull Action<? extends MinecraftAccount> retrieveMinecraftAccount(long id);
 
     @NotNull UserBuilder createUser();
 

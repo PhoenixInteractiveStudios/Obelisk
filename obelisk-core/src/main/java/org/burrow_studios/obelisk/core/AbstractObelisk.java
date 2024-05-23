@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.core;
 
 import org.burrow_studios.obelisk.api.Obelisk;
 import org.burrow_studios.obelisk.api.Status;
+import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.core.cache.EntityCache;
 import org.burrow_studios.obelisk.core.entities.*;
 import org.burrow_studios.obelisk.util.EnumLatch;
@@ -107,4 +108,34 @@ public abstract class AbstractObelisk implements Obelisk {
     public final @Nullable AbstractMinecraftAccount getMinecraftAccount(long id) {
         return this.minecraftAccountCache.get(id);
     }
+
+    @Override
+    public abstract @NotNull Action<EntityCache<AbstractUser>> retrieveUsers();
+
+    @Override
+    public abstract @NotNull Action<EntityCache<AbstractTicket>> retrieveTickets();
+
+    @Override
+    public abstract @NotNull Action<EntityCache<AbstractProject>> retrieveProjects();
+
+    @Override
+    public abstract @NotNull Action<EntityCache<AbstractDiscordAccount>> retrieveDiscordAccounts();
+
+    @Override
+    public abstract @NotNull Action<EntityCache<AbstractMinecraftAccount>> retrieveMinecraftAccounts();
+
+    @Override
+    public abstract @NotNull Action<? extends AbstractUser> retrieveUser(long id);
+
+    @Override
+    public abstract @NotNull Action<? extends AbstractTicket> retrieveTicket(long id);
+
+    @Override
+    public abstract @NotNull Action<? extends AbstractProject> retrieveProject(long id);
+
+    @Override
+    public abstract @NotNull Action<? extends AbstractDiscordAccount> retrieveDiscordAccount(long id);
+
+    @Override
+    public abstract @NotNull Action<? extends AbstractMinecraftAccount> retrieveMinecraftAccount(long id);
 }
