@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.core.entities;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.core.AbstractObelisk;
 import org.burrow_studios.obelisk.core.cache.OrderedEntitySetView;
@@ -22,6 +24,35 @@ public abstract class AbstractUser extends AbstractEntity implements User {
         this.name = name;
         this.discordAccounts = discordAccounts;
         this.minecraftAccounts = minecraftAccounts;
+    }
+
+    @Override
+    public final @NotNull JsonObject toJson() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", this.id);
+        json.addProperty("name", this.name);
+
+        JsonArray discord = new JsonArray();
+        this.discordAccounts.forEach(acc -> {
+            JsonObject dJson = new JsonObject();
+            dJson.addProperty("id", acc.getId());
+            dJson.addProperty("snowflake", acc.getSnowflake());
+            dJson.addProperty("name", acc.getCachedName());
+            discord.add(dJson);
+        });
+        json.add("discord", discord);
+
+        JsonArray minecraft = new JsonArray();
+        this.minecraftAccounts.forEach(acc -> {
+            JsonObject mJson = new JsonObject();
+            mJson.addProperty("id", acc.getId());
+            mJson.addProperty("uuid", acc.getUUID().toString());
+            mJson.addProperty("name", acc.getCachedName());
+            minecraft.add(mJson);
+        });
+        json.add("minecraft", minecraft);
+
+        return json;
     }
 
     @Override

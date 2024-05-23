@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.core.entities;
 
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.DiscordAccount;
 import org.burrow_studios.obelisk.core.AbstractObelisk;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +23,27 @@ public abstract class AbstractDiscordAccount extends AbstractEntity implements D
         this.snowflake = snowflake;
         this.cachedName = cachedName;
         this.user = user;
+    }
+
+    @Override
+    public final @NotNull JsonObject toJson() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", this.id);
+        json.addProperty("snowflake", this.snowflake);
+        json.addProperty("name", this.cachedName);
+
+        // prevent concurrent modifications
+        AbstractUser user = this.user;
+        if (user == null) {
+            json.add("user", JsonNull.INSTANCE);
+        } else {
+            JsonObject uJson = new JsonObject();
+            uJson.addProperty("id", user.getId());
+            uJson.addProperty("name", user.getName());
+            json.add("user", uJson);
+        }
+
+        return json;
     }
 
     @Override

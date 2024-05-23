@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.core.entities;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.core.AbstractObelisk;
 import org.burrow_studios.obelisk.core.cache.OrderedEntitySetView;
@@ -21,6 +23,25 @@ public abstract class AbstractProject extends AbstractEntity implements Project 
         this.title = title;
         this.state = state;
         this.members = members;
+    }
+
+    @Override
+    public final @NotNull JsonObject toJson() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", this.id);
+        json.addProperty("title", this.title);
+        json.addProperty("state", state.name());
+
+        JsonArray members = new JsonArray();
+        this.members.forEach(user -> {
+            JsonObject uJson = new JsonObject();
+            uJson.addProperty("id", user.getId());
+            uJson.addProperty("name", user.getName());
+            members.add(members);
+        });
+        json.add("members", members);
+
+        return json;
     }
 
     @Override

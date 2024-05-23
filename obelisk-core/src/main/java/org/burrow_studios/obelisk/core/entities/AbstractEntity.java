@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.core.entities;
 
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.entities.IEntity;
 import org.burrow_studios.obelisk.core.AbstractObelisk;
 import org.jetbrains.annotations.NotNull;
@@ -22,4 +23,6 @@ public abstract class AbstractEntity implements IEntity {
     public final long getId() {
         return this.id;
     }
+
+    public abstract @NotNull JsonObject toJson();
 }
