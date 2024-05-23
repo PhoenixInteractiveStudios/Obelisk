@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.monolith;
 
+import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
+
 import java.io.File;
 import java.net.URISyntaxException;
 
@@ -18,7 +20,7 @@ public class Main {
     }
 
     /** JVM entrypoint */
-    public static void main(String[] args) {
-        // TODO
+    public static void main(String[] args) throws DatabaseException {
+        ObeliskMonolith obelisk = new ObeliskMonolith();
     }
 }
