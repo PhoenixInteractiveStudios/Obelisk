@@ -39,8 +39,8 @@ public class ObeliskMonolith extends AbstractObelisk {
     public ObeliskMonolith() throws DatabaseException, IOException {
         super();
 
-        this.databaseAdapter = new DatabaseAdapter();
-        this.databaseAdapter.registerDatabase(new ActionableDatabase(new File(Main.DIR, "entities.db")));
+        final ActionableDatabase database = new ActionableDatabase(new File(Main.DIR, "entities.db"));
+        this.databaseAdapter = new DatabaseAdapter(database);
 
         this.apiServer = new HTTPServer(EnvUtil.getInt("API_PORT", 80));
 
