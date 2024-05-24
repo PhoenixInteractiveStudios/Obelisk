@@ -7,7 +7,6 @@ import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.core.entities.AbstractTicket;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketBuilder;
-import org.burrow_studios.obelisk.monolith.entities.BackendTicket;
 import org.burrow_studios.obelisk.monolith.http.Request;
 import org.burrow_studios.obelisk.monolith.http.Response;
 import org.burrow_studios.obelisk.monolith.http.exceptions.BadRequestException;
@@ -75,9 +74,9 @@ public class TicketHandler {
                 .get();
         builder.setState(state);
 
-        BackendTicket ticket;
+        AbstractTicket ticket;
         try {
-            ticket = ((BackendTicket) builder.await());
+            ticket = ((AbstractTicket) builder.await());
         } catch (ExecutionException | InterruptedException e) {
             throw new InternalServerErrorException();
         }
@@ -85,6 +84,23 @@ public class TicketHandler {
         return new Response.Builder()
                 .setBody(ticket.toJson())
                 .setStatus(201)
+                .build();
+    }
+
+    public @NotNull Response onDelete(@NotNull Request request) throws RequestHandlerException {
+        final long ticketId = request.parsePathSegment(1, Long::parseLong);
+
+        Ticket ticket = this.obelisk.getTicket(ticketId);
+
+        if (ticket != null)
+            try {
+                ticket.delete().await();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new InternalServerErrorException();
+            }
+
+        return new Response.Builder()
+                .setStatus(204)
                 .build();
     }
 }

@@ -3,11 +3,11 @@ package org.burrow_studios.obelisk.monolith.http.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.entities.DiscordAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractDiscordAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountBuilder;
-import org.burrow_studios.obelisk.monolith.entities.BackendDiscordAccount;
 import org.burrow_studios.obelisk.monolith.http.Request;
 import org.burrow_studios.obelisk.monolith.http.Response;
 import org.burrow_studios.obelisk.monolith.http.exceptions.BadRequestException;
@@ -88,9 +88,9 @@ public class DiscordAccountHandler {
             builder.setUser(user);
         }
 
-        BackendDiscordAccount discordAccount;
+        AbstractDiscordAccount discordAccount;
         try {
-            discordAccount = ((BackendDiscordAccount) builder.await());
+            discordAccount = ((AbstractDiscordAccount) builder.await());
         } catch (ExecutionException | InterruptedException e) {
             throw new InternalServerErrorException();
         }
@@ -98,6 +98,23 @@ public class DiscordAccountHandler {
         return new Response.Builder()
                 .setBody(discordAccount.toJson())
                 .setStatus(201)
+                .build();
+    }
+
+    public @NotNull Response onDelete(@NotNull Request request) throws RequestHandlerException {
+        final long discordAccountId = request.parsePathSegment(1, Long::parseLong);
+
+        DiscordAccount discordAccount = this.obelisk.getDiscordAccount(discordAccountId);
+
+        if (discordAccount != null)
+            try {
+                discordAccount.delete().await();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new InternalServerErrorException();
+            }
+
+        return new Response.Builder()
+                .setStatus(204)
                 .build();
     }
 }

@@ -3,10 +3,10 @@ package org.burrow_studios.obelisk.monolith.http.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserBuilder;
-import org.burrow_studios.obelisk.monolith.entities.BackendUser;
 import org.burrow_studios.obelisk.monolith.http.Request;
 import org.burrow_studios.obelisk.monolith.http.Response;
 import org.burrow_studios.obelisk.monolith.http.exceptions.BadRequestException;
@@ -65,9 +65,9 @@ public class UserHandler {
                 .get();
         builder.setName(name);
 
-        BackendUser user;
+        AbstractUser user;
         try {
-            user = ((BackendUser) builder.await());
+            user = ((AbstractUser) builder.await());
         } catch (ExecutionException | InterruptedException e) {
             throw new InternalServerErrorException();
         }
@@ -75,6 +75,23 @@ public class UserHandler {
         return new Response.Builder()
                 .setBody(user.toJson())
                 .setStatus(201)
+                .build();
+    }
+
+    public @NotNull Response onDelete(@NotNull Request request) throws RequestHandlerException {
+        final long userId = request.parsePathSegment(1, Long::parseLong);
+
+        User user = this.obelisk.getUser(userId);
+
+        if (user != null)
+            try {
+                user.delete().await();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new InternalServerErrorException();
+            }
+
+        return new Response.Builder()
+                .setStatus(204)
                 .build();
     }
 }

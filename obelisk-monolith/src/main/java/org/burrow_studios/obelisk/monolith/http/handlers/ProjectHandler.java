@@ -7,7 +7,6 @@ import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.core.entities.AbstractProject;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectBuilder;
-import org.burrow_studios.obelisk.monolith.entities.BackendProject;
 import org.burrow_studios.obelisk.monolith.http.Request;
 import org.burrow_studios.obelisk.monolith.http.Response;
 import org.burrow_studios.obelisk.monolith.http.exceptions.BadRequestException;
@@ -73,9 +72,9 @@ public class ProjectHandler {
                 .get();
         builder.setState(state);
 
-        BackendProject project;
+        AbstractProject project;
         try {
-            project = ((BackendProject) builder.await());
+            project = ((AbstractProject) builder.await());
         } catch (ExecutionException | InterruptedException e) {
             throw new InternalServerErrorException();
         }
@@ -83,6 +82,23 @@ public class ProjectHandler {
         return new Response.Builder()
                 .setBody(project.toJson())
                 .setStatus(201)
+                .build();
+    }
+
+    public @NotNull Response onDelete(@NotNull Request request) throws RequestHandlerException {
+        final long projectId = request.parsePathSegment(1, Long::parseLong);
+
+        Project project = this.obelisk.getProject(projectId);
+
+        if (project != null)
+            try {
+                project.delete().await();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new InternalServerErrorException();
+            }
+
+        return new Response.Builder()
+                .setStatus(204)
                 .build();
     }
 }

@@ -3,11 +3,11 @@ package org.burrow_studios.obelisk.monolith.http.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.entities.MinecraftAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractMinecraftAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountBuilder;
-import org.burrow_studios.obelisk.monolith.entities.BackendMinecraftAccount;
 import org.burrow_studios.obelisk.monolith.http.Request;
 import org.burrow_studios.obelisk.monolith.http.Response;
 import org.burrow_studios.obelisk.monolith.http.exceptions.BadRequestException;
@@ -90,9 +90,9 @@ public class MinecraftAccountHandler {
             builder.setUser(user);
         }
 
-        BackendMinecraftAccount minecraftAccount;
+        AbstractMinecraftAccount minecraftAccount;
         try {
-            minecraftAccount = ((BackendMinecraftAccount) builder.await());
+            minecraftAccount = ((AbstractMinecraftAccount) builder.await());
         } catch (ExecutionException | InterruptedException e) {
             throw new InternalServerErrorException();
         }
@@ -100,6 +100,23 @@ public class MinecraftAccountHandler {
         return new Response.Builder()
                 .setBody(minecraftAccount.toJson())
                 .setStatus(201)
+                .build();
+    }
+
+    public @NotNull Response onDelete(@NotNull Request request) throws RequestHandlerException {
+        final long minecraftAccountId = request.parsePathSegment(1, Long::parseLong);
+
+        MinecraftAccount minecraftAccount = this.obelisk.getMinecraftAccount(minecraftAccountId);
+
+        if (minecraftAccount != null)
+            try {
+                minecraftAccount.delete().await();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new InternalServerErrorException();
+            }
+
+        return new Response.Builder()
+                .setStatus(204)
                 .build();
     }
 }
