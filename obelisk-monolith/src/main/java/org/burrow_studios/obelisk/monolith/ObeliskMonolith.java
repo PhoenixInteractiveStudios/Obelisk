@@ -46,18 +46,23 @@ public class ObeliskMonolith extends AbstractObelisk {
 
         final UserHandler userHandler = new UserHandler(this);
         this.apiServer.addHandler(Route.User.GET_USER, userHandler::onGet);
+        this.apiServer.addHandler(Route.User.LIST_USERS, userHandler::onList);
 
         final TicketHandler ticketHandler = new TicketHandler(this);
         this.apiServer.addHandler(Route.Ticket.GET_TICKET, ticketHandler::onGet);
+        this.apiServer.addHandler(Route.Ticket.LIST_TICKETS, ticketHandler::onList);
 
         final ProjectHandler projectHandler = new ProjectHandler(this);
         this.apiServer.addHandler(Route.Project.GET_PROJECT, projectHandler::onGet);
+        this.apiServer.addHandler(Route.Project.LIST_PROJECTS, projectHandler::onList);
 
         final DiscordAccountHandler discordAccountHandler = new DiscordAccountHandler(this);
         this.apiServer.addHandler(Route.Discord.GET_DISCORD_ACCOUNT, discordAccountHandler::onGet);
+        this.apiServer.addHandler(Route.Discord.LIST_DISCORD_ACCOUNTS, discordAccountHandler::onList);
 
         final MinecraftAccountHandler minecraftAccountHandler = new MinecraftAccountHandler(this);
         this.apiServer.addHandler(Route.Minecraft.GET_MINECRAFT_ACCOUNT, minecraftAccountHandler::onGet);
+        this.apiServer.addHandler(Route.Minecraft.LIST_MINECRAFT_ACCOUNTS, minecraftAccountHandler::onList);
 
         this.apiServer.start();
     }

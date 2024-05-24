@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.monolith.http.handlers;
 
+import com.google.gson.JsonArray;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.monolith.http.Request;
@@ -13,6 +14,17 @@ public class UserHandler {
 
     public UserHandler(@NotNull ObeliskMonolith obelisk) {
         this.obelisk = obelisk;
+    }
+
+    public @NotNull Response onList(@NotNull Request request) throws RequestHandlerException {
+        JsonArray arr = new JsonArray();
+
+        this.obelisk.getUsers().forEach(users -> arr.add(users.toMinimalJson()));
+
+        return new Response.Builder()
+                .setStatus(200)
+                .setBody(arr)
+                .build();
     }
 
     public @NotNull Response onGet(@NotNull Request request) throws RequestHandlerException {
