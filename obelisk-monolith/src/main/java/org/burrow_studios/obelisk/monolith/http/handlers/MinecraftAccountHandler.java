@@ -1,13 +1,24 @@
 package org.burrow_studios.obelisk.monolith.http.handlers;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.core.entities.AbstractMinecraftAccount;
+import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
+import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountBuilder;
+import org.burrow_studios.obelisk.monolith.entities.BackendMinecraftAccount;
 import org.burrow_studios.obelisk.monolith.http.Request;
 import org.burrow_studios.obelisk.monolith.http.Response;
+import org.burrow_studios.obelisk.monolith.http.exceptions.BadRequestException;
+import org.burrow_studios.obelisk.monolith.http.exceptions.InternalServerErrorException;
 import org.burrow_studios.obelisk.monolith.http.exceptions.NotFoundException;
 import org.burrow_studios.obelisk.monolith.http.exceptions.RequestHandlerException;
+import org.burrow_studios.obelisk.util.Pipe;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 public class MinecraftAccountHandler {
     private final ObeliskMonolith obelisk;
@@ -42,6 +53,53 @@ public class MinecraftAccountHandler {
         return new Response.Builder()
                 .setBody(minecraftAccount.toJson())
                 .setStatus(200)
+                .build();
+    }
+
+    public @NotNull Response onPost(@NotNull Request request) throws RequestHandlerException {
+        JsonObject requestJson = request.requireBodyObject();
+
+        DatabaseMinecraftAccountBuilder builder = this.obelisk.createMinecraftAccount();
+
+        UUID uuid = Pipe.of(requestJson.get("uuid"), BadRequestException::new)
+                .nonNull("Missing \"uuid\" attribute")
+                .map(JsonElement::getAsString, "Malformed \"uuid\" attribute")
+                .map(UUID::fromString, "Malformed \"uuid\" attribute")
+                .get();
+        builder.setUUID(uuid);
+
+        String name = Pipe.of(requestJson.get("name"), BadRequestException::new)
+                .nonNull("Missing \"name\" attribute")
+                .map(JsonElement::getAsString, "Malformed \"name\" attribute")
+                .get();
+        builder.setCachedName(name);
+
+        Long userId = Pipe.of(requestJson.get("user"), BadRequestException::new)
+                .map(json -> {
+                    if (json == null || json.isJsonNull())
+                        return null;
+                    return json.getAsLong();
+                }, "Malformed \"user\" attribute")
+                .get();
+        if (userId != null) {
+            AbstractUser user = this.obelisk.getUser(userId);
+
+            if (user == null)
+                throw new NotFoundException("User not found");
+
+            builder.setUser(user);
+        }
+
+        BackendMinecraftAccount minecraftAccount;
+        try {
+            minecraftAccount = ((BackendMinecraftAccount) builder.await());
+        } catch (ExecutionException | InterruptedException e) {
+            throw new InternalServerErrorException();
+        }
+
+        return new Response.Builder()
+                .setBody(minecraftAccount.toJson())
+                .setStatus(201)
                 .build();
     }
 }

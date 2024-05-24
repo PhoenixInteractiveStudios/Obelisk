@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.util;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 @SuppressWarnings("DataFlowIssue")
@@ -57,5 +58,12 @@ public class Pipe<A, T extends Throwable> {
         if (ex != null)
             throw ex;
         return obj;
+    }
+
+    public void ifPresent(@NotNull Consumer<A> handler) throws T {
+        if (ex != null)
+            throw ex;
+        if (this.obj != null)
+            handler.accept(this.obj);
     }
 }

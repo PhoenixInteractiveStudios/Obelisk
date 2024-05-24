@@ -1,13 +1,23 @@
 package org.burrow_studios.obelisk.monolith.http.handlers;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.core.entities.AbstractDiscordAccount;
+import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
+import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountBuilder;
+import org.burrow_studios.obelisk.monolith.entities.BackendDiscordAccount;
 import org.burrow_studios.obelisk.monolith.http.Request;
 import org.burrow_studios.obelisk.monolith.http.Response;
+import org.burrow_studios.obelisk.monolith.http.exceptions.BadRequestException;
+import org.burrow_studios.obelisk.monolith.http.exceptions.InternalServerErrorException;
 import org.burrow_studios.obelisk.monolith.http.exceptions.NotFoundException;
 import org.burrow_studios.obelisk.monolith.http.exceptions.RequestHandlerException;
+import org.burrow_studios.obelisk.util.Pipe;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.ExecutionException;
 
 public class DiscordAccountHandler {
     private final ObeliskMonolith obelisk;
@@ -42,6 +52,52 @@ public class DiscordAccountHandler {
         return new Response.Builder()
                 .setBody(discordAccount.toJson())
                 .setStatus(200)
+                .build();
+    }
+
+    public @NotNull Response onPost(@NotNull Request request) throws RequestHandlerException {
+        JsonObject requestJson = request.requireBodyObject();
+
+        DatabaseDiscordAccountBuilder builder = this.obelisk.createDiscordAccount();
+
+        long snowflake = Pipe.of(requestJson.get("snowflake"), BadRequestException::new)
+                .nonNull("Missing \"snowflake\" attribute")
+                .map(JsonElement::getAsLong, "Malformed \"snowflake\" attribute")
+                .get();
+        builder.setSnowflake(snowflake);
+
+        String name = Pipe.of(requestJson.get("name"), BadRequestException::new)
+                .nonNull("Missing \"name\" attribute")
+                .map(JsonElement::getAsString, "Malformed \"name\" attribute")
+                .get();
+        builder.setCachedName(name);
+
+        Long userId = Pipe.of(requestJson.get("user"), BadRequestException::new)
+                .map(json -> {
+                    if (json == null || json.isJsonNull())
+                        return null;
+                    return json.getAsLong();
+                }, "Malformed \"user\" attribute")
+                .get();
+        if (userId != null) {
+            AbstractUser user = this.obelisk.getUser(userId);
+
+            if (user == null)
+                throw new NotFoundException("User not found");
+
+            builder.setUser(user);
+        }
+
+        BackendDiscordAccount discordAccount;
+        try {
+            discordAccount = ((BackendDiscordAccount) builder.await());
+        } catch (ExecutionException | InterruptedException e) {
+            throw new InternalServerErrorException();
+        }
+
+        return new Response.Builder()
+                .setBody(discordAccount.toJson())
+                .setStatus(201)
                 .build();
     }
 }

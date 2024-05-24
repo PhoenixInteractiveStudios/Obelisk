@@ -1,10 +1,12 @@
 package org.burrow_studios.obelisk.monolith.http;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 import org.burrow_studios.obelisk.core.http.Method;
 import org.burrow_studios.obelisk.core.http.Path;
 import org.burrow_studios.obelisk.core.http.Route;
+import org.burrow_studios.obelisk.monolith.http.exceptions.BadRequestException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,6 +50,18 @@ public class Request {
 
     public @NotNull Map<String, String> getHeaders() {
         return Collections.unmodifiableMap(this.headers);
+    }
+
+    public @NotNull JsonElement requireBody() throws BadRequestException {
+        if (body == null)
+            throw new BadRequestException("Missing request body");
+        return body;
+    }
+
+    public @NotNull JsonObject requireBodyObject() throws BadRequestException {
+        if (requireBody() instanceof JsonObject obj)
+            return obj;
+        throw new BadRequestException("Malformed request body");
     }
 
     public <T> T parsePathSegment(int index, @NotNull Function<String, T> func) {
