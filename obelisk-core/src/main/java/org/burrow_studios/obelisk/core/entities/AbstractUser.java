@@ -28,9 +28,7 @@ public abstract class AbstractUser extends AbstractEntity implements User {
 
     @Override
     public final @NotNull JsonObject toJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("id", this.id);
-        json.addProperty("name", this.name);
+        JsonObject json = this.toMinimalJson();
 
         JsonArray discord = new JsonArray();
         this.discordAccounts.forEach(acc -> {
@@ -52,6 +50,13 @@ public abstract class AbstractUser extends AbstractEntity implements User {
         });
         json.add("minecraft", minecraft);
 
+        return json;
+    }
+
+    public final @NotNull JsonObject toMinimalJson() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", this.id);
+        json.addProperty("name", this.name);
         return json;
     }
 

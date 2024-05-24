@@ -27,10 +27,7 @@ public abstract class AbstractProject extends AbstractEntity implements Project 
 
     @Override
     public final @NotNull JsonObject toJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("id", this.id);
-        json.addProperty("title", this.title);
-        json.addProperty("state", state.name());
+        JsonObject json = this.toMinimalJson();
 
         JsonArray members = new JsonArray();
         this.members.forEach(user -> {
@@ -41,6 +38,14 @@ public abstract class AbstractProject extends AbstractEntity implements Project 
         });
         json.add("members", members);
 
+        return json;
+    }
+
+    public final @NotNull JsonObject toMinimalJson() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", this.id);
+        json.addProperty("title", this.title);
+        json.addProperty("state", this.state.name());
         return json;
     }
 

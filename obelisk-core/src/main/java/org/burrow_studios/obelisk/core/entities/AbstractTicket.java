@@ -29,6 +29,21 @@ public abstract class AbstractTicket extends AbstractEntity implements Ticket {
 
     @Override
     public final @NotNull JsonObject toJson() {
+        JsonObject json = this.toMinimalJson();
+
+        JsonArray users = new JsonArray();
+        this.users.forEach(user -> {
+            JsonObject uJson = new JsonObject();
+            uJson.addProperty("id", user.getId());
+            uJson.addProperty("name", user.getName());
+            users.add(users);
+        });
+        json.add("users", users);
+
+        return json;
+    }
+
+    public final @NotNull JsonObject toMinimalJson() {
         JsonObject json = new JsonObject();
         json.addProperty("id", this.id);
 
@@ -41,16 +56,6 @@ public abstract class AbstractTicket extends AbstractEntity implements Ticket {
         }
 
         json.addProperty("state", state.name());
-
-        JsonArray users = new JsonArray();
-        this.users.forEach(user -> {
-            JsonObject uJson = new JsonObject();
-            uJson.addProperty("id", user.getId());
-            uJson.addProperty("name", user.getName());
-            users.add(users);
-        });
-        json.add("users", users);
-
         return json;
     }
 

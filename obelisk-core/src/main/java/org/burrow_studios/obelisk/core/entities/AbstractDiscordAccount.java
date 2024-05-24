@@ -27,10 +27,7 @@ public abstract class AbstractDiscordAccount extends AbstractEntity implements D
 
     @Override
     public final @NotNull JsonObject toJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("id", this.id);
-        json.addProperty("snowflake", this.snowflake);
-        json.addProperty("name", this.cachedName);
+        JsonObject json = this.toMinimalJson();
 
         // prevent concurrent modifications
         AbstractUser user = this.user;
@@ -43,6 +40,14 @@ public abstract class AbstractDiscordAccount extends AbstractEntity implements D
             json.add("user", uJson);
         }
 
+        return json;
+    }
+
+    public final @NotNull JsonObject toMinimalJson() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", this.id);
+        json.addProperty("snowflake", this.snowflake);
+        json.addProperty("name", this.cachedName);
         return json;
     }
 

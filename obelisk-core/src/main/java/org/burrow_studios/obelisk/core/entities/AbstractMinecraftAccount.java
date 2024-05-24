@@ -29,10 +29,7 @@ public abstract class AbstractMinecraftAccount extends AbstractEntity implements
 
     @Override
     public final @NotNull JsonObject toJson() {
-        JsonObject json = new JsonObject();
-        json.addProperty("id", this.id);
-        json.addProperty("uuid", this.uuid.toString());
-        json.addProperty("name", this.cachedName);
+        JsonObject json = this.toMinimalJson();
 
         // prevent concurrent modifications
         AbstractUser user = this.user;
@@ -45,6 +42,14 @@ public abstract class AbstractMinecraftAccount extends AbstractEntity implements
             json.add("user", uJson);
         }
 
+        return json;
+    }
+
+    public final @NotNull JsonObject toMinimalJson() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", this.id);
+        json.addProperty("uuid", this.uuid.toString());
+        json.addProperty("name", this.cachedName);
         return json;
     }
 
