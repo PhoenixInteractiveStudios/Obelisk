@@ -4,7 +4,12 @@ import org.burrow_studios.obelisk.api.action.entity.project.ProjectBuilder;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.monolith.action.DatabaseBuilder;
+import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
+import org.burrow_studios.obelisk.monolith.entities.BackendProject;
+import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
 
 public class DatabaseProjectBuilder extends DatabaseBuilder<Project> implements ProjectBuilder {
     private String title;
@@ -12,6 +17,12 @@ public class DatabaseProjectBuilder extends DatabaseBuilder<Project> implements 
 
     public DatabaseProjectBuilder(@NotNull ObeliskMonolith obelisk) {
         super(obelisk);
+    }
+
+    @Override
+    public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Project> future) throws DatabaseException {
+        BackendProject project = actionableDatabase.onProjectBuild(this);
+        future.complete(project);
     }
 
     @Override

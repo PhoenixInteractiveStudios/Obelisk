@@ -3,9 +3,13 @@ package org.burrow_studios.obelisk.monolith.action.entity.ticket;
 import org.burrow_studios.obelisk.api.action.entity.ticket.TicketModifier;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.monolith.action.DatabaseModifier;
+import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
 import org.burrow_studios.obelisk.monolith.entities.BackendTicket;
+import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 public class DatabaseTicketModifier extends DatabaseModifier<Ticket> implements TicketModifier {
     private String title;
@@ -13,6 +17,12 @@ public class DatabaseTicketModifier extends DatabaseModifier<Ticket> implements 
 
     public DatabaseTicketModifier(@NotNull BackendTicket entity) {
         super(entity);
+    }
+
+    @Override
+    public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Ticket> future) throws DatabaseException {
+        actionableDatabase.onTicketModify(this);
+        future.complete(null);
     }
 
     @Override

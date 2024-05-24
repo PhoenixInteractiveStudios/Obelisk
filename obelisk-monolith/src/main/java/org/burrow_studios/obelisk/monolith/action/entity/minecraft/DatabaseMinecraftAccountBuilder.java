@@ -5,10 +5,14 @@ import org.burrow_studios.obelisk.api.entities.MinecraftAccount;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.monolith.action.DatabaseBuilder;
+import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
+import org.burrow_studios.obelisk.monolith.entities.BackendMinecraftAccount;
+import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class DatabaseMinecraftAccountBuilder extends DatabaseBuilder<MinecraftAccount> implements MinecraftAccountBuilder {
     private UUID uuid;
@@ -17,6 +21,12 @@ public class DatabaseMinecraftAccountBuilder extends DatabaseBuilder<MinecraftAc
 
     public DatabaseMinecraftAccountBuilder(@NotNull ObeliskMonolith obelisk) {
         super(obelisk);
+    }
+
+    @Override
+    public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<MinecraftAccount> future) throws DatabaseException {
+        BackendMinecraftAccount minecraftAccount = actionableDatabase.onMinecraftAccountBuild(this);
+        future.complete(minecraftAccount);
     }
 
     @Override

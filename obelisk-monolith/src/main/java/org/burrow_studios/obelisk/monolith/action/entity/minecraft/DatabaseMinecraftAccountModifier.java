@@ -4,9 +4,13 @@ import org.burrow_studios.obelisk.api.action.entity.discord.MinecraftAccountModi
 import org.burrow_studios.obelisk.api.entities.MinecraftAccount;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.monolith.action.DatabaseModifier;
+import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
 import org.burrow_studios.obelisk.monolith.entities.BackendMinecraftAccount;
+import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 public class DatabaseMinecraftAccountModifier extends DatabaseModifier<MinecraftAccount> implements MinecraftAccountModifier {
     private String name;
@@ -14,6 +18,12 @@ public class DatabaseMinecraftAccountModifier extends DatabaseModifier<Minecraft
 
     public DatabaseMinecraftAccountModifier(@NotNull BackendMinecraftAccount entity) {
         super(entity);
+    }
+
+    @Override
+    public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<MinecraftAccount> future) throws DatabaseException {
+        actionableDatabase.onMinecraftAccountModify(this);
+        future.complete(null);
     }
 
     @Override

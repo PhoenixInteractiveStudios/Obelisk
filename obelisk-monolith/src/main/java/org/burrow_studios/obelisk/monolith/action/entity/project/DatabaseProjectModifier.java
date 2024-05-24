@@ -3,8 +3,12 @@ package org.burrow_studios.obelisk.monolith.action.entity.project;
 import org.burrow_studios.obelisk.api.action.entity.project.ProjectModifier;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.monolith.action.DatabaseModifier;
+import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
 import org.burrow_studios.obelisk.monolith.entities.BackendProject;
+import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.concurrent.CompletableFuture;
 
 public class DatabaseProjectModifier extends DatabaseModifier<Project> implements ProjectModifier {
     private String title;
@@ -12,6 +16,12 @@ public class DatabaseProjectModifier extends DatabaseModifier<Project> implement
 
     public DatabaseProjectModifier(@NotNull BackendProject entity) {
         super(entity);
+    }
+
+    @Override
+    public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Project> future) throws DatabaseException {
+        actionableDatabase.onProjectModify(this);
+        future.complete(null);
     }
 
     @Override
