@@ -3,10 +3,20 @@ package org.burrow_studios.obelisk.monolith;
 import org.burrow_studios.obelisk.core.AbstractObelisk;
 import org.burrow_studios.obelisk.core.http.Route;
 import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountBuilder;
+import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountGetAction;
+import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountListAction;
 import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountBuilder;
+import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountGetAction;
+import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountListAction;
 import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectBuilder;
+import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectGetAction;
+import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectListAction;
 import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketBuilder;
+import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketGetAction;
+import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketListAction;
 import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserBuilder;
+import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserGetAction;
+import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserListAction;
 import org.burrow_studios.obelisk.monolith.db.DatabaseAdapter;
 import org.burrow_studios.obelisk.monolith.db.impl.ActionableDatabase;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
@@ -54,6 +64,56 @@ public class ObeliskMonolith extends AbstractObelisk {
 
     public @NotNull DatabaseAdapter getDatabaseAdapter() {
         return this.databaseAdapter;
+    }
+
+    @Override
+    public @NotNull DatabaseUserListAction retrieveUsers() {
+        return new DatabaseUserListAction(this.getUsers());
+    }
+
+    @Override
+    public @NotNull DatabaseTicketListAction retrieveTickets() {
+        return new DatabaseTicketListAction(this.getTickets());
+    }
+
+    @Override
+    public @NotNull DatabaseProjectListAction retrieveProjects() {
+        return new DatabaseProjectListAction(this.getProjects());
+    }
+
+    @Override
+    public @NotNull DatabaseDiscordAccountListAction retrieveDiscordAccounts() {
+        return new DatabaseDiscordAccountListAction(this.getDiscordAccounts());
+    }
+
+    @Override
+    public @NotNull DatabaseMinecraftAccountListAction retrieveMinecraftAccounts() {
+        return new DatabaseMinecraftAccountListAction(this.getMinecraftAccounts());
+    }
+
+    @Override
+    public @NotNull DatabaseUserGetAction retrieveUser(long id) {
+        return new DatabaseUserGetAction(this, id);
+    }
+
+    @Override
+    public @NotNull DatabaseTicketGetAction retrieveTicket(long id) {
+        return new DatabaseTicketGetAction(this, id);
+    }
+
+    @Override
+    public @NotNull DatabaseProjectGetAction retrieveProject(long id) {
+        return new DatabaseProjectGetAction(this, id);
+    }
+
+    @Override
+    public @NotNull DatabaseDiscordAccountGetAction retrieveDiscordAccount(long id) {
+        return new DatabaseDiscordAccountGetAction(this, id);
+    }
+
+    @Override
+    public @NotNull DatabaseMinecraftAccountGetAction retrieveMinecraftAccount(long id) {
+        return new DatabaseMinecraftAccountGetAction(this, id);
     }
 
     @Override
