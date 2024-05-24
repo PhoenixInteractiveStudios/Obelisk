@@ -45,8 +45,8 @@ public class HTTPServer {
     }
 
     private void handle(@NotNull HttpExchange exchange) throws IOException {
-        // request path
-        String requestPath = exchange.getRequestURI().getPath();
+        // request path (trim leading "/")
+        String requestPath = exchange.getRequestURI().getPath().substring(1);
 
         // request method
         String methodStr = exchange.getRequestMethod();
@@ -76,7 +76,7 @@ public class HTTPServer {
         });
 
         // response status (& body length)
-        exchange.sendResponseHeaders(response.getStatus(), (response.getBody() != null && response.getBody().isEmpty()) ? response.getBody().length() : -1);
+        exchange.sendResponseHeaders(response.getStatus(), (response.getBody() != null && !response.getBody().isEmpty()) ? response.getBody().length() : -1);
 
         // response body
         if (response.getBody() != null)
