@@ -3,6 +3,7 @@ package org.burrow_studios.obelisk.monolith.http.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.action.entity.user.UserModifier;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
@@ -75,6 +76,32 @@ public class UserHandler {
         return new Response.Builder()
                 .setBody(user.toJson())
                 .setStatus(201)
+                .build();
+    }
+
+    public @NotNull Response onPatch(@NotNull Request request) throws RequestHandlerException {
+        final long userId = request.parsePathSegment(1, Long::parseLong);
+        JsonObject requestJson = request.requireBodyObject();
+
+        AbstractUser user = this.obelisk.getUser(userId);
+        if (user == null)
+            throw new NotFoundException("User not found");
+
+        UserModifier modifier = user.modify();
+
+        Pipe.of(requestJson.get("name"), BadRequestException::new)
+                .map(JsonElement::getAsString, "Malformed \"name\" attribute")
+                .ifPresent(modifier::setName);
+
+        try {
+            user = (AbstractUser) modifier.await();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new InternalServerErrorException();
+        }
+
+        return new Response.Builder()
+                .setBody(user.toJson())
+                .setStatus(200)
                 .build();
     }
 

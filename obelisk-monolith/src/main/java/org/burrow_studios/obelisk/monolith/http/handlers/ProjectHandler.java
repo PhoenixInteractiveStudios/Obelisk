@@ -3,6 +3,7 @@ package org.burrow_studios.obelisk.monolith.http.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.action.entity.project.ProjectModifier;
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.core.entities.AbstractProject;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
@@ -82,6 +83,44 @@ public class ProjectHandler {
         return new Response.Builder()
                 .setBody(project.toJson())
                 .setStatus(201)
+                .build();
+    }
+
+    public @NotNull Response onPatch(@NotNull Request request) throws RequestHandlerException {
+        final long projectId = request.parsePathSegment(1, Long::parseLong);
+        JsonObject requestJson = request.requireBodyObject();
+
+        AbstractProject project = this.obelisk.getProject(projectId);
+        if (project == null)
+            throw new NotFoundException("Project not found");
+
+        ProjectModifier modifier = project.modify();
+
+        Pipe.of(requestJson.get("title"), BadRequestException::new)
+                .map(json -> {
+                    if (json == null)
+                        return null;
+                    return json.getAsString();
+                }, "Malformed \"title\" attribute")
+                .ifPresent(modifier::setTitle);
+
+        Pipe.of(requestJson.get("state"), BadRequestException::new)
+                .map(json -> {
+                    if (json == null)
+                        return null;
+                    return Project.State.valueOf(json.getAsString());
+                }, "Malformed \"state\" attribute")
+                .ifPresent(modifier::setState);
+
+        try {
+            project = (AbstractProject) modifier.await();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new InternalServerErrorException();
+        }
+
+        return new Response.Builder()
+                .setBody(project.toJson())
+                .setStatus(200)
                 .build();
     }
 

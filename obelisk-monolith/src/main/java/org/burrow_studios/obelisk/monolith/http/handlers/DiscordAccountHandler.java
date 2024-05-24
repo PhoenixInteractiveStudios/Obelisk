@@ -3,6 +3,7 @@ package org.burrow_studios.obelisk.monolith.http.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.action.entity.minecraft.DiscordAccountModifier;
 import org.burrow_studios.obelisk.api.entities.DiscordAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractDiscordAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
@@ -98,6 +99,52 @@ public class DiscordAccountHandler {
         return new Response.Builder()
                 .setBody(discordAccount.toJson())
                 .setStatus(201)
+                .build();
+    }
+
+    public @NotNull Response onPatch(@NotNull Request request) throws RequestHandlerException {
+        final long discordAccountId = request.parsePathSegment(1, Long::parseLong);
+        JsonObject requestJson = request.requireBodyObject();
+
+        AbstractDiscordAccount discordAccount = this.obelisk.getDiscordAccount(discordAccountId);
+        if (discordAccount == null)
+            throw new NotFoundException("Discord account not found");
+
+        DiscordAccountModifier modifier = discordAccount.modify();
+
+        Pipe.of(requestJson.get("name"), BadRequestException::new)
+                .map(json -> {
+                    if (json == null)
+                        return null;
+                    return json.getAsString();
+                }, "Malformed \"name\" attribute")
+                .ifPresent(modifier::setCachedName);
+
+        Long userId = Pipe.of(requestJson.get("user"), BadRequestException::new)
+                .map(json -> {
+                    if (json == null)
+                        return null;
+                    return json.getAsLong();
+                }, "Malformed \"user\" attribute")
+                .get();
+        if (userId != null) {
+            AbstractUser user = this.obelisk.getUser(userId);
+
+            if (user == null)
+                throw new NotFoundException("User not found");
+
+            modifier.setUser(user);
+        }
+
+        try {
+            discordAccount = (AbstractDiscordAccount) modifier.await();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new InternalServerErrorException();
+        }
+
+        return new Response.Builder()
+                .setBody(discordAccount.toJson())
+                .setStatus(200)
                 .build();
     }
 

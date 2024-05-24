@@ -3,6 +3,7 @@ package org.burrow_studios.obelisk.monolith.http.handlers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.action.entity.ticket.TicketModifier;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.core.entities.AbstractTicket;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
@@ -84,6 +85,48 @@ public class TicketHandler {
         return new Response.Builder()
                 .setBody(ticket.toJson())
                 .setStatus(201)
+                .build();
+    }
+
+    public @NotNull Response onPatch(@NotNull Request request) throws RequestHandlerException {
+        final long ticketId = request.parsePathSegment(1, Long::parseLong);
+        JsonObject requestJson = request.requireBodyObject();
+
+        AbstractTicket ticket = this.obelisk.getTicket(ticketId);
+        if (ticket == null)
+            throw new NotFoundException("Ticket not found");
+
+        TicketModifier modifier = ticket.modify();
+
+        Pipe.of(requestJson.get("title"), BadRequestException::new)
+                .map(json -> {
+                    if (json == null)
+                        return null;
+                    if (json.isJsonNull()) {
+                        modifier.setTitle(null);
+                        return null;
+                    }
+                    return json.getAsString();
+                }, "Malformed \"title\" attribute")
+                .ifPresent(modifier::setTitle);
+
+        Pipe.of(requestJson.get("state"), BadRequestException::new)
+                .map(json -> {
+                    if (json == null)
+                        return null;
+                    return Ticket.State.valueOf(json.getAsString());
+                }, "Malformed \"state\" attribute")
+                .ifPresent(modifier::setState);
+
+        try {
+            ticket = (AbstractTicket) modifier.await();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new InternalServerErrorException();
+        }
+
+        return new Response.Builder()
+                .setBody(ticket.toJson())
+                .setStatus(200)
                 .build();
     }
 
