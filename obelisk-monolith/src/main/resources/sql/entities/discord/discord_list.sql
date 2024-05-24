@@ -1,1 +1,1 @@
-SELECT `id` FROM `discord`;
+SELECT * FROM `discord`;

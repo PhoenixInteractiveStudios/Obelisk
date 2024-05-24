@@ -9,7 +9,6 @@ import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.monolith.entities.*;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
-import org.burrow_studios.obelisk.monolith.exceptions.NoSuchEntryException;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.ResultSet;
@@ -20,9 +19,6 @@ public class EntityProvider {
     public static @NotNull BackendUser getUser(@NotNull ObeliskMonolith obelisk, long id, @NotNull ResultSet res, @NotNull ResultSet dRes, @NotNull ResultSet mRes) throws SQLException, DatabaseException {
         OrderedEntitySetView<AbstractDiscordAccount>   discordAccounts   = new OrderedEntitySetView<>(obelisk.getDiscordAccounts(),   AbstractDiscordAccount.class);
         OrderedEntitySetView<AbstractMinecraftAccount> minecraftAccounts = new OrderedEntitySetView<>(obelisk.getMinecraftAccounts(), AbstractMinecraftAccount.class);
-
-        if (!res.next())
-            throw new NoSuchEntryException();
 
         String name = res.getString("name");
 
@@ -62,9 +58,6 @@ public class EntityProvider {
     public static @NotNull BackendTicket getTicket(@NotNull ObeliskMonolith obelisk, long id, @NotNull ResultSet res, @NotNull ResultSet uRes) throws SQLException, DatabaseException {
         OrderedEntitySetView<AbstractUser> users = new OrderedEntitySetView<>(obelisk.getUsers(), AbstractUser.class);
 
-        if (!res.next())
-            throw new NoSuchEntryException();
-
         String       title = res.getString("title");
         Ticket.State state = Ticket.State.valueOf(res.getString("state"));
 
@@ -94,9 +87,6 @@ public class EntityProvider {
     public static @NotNull BackendProject getProject(@NotNull ObeliskMonolith obelisk, long id, @NotNull ResultSet res, @NotNull ResultSet mRes) throws SQLException, DatabaseException {
         OrderedEntitySetView<AbstractUser> members = new OrderedEntitySetView<>(obelisk.getUsers(), AbstractUser.class);
 
-        if (!res.next())
-            throw new NoSuchEntryException();
-
         String        title = res.getString("title");
         Project.State state = Project.State.valueOf(res.getString("state"));
 
@@ -124,9 +114,6 @@ public class EntityProvider {
     }
 
     public static @NotNull BackendDiscordAccount getDiscordAccount(@NotNull ObeliskMonolith obelisk, long id, @NotNull ResultSet res, @NotNull ResultSet uRes) throws SQLException, DatabaseException {
-        if (!res.next())
-            throw new NoSuchEntryException();
-
         long   snowflake  = res.getLong("snowflake");
         String cachedName = res.getString("name");
 
@@ -152,9 +139,6 @@ public class EntityProvider {
     }
 
     public static @NotNull BackendMinecraftAccount getMinecraftAccount(@NotNull ObeliskMonolith obelisk, long id, @NotNull ResultSet res, @NotNull ResultSet uRes) throws SQLException, DatabaseException {
-        if (!res.next())
-            throw new NoSuchEntryException();
-
         UUID   uuid       = UUID.fromString(res.getString("uuid"));
         String cachedName = res.getString("name");
 

@@ -1,24 +1,12 @@
 package org.burrow_studios.obelisk.monolith.db;
 
 import org.burrow_studios.obelisk.core.cache.EntityCache;
-import org.burrow_studios.obelisk.core.entities.AbstractUser;
+import org.burrow_studios.obelisk.core.entities.*;
 import org.burrow_studios.obelisk.monolith.action.*;
-import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountBuilder;
-import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountDeleteAction;
-import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountGetAction;
-import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountModifier;
-import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountBuilder;
-import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountDeleteAction;
-import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountGetAction;
-import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountModifier;
-import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectBuilder;
-import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectDeleteAction;
-import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectGetAction;
-import org.burrow_studios.obelisk.monolith.action.entity.project.DatabaseProjectModifier;
-import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketBuilder;
-import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketDeleteAction;
-import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketGetAction;
-import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketModifier;
+import org.burrow_studios.obelisk.monolith.action.entity.discord.*;
+import org.burrow_studios.obelisk.monolith.action.entity.minecraft.*;
+import org.burrow_studios.obelisk.monolith.action.entity.project.*;
+import org.burrow_studios.obelisk.monolith.action.entity.ticket.*;
 import org.burrow_studios.obelisk.monolith.action.entity.user.*;
 import org.burrow_studios.obelisk.monolith.entities.*;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
@@ -68,7 +56,69 @@ public class DatabaseAdapter {
                 return;
             }
 
-            // TODO
+            if (listAction instanceof DatabaseTicketListAction ticketListAction) {
+                List<BackendTicket> tickets = null;
+                for (IActionableDatabase listener : this.listeners) {
+                    tickets = listener.onTicketList(ticketListAction);
+                    if (tickets != null) break;
+                }
+
+                if (tickets == null) {
+                    future.complete(null);
+                    return;
+                }
+
+                ticketListAction.complete((CompletableFuture<EntityCache<AbstractTicket>>) future, tickets);
+                return;
+            }
+
+            if (listAction instanceof DatabaseProjectListAction projectListAction) {
+                List<BackendProject> projects = null;
+                for (IActionableDatabase listener : this.listeners) {
+                    projects = listener.onProjectList(projectListAction);
+                    if (projects != null) break;
+                }
+
+                if (projects == null) {
+                    future.complete(null);
+                    return;
+                }
+
+                projectListAction.complete((CompletableFuture<EntityCache<AbstractProject>>) future, projects);
+                return;
+            }
+
+            if (listAction instanceof DatabaseDiscordAccountListAction discordAccountListAction) {
+                List<BackendDiscordAccount> discordAccounts = null;
+                for (IActionableDatabase listener : this.listeners) {
+                    discordAccounts = listener.onDiscordAccountList(discordAccountListAction);
+                    if (discordAccounts != null) break;
+                }
+
+                if (discordAccounts == null) {
+                    future.complete(null);
+                    return;
+                }
+
+                discordAccountListAction.complete((CompletableFuture<EntityCache<AbstractDiscordAccount>>) future, discordAccounts);
+                return;
+            }
+
+            if (listAction instanceof DatabaseMinecraftAccountListAction minecraftAccountListAction) {
+                List<BackendMinecraftAccount> minecraftAccounts = null;
+                for (IActionableDatabase listener : this.listeners) {
+                    minecraftAccounts = listener.onMinecraftAccountList(minecraftAccountListAction);
+                    if (minecraftAccounts != null) break;
+                }
+
+                if (minecraftAccounts == null) {
+                    future.complete(null);
+                    return;
+                }
+
+                minecraftAccountListAction.complete((CompletableFuture<EntityCache<AbstractMinecraftAccount>>) future, minecraftAccounts);
+                return;
+            }
         } else if (action instanceof DatabaseGetAction<?> getAction) {
             if (getAction instanceof DatabaseUserGetAction userGetAction) {
                 BackendUser user = null;

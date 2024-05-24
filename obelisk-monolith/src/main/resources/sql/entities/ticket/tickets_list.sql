@@ -1,1 +1,1 @@
-SELECT `id` FROM `tickets`;
+SELECT * FROM `tickets`;

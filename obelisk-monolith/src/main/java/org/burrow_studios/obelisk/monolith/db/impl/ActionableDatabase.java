@@ -8,20 +8,11 @@ import org.burrow_studios.obelisk.core.entities.AbstractDiscordAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractMinecraftAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.Main;
-import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountBuilder;
-import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountDeleteAction;
-import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountGetAction;
-import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountModifier;
-import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountBuilder;
-import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountDeleteAction;
-import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountGetAction;
-import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountModifier;
+import org.burrow_studios.obelisk.monolith.action.entity.discord.*;
+import org.burrow_studios.obelisk.monolith.action.entity.minecraft.*;
 import org.burrow_studios.obelisk.monolith.action.entity.project.*;
 import org.burrow_studios.obelisk.monolith.action.entity.ticket.*;
-import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserBuilder;
-import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserDeleteAction;
-import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserGetAction;
-import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserModifier;
+import org.burrow_studios.obelisk.monolith.action.entity.user.*;
 import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
 import org.burrow_studios.obelisk.monolith.db.SQLDB;
 import org.burrow_studios.obelisk.monolith.entities.*;
@@ -38,6 +29,8 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class ActionableDatabase implements IActionableDatabase, Closeable {
@@ -87,6 +80,37 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     /* - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    @Override
+    public List<BackendUser> onUserList(@NotNull DatabaseUserListAction action) throws DatabaseException {
+        List<BackendUser> users = new ArrayList<>();
+
+        try (PreparedStatement stmt0 = this.database.preparedStatement("user/users_list")) {
+            ResultSet res = stmt0.executeQuery();
+
+            while (res.next()) {
+                final long id = res.getLong("id");
+
+                try (
+                        PreparedStatement stmt1 = this.database.preparedStatement("user/discord_get");
+                        PreparedStatement stmt2 = this.database.preparedStatement("user/minecraft_get")
+                ) {
+                    stmt1.setLong(1, id);
+                    stmt2.setLong(1, id);
+
+                    ResultSet dRes = stmt1.executeQuery();
+                    ResultSet mRes = stmt2.executeQuery();
+
+                    BackendUser user = EntityProvider.getUser(action.getAPI(), id, res, dRes, mRes);
+                    users.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return users;
+    }
 
     @Override
     public BackendUser onUserGet(@NotNull DatabaseUserGetAction action) throws DatabaseException {
@@ -158,6 +182,32 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
+    }
+
+    @Override
+    public List<BackendTicket> onTicketList(@NotNull DatabaseTicketListAction action) throws DatabaseException {
+        List<BackendTicket> tickets = new ArrayList<>();
+
+        try (PreparedStatement stmt0 = this.database.preparedStatement("ticket/tickets_list")) {
+            ResultSet res = stmt0.executeQuery();
+
+            while (res.next()) {
+                final long id = res.getLong("id");
+
+                try (PreparedStatement stmt1 = this.database.preparedStatement("ticket/users_get")) {
+                    stmt1.setLong(1, id);
+
+                    ResultSet uRes = stmt1.executeQuery();
+
+                    BackendTicket user = EntityProvider.getTicket(action.getAPI(), id, res, uRes);
+                    tickets.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return tickets;
     }
 
     @Override
@@ -269,10 +319,36 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
+    public List<BackendProject> onProjectList(@NotNull DatabaseProjectListAction action) throws DatabaseException {
+        List<BackendProject> projects = new ArrayList<>();
+
+        try (PreparedStatement stmt0 = this.database.preparedStatement("projects/projects_list")) {
+            ResultSet res = stmt0.executeQuery();
+
+            while (res.next()) {
+                final long id = res.getLong("id");
+
+                try (PreparedStatement stmt1 = this.database.preparedStatement("project/members_get")) {
+                    stmt1.setLong(1, id);
+
+                    ResultSet mRes = stmt1.executeQuery();
+
+                    BackendProject user = EntityProvider.getProject(action.getAPI(), id, res, mRes);
+                    projects.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return projects;
+    }
+
+    @Override
     public BackendProject onProjectGet(@NotNull DatabaseProjectGetAction action) throws DatabaseException {
         try (
                 PreparedStatement stmt0 = this.database.preparedStatement("project/project_get");
-                PreparedStatement stmt1 = this.database.preparedStatement("project/users_get");
+                PreparedStatement stmt1 = this.database.preparedStatement("project/members_get");
         ) {
             stmt0.setLong(1, action.getId());
             stmt1.setLong(1, action.getId());
@@ -377,6 +453,32 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
+    public List<BackendDiscordAccount> onDiscordAccountList(@NotNull DatabaseDiscordAccountListAction action) throws DatabaseException {
+        List<BackendDiscordAccount> discordAccounts = new ArrayList<>();
+
+        try (PreparedStatement stmt0 = this.database.preparedStatement("discord/discord_list")) {
+            ResultSet res = stmt0.executeQuery();
+
+            while (res.next()) {
+                final long id = res.getLong("id");
+
+                try (PreparedStatement stmt1 = this.database.preparedStatement("discord/user_get")) {
+                    stmt1.setLong(1, id);
+
+                    ResultSet uRes = stmt1.executeQuery();
+
+                    BackendDiscordAccount user = EntityProvider.getDiscordAccount(action.getAPI(), id, res, uRes);
+                    discordAccounts.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return discordAccounts;
+    }
+
+    @Override
     public BackendDiscordAccount onDiscordAccountGet(@NotNull DatabaseDiscordAccountGetAction action) throws DatabaseException {
         try (
                 PreparedStatement stmt0 = this.database.preparedStatement("discord/discord_get");
@@ -452,6 +554,32 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
+    }
+
+    @Override
+    public List<BackendMinecraftAccount> onMinecraftAccountList(@NotNull DatabaseMinecraftAccountListAction action) throws DatabaseException {
+        List<BackendMinecraftAccount> minecraftAccounts = new ArrayList<>();
+
+        try (PreparedStatement stmt0 = this.database.preparedStatement("minecraft/minecraft_list")) {
+            ResultSet res = stmt0.executeQuery();
+
+            while (res.next()) {
+                final long id = res.getLong("id");
+
+                try (PreparedStatement stmt1 = this.database.preparedStatement("minecraft/user_get")) {
+                    stmt1.setLong(1, id);
+
+                    ResultSet uRes = stmt1.executeQuery();
+
+                    BackendMinecraftAccount user = EntityProvider.getMinecraftAccount(action.getAPI(), id, res, uRes);
+                    minecraftAccounts.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return minecraftAccounts;
     }
 
     @Override

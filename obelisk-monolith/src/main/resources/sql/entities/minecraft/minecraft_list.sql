@@ -1,1 +1,1 @@
-SELECT `id` FROM `minecraft`;
+SELECT * FROM `minecraft`;
