@@ -19,6 +19,7 @@ import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserGetAct
 import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserListAction;
 import org.burrow_studios.obelisk.monolith.db.DatabaseAdapter;
 import org.burrow_studios.obelisk.monolith.db.impl.ActionableDatabase;
+import org.burrow_studios.obelisk.monolith.db.impl.EntityDatabase;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.burrow_studios.obelisk.monolith.http.HTTPServer;
 import org.burrow_studios.obelisk.monolith.http.handlers.*;
@@ -39,7 +40,8 @@ public class ObeliskMonolith extends AbstractObelisk {
     public ObeliskMonolith() throws DatabaseException, IOException {
         super();
 
-        final ActionableDatabase database = new ActionableDatabase(new File(Main.DIR, "entities.db"));
+        final EntityDatabase entityDatabase = new EntityDatabase(this, new File(Main.DIR, "entities.db"));
+        final ActionableDatabase database = new ActionableDatabase(entityDatabase);
         this.databaseAdapter = new DatabaseAdapter(database);
 
         this.apiServer = new HTTPServer(EnvUtil.getInt("API_PORT", 80));
