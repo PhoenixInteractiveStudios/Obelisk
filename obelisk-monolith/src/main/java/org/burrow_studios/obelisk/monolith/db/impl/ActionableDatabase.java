@@ -12,6 +12,7 @@ import org.burrow_studios.obelisk.monolith.action.entity.user.*;
 import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
 import org.burrow_studios.obelisk.monolith.entities.*;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
+import org.burrow_studios.obelisk.util.turtle.TurtleGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(ActionableDatabase.class);
 
     private final EntityDatabase entityDatabase;
+    private final TurtleGenerator idGenerator = TurtleGenerator.get("db");
 
     public ActionableDatabase(@NotNull EntityDatabase entityDatabase) {
         this.entityDatabase = entityDatabase;
@@ -50,8 +52,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
 
     @Override
     public BackendUser createUser(@NotNull DatabaseUserBuilder builder) throws DatabaseException {
-        long id = 0; // TODO: generate id
-
+        final long id = this.idGenerator.newId();
         return this.entityDatabase.createUser(id, builder.getName());
     }
 
@@ -82,8 +83,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
 
     @Override
     public BackendTicket createTicket(@NotNull DatabaseTicketBuilder builder) throws DatabaseException {
-        long id = 0; // TODO: generate id
-
+        final long id = this.idGenerator.newId();
         return this.entityDatabase.createTicket(id, builder.getTitle(), builder.getState());
     }
 
@@ -127,8 +127,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
 
     @Override
     public BackendProject createProject(@NotNull DatabaseProjectBuilder builder) throws DatabaseException {
-        long id = 0; // TODO: generate id
-
+        final long id = this.idGenerator.newId();
         return this.entityDatabase.createProject(id, builder.getTitle(), builder.getState());
     }
 
@@ -172,8 +171,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
 
     @Override
     public BackendDiscordAccount createDiscordAccount(@NotNull DatabaseDiscordAccountBuilder builder) throws DatabaseException {
-        long id = 0; // TODO: generate id
-
+        final long id = this.idGenerator.newId();
         return this.entityDatabase.createDiscordAccount(id, builder.getSnowflake(), builder.getName(), ((AbstractUser) builder.getUser()));
     }
 
@@ -207,8 +205,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
 
     @Override
     public BackendMinecraftAccount createMinecraftAccount(@NotNull DatabaseMinecraftAccountBuilder builder) throws DatabaseException {
-        long id = 0; // TODO: generate id
-
+        final long id = this.idGenerator.newId();
         return this.entityDatabase.createMinecraftAccount(id, builder.getUUID(), builder.getName(), ((AbstractUser) builder.getUser()));
     }
 
