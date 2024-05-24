@@ -10,15 +10,15 @@ import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinec
 import org.burrow_studios.obelisk.monolith.action.entity.minecraft.DatabaseMinecraftAccountModifier;
 import org.burrow_studios.obelisk.monolith.action.entity.project.*;
 import org.burrow_studios.obelisk.monolith.action.entity.ticket.*;
-import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserBuilder;
-import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserDeleteAction;
-import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserGetAction;
-import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserModifier;
+import org.burrow_studios.obelisk.monolith.action.entity.user.*;
 import org.burrow_studios.obelisk.monolith.entities.*;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public interface IActionableDatabase {
+    default List<BackendUser> onUserList(@NotNull DatabaseUserListAction action) throws DatabaseException { return null; }
     default BackendUser onUserGet(@NotNull DatabaseUserGetAction action) throws DatabaseException { return null; }
     default BackendUser onUserBuild(@NotNull DatabaseUserBuilder builder) throws DatabaseException { return null; }
     default void onUserModify(@NotNull DatabaseUserModifier modifier) throws DatabaseException { }
