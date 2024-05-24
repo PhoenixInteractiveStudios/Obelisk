@@ -82,7 +82,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     /* - - - - - - - - - - - - - - - - - - - - - - - - - */
 
     @Override
-    public List<BackendUser> onUserList(@NotNull DatabaseUserListAction action) throws DatabaseException {
+    public List<BackendUser> getUsers(@NotNull DatabaseUserListAction action) throws DatabaseException {
         List<BackendUser> users = new ArrayList<>();
 
         try (PreparedStatement stmt0 = this.database.preparedStatement("user/users_list")) {
@@ -113,7 +113,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public BackendUser onUserGet(@NotNull DatabaseUserGetAction action) throws DatabaseException {
+    public BackendUser getUser(@NotNull DatabaseUserGetAction action) throws DatabaseException {
         try (
                 PreparedStatement stmt0 = this.database.preparedStatement("user/user_get");
                 PreparedStatement stmt1 = this.database.preparedStatement("user/discord_get");
@@ -137,7 +137,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public BackendUser onUserBuild(@NotNull DatabaseUserBuilder builder) throws DatabaseException {
+    public BackendUser createUser(@NotNull DatabaseUserBuilder builder) throws DatabaseException {
         long id = 0; // TODO: generate id
 
         OrderedEntitySetView<AbstractDiscordAccount>   discord   = new OrderedEntitySetView<>(builder.getAPI().getDiscordAccounts(),   AbstractDiscordAccount.class);
@@ -156,7 +156,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onUserModify(@NotNull DatabaseUserModifier modifier) throws DatabaseException {
+    public void modifyUser(@NotNull DatabaseUserModifier modifier) throws DatabaseException {
         String oldName = modifier.getEntity().getName();
         String newName = modifier.getName();
 
@@ -174,7 +174,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onUserDelete(@NotNull DatabaseUserDeleteAction deleteAction) throws DatabaseException {
+    public void deleteUser(@NotNull DatabaseUserDeleteAction deleteAction) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("user/user_delete")) {
             stmt.setLong(1, deleteAction.getId());
 
@@ -185,7 +185,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public List<BackendTicket> onTicketList(@NotNull DatabaseTicketListAction action) throws DatabaseException {
+    public List<BackendTicket> getTickets(@NotNull DatabaseTicketListAction action) throws DatabaseException {
         List<BackendTicket> tickets = new ArrayList<>();
 
         try (PreparedStatement stmt0 = this.database.preparedStatement("ticket/tickets_list")) {
@@ -211,7 +211,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public BackendTicket onTicketGet(@NotNull DatabaseTicketGetAction action) throws DatabaseException {
+    public BackendTicket getTicket(@NotNull DatabaseTicketGetAction action) throws DatabaseException {
         try (
                 PreparedStatement stmt0 = this.database.preparedStatement("ticket/ticket_get");
                 PreparedStatement stmt1 = this.database.preparedStatement("ticket/users_get");
@@ -232,7 +232,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public BackendTicket onTicketBuild(@NotNull DatabaseTicketBuilder builder) throws DatabaseException {
+    public BackendTicket createTicket(@NotNull DatabaseTicketBuilder builder) throws DatabaseException {
         long id = 0; // TODO: generate id
 
         OrderedEntitySetView<AbstractUser> users = new OrderedEntitySetView<>(builder.getAPI().getUsers(), AbstractUser.class);
@@ -251,7 +251,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onTicketModify(@NotNull DatabaseTicketModifier modifier) throws DatabaseException {
+    public void modifyTicket(@NotNull DatabaseTicketModifier modifier) throws DatabaseException {
         String oldTitle = modifier.getEntity().getTitle();
         String newTitle = modifier.getTitle();
 
@@ -284,7 +284,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onTicketDelete(@NotNull DatabaseTicketDeleteAction deleteAction) throws DatabaseException {
+    public void deleteTicket(@NotNull DatabaseTicketDeleteAction deleteAction) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_delete")) {
             stmt.setLong(1, deleteAction.getId());
 
@@ -295,7 +295,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onTicketUserAdd(@NotNull DatabaseTicketUserAddAction action) throws DatabaseException {
+    public void addTicketUser(@NotNull DatabaseTicketUserAddAction action) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_users_add")) {
             stmt.setLong(1, action.getTicket().getId());
             stmt.setLong(2, action.getUser().getId());
@@ -307,7 +307,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onTicketUserRemove(@NotNull DatabaseTicketUserRemoveAction action) throws DatabaseException {
+    public void removeTicketUser(@NotNull DatabaseTicketUserRemoveAction action) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_users_remove")) {
             stmt.setLong(1, action.getTicket().getId());
             stmt.setLong(2, action.getUser().getId());
@@ -319,7 +319,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public List<BackendProject> onProjectList(@NotNull DatabaseProjectListAction action) throws DatabaseException {
+    public List<BackendProject> getProjects(@NotNull DatabaseProjectListAction action) throws DatabaseException {
         List<BackendProject> projects = new ArrayList<>();
 
         try (PreparedStatement stmt0 = this.database.preparedStatement("projects/projects_list")) {
@@ -345,7 +345,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public BackendProject onProjectGet(@NotNull DatabaseProjectGetAction action) throws DatabaseException {
+    public BackendProject getProject(@NotNull DatabaseProjectGetAction action) throws DatabaseException {
         try (
                 PreparedStatement stmt0 = this.database.preparedStatement("project/project_get");
                 PreparedStatement stmt1 = this.database.preparedStatement("project/members_get");
@@ -366,7 +366,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public BackendProject onProjectBuild(@NotNull DatabaseProjectBuilder builder) throws DatabaseException {
+    public BackendProject createProject(@NotNull DatabaseProjectBuilder builder) throws DatabaseException {
         long id = 0; // TODO: generate id
 
         OrderedEntitySetView<AbstractUser> members = new OrderedEntitySetView<>(builder.getAPI().getUsers(), AbstractUser.class);
@@ -385,7 +385,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onProjectModify(@NotNull DatabaseProjectModifier modifier) throws DatabaseException {
+    public void modifyProject(@NotNull DatabaseProjectModifier modifier) throws DatabaseException {
         String oldTitle = modifier.getEntity().getTitle();
         String newTitle = modifier.getTitle();
 
@@ -418,7 +418,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onProjectDelete(@NotNull DatabaseProjectDeleteAction deleteAction) throws DatabaseException {
+    public void deleteProject(@NotNull DatabaseProjectDeleteAction deleteAction) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("project/project_delete")) {
             stmt.setLong(1, deleteAction.getId());
 
@@ -429,7 +429,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onProjectUserAdd(@NotNull DatabaseProjectUserAddAction action) throws DatabaseException {
+    public void addProjectMember(@NotNull DatabaseProjectUserAddAction action) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("project/project_members_add")) {
             stmt.setLong(1, action.getProject().getId());
             stmt.setLong(2, action.getUser().getId());
@@ -441,7 +441,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onProjectUserRemove(@NotNull DatabaseProjectUserRemoveAction action) throws DatabaseException {
+    public void removeProjectMember(@NotNull DatabaseProjectUserRemoveAction action) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("project/project_members_remove")) {
             stmt.setLong(1, action.getProject().getId());
             stmt.setLong(2, action.getUser().getId());
@@ -453,7 +453,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public List<BackendDiscordAccount> onDiscordAccountList(@NotNull DatabaseDiscordAccountListAction action) throws DatabaseException {
+    public List<BackendDiscordAccount> getDiscordAccounts(@NotNull DatabaseDiscordAccountListAction action) throws DatabaseException {
         List<BackendDiscordAccount> discordAccounts = new ArrayList<>();
 
         try (PreparedStatement stmt0 = this.database.preparedStatement("discord/discord_list")) {
@@ -479,7 +479,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public BackendDiscordAccount onDiscordAccountGet(@NotNull DatabaseDiscordAccountGetAction action) throws DatabaseException {
+    public BackendDiscordAccount getDiscordAccount(@NotNull DatabaseDiscordAccountGetAction action) throws DatabaseException {
         try (
                 PreparedStatement stmt0 = this.database.preparedStatement("discord/discord_get");
                 PreparedStatement stmt1 = this.database.preparedStatement("discord/user_get");
@@ -500,7 +500,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public BackendDiscordAccount onDiscordAccountBuild(@NotNull DatabaseDiscordAccountBuilder builder) throws DatabaseException {
+    public BackendDiscordAccount createDiscordAccount(@NotNull DatabaseDiscordAccountBuilder builder) throws DatabaseException {
         long id = 0; // TODO: generate id
 
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_create")) {
@@ -521,7 +521,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onDiscordAccountModify(@NotNull DatabaseDiscordAccountModifier modifier) throws DatabaseException {
+    public void modifyDiscordAccount(@NotNull DatabaseDiscordAccountModifier modifier) throws DatabaseException {
         String oldName = modifier.getEntity().getCachedName();
         String newName = modifier.getName();
 
@@ -546,7 +546,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onDiscordAccountDelete(@NotNull DatabaseDiscordAccountDeleteAction deleteAction) throws DatabaseException {
+    public void deleteDiscordAccount(@NotNull DatabaseDiscordAccountDeleteAction deleteAction) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_delete")) {
             stmt.setLong(1, deleteAction.getId());
 
@@ -557,7 +557,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public List<BackendMinecraftAccount> onMinecraftAccountList(@NotNull DatabaseMinecraftAccountListAction action) throws DatabaseException {
+    public List<BackendMinecraftAccount> getMinecraftAccounts(@NotNull DatabaseMinecraftAccountListAction action) throws DatabaseException {
         List<BackendMinecraftAccount> minecraftAccounts = new ArrayList<>();
 
         try (PreparedStatement stmt0 = this.database.preparedStatement("minecraft/minecraft_list")) {
@@ -583,7 +583,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public BackendMinecraftAccount onMinecraftAccountGet(@NotNull DatabaseMinecraftAccountGetAction action) throws DatabaseException {
+    public BackendMinecraftAccount getMinecraftAccount(@NotNull DatabaseMinecraftAccountGetAction action) throws DatabaseException {
         try (
                 PreparedStatement stmt0 = this.database.preparedStatement("minecraft/minecraft_get");
                 PreparedStatement stmt1 = this.database.preparedStatement("minecraft/user_get");
@@ -604,7 +604,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public BackendMinecraftAccount onMinecraftAccountBuild(@NotNull DatabaseMinecraftAccountBuilder builder) throws DatabaseException {
+    public BackendMinecraftAccount createMinecraftAccount(@NotNull DatabaseMinecraftAccountBuilder builder) throws DatabaseException {
         long id = 0; // TODO: generate id
 
         try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_create")) {
@@ -625,7 +625,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onMinecraftAccountModify(@NotNull DatabaseMinecraftAccountModifier modifier) throws DatabaseException {
+    public void modifyMinecraftAccount(@NotNull DatabaseMinecraftAccountModifier modifier) throws DatabaseException {
         String oldName = modifier.getEntity().getCachedName();
         String newName = modifier.getName();
 
@@ -650,7 +650,7 @@ public class ActionableDatabase implements IActionableDatabase, Closeable {
     }
 
     @Override
-    public void onMinecraftAccountDelete(@NotNull DatabaseMinecraftAccountDeleteAction deleteAction) throws DatabaseException {
+    public void deleteMinecraftAccount(@NotNull DatabaseMinecraftAccountDeleteAction deleteAction) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_delete")) {
             stmt.setLong(1, deleteAction.getId());
 

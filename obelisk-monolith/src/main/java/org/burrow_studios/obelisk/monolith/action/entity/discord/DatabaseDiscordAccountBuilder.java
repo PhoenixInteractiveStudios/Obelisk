@@ -24,7 +24,7 @@ public class DatabaseDiscordAccountBuilder extends DatabaseBuilder<DiscordAccoun
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<DiscordAccount> future) throws DatabaseException {
-        BackendDiscordAccount discordAccount = actionableDatabase.onDiscordAccountBuild(this);
+        BackendDiscordAccount discordAccount = actionableDatabase.createDiscordAccount(this);
         future.complete(discordAccount);
     }
 

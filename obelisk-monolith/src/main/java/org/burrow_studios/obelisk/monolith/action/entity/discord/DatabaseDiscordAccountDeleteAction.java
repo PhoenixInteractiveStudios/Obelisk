@@ -17,7 +17,7 @@ public class DatabaseDiscordAccountDeleteAction extends DatabaseDeleteAction<Dis
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Void> future) throws DatabaseException {
-        actionableDatabase.onDiscordAccountDelete(this);
+        actionableDatabase.deleteDiscordAccount(this);
         future.complete(null);
     }
 }

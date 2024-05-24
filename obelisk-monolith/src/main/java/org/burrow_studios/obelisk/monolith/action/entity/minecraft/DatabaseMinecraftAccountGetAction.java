@@ -16,7 +16,7 @@ public class DatabaseMinecraftAccountGetAction extends DatabaseGetAction<Backend
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<BackendMinecraftAccount> future) throws DatabaseException {
-        BackendMinecraftAccount minecraftAccount = actionableDatabase.onMinecraftAccountGet(this);
+        BackendMinecraftAccount minecraftAccount = actionableDatabase.getMinecraftAccount(this);
         future.complete(minecraftAccount);
     }
 }

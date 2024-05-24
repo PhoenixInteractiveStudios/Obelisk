@@ -17,7 +17,7 @@ public class DatabaseProjectDeleteAction extends DatabaseDeleteAction<Project> {
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Void> future) throws DatabaseException {
-        actionableDatabase.onProjectDelete(this);
+        actionableDatabase.deleteProject(this);
         future.complete(null);
     }
 }

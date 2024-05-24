@@ -18,7 +18,7 @@ public class DatabaseTicketListAction extends DatabaseListAction<AbstractTicket>
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<EntityCache<AbstractTicket>> future) throws DatabaseException {
-        List<BackendTicket> tickets = actionableDatabase.onTicketList(this);
+        List<BackendTicket> tickets = actionableDatabase.getTickets(this);
 
         this.getCache().clear();
         for (BackendTicket ticket : tickets)

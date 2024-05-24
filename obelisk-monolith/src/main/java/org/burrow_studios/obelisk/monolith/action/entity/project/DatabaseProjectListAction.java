@@ -18,7 +18,7 @@ public class DatabaseProjectListAction extends DatabaseListAction<AbstractProjec
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<EntityCache<AbstractProject>> future) throws DatabaseException {
-        List<BackendProject> projects = actionableDatabase.onProjectList(this);
+        List<BackendProject> projects = actionableDatabase.getProjects(this);
 
         this.getCache().clear();
         for (BackendProject project : projects)

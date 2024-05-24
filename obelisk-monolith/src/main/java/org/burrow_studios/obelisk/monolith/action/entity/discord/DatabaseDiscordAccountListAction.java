@@ -18,7 +18,7 @@ public class DatabaseDiscordAccountListAction extends DatabaseListAction<Abstrac
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<EntityCache<AbstractDiscordAccount>> future) throws DatabaseException {
-        List<BackendDiscordAccount> discordAccounts = actionableDatabase.onDiscordAccountList(this);
+        List<BackendDiscordAccount> discordAccounts = actionableDatabase.getDiscordAccounts(this);
 
         this.getCache().clear();
         for (BackendDiscordAccount discordAccount : discordAccounts)

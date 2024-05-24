@@ -21,7 +21,7 @@ public class DatabaseTicketModifier extends DatabaseModifier<Ticket> implements 
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Ticket> future) throws DatabaseException {
-        actionableDatabase.onTicketModify(this);
+        actionableDatabase.modifyTicket(this);
         future.complete(null);
     }
 

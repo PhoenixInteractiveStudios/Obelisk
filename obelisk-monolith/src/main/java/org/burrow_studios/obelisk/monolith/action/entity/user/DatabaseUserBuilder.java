@@ -21,7 +21,7 @@ public class DatabaseUserBuilder extends DatabaseBuilder<User> implements UserBu
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<User> future) throws DatabaseException {
-        BackendUser user = actionableDatabase.onUserBuild(this);
+        BackendUser user = actionableDatabase.createUser(this);
         future.complete(user);
     }
 

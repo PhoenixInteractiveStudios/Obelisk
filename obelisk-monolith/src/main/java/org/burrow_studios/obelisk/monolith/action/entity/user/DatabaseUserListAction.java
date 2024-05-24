@@ -18,7 +18,7 @@ public class DatabaseUserListAction extends DatabaseListAction<AbstractUser> {
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<EntityCache<AbstractUser>> future) throws DatabaseException {
-        List<BackendUser> users = actionableDatabase.onUserList(this);
+        List<BackendUser> users = actionableDatabase.getUsers(this);
 
         this.getCache().clear();
         for (BackendUser user : users)

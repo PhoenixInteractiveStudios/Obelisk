@@ -25,7 +25,7 @@ public class DatabaseMinecraftAccountBuilder extends DatabaseBuilder<MinecraftAc
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<MinecraftAccount> future) throws DatabaseException {
-        BackendMinecraftAccount minecraftAccount = actionableDatabase.onMinecraftAccountBuild(this);
+        BackendMinecraftAccount minecraftAccount = actionableDatabase.createMinecraftAccount(this);
         future.complete(minecraftAccount);
     }
 

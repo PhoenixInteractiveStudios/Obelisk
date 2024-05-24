@@ -22,7 +22,7 @@ public class DatabaseTicketBuilder extends DatabaseBuilder<Ticket> implements Ti
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Ticket> future) throws DatabaseException {
-        BackendTicket ticket = actionableDatabase.onTicketBuild(this);
+        BackendTicket ticket = actionableDatabase.createTicket(this);
         future.complete(ticket);
     }
 

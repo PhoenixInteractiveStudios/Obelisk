@@ -20,7 +20,7 @@ public class DatabaseProjectModifier extends DatabaseModifier<Project> implement
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Project> future) throws DatabaseException {
-        actionableDatabase.onProjectModify(this);
+        actionableDatabase.modifyProject(this);
         future.complete(null);
     }
 

@@ -23,7 +23,7 @@ public class DatabaseTicketUserRemoveAction extends DatabaseAction<Void> {
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Void> future) throws DatabaseException {
-        actionableDatabase.onTicketUserRemove(this);
+        actionableDatabase.removeTicketUser(this);
         future.complete(null);
     }
 

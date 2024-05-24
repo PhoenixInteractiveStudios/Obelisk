@@ -16,7 +16,7 @@ public class DatabaseDiscordAccountGetAction extends DatabaseGetAction<BackendDi
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<BackendDiscordAccount> future) throws DatabaseException {
-        BackendDiscordAccount discordAccount = actionableDatabase.onDiscordAccountGet(this);
+        BackendDiscordAccount discordAccount = actionableDatabase.getDiscordAccount(this);
         future.complete(discordAccount);
     }
 }

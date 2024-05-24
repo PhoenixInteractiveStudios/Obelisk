@@ -22,7 +22,7 @@ public class DatabaseDiscordAccountModifier extends DatabaseModifier<DiscordAcco
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<DiscordAccount> future) throws DatabaseException {
-        actionableDatabase.onDiscordAccountModify(this);
+        actionableDatabase.modifyDiscordAccount(this);
         future.complete(null);
     }
 

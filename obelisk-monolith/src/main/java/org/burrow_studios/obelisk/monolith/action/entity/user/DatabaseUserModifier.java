@@ -30,7 +30,7 @@ public class DatabaseUserModifier extends DatabaseModifier<User> implements User
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<User> future) throws DatabaseException {
-        actionableDatabase.onUserModify(this);
+        actionableDatabase.modifyUser(this);
         future.complete(null);
     }
 }

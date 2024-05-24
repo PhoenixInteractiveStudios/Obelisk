@@ -16,7 +16,7 @@ public class DatabaseUserGetAction extends DatabaseGetAction<BackendUser> {
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<BackendUser> future) throws DatabaseException {
-        BackendUser user = actionableDatabase.onUserGet(this);
+        BackendUser user = actionableDatabase.getUser(this);
         future.complete(user);
     }
 }

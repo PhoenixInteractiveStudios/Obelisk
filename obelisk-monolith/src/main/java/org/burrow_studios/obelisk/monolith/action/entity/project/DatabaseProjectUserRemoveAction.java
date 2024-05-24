@@ -23,7 +23,7 @@ public class DatabaseProjectUserRemoveAction extends DatabaseAction<Void> {
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Void> future) throws DatabaseException {
-        actionableDatabase.onProjectUserRemove(this);
+        actionableDatabase.removeProjectMember(this);
         future.complete(null);
     }
 

@@ -17,7 +17,7 @@ public class DatabaseUserDeleteAction extends DatabaseDeleteAction<User> {
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Void> future) throws DatabaseException {
-        actionableDatabase.onUserDelete(this);
+        actionableDatabase.deleteUser(this);
         future.complete(null);
     }
 }

@@ -18,7 +18,7 @@ public class DatabaseMinecraftAccountListAction extends DatabaseListAction<Abstr
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<EntityCache<AbstractMinecraftAccount>> future) throws DatabaseException {
-        List<BackendMinecraftAccount> minecraftAccounts = actionableDatabase.onMinecraftAccountList(this);
+        List<BackendMinecraftAccount> minecraftAccounts = actionableDatabase.getMinecraftAccounts(this);
 
         this.getCache().clear();
         for (BackendMinecraftAccount minecraftAccount : minecraftAccounts)

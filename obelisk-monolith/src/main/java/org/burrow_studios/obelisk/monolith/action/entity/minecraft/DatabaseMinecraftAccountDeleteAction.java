@@ -17,7 +17,7 @@ public class DatabaseMinecraftAccountDeleteAction extends DatabaseDeleteAction<M
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Void> future) throws DatabaseException {
-        actionableDatabase.onMinecraftAccountDelete(this);
+        actionableDatabase.deleteMinecraftAccount(this);
         future.complete(null);
     }
 }

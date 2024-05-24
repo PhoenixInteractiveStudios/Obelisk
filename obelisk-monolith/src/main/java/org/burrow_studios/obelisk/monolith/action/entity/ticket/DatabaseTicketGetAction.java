@@ -16,7 +16,7 @@ public class DatabaseTicketGetAction extends DatabaseGetAction<BackendTicket> {
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<BackendTicket> future) throws DatabaseException {
-        BackendTicket ticket = actionableDatabase.onTicketGet(this);
+        BackendTicket ticket = actionableDatabase.getTicket(this);
         future.complete(ticket);
     }
 }

@@ -22,7 +22,7 @@ public class DatabaseMinecraftAccountModifier extends DatabaseModifier<Minecraft
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<MinecraftAccount> future) throws DatabaseException {
-        actionableDatabase.onMinecraftAccountModify(this);
+        actionableDatabase.modifyMinecraftAccount(this);
         future.complete(null);
     }
 

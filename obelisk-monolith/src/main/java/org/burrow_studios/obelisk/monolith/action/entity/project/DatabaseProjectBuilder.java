@@ -21,7 +21,7 @@ public class DatabaseProjectBuilder extends DatabaseBuilder<Project> implements 
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Project> future) throws DatabaseException {
-        BackendProject project = actionableDatabase.onProjectBuild(this);
+        BackendProject project = actionableDatabase.createProject(this);
         future.complete(project);
     }
 

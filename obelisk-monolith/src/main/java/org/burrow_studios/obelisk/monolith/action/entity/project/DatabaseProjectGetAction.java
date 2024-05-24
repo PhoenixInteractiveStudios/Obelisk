@@ -16,7 +16,7 @@ public class DatabaseProjectGetAction extends DatabaseGetAction<BackendProject> 
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<BackendProject> future) throws DatabaseException {
-        BackendProject project = actionableDatabase.onProjectGet(this);
+        BackendProject project = actionableDatabase.getProject(this);
         future.complete(project);
     }
 }

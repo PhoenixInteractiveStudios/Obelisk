@@ -17,7 +17,7 @@ public class DatabaseTicketDeleteAction extends DatabaseDeleteAction<Ticket> {
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Void> future) throws DatabaseException {
-        actionableDatabase.onTicketDelete(this);
+        actionableDatabase.deleteTicket(this);
         future.complete(null);
     }
 }

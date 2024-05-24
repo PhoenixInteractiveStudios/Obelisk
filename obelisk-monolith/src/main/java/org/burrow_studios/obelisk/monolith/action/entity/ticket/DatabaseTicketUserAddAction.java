@@ -23,7 +23,7 @@ public class DatabaseTicketUserAddAction extends DatabaseAction<Void> {
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Void> future) throws DatabaseException {
-        actionableDatabase.onTicketUserAdd(this);
+        actionableDatabase.addTicketUser(this);
         future.complete(null);
     }
 

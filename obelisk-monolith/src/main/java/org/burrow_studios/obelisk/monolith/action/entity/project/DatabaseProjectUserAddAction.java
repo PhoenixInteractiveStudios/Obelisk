@@ -23,7 +23,7 @@ public class DatabaseProjectUserAddAction extends DatabaseAction<Void> {
 
     @Override
     public void execute(@NotNull IActionableDatabase actionableDatabase, @NotNull CompletableFuture<Void> future) throws DatabaseException {
-        actionableDatabase.onProjectUserAdd(this);
+        actionableDatabase.addProjectMember(this);
         future.complete(null);
     }
 
