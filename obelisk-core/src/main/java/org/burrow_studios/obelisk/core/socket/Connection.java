@@ -1,7 +1,9 @@
 package org.burrow_studios.obelisk.core.socket;
 
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.util.crypto.Encryption;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -42,6 +44,10 @@ public class Connection implements Closeable {
 
     public void addHandler(@NotNull Opcode opcode, @NotNull PacketHandler handler) {
         this.handlers.put(opcode, handler);
+    }
+
+    public void setEncryption(@Nullable Encryption encryption) {
+        this.socketIO.setEncryption(encryption);
     }
 
     @Override

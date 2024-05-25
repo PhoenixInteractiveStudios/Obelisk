@@ -4,48 +4,42 @@ package org.burrow_studios.obelisk.core.socket;
 public enum Opcode {
     /* META */
     /** Ends a session and closes the connection. */
-    DISCONNECT(0, false),
+    DISCONNECT(0),
     /** Initial handshake, sent by the server */
-    HELLO(1, false),
+    HELLO(1),
     /** Initial handshake, sent by the client. Begins encryption */
-    IDENTIFY(2, false),
+    IDENTIFY(2),
 
     /* HEARTBEAT */
     /** Periodically sent by the client to keep a connection alive. */
-    HEARTBEAT(10, false),
+    HEARTBEAT(10),
     /** Acknowledges a heartbeat; Sent by the server. */
-    HEARTBEAT_ACK(11, false),
+    HEARTBEAT_ACK(11),
 
     /* EVENTS */
     /** An entity create event. */
-    CREATE_EVENT(20, true),
+    CREATE_EVENT(20),
     /** An entity delete event. */
-    DELETE_EVENT(21, true),
+    DELETE_EVENT(21),
     /** An entity update event. */
-    UPDATE_EVENT(22, true),
+    UPDATE_EVENT(22),
 
     /* CACHE REQUESTS */
     /** Requests all cacheable data from the server. */
-    CACHE_REQUEST(30, true),
+    CACHE_REQUEST(30),
     /** Part of the cacheable data, sent as a response to a CACHE_REQUEST. */
-    ENTITY_DATA(31, true),
+    ENTITY_DATA(31),
     /** Informs the client that all ENTITY_DATA packets have been sent. */
-    CACHE_DONE(32, true);
+    CACHE_DONE(32);
 
     private final int code;
-    private final boolean encrypted;
 
-    Opcode(int code, boolean encrypted) {
+    Opcode(int code) {
         this.code = code;
-        this.encrypted = encrypted;
     }
 
     public int getCode() {
         return this.code;
-    }
-
-    public boolean isEncrypted() {
-        return this.encrypted;
     }
 
     public static Opcode get(int code) {

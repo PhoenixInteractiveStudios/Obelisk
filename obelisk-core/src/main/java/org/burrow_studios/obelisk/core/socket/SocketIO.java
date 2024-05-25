@@ -3,6 +3,8 @@ package org.burrow_studios.obelisk.core.socket;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import org.burrow_studios.obelisk.util.crypto.Encryption;
+import org.burrow_studios.obelisk.util.crypto.EncryptionException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -25,13 +27,18 @@ final class SocketIO implements Closeable {
     private final DataOutputStream out;
     private final ReentrantLock    sendLock = new ReentrantLock();
     private final ReentrantLock receiveLock = new ReentrantLock();
-    private Receiver receiver;
+    private Encryption encryption = Encryption.NONE;
+    private Receiver receiver = data -> { };
 
     public SocketIO(@NotNull Socket socket, @Nullable Receiver receiver) throws IOException {
         this.socket = socket;
         this.setReceiver(receiver);
         this.in  = new DataInputStream(this.socket.getInputStream());
         this.out = new DataOutputStream(this.socket.getOutputStream());
+    }
+
+    public void setEncryption(@Nullable Encryption encryption) {
+        this.encryption = encryption == null ? Encryption.NONE : encryption;
     }
 
     public void setReceiver(@Nullable Receiver receiver) {
@@ -47,10 +54,18 @@ final class SocketIO implements Closeable {
     }
 
     public void send(byte[] data) {
+        byte[] encrypted;
+        try {
+            encrypted = encryption.encrypt(data);
+        } catch (EncryptionException e) {
+            LOG.warn("Encountered an exception when attempting to encrypt", e);
+            return;
+        }
+
         this.sendLock.lock();
         try {
-            this.out.writeInt(data.length);
-            this.out.write(data);
+            this.out.writeInt(encrypted.length);
+            this.out.write(encrypted);
         } catch (IOException e) {
             LOG.warn("Encountered an exception when attempting to send", e);
         } finally {
@@ -59,17 +74,30 @@ final class SocketIO implements Closeable {
     }
 
     public void receive() {
+        byte[] data;
+        byte[] decrypted;
+
         this.receiveLock.lock();
         try {
             int length = this.in.readInt();
 
-            byte[] data = new byte[length];
+            data = new byte[length];
             this.in.readFully(data);
         } catch (IOException e) {
             LOG.warn("Encountered an exception when attempting to receive", e);
+            return;
         } finally {
             this.receiveLock.unlock();
         }
+
+        try {
+            decrypted = this.encryption.decrypt(data);
+        } catch (EncryptionException e) {
+            LOG.warn("Encountered an exception when attempting to decrypt", e);
+            return;
+        }
+
+        this.receiver.receive(decrypted);
     }
 
     @Override
