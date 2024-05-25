@@ -52,16 +52,17 @@ public class ObeliskMonolith extends AbstractObelisk {
 
         final SocketHandler socketHandler = new SocketHandler();
         this.socketServer.addHandler(Opcode.DISCONNECT, socketHandler::onDisconnect);
-        this.socketServer.addHandler(Opcode.HELLO, socketHandler::onHello);
         this.socketServer.addHandler(Opcode.IDENTIFY, socketHandler::onIdentify);
         this.socketServer.addHandler(Opcode.HEARTBEAT, socketHandler::onHeartbeat);
-        this.socketServer.addHandler(Opcode.HEARTBEAT_ACK, socketHandler::onHeartbeatAck);
-        this.socketServer.addHandler(Opcode.CREATE_EVENT, socketHandler::onCreateEvent);
-        this.socketServer.addHandler(Opcode.DELETE_EVENT, socketHandler::onDeleteEvent);
-        this.socketServer.addHandler(Opcode.UPDATE_EVENT, socketHandler::onUpdateEvent);
         this.socketServer.addHandler(Opcode.CACHE_REQUEST, socketHandler::onCacheRequest);
-        this.socketServer.addHandler(Opcode.ENTITY_DATA, socketHandler::onEntityData);
-        this.socketServer.addHandler(Opcode.CACHE_DONE, socketHandler::onCacheDone);
+
+        this.socketServer.addHandler(Opcode.HELLO, socketHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.HEARTBEAT_ACK, socketHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.CREATE_EVENT, socketHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.DELETE_EVENT, socketHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.UPDATE_EVENT, socketHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.ENTITY_DATA, socketHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.CACHE_DONE, socketHandler::onUnexpected);
 
         this.apiServer = new HTTPServer(EnvUtil.getInt("API_PORT", 8080));
 

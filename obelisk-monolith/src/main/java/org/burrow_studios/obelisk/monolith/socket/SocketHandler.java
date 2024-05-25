@@ -1,16 +1,14 @@
 package org.burrow_studios.obelisk.monolith.socket;
 
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.core.socket.Connection;
+import org.burrow_studios.obelisk.core.socket.Opcode;
 import org.burrow_studios.obelisk.core.socket.Packet;
 import org.jetbrains.annotations.NotNull;
 
 public class SocketHandler {
     public void onDisconnect(@NotNull Connection connection, @NotNull Packet packet) {
         // TODO
-    }
-
-    public void onHello(@NotNull Connection connection, @NotNull Packet packet) {
-        // TODO: fail & disconnect
     }
 
     public void onIdentify(@NotNull Connection connection, @NotNull Packet packet) {
@@ -21,31 +19,13 @@ public class SocketHandler {
         // TODO: respond
     }
 
-    public void onHeartbeatAck(@NotNull Connection connection, @NotNull Packet packet) {
-        // TODO: fail & disconnect
-    }
-
-    public void onCreateEvent(@NotNull Connection connection, @NotNull Packet packet) {
-        // TODO: fail & disconnect
-    }
-
-    public void onDeleteEvent(@NotNull Connection connection, @NotNull Packet packet) {
-        // TODO: fail & disconnect
-    }
-
-    public void onUpdateEvent(@NotNull Connection connection, @NotNull Packet packet) {
-        // TODO: fail & disconnect
-    }
-
     public void onCacheRequest(@NotNull Connection connection, @NotNull Packet packet) {
         // TODO
     }
 
-    public void onEntityData(@NotNull Connection connection, @NotNull Packet packet) {
-        // TODO: fail & disconnect
-    }
-
-    public void onCacheDone(@NotNull Connection connection, @NotNull Packet packet) {
-        // TODO: fail & disconnect
+    public void onUnexpected(@NotNull Connection connection, @NotNull Packet packet) {
+        JsonObject json = new JsonObject();
+        json.addProperty("reason", "Unexpected packet");
+        connection.send(new Packet(Opcode.DISCONNECT, json));
     }
 }
