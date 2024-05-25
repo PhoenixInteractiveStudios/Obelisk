@@ -7,6 +7,8 @@ import org.burrow_studios.obelisk.api.cache.EntitySet;
 import org.jetbrains.annotations.NotNull;
 
 public interface Project extends IEntity {
+    String IDENTIFIER = "project";
+
     @Override
     @NotNull ProjectModifier modify();
 

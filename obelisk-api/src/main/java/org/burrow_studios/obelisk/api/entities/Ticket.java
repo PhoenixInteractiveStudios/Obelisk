@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface Ticket extends IEntity {
+    String IDENTIFIER = "ticket";
+
     @Override
     @NotNull TicketModifier modify();
 

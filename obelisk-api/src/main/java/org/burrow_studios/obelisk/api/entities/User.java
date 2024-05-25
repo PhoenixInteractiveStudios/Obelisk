@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 public interface User extends IEntity {
+    String IDENTIFIER = "user";
+
     @Override
     @NotNull UserModifier modify();
 

@@ -8,6 +8,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public interface MinecraftAccount extends IEntity {
+    String IDENTIFIER = "minecraft";
+
     @Override
     @NotNull MinecraftAccountModifier modify();
 

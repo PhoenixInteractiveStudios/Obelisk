@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.client.socket.handlers;
 
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.entities.*;
 import org.burrow_studios.obelisk.client.EntityBuilder;
 import org.burrow_studios.obelisk.client.ObeliskImpl;
 import org.burrow_studios.obelisk.client.entities.*;
@@ -26,23 +27,23 @@ public class CacheDataHandler implements PacketHandler {
         EntityBuilder entityBuilder = this.obelisk.getEntityBuilder();
 
         switch (type) {
-            case "user" -> {
+            case User.IDENTIFIER -> {
                 UserImpl user = entityBuilder.buildUser(data);
                 this.obelisk.getUsers().add(user);
             }
-            case "ticket" -> {
+            case Ticket.IDENTIFIER -> {
                 TicketImpl ticket = entityBuilder.buildTicket(data);
                 this.obelisk.getTickets().add(ticket);
             }
-            case "project" -> {
+            case Project.IDENTIFIER -> {
                 ProjectImpl project = entityBuilder.buildProject(data);
                 this.obelisk.getProjects().add(project);
             }
-            case "discord" -> {
+            case DiscordAccount.IDENTIFIER -> {
                 DiscordAccountImpl discord = entityBuilder.buildDiscordAccount(data);
                 this.obelisk.getDiscordAccounts().add(discord);
             }
-            case "minecraft" -> {
+            case MinecraftAccount.IDENTIFIER -> {
                 MinecraftAccountImpl minecraft = entityBuilder.buildMinecraftAccount(data);
                 this.obelisk.getMinecraftAccounts().add(minecraft);
             }

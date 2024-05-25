@@ -6,6 +6,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface DiscordAccount extends IEntity {
+    String IDENTIFIER = "discord";
+
     @Override
     @NotNull DiscordAccountModifier modify();
 

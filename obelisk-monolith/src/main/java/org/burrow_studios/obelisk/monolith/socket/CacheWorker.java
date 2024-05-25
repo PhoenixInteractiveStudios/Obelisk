@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.monolith.socket;
 
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.entities.*;
 import org.burrow_studios.obelisk.core.socket.Connection;
 import org.burrow_studios.obelisk.core.socket.Opcode;
 import org.burrow_studios.obelisk.core.socket.Packet;
@@ -25,19 +26,19 @@ public class CacheWorker extends Thread {
     @Override
     public void run() {
         this.obelisk.getUsers().forEach(user -> buffer.add(user.toJson()));
-        this.flush("user");
+        this.flush(User.IDENTIFIER);
 
         this.obelisk.getTickets().forEach(ticket -> buffer.add(ticket.toJson()));
-        this.flush("ticket");
+        this.flush(Ticket.IDENTIFIER);
 
         this.obelisk.getProjects().forEach(project -> buffer.add(project.toJson()));
-        this.flush("project");
+        this.flush(Project.IDENTIFIER);
 
         this.obelisk.getDiscordAccounts().forEach(discord -> buffer.add(discord.toJson()));
-        this.flush("discord");
+        this.flush(DiscordAccount.IDENTIFIER);
 
         this.obelisk.getMinecraftAccounts().forEach(minecraft -> buffer.add(minecraft.toJson()));
-        this.flush("minecraft");
+        this.flush(MinecraftAccount.IDENTIFIER);
     }
 
     private void flush(@NotNull String type) {
