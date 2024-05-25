@@ -50,7 +50,7 @@ public class ObeliskMonolith extends AbstractObelisk {
 
         this.socketServer = new SocketServer(EnvUtil.getInt("SOCKET_PORT", 8081));
 
-        final PacketHandler packetHandler = new PacketHandler();
+        final PacketHandler packetHandler = new PacketHandler(this);
         this.socketServer.addHandler(Opcode.DISCONNECT, packetHandler::onDisconnect);
         this.socketServer.addHandler(Opcode.IDENTIFY, packetHandler::onIdentify);
         this.socketServer.addHandler(Opcode.HEARTBEAT, packetHandler::onHeartbeat);

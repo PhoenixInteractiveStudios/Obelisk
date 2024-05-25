@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.core.socket.Connection;
 import org.burrow_studios.obelisk.core.socket.Opcode;
 import org.burrow_studios.obelisk.core.socket.Packet;
+import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.util.crypto.PassGen;
 import org.burrow_studios.obelisk.util.crypto.SimpleSymmetricEncryption;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,12 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 
 public class PacketHandler {
+    private final ObeliskMonolith obelisk;
+
+    public PacketHandler(@NotNull ObeliskMonolith obelisk) {
+        this.obelisk = obelisk;
+    }
+
     public void onDisconnect(@NotNull Connection connection, @NotNull Packet packet) {
         try {
             connection.close();
@@ -46,7 +53,8 @@ public class PacketHandler {
     }
 
     public void onCacheRequest(@NotNull Connection connection, @NotNull Packet packet) {
-        // TODO
+        CacheWorker cacheWorker = new CacheWorker(this.obelisk, connection);
+        cacheWorker.start();
     }
 
     public void onUnexpected(@NotNull Connection connection, @NotNull Packet packet) {
