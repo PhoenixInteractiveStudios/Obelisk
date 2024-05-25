@@ -13,6 +13,7 @@ import org.burrow_studios.obelisk.client.action.entity.ticket.TicketBuilderImpl;
 import org.burrow_studios.obelisk.client.action.entity.user.UserBuilderImpl;
 import org.burrow_studios.obelisk.client.config.AuthConfig;
 import org.burrow_studios.obelisk.client.config.HttpConfig;
+import org.burrow_studios.obelisk.client.config.GatewayConfig;
 import org.burrow_studios.obelisk.client.entities.*;
 import org.burrow_studios.obelisk.client.http.HTTPClient;
 import org.burrow_studios.obelisk.core.AbstractObelisk;
@@ -27,15 +28,16 @@ import java.util.concurrent.ExecutionException;
 public class ObeliskImpl extends AbstractObelisk {
     private final AuthConfig authConfig;
     private final HttpConfig httpConfig;
+    private final GatewayConfig gatewayConfig;
     private final EntityBuilder entityBuilder;
     private HTTPClient httpClient;
-    private URI gatewayUrl;
 
-    public ObeliskImpl(@NotNull AuthConfig authConfig, @NotNull HttpConfig httpConfig) {
+    public ObeliskImpl(@NotNull AuthConfig authConfig, @NotNull HttpConfig httpConfig, @NotNull GatewayConfig gatewayConfig) {
         super();
 
         this.authConfig = authConfig;
         this.httpConfig = httpConfig;
+        this.gatewayConfig = gatewayConfig;
 
         this.entityBuilder = new EntityBuilder(this);
     }
@@ -55,10 +57,9 @@ public class ObeliskImpl extends AbstractObelisk {
             throw new IllegalStateException("HTTPClient has already been initialized");
         this.httpClient = new HTTPClient(authConfig, httpConfig);
 
-        this.gatewayUrl = gatewayUrl;
-        if (this.gatewayUrl == null) {
+        if (this.gatewayConfig.isEmpty()) {
             try {
-                this.gatewayUrl = getGatewayUrl().await();
+                getGatewayUrl().await();
             } catch (ExecutionException | InterruptedException e) {
                 throw new RuntimeException("Failed to retrieve gateway url", e);
             }
@@ -67,8 +68,8 @@ public class ObeliskImpl extends AbstractObelisk {
         // TODO: initial cache fill
     }
 
-    public @NotNull Action<URI> getGatewayUrl() {
-        // TODO: acquire gateway url
+    public @NotNull Action<Void> getGatewayUrl() {
+        // TODO: acquire gateway url & edit socketConfig
         return null;
     }
 

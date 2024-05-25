@@ -2,16 +2,15 @@ package org.burrow_studios.obelisk.client;
 
 import org.burrow_studios.obelisk.api.Obelisk;
 import org.burrow_studios.obelisk.client.config.AuthConfig;
+import org.burrow_studios.obelisk.client.config.GatewayConfig;
 import org.burrow_studios.obelisk.client.config.HttpConfig;
 import org.jetbrains.annotations.NotNull;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 public class ObeliskBuilder {
     private String host;
     private String token;
-    private String gateway;
+    private String gatewayHost;
+    private Integer gatewayPort;
 
     private ObeliskBuilder() { }
 
@@ -32,15 +31,14 @@ public class ObeliskBuilder {
 
         AuthConfig authConfig = new AuthConfig(token);
         HttpConfig httpConfig = new HttpConfig(host);
+        GatewayConfig gatewayConfig = new GatewayConfig();
 
-        if (this.gateway != null)
-            try {
-                httpConfig.setGatewayUrl(new URI(this.gateway));
-            } catch (URISyntaxException e) {
-                throw new IllegalArgumentException("Invalid gateway URI syntax", e);
-            }
+        if (this.gatewayHost != null)
+            gatewayConfig.setHost(gatewayHost);
+        if (this.gatewayPort != null)
+            gatewayConfig.setPort(gatewayPort);
 
-        ObeliskImpl obelisk = new ObeliskImpl(authConfig, httpConfig);
+        ObeliskImpl obelisk = new ObeliskImpl(authConfig, httpConfig, gatewayConfig);
 
         obelisk.login();
 
@@ -52,8 +50,9 @@ public class ObeliskBuilder {
         return this;
     }
 
-    public @NotNull ObeliskBuilder setGateway(String gateway) {
-        this.gateway = gateway;
+    public @NotNull ObeliskBuilder setGateway(String host, int port) {
+        this.gatewayHost = host;
+        this.gatewayPort = port;
         return this;
     }
 
