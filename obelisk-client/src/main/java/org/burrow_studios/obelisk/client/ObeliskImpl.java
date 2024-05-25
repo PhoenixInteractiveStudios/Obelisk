@@ -69,8 +69,20 @@ public class ObeliskImpl extends AbstractObelisk {
     }
 
     public @NotNull Action<Void> getGatewayUrl() {
-        // TODO: acquire gateway url & edit socketConfig
-        return null;
+        return ActionImpl.simpleGet(this, Route.Meta.GET_GATEWAY.compile(), (voidRequest, response) -> {
+            JsonElement body = voidRequest.getBody();
+            if (body == null)
+                throw new RuntimeException("Missing response body");
+            JsonObject json = body.getAsJsonObject();
+
+            final String host = json.get("host").getAsString();
+            final int    port = json.get("port").getAsInt();
+
+            gatewayConfig.setHost(host);
+            gatewayConfig.setPort(port);
+
+            return null;
+        });
     }
 
     public @NotNull HTTPClient getHttpClient() {
