@@ -2,6 +2,8 @@ package org.burrow_studios.obelisk.monolith;
 
 import org.burrow_studios.obelisk.core.AbstractObelisk;
 import org.burrow_studios.obelisk.core.http.Route;
+import org.burrow_studios.obelisk.core.socket.Opcode;
+import org.burrow_studios.obelisk.core.socket.SocketServer;
 import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountBuilder;
 import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountGetAction;
 import org.burrow_studios.obelisk.monolith.action.entity.discord.DatabaseDiscordAccountListAction;
@@ -23,6 +25,7 @@ import org.burrow_studios.obelisk.monolith.db.impl.EntityDatabase;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.burrow_studios.obelisk.monolith.http.HTTPServer;
 import org.burrow_studios.obelisk.monolith.http.handlers.*;
+import org.burrow_studios.obelisk.monolith.socket.SocketHandler;
 import org.burrow_studios.obelisk.util.EnvUtil;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -36,6 +39,7 @@ public class ObeliskMonolith extends AbstractObelisk {
 
     private final DatabaseAdapter databaseAdapter;
     private final HTTPServer apiServer;
+    private final SocketServer socketServer;
 
     public ObeliskMonolith() throws DatabaseException, IOException {
         super();
@@ -44,7 +48,22 @@ public class ObeliskMonolith extends AbstractObelisk {
         final ActionableDatabase database = new ActionableDatabase(entityDatabase);
         this.databaseAdapter = new DatabaseAdapter(database);
 
-        this.apiServer = new HTTPServer(EnvUtil.getInt("API_PORT", 80));
+        this.socketServer = new SocketServer(EnvUtil.getInt("SOCKET_PORT", 8081));
+
+        final SocketHandler socketHandler = new SocketHandler();
+        this.socketServer.addHandler(Opcode.DISCONNECT, socketHandler::onDisconnect);
+        this.socketServer.addHandler(Opcode.HELLO, socketHandler::onHello);
+        this.socketServer.addHandler(Opcode.IDENTIFY, socketHandler::onIdentify);
+        this.socketServer.addHandler(Opcode.HEARTBEAT, socketHandler::onHeartbeat);
+        this.socketServer.addHandler(Opcode.HEARTBEAT_ACK, socketHandler::onHeartbeatAck);
+        this.socketServer.addHandler(Opcode.CREATE_EVENT, socketHandler::onCreateEvent);
+        this.socketServer.addHandler(Opcode.DELETE_EVENT, socketHandler::onDeleteEvent);
+        this.socketServer.addHandler(Opcode.UPDATE_EVENT, socketHandler::onUpdateEvent);
+        this.socketServer.addHandler(Opcode.CACHE_REQUEST, socketHandler::onCacheRequest);
+        this.socketServer.addHandler(Opcode.ENTITY_DATA, socketHandler::onEntityData);
+        this.socketServer.addHandler(Opcode.CACHE_DONE, socketHandler::onCacheDone);
+
+        this.apiServer = new HTTPServer(EnvUtil.getInt("API_PORT", 8080));
 
         final UserHandler userHandler = new UserHandler(this);
         this.apiServer.addHandler(Route.User.GET_USER, userHandler::onGet);
@@ -81,6 +100,7 @@ public class ObeliskMonolith extends AbstractObelisk {
         this.apiServer.addHandler(Route.Minecraft.EDIT_MINECRAFT_ACCOUNT, minecraftAccountHandler::onPatch);
         this.apiServer.addHandler(Route.Minecraft.DELETE_MINECRAFT_ACCOUNT, minecraftAccountHandler::onDelete);
 
+        this.socketServer.start();
         this.apiServer.start();
     }
 
