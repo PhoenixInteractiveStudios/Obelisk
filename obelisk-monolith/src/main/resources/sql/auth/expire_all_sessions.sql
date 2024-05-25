@@ -1,1 +1,0 @@
-UPDATE `sessions` SET `expired` = 1 WHERE `identity` = ?;

@@ -1,1 +1,0 @@
-SELECT * FROM `sessions` WHERE `identity` = ? AND `expired` = 0;

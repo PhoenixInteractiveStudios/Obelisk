@@ -1,1 +1,0 @@
-SELECT * FROM `sessions` WHERE `id` = ? LIMIT 1;

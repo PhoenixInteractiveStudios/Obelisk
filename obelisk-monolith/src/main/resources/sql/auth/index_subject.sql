@@ -1,1 +1,0 @@
-CREATE INDEX IF NOT EXISTS `application` ON `identities` (`application`);

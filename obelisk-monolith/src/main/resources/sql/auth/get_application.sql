@@ -1,1 +1,0 @@
-SELECT * FROM `identities` WHERE `token_id` = ?;

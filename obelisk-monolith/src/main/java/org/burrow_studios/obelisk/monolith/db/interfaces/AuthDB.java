@@ -1,24 +1,24 @@
 package org.burrow_studios.obelisk.monolith.db.interfaces;
 
+import org.burrow_studios.obelisk.monolith.auth.ApplicationData;
+import org.burrow_studios.obelisk.monolith.auth.Intent;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Closeable;
+import java.util.Map;
+import java.util.Set;
 
 public interface AuthDB extends Closeable {
-    long[] getActiveSessions(long identity) throws DatabaseException;
+    @NotNull Set<Intent> getIntents() throws DatabaseException;
 
-    @NotNull String getSessionToken(long session) throws DatabaseException;
+    @NotNull Intent getIntent(long id) throws DatabaseException;
 
-    long getIdentitySubject(long identity) throws DatabaseException;
+    @NotNull Intent getIntent(@NotNull String name) throws DatabaseException;
 
-    void createSession(long id, long identity, String token) throws DatabaseException;
+    @NotNull Map<Long, String> getApplications() throws DatabaseException;
 
-    void invalidateSession(long id, long identity) throws DatabaseException;
+    @NotNull ApplicationData getApplication(long application) throws DatabaseException;
 
-    void invalidateAllSessions(long identity) throws DatabaseException;
-
-    void invalidateIdentityTokenFamily(long application) throws DatabaseException;
-
-    void createIdentity(long id, long application) throws DatabaseException;
+    @NotNull Set<Intent> getApplicationIntents(long application) throws DatabaseException;
 }

@@ -1,1 +1,0 @@
-SELECT `token_family` AS `family` FROM `identities` WHERE `application` = ? ORDER BY `family` DESC LIMIT 1;

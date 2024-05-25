@@ -1,0 +1,1 @@
+SELECT * FROM `intents` WHERE `id` = ?;

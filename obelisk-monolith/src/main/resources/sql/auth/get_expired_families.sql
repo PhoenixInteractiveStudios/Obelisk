@@ -1,1 +1,0 @@
-SELECT * FROM `expired_families` WHERE `application` = ? AND `family` = ?;
