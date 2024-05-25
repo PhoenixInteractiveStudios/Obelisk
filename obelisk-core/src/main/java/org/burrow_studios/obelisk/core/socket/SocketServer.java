@@ -64,4 +64,8 @@ public class SocketServer implements Closeable {
     public Map<Opcode, PacketHandler> getHandlers() {
         return Collections.unmodifiableMap(this.handlers);
     }
+
+    public void forgetClient(Connection connection) {
+        this.connections.remove(connection);
+    }
 }

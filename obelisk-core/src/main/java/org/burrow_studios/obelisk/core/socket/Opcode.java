@@ -9,6 +9,7 @@ public enum Opcode {
     HELLO(1),
     /** Initial handshake, sent by the client. Begins encryption */
     IDENTIFY(2),
+    ENCRYPTION(3),
 
     /* HEARTBEAT */
     /** Periodically sent by the client to keep a connection alive. */
