@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-public class SocketHandler {
+public class PacketHandler {
     public void onDisconnect(@NotNull Connection connection, @NotNull Packet packet) {
         try {
             connection.close();

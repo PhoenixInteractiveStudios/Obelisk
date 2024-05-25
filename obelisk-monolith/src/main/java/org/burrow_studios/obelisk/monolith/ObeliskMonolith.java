@@ -25,7 +25,7 @@ import org.burrow_studios.obelisk.monolith.db.impl.EntityDatabase;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.burrow_studios.obelisk.monolith.http.HTTPServer;
 import org.burrow_studios.obelisk.monolith.http.handlers.*;
-import org.burrow_studios.obelisk.monolith.socket.SocketHandler;
+import org.burrow_studios.obelisk.monolith.socket.PacketHandler;
 import org.burrow_studios.obelisk.util.EnvUtil;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -50,19 +50,19 @@ public class ObeliskMonolith extends AbstractObelisk {
 
         this.socketServer = new SocketServer(EnvUtil.getInt("SOCKET_PORT", 8081));
 
-        final SocketHandler socketHandler = new SocketHandler();
-        this.socketServer.addHandler(Opcode.DISCONNECT, socketHandler::onDisconnect);
-        this.socketServer.addHandler(Opcode.IDENTIFY, socketHandler::onIdentify);
-        this.socketServer.addHandler(Opcode.HEARTBEAT, socketHandler::onHeartbeat);
-        this.socketServer.addHandler(Opcode.CACHE_REQUEST, socketHandler::onCacheRequest);
+        final PacketHandler packetHandler = new PacketHandler();
+        this.socketServer.addHandler(Opcode.DISCONNECT, packetHandler::onDisconnect);
+        this.socketServer.addHandler(Opcode.IDENTIFY, packetHandler::onIdentify);
+        this.socketServer.addHandler(Opcode.HEARTBEAT, packetHandler::onHeartbeat);
+        this.socketServer.addHandler(Opcode.CACHE_REQUEST, packetHandler::onCacheRequest);
 
-        this.socketServer.addHandler(Opcode.HELLO, socketHandler::onUnexpected);
-        this.socketServer.addHandler(Opcode.HEARTBEAT_ACK, socketHandler::onUnexpected);
-        this.socketServer.addHandler(Opcode.CREATE_EVENT, socketHandler::onUnexpected);
-        this.socketServer.addHandler(Opcode.DELETE_EVENT, socketHandler::onUnexpected);
-        this.socketServer.addHandler(Opcode.UPDATE_EVENT, socketHandler::onUnexpected);
-        this.socketServer.addHandler(Opcode.ENTITY_DATA, socketHandler::onUnexpected);
-        this.socketServer.addHandler(Opcode.CACHE_DONE, socketHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.HELLO, packetHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.HEARTBEAT_ACK, packetHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.CREATE_EVENT, packetHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.DELETE_EVENT, packetHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.UPDATE_EVENT, packetHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.ENTITY_DATA, packetHandler::onUnexpected);
+        this.socketServer.addHandler(Opcode.CACHE_DONE, packetHandler::onUnexpected);
 
         this.apiServer = new HTTPServer(EnvUtil.getInt("API_PORT", 8080));
 
