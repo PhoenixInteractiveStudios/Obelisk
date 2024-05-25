@@ -5,6 +5,7 @@ import org.burrow_studios.obelisk.api.Status;
 import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.core.cache.EntityCache;
 import org.burrow_studios.obelisk.core.entities.*;
+import org.burrow_studios.obelisk.core.event.EventManagerImpl;
 import org.burrow_studios.obelisk.util.EnumLatch;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +21,8 @@ public abstract class AbstractObelisk implements Obelisk {
     private final @NotNull EntityCache<AbstractDiscordAccount> discordAccountCache;
     private final @NotNull EntityCache<AbstractMinecraftAccount> minecraftAccountCache;
 
+    private final @NotNull EventManagerImpl eventManager;
+
     protected final @NotNull EnumLatch<Status> status;
 
     protected AbstractObelisk() {
@@ -31,6 +34,13 @@ public abstract class AbstractObelisk implements Obelisk {
 
         this.discordAccountCache = new EntityCache<>(this, AbstractDiscordAccount.class);
         this.minecraftAccountCache = new EntityCache<>(this, AbstractMinecraftAccount.class);
+
+        this.eventManager = new EventManagerImpl();
+    }
+
+    @Override
+    public final @NotNull EventManagerImpl getEventManager() {
+        return this.eventManager;
     }
 
     public final @NotNull Status getStatus() {

@@ -8,6 +8,7 @@ import org.burrow_studios.obelisk.api.action.entity.ticket.TicketBuilder;
 import org.burrow_studios.obelisk.api.action.entity.user.UserBuilder;
 import org.burrow_studios.obelisk.api.cache.EntitySet;
 import org.burrow_studios.obelisk.api.entities.*;
+import org.burrow_studios.obelisk.api.event.EventManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +16,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public interface Obelisk {
+    @NotNull EventManager getEventManager();
+
     @NotNull Status getStatus();
 
     void awaitReady() throws InterruptedException;
