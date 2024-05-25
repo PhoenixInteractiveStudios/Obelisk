@@ -65,6 +65,9 @@ public class ObeliskMonolith extends AbstractObelisk {
 
         this.apiServer = new HTTPServer(EnvUtil.getInt("API_PORT", 8080));
 
+        final GatewayHandler gatewayHandler = new GatewayHandler();
+        this.apiServer.addHandler(Route.Meta.GET_GATEWAY, gatewayHandler::onGet);
+
         final UserHandler userHandler = new UserHandler(this);
         this.apiServer.addHandler(Route.User.GET_USER, userHandler::onGet);
         this.apiServer.addHandler(Route.User.LIST_USERS, userHandler::onList);
