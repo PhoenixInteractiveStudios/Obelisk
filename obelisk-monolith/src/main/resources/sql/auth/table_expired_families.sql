@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS `expired_families` (
-    `subject` BIGINT(20) NOT NULL,
+    `application` BIGINT(20) NOT NULL,
     `family` INT NOT NULL,
-    PRIMARY KEY (`subject`, `family`),
-    FOREIGN KEY (`subject`, `family`) REFERENCES `identities`(`subject`, `token_family`)
+    PRIMARY KEY (`application`, `family`),
+    FOREIGN KEY (`application`, `family`) REFERENCES `identities`(`application`, `token_family`)
 );

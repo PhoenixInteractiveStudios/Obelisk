@@ -1,1 +1,1 @@
-SELECT * FROM `expired_families` WHERE `subject` = ? AND `family` = ?;
+SELECT * FROM `expired_families` WHERE `application` = ? AND `family` = ?;

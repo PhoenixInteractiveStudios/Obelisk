@@ -18,7 +18,7 @@ public interface AuthDB extends Closeable {
 
     void invalidateAllSessions(long identity) throws DatabaseException;
 
-    void invalidateIdentityTokenFamily(long subject) throws DatabaseException;
+    void invalidateIdentityTokenFamily(long application) throws DatabaseException;
 
-    void createIdentity(long id, long subject) throws DatabaseException;
+    void createIdentity(long id, long application) throws DatabaseException;
 }

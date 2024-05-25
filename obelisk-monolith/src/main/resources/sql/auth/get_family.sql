@@ -1,1 +1,1 @@
-SELECT `token_family` AS `family` FROM `identities` WHERE `subject` = ? ORDER BY `family` DESC LIMIT 1;
+SELECT `token_family` AS `family` FROM `identities` WHERE `application` = ? ORDER BY `family` DESC LIMIT 1;

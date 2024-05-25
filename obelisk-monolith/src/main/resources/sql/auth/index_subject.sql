@@ -1,1 +1,1 @@
-CREATE INDEX IF NOT EXISTS `subject` ON `identities` (`subject`);
+CREATE INDEX IF NOT EXISTS `application` ON `identities` (`application`);

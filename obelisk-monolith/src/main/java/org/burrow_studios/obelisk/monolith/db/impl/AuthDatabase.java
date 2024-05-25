@@ -41,7 +41,7 @@ public class AuthDatabase implements AuthDB {
             this.database.execute("table_expired_families");
             this.database.execute("table_sessions");
 
-            this.database.execute("index_subject");
+            this.database.execute("index_application");
             this.database.execute("index_token_family");
         } catch (SQLException e) {
             throw new DatabaseException("Could not create tables", e);
@@ -96,7 +96,7 @@ public class AuthDatabase implements AuthDB {
 
     @Override
     public long getIdentitySubject(long identity) throws DatabaseException {
-        try (PreparedStatement stmt = database.preparedStatement("get_subject")) {
+        try (PreparedStatement stmt = database.preparedStatement("get_application")) {
             stmt.setLong(1, identity);
 
             ResultSet result = stmt.executeQuery();
@@ -104,7 +104,7 @@ public class AuthDatabase implements AuthDB {
             if (!result.next())
                 throw new NoSuchEntryException();
 
-            return result.getLong("subject");
+            return result.getLong("application");
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
@@ -147,11 +147,11 @@ public class AuthDatabase implements AuthDB {
     }
 
     @Override
-    public void invalidateIdentityTokenFamily(long subject) throws DatabaseException {
-        final int family = getCurrentFamily(subject, false);
+    public void invalidateIdentityTokenFamily(long application) throws DatabaseException {
+        final int family = getCurrentFamily(application, false);
 
         try (PreparedStatement stmt = database.preparedStatement("create_expired_family")) {
-            stmt.setLong(1, subject);
+            stmt.setLong(1, application);
             stmt.setInt(2, family);
 
             stmt.execute();
@@ -161,11 +161,11 @@ public class AuthDatabase implements AuthDB {
     }
 
     @Override
-    public void createIdentity(long id, long subject) throws DatabaseException {
-        final int family = getCurrentFamily(subject, true);
+    public void createIdentity(long id, long application) throws DatabaseException {
+        final int family = getCurrentFamily(application, true);
 
         try (PreparedStatement stmt = database.preparedStatement("create_identity")) {
-            stmt.setLong(1, subject);
+            stmt.setLong(1, application);
             stmt.setInt(2, family);
             stmt.setLong(3, id);
 
@@ -175,11 +175,11 @@ public class AuthDatabase implements AuthDB {
         }
     }
 
-    private int getCurrentFamily(long subject, boolean createNew) throws DatabaseException {
+    private int getCurrentFamily(long application, boolean createNew) throws DatabaseException {
         int family = 0;
 
         try (PreparedStatement stmt = database.preparedStatement("get_family")) {
-            stmt.setLong(1, subject);
+            stmt.setLong(1, application);
 
             ResultSet result = stmt.executeQuery();
 
