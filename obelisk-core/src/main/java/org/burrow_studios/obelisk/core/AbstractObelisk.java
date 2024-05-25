@@ -37,6 +37,10 @@ public abstract class AbstractObelisk implements Obelisk {
         return this.status.get();
     }
 
+    public final void setStatus(@NotNull Status status) {
+        this.status.set(status);
+    }
+
     @Override
     public final void awaitReady() throws InterruptedException {
         this.status.await(Status.READY);

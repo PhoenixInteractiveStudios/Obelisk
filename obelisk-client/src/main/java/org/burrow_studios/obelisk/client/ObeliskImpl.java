@@ -12,17 +12,18 @@ import org.burrow_studios.obelisk.client.action.entity.project.ProjectBuilderImp
 import org.burrow_studios.obelisk.client.action.entity.ticket.TicketBuilderImpl;
 import org.burrow_studios.obelisk.client.action.entity.user.UserBuilderImpl;
 import org.burrow_studios.obelisk.client.config.AuthConfig;
-import org.burrow_studios.obelisk.client.config.HttpConfig;
 import org.burrow_studios.obelisk.client.config.GatewayConfig;
+import org.burrow_studios.obelisk.client.config.HttpConfig;
 import org.burrow_studios.obelisk.client.entities.*;
 import org.burrow_studios.obelisk.client.http.HTTPClient;
+import org.burrow_studios.obelisk.client.socket.GatewayAdapter;
 import org.burrow_studios.obelisk.core.AbstractObelisk;
 import org.burrow_studios.obelisk.core.cache.EntityCache;
 import org.burrow_studios.obelisk.core.entities.*;
 import org.burrow_studios.obelisk.core.http.Route;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.URI;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class ObeliskImpl extends AbstractObelisk {
@@ -30,6 +31,7 @@ public class ObeliskImpl extends AbstractObelisk {
     private final HttpConfig httpConfig;
     private final GatewayConfig gatewayConfig;
     private final EntityBuilder entityBuilder;
+    private final GatewayAdapter gatewayAdapter;
     private HTTPClient httpClient;
 
     public ObeliskImpl(@NotNull AuthConfig authConfig, @NotNull HttpConfig httpConfig, @NotNull GatewayConfig gatewayConfig) {
@@ -40,13 +42,11 @@ public class ObeliskImpl extends AbstractObelisk {
         this.gatewayConfig = gatewayConfig;
 
         this.entityBuilder = new EntityBuilder(this);
+
+        this.gatewayAdapter = new GatewayAdapter(this, gatewayConfig);
     }
 
-    public void login() {
-        this.login(null);
-    }
-
-    public void login(URI gatewayUrl) {
+    public synchronized void login() {
         Status s = this.status.get();
 
         if (s != Status.PRE_INIT)
@@ -63,6 +63,12 @@ public class ObeliskImpl extends AbstractObelisk {
             } catch (ExecutionException | InterruptedException e) {
                 throw new RuntimeException("Failed to retrieve gateway url", e);
             }
+        }
+
+        try {
+            this.gatewayAdapter.connect();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to connect to gateway", e);
         }
 
         // TODO: initial cache fill
