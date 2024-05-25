@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.monolith.db.impl;
+package org.burrow_studios.obelisk.monolith.db;
 
 import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.Ticket;

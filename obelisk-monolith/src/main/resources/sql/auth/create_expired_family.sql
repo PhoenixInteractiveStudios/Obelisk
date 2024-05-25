@@ -1,0 +1,1 @@
+INSERT OR IGNORE INTO `expired_families` (`subject`, `family`) VALUES (?, ?);

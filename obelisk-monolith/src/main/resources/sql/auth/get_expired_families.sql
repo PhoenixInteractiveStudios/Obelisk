@@ -1,0 +1,1 @@
+SELECT * FROM `expired_families` WHERE `subject` = ? AND `family` = ?;

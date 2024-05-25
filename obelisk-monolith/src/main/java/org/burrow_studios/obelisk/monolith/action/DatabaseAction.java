@@ -2,7 +2,7 @@ package org.burrow_studios.obelisk.monolith.action;
 
 import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
-import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
+import org.burrow_studios.obelisk.monolith.db.interfaces.IActionableDatabase;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 

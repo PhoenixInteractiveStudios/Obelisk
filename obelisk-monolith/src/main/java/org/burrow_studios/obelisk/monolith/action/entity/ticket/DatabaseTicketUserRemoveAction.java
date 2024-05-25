@@ -4,7 +4,7 @@ import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.monolith.action.DatabaseAction;
-import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
+import org.burrow_studios.obelisk.monolith.db.interfaces.IActionableDatabase;
 import org.burrow_studios.obelisk.monolith.entities.BackendTicket;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;

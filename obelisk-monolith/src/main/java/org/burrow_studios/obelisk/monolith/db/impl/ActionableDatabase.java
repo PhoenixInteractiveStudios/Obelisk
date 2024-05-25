@@ -9,7 +9,7 @@ import org.burrow_studios.obelisk.monolith.action.entity.minecraft.*;
 import org.burrow_studios.obelisk.monolith.action.entity.project.*;
 import org.burrow_studios.obelisk.monolith.action.entity.ticket.*;
 import org.burrow_studios.obelisk.monolith.action.entity.user.*;
-import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
+import org.burrow_studios.obelisk.monolith.db.interfaces.IActionableDatabase;
 import org.burrow_studios.obelisk.monolith.entities.*;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.burrow_studios.obelisk.util.turtle.TurtleGenerator;

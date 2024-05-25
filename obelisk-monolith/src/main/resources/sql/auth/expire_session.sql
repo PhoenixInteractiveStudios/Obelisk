@@ -1,0 +1,1 @@
+UPDATE `sessions` SET `expired` = 1 WHERE `id` = ? AND `identity` = ?;

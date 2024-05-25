@@ -3,7 +3,7 @@ package org.burrow_studios.obelisk.monolith.action.entity.discord;
 import org.burrow_studios.obelisk.api.entities.DiscordAccount;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.monolith.action.DatabaseDeleteAction;
-import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
+import org.burrow_studios.obelisk.monolith.db.interfaces.IActionableDatabase;
 import org.burrow_studios.obelisk.monolith.entities.BackendDiscordAccount;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;

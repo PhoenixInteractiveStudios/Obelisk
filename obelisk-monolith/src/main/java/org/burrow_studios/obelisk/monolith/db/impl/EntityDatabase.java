@@ -9,6 +9,7 @@ import org.burrow_studios.obelisk.core.entities.AbstractMinecraftAccount;
 import org.burrow_studios.obelisk.core.entities.AbstractUser;
 import org.burrow_studios.obelisk.monolith.Main;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
+import org.burrow_studios.obelisk.monolith.db.EntityProvider;
 import org.burrow_studios.obelisk.monolith.db.SQLDB;
 import org.burrow_studios.obelisk.monolith.entities.*;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;

@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS `token_family` ON `identities` (`token_family`);

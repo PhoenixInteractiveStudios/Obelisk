@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.monolith.db;
 
 import org.burrow_studios.obelisk.monolith.action.DatabaseAction;
+import org.burrow_studios.obelisk.monolith.db.interfaces.IActionableDatabase;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Closeable;

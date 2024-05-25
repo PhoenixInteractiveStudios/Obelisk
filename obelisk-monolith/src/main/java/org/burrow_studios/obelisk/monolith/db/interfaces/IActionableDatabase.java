@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.monolith.db;
+package org.burrow_studios.obelisk.monolith.db.interfaces;
 
 import org.burrow_studios.obelisk.monolith.action.entity.discord.*;
 import org.burrow_studios.obelisk.monolith.action.entity.minecraft.*;

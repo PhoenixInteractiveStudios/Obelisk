@@ -3,7 +3,7 @@ package org.burrow_studios.obelisk.monolith.action.entity.user;
 import org.burrow_studios.obelisk.api.action.entity.user.UserModifier;
 import org.burrow_studios.obelisk.api.entities.User;
 import org.burrow_studios.obelisk.monolith.action.DatabaseModifier;
-import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
+import org.burrow_studios.obelisk.monolith.db.interfaces.IActionableDatabase;
 import org.burrow_studios.obelisk.monolith.entities.BackendUser;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;

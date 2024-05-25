@@ -3,7 +3,7 @@ package org.burrow_studios.obelisk.monolith.action.entity.minecraft;
 import org.burrow_studios.obelisk.core.cache.EntityCache;
 import org.burrow_studios.obelisk.core.entities.AbstractMinecraftAccount;
 import org.burrow_studios.obelisk.monolith.action.DatabaseListAction;
-import org.burrow_studios.obelisk.monolith.db.IActionableDatabase;
+import org.burrow_studios.obelisk.monolith.db.interfaces.IActionableDatabase;
 import org.burrow_studios.obelisk.monolith.entities.BackendMinecraftAccount;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
