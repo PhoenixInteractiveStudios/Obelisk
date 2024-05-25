@@ -31,9 +31,9 @@ public class GatewayAdapter implements Closeable {
 
         this.connection.addHandler(Opcode.HEARTBEAT_ACK, new HeartbeatHandler());
 
-        this.connection.addHandler(Opcode.CREATE_EVENT, new CreateEventHandler());
-        this.connection.addHandler(Opcode.DELETE_EVENT, new DeleteEventHandler());
-        this.connection.addHandler(Opcode.UPDATE_EVENT, new UpdateEventHandler());
+        this.connection.addHandler(Opcode.CREATE_EVENT, new CreateEventHandler(obelisk));
+        this.connection.addHandler(Opcode.DELETE_EVENT, new DeleteEventHandler(obelisk));
+        this.connection.addHandler(Opcode.UPDATE_EVENT, new UpdateEventHandler(obelisk));
 
         this.connection.addHandler(Opcode.ENTITY_DATA, new CacheDataHandler(obelisk));
         this.connection.addHandler(Opcode.CACHE_DONE, new CacheDoneHandler(obelisk));
