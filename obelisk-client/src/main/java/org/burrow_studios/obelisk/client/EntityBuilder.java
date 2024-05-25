@@ -7,9 +7,7 @@ import org.burrow_studios.obelisk.api.entities.Project;
 import org.burrow_studios.obelisk.api.entities.Ticket;
 import org.burrow_studios.obelisk.client.entities.*;
 import org.burrow_studios.obelisk.core.cache.OrderedEntitySetView;
-import org.burrow_studios.obelisk.core.entities.AbstractDiscordAccount;
-import org.burrow_studios.obelisk.core.entities.AbstractMinecraftAccount;
-import org.burrow_studios.obelisk.core.entities.AbstractUser;
+import org.burrow_studios.obelisk.core.entities.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -82,6 +80,22 @@ public class EntityBuilder {
         return new TicketImpl(obelisk, id, title, state, users);
     }
 
+    public @NotNull AbstractTicket provideTicket(@NotNull JsonObject data) {
+        final long id = data.get("id").getAsLong();
+
+        AbstractTicket ticket = obelisk.getTicket(id);
+
+        if (ticket != null) {
+            // TODO: implicit updates?
+            return ticket;
+        } else {
+            ticket = this.buildTicket(data);
+            obelisk.getTickets().add(ticket);
+        }
+
+        return ticket;
+    }
+
     public @NotNull ProjectImpl buildProject(@NotNull JsonObject data) {
         final long id = data.get("id").getAsLong();
 
@@ -99,6 +113,22 @@ public class EntityBuilder {
         }
 
         return new ProjectImpl(obelisk, id, title, state, members);
+    }
+
+    public @NotNull AbstractProject provideProject(@NotNull JsonObject data) {
+        final long id = data.get("id").getAsLong();
+
+        AbstractProject project = obelisk.getProject(id);
+
+        if (project != null) {
+            // TODO: implicit updates?
+            return project;
+        } else {
+            project = this.buildProject(data);
+            obelisk.getProjects().add(project);
+        }
+
+        return project;
     }
 
     public @NotNull DiscordAccountImpl buildDiscordAccount(@NotNull JsonObject data) {
