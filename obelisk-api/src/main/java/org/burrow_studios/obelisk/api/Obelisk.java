@@ -20,6 +20,8 @@ public interface Obelisk {
 
     @NotNull Status getStatus();
 
+    void stop();
+
     void awaitReady() throws InterruptedException;
 
     void awaitReady(long timeout, @NotNull TimeUnit unit) throws InterruptedException, TimeoutException;

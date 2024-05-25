@@ -9,9 +9,10 @@ import org.burrow_studios.obelisk.monolith.entities.*;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Closeable;
 import java.util.List;
 
-public interface IActionableDatabase {
+public interface IActionableDatabase extends Closeable {
     default List<BackendUser> getUsers(@NotNull DatabaseUserListAction action) throws DatabaseException { return null; }
     default BackendUser getUser(@NotNull DatabaseUserGetAction action) throws DatabaseException { return null; }
     default BackendUser createUser(@NotNull DatabaseUserBuilder builder) throws DatabaseException { return null; }

@@ -50,4 +50,8 @@ public class EventManagerImpl implements EventManager {
     public void unregisterListener(@NotNull EventListener listener) {
         this.listener.remove(listener);
     }
+
+    public void shutdown() {
+        this.executorService.shutdown();
+    }
 }

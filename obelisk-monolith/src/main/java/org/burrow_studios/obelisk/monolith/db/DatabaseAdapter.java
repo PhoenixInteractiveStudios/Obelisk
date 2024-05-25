@@ -3,11 +3,13 @@ package org.burrow_studios.obelisk.monolith.db;
 import org.burrow_studios.obelisk.monolith.action.DatabaseAction;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class DatabaseAdapter {
+public class DatabaseAdapter implements Closeable {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final IActionableDatabase database;
 
@@ -27,5 +29,11 @@ public class DatabaseAdapter {
         });
 
         return future;
+    }
+
+    @Override
+    public void close() throws IOException {
+        this.executor.shutdown();
+        this.database.close();
     }
 }

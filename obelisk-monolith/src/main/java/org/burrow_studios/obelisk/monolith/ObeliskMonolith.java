@@ -108,6 +108,27 @@ public class ObeliskMonolith extends AbstractObelisk {
         this.apiServer.start();
     }
 
+    @Override
+    public void stop() {
+        LOG.info("Stopping...");
+
+        this.apiServer.stop();
+
+        try {
+            this.socketServer.close();
+        } catch (IOException e) {
+            LOG.warn("Could not properly close SocketServer", e);
+        }
+
+        try {
+            this.databaseAdapter.close();
+        } catch (IOException e) {
+            LOG.warn("Could not properly close DatabaseAdapter", e);
+        }
+
+        LOG.info("OK bye");
+    }
+
     public @NotNull DatabaseAdapter getDatabaseAdapter() {
         return this.databaseAdapter;
     }

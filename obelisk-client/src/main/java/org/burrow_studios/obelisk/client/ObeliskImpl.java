@@ -3,6 +3,7 @@ package org.burrow_studios.obelisk.client;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.Obelisk;
 import org.burrow_studios.obelisk.api.Status;
 import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.client.action.ActionImpl;
@@ -22,11 +23,15 @@ import org.burrow_studios.obelisk.core.cache.EntityCache;
 import org.burrow_studios.obelisk.core.entities.*;
 import org.burrow_studios.obelisk.core.http.Route;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class ObeliskImpl extends AbstractObelisk {
+    private static final Logger LOG = LoggerFactory.getLogger(Obelisk.class);
+
     private final AuthConfig authConfig;
     private final HttpConfig httpConfig;
     private final GatewayConfig gatewayConfig;
@@ -89,6 +94,22 @@ public class ObeliskImpl extends AbstractObelisk {
 
             return null;
         });
+    }
+
+    @Override
+    public synchronized void stop() {
+        if (this.status.get() == Status.STOPPED) return;
+        this.status.set(Status.STOPPING);
+
+        try {
+            this.gatewayAdapter.close();
+        } catch (IOException e) {
+            LOG.warn("Could not properly close GatewayAdapter", e);
+        }
+
+        this.getEventManager().shutdown();
+
+        this.status.set(Status.STOPPED);
     }
 
     public @NotNull HTTPClient getHttpClient() {

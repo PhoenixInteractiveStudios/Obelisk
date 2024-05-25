@@ -40,6 +40,10 @@ public class HTTPServer {
         this.internalServer.start();
     }
 
+    public void stop() {
+        this.internalServer.stop(4);
+    }
+
     public void addHandler(@NotNull Route route, @NotNull RequestHandler handler) {
         this.handlers.put(route, handler);
     }

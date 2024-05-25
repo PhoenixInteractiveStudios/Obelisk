@@ -17,12 +17,11 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-public class ActionableDatabase implements IActionableDatabase, Closeable {
+public class ActionableDatabase implements IActionableDatabase {
     private static final Logger LOG = LoggerFactory.getLogger(ActionableDatabase.class);
 
     private final EntityDatabase entityDatabase;
