@@ -10,10 +10,14 @@ import org.burrow_studios.obelisk.monolith.exceptions.AuthenticationException;
 import org.burrow_studios.obelisk.util.crypto.PassGen;
 import org.burrow_studios.obelisk.util.crypto.SimpleSymmetricEncryption;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class PacketHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(PacketHandler.class);
+
     private final ObeliskMonolith obelisk;
 
     public PacketHandler(@NotNull ObeliskMonolith obelisk) {
@@ -23,8 +27,8 @@ public class PacketHandler {
     public void onDisconnect(@NotNull Connection connection, @NotNull Packet packet) {
         try {
             connection.close();
-        } catch (IOException ignored) {
-            // TODO: handle or log?
+        } catch (IOException e) {
+            LOG.warn("Encountered an IOException when attempting to close connection", e);
         }
     }
 
@@ -36,27 +40,11 @@ public class PacketHandler {
             ApplicationContext appCtx = this.obelisk.getAuthManager().authenticate(token);
 
             if (!appCtx.hasIntent("gateway")) {
-                JsonObject json = new JsonObject();
-                json.addProperty("reason", "Missing gateway intent");
-                connection.send(new Packet(Opcode.DISCONNECT, json));
-
-                try {
-                    connection.close();
-                } catch (IOException ex) {
-                    // TODO: handle or log?
-                }
+                this.disconnect(connection, "Missing gateway intent");
                 return;
             }
         } catch (AuthenticationException e) {
-            JsonObject json = new JsonObject();
-            json.addProperty("reason", "Invalid token");
-            connection.send(new Packet(Opcode.DISCONNECT, json));
-
-            try {
-                connection.close();
-            } catch (IOException ex) {
-                // TODO: handle or log?
-            }
+            this.disconnect(connection, "Invalid token");
             return;
         }
 
@@ -87,14 +75,18 @@ public class PacketHandler {
     }
 
     public void onUnexpected(@NotNull Connection connection, @NotNull Packet packet) {
+        this.disconnect(connection, "Unexpected packet");
+    }
+
+    private void disconnect(@NotNull Connection connection, @NotNull String reason) {
         JsonObject json = new JsonObject();
-        json.addProperty("reason", "Unexpected packet");
+        json.addProperty("reason", reason);
         connection.send(new Packet(Opcode.DISCONNECT, json));
 
         try {
             connection.close();
         } catch (IOException e) {
-            // TODO: handle or log?
+            LOG.warn("Encountered an IOException when attempting to close connection", e);
         }
     }
 }
