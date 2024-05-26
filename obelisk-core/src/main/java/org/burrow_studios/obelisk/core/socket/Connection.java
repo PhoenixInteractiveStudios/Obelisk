@@ -60,4 +60,8 @@ public class Connection implements Closeable {
             this.server.forgetClient(this);
         this.socketIO.close();
     }
+
+    public boolean isClosed() {
+        return this.socketIO.isClosed();
+    }
 }

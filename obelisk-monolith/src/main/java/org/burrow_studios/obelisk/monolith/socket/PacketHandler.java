@@ -19,9 +19,11 @@ public class PacketHandler {
     private static final Logger LOG = LoggerFactory.getLogger(PacketHandler.class);
 
     private final ObeliskMonolith obelisk;
+    private final HeartbeatManager heartbeatManager;
 
-    public PacketHandler(@NotNull ObeliskMonolith obelisk) {
+    public PacketHandler(@NotNull ObeliskMonolith obelisk, @NotNull HeartbeatManager heartbeatManager) {
         this.obelisk = obelisk;
+        this.heartbeatManager = heartbeatManager;
     }
 
     public void onDisconnect(@NotNull Connection connection, @NotNull Packet packet) {
@@ -58,6 +60,7 @@ public class PacketHandler {
 
         JsonObject responseJson = new JsonObject();
         responseJson.addProperty("key", new String(encryptionKey));
+        responseJson.addProperty("heartbeat_interval", HeartbeatManager.HEARTBEAT_INTERVAL);
         connection.send(new Packet(Opcode.ENCRYPTION, responseJson));
 
         // upgrade encryption for all subsequent packets
@@ -65,6 +68,8 @@ public class PacketHandler {
     }
 
     public void onHeartbeat(@NotNull Connection connection, @NotNull Packet packet) {
+        this.heartbeatManager.onHeartbeat(connection);
+
         // acknowledge heartbeat
         connection.send(new Packet(Opcode.HEARTBEAT_ACK));
     }

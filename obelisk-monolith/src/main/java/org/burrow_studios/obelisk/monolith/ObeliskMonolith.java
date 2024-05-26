@@ -26,6 +26,7 @@ import org.burrow_studios.obelisk.monolith.db.impl.EntityDatabase;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.burrow_studios.obelisk.monolith.http.HTTPServer;
 import org.burrow_studios.obelisk.monolith.http.handlers.*;
+import org.burrow_studios.obelisk.monolith.socket.HeartbeatManager;
 import org.burrow_studios.obelisk.monolith.socket.PacketHandler;
 import org.burrow_studios.obelisk.util.EnvUtil;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +43,7 @@ public class ObeliskMonolith extends AbstractObelisk {
     private final DatabaseAdapter databaseAdapter;
     private final HTTPServer apiServer;
     private final SocketServer socketServer;
+    private final HeartbeatManager heartbeatManager;
 
     public ObeliskMonolith() throws DatabaseException, IOException {
         super();
@@ -53,8 +55,9 @@ public class ObeliskMonolith extends AbstractObelisk {
         this.databaseAdapter = new DatabaseAdapter(database);
 
         this.socketServer = new SocketServer(EnvUtil.getInt("SOCKET_PORT", 8081));
+        this.heartbeatManager = new HeartbeatManager(socketServer);
 
-        final PacketHandler packetHandler = new PacketHandler(this);
+        final PacketHandler packetHandler = new PacketHandler(this, heartbeatManager);
         this.socketServer.addHandler(Opcode.DISCONNECT, packetHandler::onDisconnect);
         this.socketServer.addHandler(Opcode.IDENTIFY, packetHandler::onIdentify);
         this.socketServer.addHandler(Opcode.HEARTBEAT, packetHandler::onHeartbeat);
@@ -117,6 +120,8 @@ public class ObeliskMonolith extends AbstractObelisk {
         LOG.info("Stopping...");
 
         this.apiServer.stop();
+
+        this.heartbeatManager.close();
 
         try {
             this.socketServer.close();

@@ -80,8 +80,12 @@ public class SocketServer implements Closeable {
         this.handlers.put(opcode, handler);
     }
 
-    public Map<Opcode, PacketHandler> getHandlers() {
+    public @NotNull Map<Opcode, PacketHandler> getHandlers() {
         return Collections.unmodifiableMap(this.handlers);
+    }
+
+    public @NotNull Set<Connection> getConnections() {
+        return Collections.unmodifiableSet(this.connections);
     }
 
     public void forgetClient(Connection connection) {

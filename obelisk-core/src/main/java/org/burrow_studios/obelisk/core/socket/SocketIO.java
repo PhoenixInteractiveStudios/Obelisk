@@ -111,4 +111,8 @@ final class SocketIO implements Closeable {
             this.receiveLock.unlock();
         }
     }
+
+    public boolean isClosed() {
+        return this.socket.isClosed();
+    }
 }
