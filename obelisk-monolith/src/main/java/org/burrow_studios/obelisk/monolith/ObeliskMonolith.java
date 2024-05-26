@@ -19,6 +19,7 @@ import org.burrow_studios.obelisk.monolith.action.entity.ticket.DatabaseTicketLi
 import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserBuilder;
 import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserGetAction;
 import org.burrow_studios.obelisk.monolith.action.entity.user.DatabaseUserListAction;
+import org.burrow_studios.obelisk.monolith.auth.AuthManager;
 import org.burrow_studios.obelisk.monolith.db.DatabaseAdapter;
 import org.burrow_studios.obelisk.monolith.db.impl.ActionableDatabase;
 import org.burrow_studios.obelisk.monolith.db.impl.EntityDatabase;
@@ -37,12 +38,15 @@ import java.io.IOException;
 public class ObeliskMonolith extends AbstractObelisk {
     private static final Logger LOG = LoggerFactory.getLogger(ObeliskMonolith.class);
 
+    private final AuthManager authManager;
     private final DatabaseAdapter databaseAdapter;
     private final HTTPServer apiServer;
     private final SocketServer socketServer;
 
     public ObeliskMonolith() throws DatabaseException, IOException {
         super();
+
+        this.authManager = new AuthManager();
 
         final EntityDatabase entityDatabase = new EntityDatabase(this, new File(Main.DIR, "entities.db"));
         final ActionableDatabase database = new ActionableDatabase(entityDatabase);
@@ -127,6 +131,10 @@ public class ObeliskMonolith extends AbstractObelisk {
         }
 
         LOG.info("OK bye");
+    }
+
+    public @NotNull AuthManager getAuthManager() {
+        return this.authManager;
     }
 
     public @NotNull DatabaseAdapter getDatabaseAdapter() {

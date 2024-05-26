@@ -157,7 +157,11 @@ public class AuthDatabase implements AuthDB {
 
         Set<Intent> intents = this.getApplicationIntents(application);
 
-        return new ApplicationData(application, name, pubKey, intents);
+        try {
+            return new ApplicationData(application, name, pubKey, intents);
+        } catch (IllegalArgumentException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
