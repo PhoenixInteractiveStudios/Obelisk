@@ -18,9 +18,6 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthManager {
-    private static final String ALGORITHM = "RSA";
-    private static final int    KEY_SIZE  = 2048;
-
     private final AuthDB database;
     private final ConcurrentHashMap<Long, ApplicationContext> appCache;
 
