@@ -38,4 +38,11 @@ public final class ApplicationContext {
     public @NotNull DecodedJWT getToken() {
         return this.token;
     }
+
+    public boolean hasIntent(@NotNull String intent) {
+        for (Intent i : this.data.getIntents())
+            if (i.name().equals(intent))
+                return true;
+        return false;
+    }
 }

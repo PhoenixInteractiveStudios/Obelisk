@@ -68,45 +68,45 @@ public class ObeliskMonolith extends AbstractObelisk {
         this.socketServer.addHandler(Opcode.ENTITY_DATA, packetHandler::onUnexpected);
         this.socketServer.addHandler(Opcode.CACHE_DONE, packetHandler::onUnexpected);
 
-        this.apiServer = new HTTPServer(EnvUtil.getInt("API_PORT", 8080));
+        this.apiServer = new HTTPServer(EnvUtil.getInt("API_PORT", 8080), authManager);
 
         final GatewayHandler gatewayHandler = new GatewayHandler();
-        this.apiServer.addHandler(Route.Meta.GET_GATEWAY, gatewayHandler::onGet);
+        this.apiServer.addHandler(Route.Meta.GET_GATEWAY, gatewayHandler::onGet, false);
 
         final UserHandler userHandler = new UserHandler(this);
-        this.apiServer.addHandler(Route.User.GET_USER, userHandler::onGet);
-        this.apiServer.addHandler(Route.User.LIST_USERS, userHandler::onList);
-        this.apiServer.addHandler(Route.User.CREATE_USER, userHandler::onPost);
-        this.apiServer.addHandler(Route.User.EDIT_USER, userHandler::onPatch);
-        this.apiServer.addHandler(Route.User.DELETE_USER, userHandler::onDelete);
+        this.apiServer.addHandler(Route.User.GET_USER,    userHandler::onGet,    true, "user.read");
+        this.apiServer.addHandler(Route.User.LIST_USERS,  userHandler::onList,   true, "user.read");
+        this.apiServer.addHandler(Route.User.CREATE_USER, userHandler::onPost,   true, "user.read", "user.write");
+        this.apiServer.addHandler(Route.User.EDIT_USER,   userHandler::onPatch,  true, "user.read", "user.write");
+        this.apiServer.addHandler(Route.User.DELETE_USER, userHandler::onDelete, true, "user.write");
 
         final TicketHandler ticketHandler = new TicketHandler(this);
-        this.apiServer.addHandler(Route.Ticket.GET_TICKET, ticketHandler::onGet);
-        this.apiServer.addHandler(Route.Ticket.LIST_TICKETS, ticketHandler::onList);
-        this.apiServer.addHandler(Route.Ticket.CREATE_TICKET, ticketHandler::onPost);
-        this.apiServer.addHandler(Route.Ticket.EDIT_TICKET, ticketHandler::onPatch);
-        this.apiServer.addHandler(Route.Ticket.DELETE_TICKET, ticketHandler::onDelete);
+        this.apiServer.addHandler(Route.Ticket.GET_TICKET,    ticketHandler::onGet,    true, "ticket.read", "user.read");
+        this.apiServer.addHandler(Route.Ticket.LIST_TICKETS,  ticketHandler::onList,   true, "ticket.read");
+        this.apiServer.addHandler(Route.Ticket.CREATE_TICKET, ticketHandler::onPost,   true, "ticket.read", "ticket.write", "user.read", "user.write");
+        this.apiServer.addHandler(Route.Ticket.EDIT_TICKET,   ticketHandler::onPatch,  true, "ticket.read", "ticket.write", "user.read", "user.write");
+        this.apiServer.addHandler(Route.Ticket.DELETE_TICKET, ticketHandler::onDelete, true, "ticket.write", "user.write");
 
         final ProjectHandler projectHandler = new ProjectHandler(this);
-        this.apiServer.addHandler(Route.Project.GET_PROJECT, projectHandler::onGet);
-        this.apiServer.addHandler(Route.Project.LIST_PROJECTS, projectHandler::onList);
-        this.apiServer.addHandler(Route.Project.CREATE_PROJECT, projectHandler::onPost);
-        this.apiServer.addHandler(Route.Project.EDIT_PROJECT, projectHandler::onPatch);
-        this.apiServer.addHandler(Route.Project.DELETE_PROJECT, projectHandler::onDelete);
+        this.apiServer.addHandler(Route.Project.GET_PROJECT,    projectHandler::onGet   , true, "project.read", "user.read");
+        this.apiServer.addHandler(Route.Project.LIST_PROJECTS,  projectHandler::onList  , true, "project.read");
+        this.apiServer.addHandler(Route.Project.CREATE_PROJECT, projectHandler::onPost  , true, "project.read", "project.write", "user.read", "user.write");
+        this.apiServer.addHandler(Route.Project.EDIT_PROJECT,   projectHandler::onPatch , true, "project.read", "project.write", "user.read", "user.write");
+        this.apiServer.addHandler(Route.Project.DELETE_PROJECT, projectHandler::onDelete, true, "project.write", "user.write");
 
         final DiscordAccountHandler discordAccountHandler = new DiscordAccountHandler(this);
-        this.apiServer.addHandler(Route.Discord.GET_DISCORD_ACCOUNT, discordAccountHandler::onGet);
-        this.apiServer.addHandler(Route.Discord.LIST_DISCORD_ACCOUNTS, discordAccountHandler::onList);
-        this.apiServer.addHandler(Route.Discord.CREATE_DISCORD_ACCOUNT, discordAccountHandler::onPost);
-        this.apiServer.addHandler(Route.Discord.EDIT_DISCORD_ACCOUNT, discordAccountHandler::onPatch);
-        this.apiServer.addHandler(Route.Discord.DELETE_DISCORD_ACCOUNT, discordAccountHandler::onDelete);
+        this.apiServer.addHandler(Route.Discord.GET_DISCORD_ACCOUNT,    discordAccountHandler::onGet   , true, "discord.read", "user.read");
+        this.apiServer.addHandler(Route.Discord.LIST_DISCORD_ACCOUNTS,  discordAccountHandler::onList  , true, "discord.read", "user.read");
+        this.apiServer.addHandler(Route.Discord.CREATE_DISCORD_ACCOUNT, discordAccountHandler::onPost  , true, "discord.read", "discord.write", "user.read", "user.write");
+        this.apiServer.addHandler(Route.Discord.EDIT_DISCORD_ACCOUNT,   discordAccountHandler::onPatch , true, "discord.read", "discord.write", "user.read", "user.write");
+        this.apiServer.addHandler(Route.Discord.DELETE_DISCORD_ACCOUNT, discordAccountHandler::onDelete, true, "discord.write", "user.write");
 
         final MinecraftAccountHandler minecraftAccountHandler = new MinecraftAccountHandler(this);
-        this.apiServer.addHandler(Route.Minecraft.GET_MINECRAFT_ACCOUNT, minecraftAccountHandler::onGet);
-        this.apiServer.addHandler(Route.Minecraft.LIST_MINECRAFT_ACCOUNTS, minecraftAccountHandler::onList);
-        this.apiServer.addHandler(Route.Minecraft.CREATE_MINECRAFT_ACCOUNT, minecraftAccountHandler::onPost);
-        this.apiServer.addHandler(Route.Minecraft.EDIT_MINECRAFT_ACCOUNT, minecraftAccountHandler::onPatch);
-        this.apiServer.addHandler(Route.Minecraft.DELETE_MINECRAFT_ACCOUNT, minecraftAccountHandler::onDelete);
+        this.apiServer.addHandler(Route.Minecraft.GET_MINECRAFT_ACCOUNT,    minecraftAccountHandler::onGet   , true, "minecraft.read", "user.read");
+        this.apiServer.addHandler(Route.Minecraft.LIST_MINECRAFT_ACCOUNTS,  minecraftAccountHandler::onList  , true, "minecraft.read", "user.read");
+        this.apiServer.addHandler(Route.Minecraft.CREATE_MINECRAFT_ACCOUNT, minecraftAccountHandler::onPost  , true, "minecraft.read", "minecraft.write", "user.read", "user.write");
+        this.apiServer.addHandler(Route.Minecraft.EDIT_MINECRAFT_ACCOUNT,   minecraftAccountHandler::onPatch , true, "minecraft.read", "minecraft.write", "user.read", "user.write");
+        this.apiServer.addHandler(Route.Minecraft.DELETE_MINECRAFT_ACCOUNT, minecraftAccountHandler::onDelete, true, "minecraft.write", "user.write");
 
         this.socketServer.start();
         this.apiServer.start();

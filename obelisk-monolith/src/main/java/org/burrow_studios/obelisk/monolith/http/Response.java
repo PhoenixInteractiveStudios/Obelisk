@@ -97,6 +97,12 @@ public class Response {
         return error(status, message, new JsonPrimitive(details));
     }
 
+    public static Response error(int status, @NotNull String message, @Nullable String details, @NotNull Map<String, String> headers) {
+        if (details == null)
+            return error(status, message, (JsonElement) null, headers);
+        return error(status, message, new JsonPrimitive(details), headers);
+    }
+
     public static Response error(int status, @NotNull String message, @Nullable JsonElement details) {
         return error(status, message, details, Map.of());
     }

@@ -7,10 +7,10 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import org.burrow_studios.obelisk.core.http.Method;
 import org.burrow_studios.obelisk.core.http.Route;
-import org.burrow_studios.obelisk.monolith.http.exceptions.IllegalMethodException;
-import org.burrow_studios.obelisk.monolith.http.exceptions.InternalServerErrorException;
-import org.burrow_studios.obelisk.monolith.http.exceptions.NotFoundException;
-import org.burrow_studios.obelisk.monolith.http.exceptions.RequestHandlerException;
+import org.burrow_studios.obelisk.monolith.auth.ApplicationContext;
+import org.burrow_studios.obelisk.monolith.auth.AuthManager;
+import org.burrow_studios.obelisk.monolith.exceptions.AuthenticationException;
+import org.burrow_studios.obelisk.monolith.http.exceptions.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -26,14 +26,21 @@ public class HTTPServer {
             .create();
 
     private final HttpServer internalServer;
+    private final AuthManager authManager;
     private final Map<Route, RequestHandler> handlers;
+    private final Map<Route, String[]> intents;
+    private final Map<Route, Boolean> reqAuth;
 
-    public HTTPServer(int port) throws IOException {
+    public HTTPServer(int port, @NotNull AuthManager authManager) throws IOException {
         this.internalServer = HttpServer.create();
         this.internalServer.bind(new InetSocketAddress(port), -1);
         this.internalServer.createContext("/", this::handle);
 
+        this.authManager = authManager;
+
         this.handlers = new ConcurrentHashMap<>();
+        this.intents  = new ConcurrentHashMap<>();
+        this.reqAuth  = new ConcurrentHashMap<>();
     }
 
     public void start() {
@@ -44,8 +51,10 @@ public class HTTPServer {
         this.internalServer.stop(4);
     }
 
-    public void addHandler(@NotNull Route route, @NotNull RequestHandler handler) {
+    public void addHandler(@NotNull Route route, @NotNull RequestHandler handler, boolean requiredAuth, @NotNull String... intents) {
         this.handlers.put(route, handler);
+        this.intents.put(route, intents);
+        this.reqAuth.put(route, requiredAuth);
     }
 
     private void handle(@NotNull HttpExchange exchange) throws IOException {
@@ -123,7 +132,32 @@ public class HTTPServer {
         }
 
 
-        // TODO: auth
+        Boolean requiresAuth = this.reqAuth.get(route);
+        if (requiresAuth == null)
+            return new InternalServerErrorException().toResponse();
+        if (requiresAuth) {
+            String authHeader = request.getHeaders().get("Authorization");
+
+            if (authHeader == null || !authHeader.startsWith("Bearer "))
+                return new UnauthorizedException("Bearer authorization required").toResponse();
+
+            String token = authHeader.substring("Bearer ".length());
+
+            ApplicationContext appCtx;
+            try {
+                appCtx = this.authManager.authenticate(token);
+            } catch (AuthenticationException e) {
+                return new UnauthorizedException("Valid bearer authorization required").toResponse();
+            }
+
+            String[] intents = this.intents.get(route);
+            if (intents == null)
+                return new InternalServerErrorException().toResponse();
+            for (String intent : intents) {
+                if (appCtx.hasIntent(intent)) continue;
+                return new ForbiddenException("This endpoints requires the '" + intent + "' intent.").toResponse();
+            }
+        }
 
 
         try {
