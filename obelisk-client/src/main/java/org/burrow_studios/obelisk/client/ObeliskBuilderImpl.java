@@ -1,28 +1,27 @@
 package org.burrow_studios.obelisk.client;
 
 import org.burrow_studios.obelisk.api.Obelisk;
+import org.burrow_studios.obelisk.api.ObeliskBuilder;
 import org.burrow_studios.obelisk.client.config.AuthConfig;
 import org.burrow_studios.obelisk.client.config.GatewayConfig;
 import org.burrow_studios.obelisk.client.config.HttpConfig;
 import org.jetbrains.annotations.NotNull;
 
-public class ObeliskBuilder {
+public class ObeliskBuilderImpl implements ObeliskBuilder {
     private String host;
     private String token;
     private String gatewayHost;
     private Integer gatewayPort;
 
-    private ObeliskBuilder() { }
+    private ObeliskBuilderImpl() { }
 
-    public static @NotNull ObeliskBuilder create() {
-        return new ObeliskBuilder();
+    // DO NOT REMOVE
+    // this method is called by the ObeliskBuilder interface via reflections
+    public static @NotNull ObeliskBuilderImpl create() {
+        return new ObeliskBuilderImpl();
     }
 
-    public static @NotNull ObeliskBuilder createDefault() {
-        return new ObeliskBuilder()
-                .setHost("api.burrow-studios.org/v1/");
-    }
-
+    @Override
     public @NotNull Obelisk build() throws IllegalArgumentException {
         if (host == null)
             throw new IllegalArgumentException("Host must be specified");
@@ -45,18 +44,21 @@ public class ObeliskBuilder {
         return obelisk;
     }
 
-    public @NotNull ObeliskBuilder setHost(String host) {
+    @Override
+    public @NotNull ObeliskBuilderImpl setHost(String host) {
         this.host = host;
         return this;
     }
 
-    public @NotNull ObeliskBuilder setGateway(String host, int port) {
+    @Override
+    public @NotNull ObeliskBuilderImpl setGateway(String host, int port) {
         this.gatewayHost = host;
         this.gatewayPort = port;
         return this;
     }
 
-    public @NotNull ObeliskBuilder setToken(String token) {
+    @Override
+    public @NotNull ObeliskBuilderImpl setToken(String token) {
         this.token = token;
         return this;
     }

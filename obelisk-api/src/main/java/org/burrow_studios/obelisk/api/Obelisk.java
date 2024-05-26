@@ -16,6 +16,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public interface Obelisk {
+    static @NotNull ObeliskBuilder create() {
+        return ObeliskBuilder.create();
+    }
+
+    static @NotNull ObeliskBuilder createDefault() {
+        return ObeliskBuilder.createDefault();
+    }
+
     @NotNull EventManager getEventManager();
 
     @NotNull Status getStatus();

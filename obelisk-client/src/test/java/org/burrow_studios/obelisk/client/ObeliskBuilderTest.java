@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ObeliskBuilderTest {
     @Test
     void testRequireHost() {
-        ObeliskBuilder builder = ObeliskBuilder.create();
+        ObeliskBuilderImpl builder = ObeliskBuilderImpl.create();
 
         builder.setToken("xyz");
 
@@ -17,7 +17,7 @@ class ObeliskBuilderTest {
 
     @Test
     void testRequireToken() {
-        ObeliskBuilder builder = ObeliskBuilder.create();
+        ObeliskBuilderImpl builder = ObeliskBuilderImpl.create();
 
         builder.setHost("localhost");
 
@@ -26,7 +26,7 @@ class ObeliskBuilderTest {
 
     @Test
     void testBuild() {
-        ObeliskBuilder builder = ObeliskBuilder.create();
+        ObeliskBuilderImpl builder = ObeliskBuilderImpl.create();
 
         builder.setHost("localhost");
         builder.setToken("xyz");
