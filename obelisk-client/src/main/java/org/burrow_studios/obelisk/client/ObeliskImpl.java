@@ -81,7 +81,7 @@ public class ObeliskImpl extends AbstractObelisk {
 
     public @NotNull Action<Void> getGatewayUrl() {
         return ActionImpl.simpleGet(this, Route.Meta.GET_GATEWAY.compile(), (voidRequest, response) -> {
-            JsonElement body = voidRequest.getBody();
+            JsonElement body = response.getBodyJson();
             if (body == null)
                 throw new RuntimeException("Missing response body");
             JsonObject json = body.getAsJsonObject();
