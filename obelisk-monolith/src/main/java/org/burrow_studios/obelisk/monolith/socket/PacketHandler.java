@@ -5,6 +5,8 @@ import org.burrow_studios.obelisk.core.socket.Connection;
 import org.burrow_studios.obelisk.core.socket.Opcode;
 import org.burrow_studios.obelisk.core.socket.Packet;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
+import org.burrow_studios.obelisk.monolith.auth.ApplicationContext;
+import org.burrow_studios.obelisk.monolith.exceptions.AuthenticationException;
 import org.burrow_studios.obelisk.util.crypto.PassGen;
 import org.burrow_studios.obelisk.util.crypto.SimpleSymmetricEncryption;
 import org.jetbrains.annotations.NotNull;
@@ -28,12 +30,39 @@ public class PacketHandler {
 
     public void onIdentify(@NotNull Connection connection, @NotNull Packet packet) {
         JsonObject requestJson = packet.toJson();
-        // TODO: authenticate
+        String token = requestJson.get("token").getAsString();
 
-        // TODO: get initial encryption key
-        char[] initialKey = new char[]{};
-        SimpleSymmetricEncryption initialEncryption = new SimpleSymmetricEncryption(initialKey);
-        connection.setEncryption(initialEncryption);
+        try {
+            ApplicationContext appCtx = this.obelisk.getAuthManager().authenticate(token);
+
+            if (!appCtx.hasIntent("gateway")) {
+                JsonObject json = new JsonObject();
+                json.addProperty("reason", "Missing gateway intent");
+                connection.send(new Packet(Opcode.DISCONNECT, json));
+
+                try {
+                    connection.close();
+                } catch (IOException ex) {
+                    // TODO: handle or log?
+                }
+                return;
+            }
+        } catch (AuthenticationException e) {
+            JsonObject json = new JsonObject();
+            json.addProperty("reason", "Invalid token");
+            connection.send(new Packet(Opcode.DISCONNECT, json));
+
+            try {
+                connection.close();
+            } catch (IOException ex) {
+                // TODO: handle or log?
+            }
+            return;
+        }
+
+        // temporary encryption
+        SimpleSymmetricEncryption tempCrypto = new SimpleSymmetricEncryption(token.toCharArray());
+        connection.setEncryption(tempCrypto);
 
         // generate encryption key
         char[] encryptionKey = PassGen.generate(256).toCharArray();

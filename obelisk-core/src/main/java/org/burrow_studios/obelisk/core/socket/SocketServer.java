@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.core.socket;
 
+import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.util.crypto.RSAPrivateEncryption;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +10,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.interfaces.RSAPublicKey;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +52,8 @@ public class SocketServer implements Closeable {
 
                 Connection connection = new Connection(client, this);
 
+                this.sendHello(connection);
+
                 this.connections.add(connection);
             } catch (IOException e) {
                 LOG.warn("Could not accept client connection due to an IOException", e);
@@ -55,6 +61,19 @@ public class SocketServer implements Closeable {
                 LOG.warn("Uncaught Throwable in listener thread!", t);
             }
         }
+    }
+
+    private void sendHello(@NotNull Connection connection) {
+        RSAPrivateEncryption crypto = RSAPrivateEncryption.generate(4096);
+        RSAPublicKey publicKey = crypto.getPublicKey();
+        String pubKey = new String(Base64.getEncoder().encode(publicKey.getEncoded()));
+
+        JsonObject json = new JsonObject();
+        json.addProperty("key", pubKey);
+
+        Packet packet = new Packet(Opcode.HELLO);
+        connection.send(packet);
+        connection.setEncryption(crypto);
     }
 
     public void addHandler(@NotNull Opcode opcode, @NotNull PacketHandler handler) {

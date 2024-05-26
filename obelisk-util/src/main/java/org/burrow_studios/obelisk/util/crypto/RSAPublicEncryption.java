@@ -16,10 +16,10 @@ import java.security.spec.X509EncodedKeySpec;
 public class RSAPublicEncryption implements Encryption {
     private final RSAPublicKey publicKey;
 
-    public RSAPublicEncryption(@NotNull String publicKey) throws EncryptionException {
+    public RSAPublicEncryption(byte[] publicKey) throws EncryptionException {
         try {
-            KeyFactory keyFactory = KeyFactory.getInstance(publicKey);
-            X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKey.getBytes());
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKey);
             this.publicKey = (RSAPublicKey) keyFactory.generatePublic(spec);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new EncryptionException(e);

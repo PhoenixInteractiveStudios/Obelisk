@@ -112,6 +112,18 @@ public class ObeliskImpl extends AbstractObelisk {
         this.status.set(Status.STOPPED);
     }
 
+    public @NotNull AuthConfig getAuthConfig() {
+        return this.authConfig;
+    }
+
+    public @NotNull HttpConfig getHttpConfig() {
+        return this.httpConfig;
+    }
+
+    public @NotNull GatewayConfig getGatewayConfig() {
+        return this.gatewayConfig;
+    }
+
     public @NotNull HTTPClient getHttpClient() {
         return this.httpClient;
     }
