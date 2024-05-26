@@ -10,11 +10,9 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.Closeable;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.concurrent.locks.ReentrantLock;
 
 final class SocketIO implements Closeable {
@@ -93,6 +91,9 @@ final class SocketIO implements Closeable {
             data = new byte[length];
             this.in.readFully(data);
         } catch (IOException e) {
+            if (e instanceof SocketException || e instanceof EOFException)
+                this.receiverThread.interrupt();
+
             LOG.warn("Encountered an exception when attempting to receive", e);
             return;
         } finally {
