@@ -20,7 +20,7 @@ import java.net.http.HttpResponse;
 public class HTTPClient {
     private static final Logger LOG = LoggerFactory.getLogger(HTTPClient.class);
 
-    static final Gson GSON = new GsonBuilder()
+    public static final Gson GSON = new GsonBuilder()
             .serializeNulls()
             .create();
 

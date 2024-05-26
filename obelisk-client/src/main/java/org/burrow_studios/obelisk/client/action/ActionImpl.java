@@ -1,6 +1,7 @@
 package org.burrow_studios.obelisk.client.action;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.action.Action;
 import org.burrow_studios.obelisk.api.action.TimeoutContext;
 import org.burrow_studios.obelisk.api.exceptions.ErrorResponseException;
@@ -19,6 +20,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiFunction;
+
+import static org.burrow_studios.obelisk.client.http.HTTPClient.GSON;
 
 public abstract class ActionImpl<T> implements Action<T> {
     protected final @NotNull AbstractObelisk obelisk;
@@ -93,7 +96,23 @@ public abstract class ActionImpl<T> implements Action<T> {
                 }
             }
         } else {
-            request.onFailure(new ErrorResponseException(ErrorResponse.fromCode(response.getCode())));
+            String message = null;
+            String details = null;
+
+            JsonElement bodyJson = response.getBodyJson();
+            if (bodyJson instanceof JsonObject json) {
+                message = json.get("message").getAsString();
+
+                JsonElement detailJson = json.get("details");
+                if (detailJson != null)
+                    details = GSON.toJson(detailJson);
+            }
+
+            if (message == null) {
+                request.onFailure(new ErrorResponseException(ErrorResponse.fromCode(response.getCode())));
+            } else {
+                request.onFailure(new ErrorResponseException(message, details, ErrorResponse.fromCode(response.getCode())));
+            }
         }
     }
 
