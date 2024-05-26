@@ -27,6 +27,7 @@ final class SocketIO implements Closeable {
     private final DataOutputStream out;
     private final ReentrantLock    sendLock = new ReentrantLock();
     private final ReentrantLock receiveLock = new ReentrantLock();
+    private final Thread receiverThread;
     private Encryption encryption = Encryption.NONE;
     private Receiver receiver = data -> { };
 
@@ -35,6 +36,14 @@ final class SocketIO implements Closeable {
         this.setReceiver(receiver);
         this.in  = new DataInputStream(this.socket.getInputStream());
         this.out = new DataOutputStream(this.socket.getOutputStream());
+
+        this.receiverThread = new Thread(() -> {
+            while (!this.isClosed() && !Thread.currentThread().isInterrupted()) {
+                this.receive();
+            }
+        });
+        this.receiverThread.setDaemon(true);
+        this.receiverThread.start();
     }
 
     public void setEncryption(@Nullable Encryption encryption) {
