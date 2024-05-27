@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.admin;
 
+import org.burrow_studios.obelisk.admin.commands.MainCommand;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 
@@ -11,8 +12,10 @@ import java.net.URL;
 import java.nio.file.Files;
 
 public class Main {
-    public static void main(String[] args) {
-        CommandLine commandLine = new CommandLine(new Command());
+    public static void main(String[] args) throws IOException, URISyntaxException {
+        Config config = Config.get();
+
+        CommandLine commandLine = new CommandLine(new MainCommand());
         commandLine.execute(args);
     }
 
@@ -24,7 +27,7 @@ public class Main {
 
         // copy default config
         if (!configFile.exists()) {
-            InputStream defaultConfig = Main.class.getResourceAsStream("config.properties");
+            InputStream defaultConfig = Main.class.getResourceAsStream("/config.properties");
 
             if (defaultConfig == null)
                 throw new Error("Implementation error");
