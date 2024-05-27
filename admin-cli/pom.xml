@@ -95,6 +95,13 @@
             <version>24.0.1</version>
         </dependency>
 
+        <!-- CLI library -->
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>4.7.6</version>
+        </dependency>
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
