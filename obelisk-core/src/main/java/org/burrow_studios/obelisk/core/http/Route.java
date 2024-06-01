@@ -11,6 +11,10 @@ public class Route {
         public static final Route GET_GATEWAY = new Route(GET, "gateway");
     }
 
+    public static class Auth {
+        public static final Route LIST_APPLICATIONS  = new Route(GET, "admin/applications");
+    }
+
     public static class User {
         public static final Route LIST_USERS  = new Route(GET, "users");
         public static final Route GET_USER    = new Route(GET, "users/{user_id}");
