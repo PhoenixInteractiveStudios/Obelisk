@@ -74,4 +74,8 @@ public class AuthManager {
 
         this.appCache.put(appCtx.getId(), appCtx);
     }
+
+    public @NotNull AuthDB getDatabase() {
+        return this.database;
+    }
 }
