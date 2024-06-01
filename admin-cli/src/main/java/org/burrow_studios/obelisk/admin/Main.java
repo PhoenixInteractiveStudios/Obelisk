@@ -16,7 +16,9 @@ public class Main {
         Config config = Config.get();
 
         CommandLine commandLine = new CommandLine(new MainCommand());
-        commandLine.execute(args);
+        int status = commandLine.execute(args);
+
+        System.exit(status);
     }
 
     public static @NotNull File getConfigFile() throws URISyntaxException, IOException {
