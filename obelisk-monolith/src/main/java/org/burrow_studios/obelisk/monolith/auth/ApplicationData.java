@@ -17,6 +17,7 @@ public class ApplicationData {
     private final long id;
     private final String name;
     private final RSAPublicKey pubKey;
+    private final String pubKeyAsString;
     private final Set<Intent> intents;
 
     public ApplicationData(long id, @NotNull String name, @NotNull String pubKey, @NotNull Set<Intent> intents) throws IllegalArgumentException {
@@ -32,6 +33,9 @@ public class ApplicationData {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new IllegalArgumentException("Illegal pubKey", e);
         }
+
+        byte[] encoded = Base64.getEncoder().encode(this.pubKey.getEncoded());
+        this.pubKeyAsString = new String(encoded);
     }
 
     public long getId() {
@@ -44,6 +48,10 @@ public class ApplicationData {
 
     public @NotNull RSAPublicKey getPubKey() {
         return this.pubKey;
+    }
+
+    public @NotNull String getPubKeyAsString() {
+        return this.pubKeyAsString;
     }
 
     public @NotNull Set<Intent> getIntents() {

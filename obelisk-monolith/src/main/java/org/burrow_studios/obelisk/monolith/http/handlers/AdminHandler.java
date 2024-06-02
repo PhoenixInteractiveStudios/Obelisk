@@ -1,11 +1,15 @@
 package org.burrow_studios.obelisk.monolith.http.handlers;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
+import org.burrow_studios.obelisk.monolith.auth.ApplicationData;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
+import org.burrow_studios.obelisk.monolith.exceptions.NoSuchEntryException;
 import org.burrow_studios.obelisk.monolith.http.Request;
 import org.burrow_studios.obelisk.monolith.http.Response;
 import org.burrow_studios.obelisk.monolith.http.exceptions.InternalServerErrorException;
+import org.burrow_studios.obelisk.monolith.http.exceptions.NotFoundException;
 import org.burrow_studios.obelisk.monolith.http.exceptions.RequestHandlerException;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +26,7 @@ public class AdminHandler {
         JsonObject responseBody = new JsonObject();
 
         try {
-            Map<Long, String> applications = obelisk.getAuthManager().getDatabase().getApplications();
+            Map<Long, String> applications = this.obelisk.getAuthManager().getDatabase().getApplications();
 
             applications.forEach((id, name) -> {
                 responseBody.addProperty(String.valueOf(id), name);
@@ -30,6 +34,34 @@ public class AdminHandler {
         } catch (DatabaseException e) {
             throw new InternalServerErrorException();
         }
+
+        return new Response.Builder()
+                .setBody(responseBody)
+                .setStatus(200)
+                .build();
+    }
+
+    public @NotNull Response onGetApplication(@NotNull Request request) throws RequestHandlerException {
+        Long applicationId = request.parsePathSegment(2, Long::parseLong);
+
+        ApplicationData application;
+
+        try {
+            application = this.obelisk.getAuthManager().getDatabase().getApplication(applicationId);
+        } catch (NoSuchEntryException e) {
+            throw new NotFoundException("Application " + applicationId + " not found");
+        } catch (DatabaseException e) {
+            throw new InternalServerErrorException();
+        }
+
+        JsonObject responseBody = new JsonObject();
+        responseBody.addProperty("id", application.getId());
+        responseBody.addProperty("name", application.getName());
+        responseBody.addProperty("pubKey", application.getPubKeyAsString());
+
+        JsonArray intentArr = new JsonArray();
+        application.getIntents().forEach(intent -> intentArr.add(intent.name()));
+        responseBody.add("intents", intentArr);
 
         return new Response.Builder()
                 .setBody(responseBody)

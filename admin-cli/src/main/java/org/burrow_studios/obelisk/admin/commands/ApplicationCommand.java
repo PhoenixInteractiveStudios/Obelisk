@@ -6,7 +6,10 @@ import picocli.CommandLine.Command;
         name = "application",
         aliases = "app",
         mixinStandardHelpOptions = true,
-        subcommands = ApplicationListCommand.class
+        subcommands = {
+                ApplicationListCommand.class,
+                ApplicationGetCommand.class
+        }
 )
 public class ApplicationCommand {
 
