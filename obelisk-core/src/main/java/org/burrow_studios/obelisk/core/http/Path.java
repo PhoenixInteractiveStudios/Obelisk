@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.core.http;
 
+import org.burrow_studios.obelisk.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -12,7 +13,7 @@ public class Path {
     private final String[] segments;
 
     public Path(@NotNull String path) {
-        this.path = path;
+        this.path = StringUtil.replaceNamedWithNumberedParameters(path);
 
         this.segments = path.split("/");
         for (int i = 0; i < this.segments.length; i++) {
