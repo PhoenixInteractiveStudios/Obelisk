@@ -29,5 +29,10 @@ public class Main {
         if (VERSION == null)
             throw new Error("Unknown version");
         System.out.printf(" version %s...%n", VERSION);
+
+        Obelisk obelisk = new Obelisk();
+        Runtime.getRuntime().addShutdownHook(new Thread(obelisk::stop));
+
+        obelisk.start();
     }
 }
