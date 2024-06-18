@@ -10,6 +10,7 @@ import org.burrow_studios.obelkisk.db.DatabaseImpl;
 import org.burrow_studios.obelkisk.entity.DiscordAccount;
 import org.burrow_studios.obelkisk.entity.Ticket;
 import org.burrow_studios.obelkisk.listeners.TicketCreateListener;
+import org.burrow_studios.obelkisk.text.TextProvider;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import java.io.IOException;
 public class Obelisk {
     private static final Logger LOG = LoggerFactory.getLogger(Obelisk.class);
 
+    private TextProvider textProvider;
     private DatabaseImpl database;
     private Config config;
     private JDA jda;
@@ -32,9 +34,14 @@ public class Obelisk {
         LOG.debug("Creating default config file");
         ResourceTools.get(Main.class).createDefault(Main.DIR, "config.properties");
 
+        LOG.debug("Creating default text.json");
+        ResourceTools.get(Main.class).createDefault(Main.DIR, "text.json");
+
         LOG.debug("Reading config");
         this.config = Config.fromFile(new File(Main.DIR, "config.properties"));
 
+        LOG.info("Parsing text.json");
+        this.textProvider = new TextProvider(new File(Main.DIR, "text.json"));
 
         LOG.info("Initializing database");
         this.database = new DatabaseImpl(new File(Main.DIR, "obelisk.db"));
@@ -88,6 +95,10 @@ public class Obelisk {
 
     public @NotNull Config getConfig() {
         return this.config;
+    }
+
+    public @NotNull TextProvider getTextProvider() {
+        return this.textProvider;
     }
 
     public @NotNull Ticket createTicket(@NotNull String name) {

@@ -82,11 +82,12 @@
                 </includes>
             </resource>
 
-            <!-- Default config -->
+            <!-- Default config & text file -->
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
                     <include>config.properties</include>
+                    <include>text.json</include>
                 </includes>
             </resource>
 
@@ -128,6 +129,13 @@
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.44.1.0</version>
+        </dependency>
+
+        <!-- JSON (de)serialization -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
         </dependency>
 
         <!-- Logging -->
