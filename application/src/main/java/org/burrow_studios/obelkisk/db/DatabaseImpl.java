@@ -2,7 +2,9 @@ package org.burrow_studios.obelkisk.db;
 
 import org.burrow_studios.obelisk.util.turtle.TurtleGenerator;
 import org.burrow_studios.obelkisk.Main;
+import org.burrow_studios.obelkisk.db.interfaces.DiscordAccountDB;
 import org.burrow_studios.obelkisk.db.interfaces.TicketDB;
+import org.burrow_studios.obelkisk.entity.DiscordAccount;
 import org.burrow_studios.obelkisk.entity.Ticket;
 import org.burrow_studios.obelkisk.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DatabaseImpl implements TicketDB, Closeable {
+public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseImpl.class);
 
     private final SQLDB database;
@@ -58,6 +60,22 @@ public class DatabaseImpl implements TicketDB, Closeable {
     /* - - - */
 
     @Override
+    public @NotNull Ticket createTicket(@NotNull String title) throws DatabaseException {
+        final long id = ids.newId();
+
+        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_create")) {
+            stmt.setLong(1, id);
+            stmt.setString(2, title);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return new Ticket(id, this);
+    }
+
+    @Override
     public @NotNull List<Ticket> listTickets() throws DatabaseException {
         List<Ticket> tickets = new ArrayList<>();
 
@@ -93,22 +111,6 @@ public class DatabaseImpl implements TicketDB, Closeable {
     }
 
     @Override
-    public @NotNull Ticket createTicket(@NotNull String title) throws DatabaseException {
-        final long id = ids.newId();
-
-        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_create")) {
-            stmt.setLong(1, id);
-            stmt.setString(2, title);
-
-            stmt.execute();
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-
-        return new Ticket(id, this);
-    }
-
-    @Override
     public void setTicketTitle(long id, @NotNull String title) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_title_set")) {
             stmt.setString(1, title);
@@ -124,6 +126,98 @@ public class DatabaseImpl implements TicketDB, Closeable {
     @Override
     public void deleteTicket(long id) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_delete")) {
+            stmt.setLong(1, id);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public @NotNull DiscordAccount createDiscordAccount(long snowflake, @NotNull String name) throws DatabaseException {
+        final long id = ids.newId();
+
+        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_create")) {
+            stmt.setLong(1, id);
+            stmt.setLong(2, snowflake);
+            stmt.setString(3, name);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return new DiscordAccount(id, this);
+    }
+
+    @Override
+    public @NotNull List<DiscordAccount> listDiscordAccounts() throws DatabaseException {
+        List<DiscordAccount> discordAccounts = new ArrayList<>();
+
+        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_list")) {
+            ResultSet res = stmt.executeQuery();
+
+            while (res.next()) {
+                long id = res.getLong("id");
+
+                discordAccounts.add(new DiscordAccount(id, this));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return Collections.unmodifiableList(discordAccounts);
+    }
+
+    @Override
+    public long getDiscordAccountSnowflake(long id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_get_snowflake")) {
+            stmt.setLong(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                throw new DatabaseException("DiscordAccount " + id + " does not exist");
+
+            return res.getLong("snowflake");
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public @NotNull String getDiscordAccountName(long id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_get_name")) {
+            stmt.setLong(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                throw new DatabaseException("DiscordAccount " + id + " does not exist");
+
+            return res.getString("name");
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public void setDiscordAccountName(long id, @NotNull String name) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_name_set")) {
+            stmt.setString(1, name);
+            stmt.setLong(2, id);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            // TODO: check for error and maybe throw a NoSuchEntryException
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public void deleteDiscordAccount(long id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_delete")) {
             stmt.setLong(1, id);
 
             stmt.execute();

@@ -1,6 +1,7 @@
 package org.burrow_studios.obelkisk;
 
 import org.burrow_studios.obelkisk.db.DatabaseImpl;
+import org.burrow_studios.obelkisk.entity.DiscordAccount;
 import org.burrow_studios.obelkisk.entity.Ticket;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -40,5 +41,9 @@ public class Obelisk {
 
     public @NotNull Ticket createTicket(@NotNull String name) {
         return this.database.createTicket(name);
+    }
+
+    public @NotNull DiscordAccount createDiscordAccount(long snowflake, @NotNull String name) {
+        return this.database.createDiscordAccount(snowflake, name);
     }
 }
