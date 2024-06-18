@@ -3,6 +3,7 @@ package org.burrow_studios.obelkisk;
 import org.burrow_studios.obelisk.util.ResourceTools;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class Main {
@@ -25,7 +26,7 @@ public class Main {
         DIR = f;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (VERSION == null)
             throw new Error("Unknown version");
         System.out.printf(" version %s...%n", VERSION);
