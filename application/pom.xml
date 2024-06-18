@@ -64,7 +64,7 @@
                 <configuration>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>org.burrow_studios.obelisk.gateway.Main</mainClass>
+                            <mainClass>org.burrow_studios.obelisk.Main</mainClass>
                         </transformer>
                     </transformers>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
