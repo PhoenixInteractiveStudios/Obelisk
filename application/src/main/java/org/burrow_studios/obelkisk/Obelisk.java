@@ -1,5 +1,9 @@
 package org.burrow_studios.obelkisk;
 
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.burrow_studios.obelisk.util.ResourceTools;
 import org.burrow_studios.obelkisk.db.DatabaseImpl;
 import org.burrow_studios.obelkisk.entity.DiscordAccount;
@@ -16,6 +20,7 @@ public class Obelisk {
 
     private DatabaseImpl database;
     private Config config;
+    private JDA jda;
 
     public Obelisk() { }
 
@@ -32,11 +37,30 @@ public class Obelisk {
         LOG.info("Initializing database");
         this.database = new DatabaseImpl(new File(Main.DIR, "obelisk.db"));
 
+        LOG.info("Initializing JDA");
+        this.jda = JDABuilder.create(config.token(),
+                    GatewayIntent.GUILD_MESSAGES,
+                    GatewayIntent.GUILD_MESSAGE_REACTIONS,
+                    GatewayIntent.GUILD_EMOJIS_AND_STICKERS,
+                    GatewayIntent.GUILD_MEMBERS)
+                .setStatus(OnlineStatus.DO_NOT_DISTURB)
+                .build();
+
         LOG.info("All done.");
     }
 
     public void stop() {
         LOG.info("Stopping...");
+
+        if (this.jda != null) {
+            try {
+                this.jda.shutdown();
+                this.jda.awaitShutdown();
+            } catch (InterruptedException e) {
+                LOG.warn("Could not properly shut down JDA", e);
+            }
+            this.jda = null;
+        }
 
         if (this.database != null) {
             try {
