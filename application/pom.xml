@@ -81,6 +81,14 @@
                     <include>meta.properties</include>
                 </includes>
             </resource>
+
+            <!-- Logging configuration -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>logback.xml</include>
+                </includes>
+            </resource>
         </resources>
     </build>
 
@@ -89,6 +97,23 @@
             <groupId>org.burrow_studios.obelisk</groupId>
             <artifactId>obelisk-util</artifactId>
             <version>1.0-alpha.1</version>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.4.12</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.12</version>
         </dependency>
     </dependencies>
 </project>
