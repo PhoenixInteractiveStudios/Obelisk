@@ -1,18 +1,24 @@
 package org.burrow_studios.obelisk.monolith.http.handlers;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import org.burrow_studios.obelisk.monolith.ObeliskMonolith;
 import org.burrow_studios.obelisk.monolith.auth.ApplicationData;
 import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.burrow_studios.obelisk.monolith.exceptions.NoSuchEntryException;
 import org.burrow_studios.obelisk.monolith.http.Request;
 import org.burrow_studios.obelisk.monolith.http.Response;
+import org.burrow_studios.obelisk.monolith.http.exceptions.BadRequestException;
 import org.burrow_studios.obelisk.monolith.http.exceptions.InternalServerErrorException;
 import org.burrow_studios.obelisk.monolith.http.exceptions.NotFoundException;
 import org.burrow_studios.obelisk.monolith.http.exceptions.RequestHandlerException;
+import org.burrow_studios.obelisk.util.Pipe;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class AdminHandler {
@@ -67,5 +73,32 @@ public class AdminHandler {
                 .setBody(responseBody)
                 .setStatus(200)
                 .build();
+    }
+
+    public @NotNull Response onCreateApplication(@NotNull Request request) throws RequestHandlerException {
+        JsonObject requestJson = request.requireBodyObject();
+
+        String name = Pipe.of(requestJson.get("name"), BadRequestException::new)
+                .nonNull("Missing \"name\" attribute")
+                .map(JsonElement::getAsString, "Malformed \"name\" attribute")
+                .get();
+
+
+        List<String> intents = new ArrayList<>();
+        JsonElement nullableIntents = requestJson.get("intents");
+        if (nullableIntents != null) {
+            if (!(nullableIntents instanceof JsonArray intentArr))
+                throw new BadRequestException("Malformed \"intents\" attributes");
+
+            for (JsonElement intent : intentArr) {
+                if (intent instanceof JsonPrimitive p)
+                    throw new BadRequestException("Malformed intent element");
+
+
+            }
+        }
+
+
+        this.obelisk.getAuthManager().getDatabase().createApplication(name, intents);
     }
 }

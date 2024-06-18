@@ -187,4 +187,9 @@ public class AuthDatabase implements AuthDB {
 
         return Collections.unmodifiableSet(intents);
     }
+
+    @Override
+    public @NotNull String createApplication(@NotNull String name, @NotNull Collection<String> intents) throws DatabaseException {
+        return null;
+    }
 }

@@ -1,5 +1,7 @@
 package org.burrow_studios.obelisk.admin;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.burrow_studios.obelisk.admin.commands.MainCommand;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
@@ -12,6 +14,11 @@ import java.net.URL;
 import java.nio.file.Files;
 
 public class Main {
+    public static final Gson GSON = new GsonBuilder()
+            .setPrettyPrinting()
+            .serializeNulls()
+            .create();
+
     public static void main(String[] args) throws IOException, URISyntaxException {
         Config config = Config.get();
 

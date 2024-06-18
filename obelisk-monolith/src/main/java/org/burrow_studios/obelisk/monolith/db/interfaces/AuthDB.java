@@ -6,6 +6,7 @@ import org.burrow_studios.obelisk.monolith.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Closeable;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,4 +22,6 @@ public interface AuthDB extends Closeable {
     @NotNull ApplicationData getApplication(long application) throws DatabaseException;
 
     @NotNull Set<Intent> getApplicationIntents(long application) throws DatabaseException;
+
+    @NotNull String createApplication(@NotNull String name, @NotNull Collection<String> intents) throws DatabaseException;
 }

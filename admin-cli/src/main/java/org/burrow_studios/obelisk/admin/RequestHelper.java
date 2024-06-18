@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.admin;
 
+import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.core.http.Route;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +21,24 @@ public class RequestHelper {
 
         builder.uri(uri);
         builder.method(route.getBase().getMethod().name(), HttpRequest.BodyPublishers.noBody());
+        builder.setHeader("Authorization", "Bearer " + config.getToken());
+
+        return builder;
+    }
+
+    public static @NotNull HttpRequest.Builder get(@NotNull Route.Compiled route, @NotNull JsonObject requestBody) throws IOException, URISyntaxException {
+        HttpRequest.Builder builder = HttpRequest.newBuilder();
+
+        Config config = Config.get();
+
+        String suffix = route.getPath().getPath();
+
+        URI uri = new URI(config.getUrl() + suffix);
+
+        String bodyStr = Main.GSON.toJson(requestBody);
+
+        builder.uri(uri);
+        builder.method(route.getBase().getMethod().name(), HttpRequest.BodyPublishers.ofString(bodyStr));
         builder.setHeader("Authorization", "Bearer " + config.getToken());
 
         return builder;

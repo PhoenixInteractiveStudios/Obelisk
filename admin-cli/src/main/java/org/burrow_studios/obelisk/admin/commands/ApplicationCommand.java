@@ -8,7 +8,8 @@ import picocli.CommandLine.Command;
         mixinStandardHelpOptions = true,
         subcommands = {
                 ApplicationListCommand.class,
-                ApplicationGetCommand.class
+                ApplicationGetCommand.class,
+                ApplicationCreateCommand.class
         }
 )
 public class ApplicationCommand {

@@ -14,6 +14,7 @@ public class Route {
     public static class Admin {
         public static final Route LIST_APPLICATIONS  = new Route(GET, "admin/applications");
         public static final Route GET_APPLICATION    = new Route(GET, "admin/applications/{application_id}");
+        public static final Route CREATE_APPLICATION = new Route(POST, "admin/applications");
     }
 
     public static class User {
