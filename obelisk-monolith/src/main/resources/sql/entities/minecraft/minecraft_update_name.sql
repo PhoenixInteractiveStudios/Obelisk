@@ -1,1 +1,0 @@
-UPDATE `minecraft` SET `name` = ? WHERE `id` = ?;

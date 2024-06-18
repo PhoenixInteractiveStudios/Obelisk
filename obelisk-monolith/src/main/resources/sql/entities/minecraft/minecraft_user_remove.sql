@@ -1,1 +1,0 @@
-DELETE FROM `user_minecraft` WHERE `user` = ? AND `minecraft` = ?;
