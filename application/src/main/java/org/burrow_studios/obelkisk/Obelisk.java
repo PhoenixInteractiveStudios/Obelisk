@@ -10,6 +10,7 @@ import org.burrow_studios.obelkisk.db.DatabaseImpl;
 import org.burrow_studios.obelkisk.entity.DiscordAccount;
 import org.burrow_studios.obelkisk.entity.Ticket;
 import org.burrow_studios.obelkisk.listeners.TicketCreateListener;
+import org.burrow_studios.obelkisk.persistence.PersistentConfig;
 import org.burrow_studios.obelkisk.text.TextProvider;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -23,8 +24,10 @@ public class Obelisk {
 
     private TextProvider textProvider;
     private DatabaseImpl database;
-    private Config config;
     private JDA jda;
+
+    private PersistentConfig persistentConfig;
+    private Config config;
 
     public Obelisk() { }
 
@@ -42,6 +45,9 @@ public class Obelisk {
 
         LOG.info("Parsing text.json");
         this.textProvider = new TextProvider(new File(Main.DIR, "text.json"));
+
+        LOG.debug("Attempting to read persistent config");
+        this.persistentConfig = new PersistentConfig(new File(Main.DIR, "persistence.json"));
 
         LOG.info("Initializing database");
         this.database = new DatabaseImpl(new File(Main.DIR, "obelisk.db"));
@@ -95,6 +101,10 @@ public class Obelisk {
 
     public @NotNull Config getConfig() {
         return this.config;
+    }
+
+    public @NotNull PersistentConfig getPersistentConfig() {
+        return this.persistentConfig;
     }
 
     public @NotNull TextProvider getTextProvider() {
