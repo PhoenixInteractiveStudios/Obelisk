@@ -4,10 +4,12 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.burrow_studios.obelisk.util.ResourceTools;
 import org.burrow_studios.obelkisk.db.DatabaseImpl;
 import org.burrow_studios.obelkisk.entity.DiscordAccount;
 import org.burrow_studios.obelkisk.entity.Ticket;
+import org.burrow_studios.obelkisk.listeners.TicketCreateListener;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +26,7 @@ public class Obelisk {
 
     public Obelisk() { }
 
-    public void start() throws IOException {
+    public void start() throws IOException, InterruptedException {
         LOG.info("Starting Obelisk...");
 
         LOG.debug("Creating default config file");
@@ -43,8 +45,18 @@ public class Obelisk {
                     GatewayIntent.GUILD_MESSAGE_REACTIONS,
                     GatewayIntent.GUILD_EMOJIS_AND_STICKERS,
                     GatewayIntent.GUILD_MEMBERS)
+                .disableCache(CacheFlag.ACTIVITY)
+                .disableCache(CacheFlag.VOICE_STATE)
+                .disableCache(CacheFlag.CLIENT_STATUS)
+                .disableCache(CacheFlag.ONLINE_STATUS)
+                .disableCache(CacheFlag.SCHEDULED_EVENTS)
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
+                .addEventListeners(new TicketCreateListener(this))
                 .build();
+
+        this.jda.awaitReady();
+
+        this.jda.getPresence().setStatus(OnlineStatus.ONLINE);
 
         LOG.info("All done.");
     }
@@ -72,6 +84,10 @@ public class Obelisk {
         }
 
         LOG.info("OK bye");
+    }
+
+    public @NotNull Config getConfig() {
+        return this.config;
     }
 
     public @NotNull Ticket createTicket(@NotNull String name) {
