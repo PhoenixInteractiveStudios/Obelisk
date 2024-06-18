@@ -89,6 +89,15 @@
                     <include>logback.xml</include>
                 </includes>
             </resource>
+
+            <!-- SQL files -->
+            <resource>
+                <directory>src/main/resources/sql</directory>
+                <targetPath>sql</targetPath>
+                <includes>
+                    <include>**/*.sql</include>
+                </includes>
+            </resource>
         </resources>
     </build>
 
