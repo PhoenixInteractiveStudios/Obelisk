@@ -1,0 +1,32 @@
+name: Build Obelisk
+
+on:
+  push:
+    branches:
+      - "development"
+    paths:
+      - "obelisk-application/**"
+      - "obelisk-util/**"
+  pull_request:
+    branches:
+      - "development"
+    paths:
+      - "obelisk-application/**"
+      - "obelisk-util/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build Util Module
+        run: mvn -B package --file application/pom.xml
