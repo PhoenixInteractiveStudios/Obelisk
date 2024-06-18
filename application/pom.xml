@@ -71,5 +71,24 @@
                 </configuration>
             </plugin>
         </plugins>
+
+        <resources>
+            <!-- Write version into resource file -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>meta.properties</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.burrow_studios.obelisk</groupId>
+            <artifactId>obelisk-util</artifactId>
+            <version>1.0-alpha.1</version>
+        </dependency>
+    </dependencies>
 </project>
