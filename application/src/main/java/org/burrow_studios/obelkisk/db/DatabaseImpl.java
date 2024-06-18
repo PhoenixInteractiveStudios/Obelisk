@@ -44,6 +44,8 @@ public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
         LOG.info("Creating tables");
         try {
             this.database.execute("ticket/table");
+
+            this.database.execute("discord/table");
         } catch (SQLException e) {
             throw new RuntimeException("Could not create tables", e);
         }
