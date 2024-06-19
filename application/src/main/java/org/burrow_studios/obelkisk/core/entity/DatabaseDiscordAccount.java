@@ -1,7 +1,7 @@
-package org.burrow_studios.obelkisk.entity;
+package org.burrow_studios.obelkisk.core.entity;
 
 import org.burrow_studios.obelisk.api.entity.DiscordAccount;
-import org.burrow_studios.obelkisk.db.interfaces.DiscordAccountDB;
+import org.burrow_studios.obelkisk.core.db.interfaces.DiscordAccountDB;
 import org.jetbrains.annotations.NotNull;
 
 public final class DatabaseDiscordAccount implements DiscordAccount {

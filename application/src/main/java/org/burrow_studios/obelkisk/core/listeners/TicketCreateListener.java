@@ -1,4 +1,4 @@
-package org.burrow_studios.obelkisk.listeners;
+package org.burrow_studios.obelkisk.core.listeners;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -13,8 +13,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.burrow_studios.obelisk.api.entity.Ticket;
-import org.burrow_studios.obelkisk.Obelisk;
-import org.burrow_studios.obelkisk.entity.DatabaseTicket;
+import org.burrow_studios.obelkisk.core.Obelisk;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package org.burrow_studios.obelkisk;
+package org.burrow_studios.obelkisk.core;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -8,12 +8,10 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.burrow_studios.obelisk.api.entity.DiscordAccount;
 import org.burrow_studios.obelisk.api.entity.Ticket;
 import org.burrow_studios.obelisk.util.ResourceTools;
-import org.burrow_studios.obelkisk.db.DatabaseImpl;
-import org.burrow_studios.obelkisk.entity.DatabaseDiscordAccount;
-import org.burrow_studios.obelkisk.entity.DatabaseTicket;
-import org.burrow_studios.obelkisk.listeners.TicketCreateListener;
-import org.burrow_studios.obelkisk.persistence.PersistentConfig;
-import org.burrow_studios.obelkisk.text.TextProvider;
+import org.burrow_studios.obelkisk.core.db.DatabaseImpl;
+import org.burrow_studios.obelkisk.core.persistence.PersistentConfig;
+import org.burrow_studios.obelkisk.core.text.TextProvider;
+import org.burrow_studios.obelkisk.core.listeners.TicketCreateListener;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

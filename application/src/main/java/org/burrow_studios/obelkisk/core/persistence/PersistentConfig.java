@@ -1,4 +1,4 @@
-package org.burrow_studios.obelkisk.persistence;
+package org.burrow_studios.obelkisk.core.persistence;
 
 import com.google.gson.*;
 import org.jetbrains.annotations.NotNull;

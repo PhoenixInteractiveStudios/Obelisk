@@ -1,4 +1,4 @@
-package org.burrow_studios.obelkisk;
+package org.burrow_studios.obelkisk.core;
 
 import org.jetbrains.annotations.NotNull;
 

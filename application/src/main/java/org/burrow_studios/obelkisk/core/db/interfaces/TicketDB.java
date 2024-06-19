@@ -1,7 +1,7 @@
-package org.burrow_studios.obelkisk.db.interfaces;
+package org.burrow_studios.obelkisk.core.db.interfaces;
 
-import org.burrow_studios.obelkisk.entity.DatabaseTicket;
-import org.burrow_studios.obelkisk.exceptions.DatabaseException;
+import org.burrow_studios.obelkisk.core.entity.DatabaseTicket;
+import org.burrow_studios.obelkisk.core.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

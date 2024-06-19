@@ -1,11 +1,11 @@
-package org.burrow_studios.obelkisk.db;
+package org.burrow_studios.obelkisk.core.db;
 
-import org.burrow_studios.obelkisk.Main;
-import org.burrow_studios.obelkisk.db.interfaces.DiscordAccountDB;
-import org.burrow_studios.obelkisk.db.interfaces.TicketDB;
-import org.burrow_studios.obelkisk.entity.DatabaseDiscordAccount;
-import org.burrow_studios.obelkisk.entity.DatabaseTicket;
-import org.burrow_studios.obelkisk.exceptions.DatabaseException;
+import org.burrow_studios.obelkisk.core.Main;
+import org.burrow_studios.obelkisk.core.exceptions.DatabaseException;
+import org.burrow_studios.obelkisk.core.db.interfaces.DiscordAccountDB;
+import org.burrow_studios.obelkisk.core.db.interfaces.TicketDB;
+import org.burrow_studios.obelkisk.core.entity.DatabaseDiscordAccount;
+import org.burrow_studios.obelkisk.core.entity.DatabaseTicket;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
