@@ -1,16 +1,16 @@
 package org.burrow_studios.obelkisk.db.interfaces;
 
-import org.burrow_studios.obelkisk.entity.DiscordAccount;
+import org.burrow_studios.obelkisk.entity.DatabaseDiscordAccount;
 import org.burrow_studios.obelkisk.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface DiscordAccountDB {
-    @NotNull DiscordAccount createDiscordAccount(long snowflake, @NotNull String name) throws DatabaseException;
+    @NotNull DatabaseDiscordAccount createDiscordAccount(long snowflake, @NotNull String name) throws DatabaseException;
 
 
-    @NotNull List<DiscordAccount> listDiscordAccounts() throws DatabaseException;
+    @NotNull List<DatabaseDiscordAccount> listDiscordAccounts() throws DatabaseException;
 
     @NotNull String getDiscordAccountName(long snowflake) throws DatabaseException;
 

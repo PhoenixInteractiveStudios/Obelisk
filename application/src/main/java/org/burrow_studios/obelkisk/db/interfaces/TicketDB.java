@@ -1,16 +1,16 @@
 package org.burrow_studios.obelkisk.db.interfaces;
 
-import org.burrow_studios.obelkisk.entity.Ticket;
+import org.burrow_studios.obelkisk.entity.DatabaseTicket;
 import org.burrow_studios.obelkisk.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface TicketDB {
-    @NotNull Ticket createTicket(long channel, @NotNull String title) throws DatabaseException;
+    @NotNull DatabaseTicket createTicket(long channel, @NotNull String title) throws DatabaseException;
 
 
-    @NotNull List<Ticket> listTickets() throws DatabaseException;
+    @NotNull List<DatabaseTicket> listTickets() throws DatabaseException;
 
     @NotNull String getTicketTitle(int id) throws DatabaseException;
 

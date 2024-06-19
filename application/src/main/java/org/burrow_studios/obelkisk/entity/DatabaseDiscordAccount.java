@@ -1,13 +1,14 @@
 package org.burrow_studios.obelkisk.entity;
 
+import org.burrow_studios.obelisk.api.entity.DiscordAccount;
 import org.burrow_studios.obelkisk.db.interfaces.DiscordAccountDB;
 import org.jetbrains.annotations.NotNull;
 
-public final class DiscordAccount {
+public final class DatabaseDiscordAccount implements DiscordAccount {
     private final long snowflake;
     private final DiscordAccountDB database;
 
-    public DiscordAccount(long snowflake, @NotNull DiscordAccountDB database) {
+    public DatabaseDiscordAccount(long snowflake, @NotNull DiscordAccountDB database) {
         this.snowflake = snowflake;
         this.database = database;
     }
