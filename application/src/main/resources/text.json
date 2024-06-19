@@ -1,5 +1,6 @@
 {
   "ticket.create.header": "# Support\n\nWenn du eine Frage hast oder Hilfe benötigst, klicke einfach auf den Button unten, um ein Ticket zu erstellen.\n\nFalls mehrere User mit involviert sind, sag uns nach erstellen des Tickets einfach bescheid und wir fügen die anderen hinzu.",
   "ticket.create.button": "Ticket erstellen",
-  "ticket.create.welcome": "Hey %user%, wie können wir dir helfen?"
+  "ticket.create.welcome": "Hey %user%, wie können wir dir helfen?",
+  "ticket.create.error": "Ticket konnte nicht erstellt werden. Bitte melde dich per DM bei der Serverleitung oder dem Team."
 }
