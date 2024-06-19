@@ -5,10 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Optional;
 
 public class PersistentConfig {
@@ -27,7 +24,10 @@ public class PersistentConfig {
     private JsonObject read() {
         try {
             return GSON.fromJson(new FileReader(file), JsonObject.class);
-        } catch (IOException | JsonIOException | JsonSyntaxException e) {
+        } catch (FileNotFoundException e) {
+            LOG.debug("persistence.json does not exist yet");
+            return null;
+        } catch (JsonIOException | JsonSyntaxException e) {
             LOG.warn("Failed to read file or parse JSON", e);
 
             // can't really be handled here without risking unpredictable IOExceptions everywhere else
