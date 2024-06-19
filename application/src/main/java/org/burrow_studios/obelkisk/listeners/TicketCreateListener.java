@@ -22,6 +22,8 @@ import java.util.Objects;
 public class TicketCreateListener extends ListenerAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(TicketCreateListener.class);
 
+    private static final String BUTTON_ID = "ticketCreate";
+
     private final Obelisk obelisk;
     private Long messageId;
 
@@ -42,6 +44,9 @@ public class TicketCreateListener extends ListenerAdapter {
         final long   actualMessage = event.getMessageIdLong();
 
         if (expectedMessage != actualMessage) return;
+
+        final String id = event.getButton().getId();
+        if (!Objects.equals(id, BUTTON_ID)) return;
 
         // TODO
     }
@@ -144,6 +149,6 @@ public class TicketCreateListener extends ListenerAdapter {
 
     private @NotNull Button getButton() {
         String label = this.obelisk.getTextProvider().get("ticket.create.button");
-        return Button.of(ButtonStyle.SUCCESS, "ticketCreate", label, Emoji.fromFormatted("\uD83C\uDFAB"));
+        return Button.of(ButtonStyle.SUCCESS, BUTTON_ID, label, Emoji.fromFormatted("\uD83C\uDFAB"));
     }
 }
