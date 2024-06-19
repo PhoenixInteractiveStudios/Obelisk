@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.requests.ErrorResponse;
 import org.burrow_studios.obelkisk.Obelisk;
+import org.burrow_studios.obelkisk.entity.Ticket;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,12 +68,13 @@ public class TicketCreateListener extends ListenerAdapter {
 
         category.createTextChannel("ticket")
                 .queue(channel -> {
-                    this.obelisk.createTicket(channel.getIdLong(), "ticket");
+                    Ticket ticket = this.obelisk.createTicket(channel.getIdLong(), "ticket");
 
                     event.getHook().deleteOriginal().queue();
 
                     String welcomeMsg = this.obelisk.getTextProvider().get("ticket.create.welcome", "user", event.getUser().getAsMention());
 
+                    channel.getManager().setName("ticket-" + ticket.getId()).queue();
                     channel.sendMessage(welcomeMsg).queueAfter(1, TimeUnit.SECONDS);
                 }, throwable -> {
                     String errorMsg = this.obelisk.getTextProvider().get("ticket.create.error");

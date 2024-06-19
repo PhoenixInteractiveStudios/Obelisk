@@ -3,28 +3,28 @@ package org.burrow_studios.obelkisk.entity;
 import org.burrow_studios.obelkisk.db.interfaces.DiscordAccountDB;
 import org.jetbrains.annotations.NotNull;
 
-public final class DiscordAccount extends AbstractEntity {
+public final class DiscordAccount {
+    private final long snowflake;
     private final DiscordAccountDB database;
 
-    public DiscordAccount(long id, @NotNull DiscordAccountDB database) {
-        super(id);
+    public DiscordAccount(long snowflake, @NotNull DiscordAccountDB database) {
+        this.snowflake = snowflake;
         this.database = database;
     }
 
     public long getSnowflake() {
-        return this.database.getDiscordAccountSnowflake(this.id);
+        return this.snowflake;
     }
 
     public @NotNull String getName() {
-        return this.database.getDiscordAccountName(this.id);
+        return this.database.getDiscordAccountName(this.snowflake);
     }
 
     public void setName(@NotNull String name) {
-        this.database.setDiscordAccountName(this.id, name);
+        this.database.setDiscordAccountName(this.snowflake, name);
     }
 
-    @Override
     public void delete() {
-        this.database.deleteDiscordAccount(this.id);
+        this.database.deleteDiscordAccount(this.snowflake);
     }
 }

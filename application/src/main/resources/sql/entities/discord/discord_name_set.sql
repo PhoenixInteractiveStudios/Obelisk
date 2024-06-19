@@ -1,1 +1,1 @@
-UPDATE `discord` SET `name` = ? WHERE `id` = ?;
+UPDATE `discord` SET `name` = ? WHERE `snowflake` = ?;

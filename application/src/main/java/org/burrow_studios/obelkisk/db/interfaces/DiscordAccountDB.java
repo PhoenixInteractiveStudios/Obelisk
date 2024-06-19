@@ -12,13 +12,11 @@ public interface DiscordAccountDB {
 
     @NotNull List<DiscordAccount> listDiscordAccounts() throws DatabaseException;
 
-    long getDiscordAccountSnowflake(long id) throws DatabaseException;
-
-    @NotNull String getDiscordAccountName(long id) throws DatabaseException;
+    @NotNull String getDiscordAccountName(long snowflake) throws DatabaseException;
 
 
-    void setDiscordAccountName(long id, @NotNull String name) throws DatabaseException;
+    void setDiscordAccountName(long snowflake, @NotNull String name) throws DatabaseException;
 
 
-    void deleteDiscordAccount(long id) throws DatabaseException;
+    void deleteDiscordAccount(long snowflake) throws DatabaseException;
 }

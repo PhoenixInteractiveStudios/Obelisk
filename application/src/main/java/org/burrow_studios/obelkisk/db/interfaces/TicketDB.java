@@ -12,13 +12,13 @@ public interface TicketDB {
 
     @NotNull List<Ticket> listTickets() throws DatabaseException;
 
-    @NotNull String getTicketTitle(long id) throws DatabaseException;
+    @NotNull String getTicketTitle(int id) throws DatabaseException;
 
-    long getTicketChannel(long id) throws DatabaseException;
-
-
-    void setTicketTitle(long id, @NotNull String title) throws DatabaseException;
+    long getTicketChannel(int id) throws DatabaseException;
 
 
-    void deleteTicket(long id) throws DatabaseException;
+    void setTicketTitle(int id, @NotNull String title) throws DatabaseException;
+
+
+    void deleteTicket(int id) throws DatabaseException;
 }

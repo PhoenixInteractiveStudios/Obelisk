@@ -1,1 +1,1 @@
-SELECT `name` FROM `discord` WHERE `id` = ?;
+SELECT `name` FROM `discord` WHERE `snowflake` = ?;

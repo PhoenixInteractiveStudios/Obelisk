@@ -1,5 +1,4 @@
 CREATE TABLE IF NOT EXISTS `discord`(
-    `id` BIGINT(20) NOT NULL PRIMARY KEY,
-    `snowflake` BIGINT(20) NOT NULL UNIQUE,
+    `snowflake` BIGINT(20) NOT NULL PRIMARY KEY,
     `name` TEXT
 );

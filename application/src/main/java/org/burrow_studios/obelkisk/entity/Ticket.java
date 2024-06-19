@@ -3,12 +3,17 @@ package org.burrow_studios.obelkisk.entity;
 import org.burrow_studios.obelkisk.db.interfaces.TicketDB;
 import org.jetbrains.annotations.NotNull;
 
-public final class Ticket extends AbstractEntity {
+public final class Ticket {
+    private final int id;
     private final TicketDB database;
 
-    public Ticket(long id, @NotNull TicketDB database) {
-        super(id);
+    public Ticket(int id, @NotNull TicketDB database) {
+        this.id = id;
         this.database = database;
+    }
+
+    public int getId() {
+        return this.id;
     }
 
     public @NotNull String getTitle() {
@@ -23,7 +28,6 @@ public final class Ticket extends AbstractEntity {
         this.database.setTicketTitle(this.id, title);
     }
 
-    @Override
     public void delete() {
         this.database.deleteTicket(this.id);
     }

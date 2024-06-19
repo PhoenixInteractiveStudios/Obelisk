@@ -1,1 +1,1 @@
-DELETE FROM `discord` WHERE `id` = ?;
+DELETE FROM `discord` WHERE `snowflake` = ?;

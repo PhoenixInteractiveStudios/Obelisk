@@ -1,1 +1,1 @@
-SELECT `id` FROM `discord`;
+SELECT `snowflake` FROM `discord`;
