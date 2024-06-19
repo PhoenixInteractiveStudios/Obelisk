@@ -7,12 +7,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public interface TicketDB {
-    @NotNull Ticket createTicket(@NotNull String title) throws DatabaseException;
+    @NotNull Ticket createTicket(long channel, @NotNull String title) throws DatabaseException;
 
 
     @NotNull List<Ticket> listTickets() throws DatabaseException;
 
     @NotNull String getTicketTitle(long id) throws DatabaseException;
+
+    long getTicketChannel(long id) throws DatabaseException;
 
 
     void setTicketTitle(long id, @NotNull String title) throws DatabaseException;

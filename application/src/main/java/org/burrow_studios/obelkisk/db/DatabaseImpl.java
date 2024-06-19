@@ -62,12 +62,13 @@ public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
     /* - - - */
 
     @Override
-    public @NotNull Ticket createTicket(@NotNull String title) throws DatabaseException {
+    public @NotNull Ticket createTicket(long channel, @NotNull String title) throws DatabaseException {
         final long id = ids.newId();
 
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_create")) {
             stmt.setLong(1, id);
-            stmt.setString(2, title);
+            stmt.setLong(2, channel);
+            stmt.setString(3, title);
 
             stmt.execute();
         } catch (SQLException e) {
@@ -98,7 +99,7 @@ public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
 
     @Override
     public @NotNull String getTicketTitle(long id) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_get_title")) {
+        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_title_get")) {
             stmt.setLong(1, id);
 
             ResultSet res = stmt.executeQuery();
@@ -107,6 +108,22 @@ public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
                 throw new DatabaseException("Ticket " + id + " does not exist");
 
             return res.getString("title");
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public long getTicketChannel(long id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_channel_get")) {
+            stmt.setLong(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                throw new DatabaseException("Ticket " + id + " does not exist");
+
+            return res.getLong("channel");
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }

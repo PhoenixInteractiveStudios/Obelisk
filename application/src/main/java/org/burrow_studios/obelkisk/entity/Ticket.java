@@ -15,6 +15,10 @@ public final class Ticket extends AbstractEntity {
         return this.database.getTicketTitle(this.id);
     }
 
+    public long getChannelId() {
+        return this.database.getTicketChannel(this.id);
+    }
+
     public void setTitle(@NotNull String title) {
         this.database.setTicketTitle(this.id, title);
     }

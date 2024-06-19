@@ -1,4 +1,5 @@
 CREATE TABLE IF NOT EXISTS `tickets` (
     `id` BIGINT(20) NOT NULL PRIMARY KEY,
+    `channel` BIGINT(20) NOT NULL UNIQUE,
     `title` TEXT
 );

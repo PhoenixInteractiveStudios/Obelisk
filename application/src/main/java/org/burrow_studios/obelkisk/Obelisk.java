@@ -111,8 +111,8 @@ public class Obelisk {
         return this.textProvider;
     }
 
-    public @NotNull Ticket createTicket(@NotNull String name) {
-        return this.database.createTicket(name);
+    public @NotNull Ticket createTicket(long channel, @NotNull String name) {
+        return this.database.createTicket(channel, name);
     }
 
     public @NotNull DiscordAccount createDiscordAccount(long snowflake, @NotNull String name) {
