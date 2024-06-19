@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.burrow_studios.obelisk</groupId>
-    <artifactId>obelisk</artifactId>
+    <artifactId>obelisk-core</artifactId>
     <version>1.0-alpha.1</version>
 
-    <name>Obelisk</name>
+    <name>Obelisk Core</name>
     <description>Burrow Studios Support System</description>
 
 

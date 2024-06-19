@@ -5,13 +5,15 @@ on:
     branches:
       - "development"
     paths:
-      - "obelisk-application/**"
+      - "obelisk-core/**"
+      - "obelisk-api/**"
       - "obelisk-util/**"
   pull_request:
     branches:
       - "development"
     paths:
-      - "obelisk-application/**"
+      - "obelisk-core/**"
+      - "obelisk-api/**"
       - "obelisk-util/**"
   workflow_dispatch:
 
@@ -30,5 +32,7 @@ jobs:
           cache: maven
       - name: Build Util Module
         run: mvn -B clean install --file obelisk-util/pom.xml
-      - name: Build Application
-        run: mvn -B package --file application/pom.xml
+      - name: Build API Module
+        run: mvn -B clean install --file obelisk-api/pom.xml
+      - name: Build Core Module
+        run: mvn -B package --file obelisk-core/pom.xml
