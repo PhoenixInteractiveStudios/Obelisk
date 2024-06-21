@@ -4,8 +4,8 @@ import org.burrow_studios.obelkisk.core.Main;
 import org.burrow_studios.obelkisk.core.exceptions.DatabaseException;
 import org.burrow_studios.obelkisk.core.db.interfaces.DiscordAccountDB;
 import org.burrow_studios.obelkisk.core.db.interfaces.TicketDB;
-import org.burrow_studios.obelkisk.core.entity.DatabaseDiscordAccount;
-import org.burrow_studios.obelkisk.core.entity.DatabaseTicket;
+import org.burrow_studios.obelkisk.core.entity.DiscordAccount;
+import org.burrow_studios.obelkisk.core.entity.Ticket;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +70,7 @@ public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
     /* - - - */
 
     @Override
-    public @NotNull DatabaseTicket createTicket(long channel, @NotNull String title) throws DatabaseException {
+    public @NotNull Ticket createTicket(long channel, @NotNull String title) throws DatabaseException {
         final int id = this.ticketIncrement.getAndIncrement();
 
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_create")) {
@@ -83,12 +83,12 @@ public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
             throw new DatabaseException(e);
         }
 
-        return new DatabaseTicket(id, this);
+        return new Ticket(id, this);
     }
 
     @Override
-    public @NotNull List<DatabaseTicket> listTickets() throws DatabaseException {
-        List<DatabaseTicket> tickets = new ArrayList<>();
+    public @NotNull List<Ticket> listTickets() throws DatabaseException {
+        List<Ticket> tickets = new ArrayList<>();
 
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/tickets_list")) {
             ResultSet res = stmt.executeQuery();
@@ -96,7 +96,7 @@ public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
             while (res.next()) {
                 int id = res.getInt("id");
 
-                tickets.add(new DatabaseTicket(id, this));
+                tickets.add(new Ticket(id, this));
             }
         } catch (SQLException e) {
             throw new DatabaseException(e);
@@ -162,7 +162,7 @@ public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
     }
 
     @Override
-    public @NotNull DatabaseDiscordAccount createDiscordAccount(long snowflake, @NotNull String name) throws DatabaseException {
+    public @NotNull DiscordAccount createDiscordAccount(long snowflake, @NotNull String name) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_create")) {
             stmt.setLong(1, snowflake);
             stmt.setString(2, name);
@@ -172,12 +172,12 @@ public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
             throw new DatabaseException(e);
         }
 
-        return new DatabaseDiscordAccount(snowflake, this);
+        return new DiscordAccount(snowflake, this);
     }
 
     @Override
-    public @NotNull List<DatabaseDiscordAccount> listDiscordAccounts() throws DatabaseException {
-        List<DatabaseDiscordAccount> discordAccounts = new ArrayList<>();
+    public @NotNull List<DiscordAccount> listDiscordAccounts() throws DatabaseException {
+        List<DiscordAccount> discordAccounts = new ArrayList<>();
 
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_list")) {
             ResultSet res = stmt.executeQuery();
@@ -185,7 +185,7 @@ public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
             while (res.next()) {
                 long snowflake = res.getLong("snowflake");
 
-                discordAccounts.add(new DatabaseDiscordAccount(snowflake, this));
+                discordAccounts.add(new DiscordAccount(snowflake, this));
             }
         } catch (SQLException e) {
             throw new DatabaseException(e);
