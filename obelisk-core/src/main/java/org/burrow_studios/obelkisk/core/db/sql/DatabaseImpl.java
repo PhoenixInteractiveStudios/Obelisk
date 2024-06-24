@@ -1,4 +1,4 @@
-package org.burrow_studios.obelkisk.core.db;
+package org.burrow_studios.obelkisk.core.db.sql;
 
 import org.burrow_studios.obelkisk.core.Main;
 import org.burrow_studios.obelkisk.core.exceptions.DatabaseException;

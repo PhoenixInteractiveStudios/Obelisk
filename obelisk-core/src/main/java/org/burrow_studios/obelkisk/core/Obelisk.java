@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.burrow_studios.obelisk.util.ResourceTools;
-import org.burrow_studios.obelkisk.core.db.DatabaseImpl;
+import org.burrow_studios.obelkisk.core.db.sql.DatabaseImpl;
 import org.burrow_studios.obelkisk.core.entity.DiscordAccount;
 import org.burrow_studios.obelkisk.core.entity.Ticket;
 import org.burrow_studios.obelkisk.core.persistence.PersistentConfig;
