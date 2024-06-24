@@ -1,12 +1,16 @@
 package org.burrow_studios.obelkisk.core.db.sql;
 
+import org.burrow_studios.obelisk.util.turtle.TurtleGenerator;
 import org.burrow_studios.obelkisk.core.Main;
+import org.burrow_studios.obelkisk.core.db.interfaces.UserDB;
+import org.burrow_studios.obelkisk.core.entity.User;
 import org.burrow_studios.obelkisk.core.exceptions.DatabaseException;
 import org.burrow_studios.obelkisk.core.db.interfaces.DiscordAccountDB;
 import org.burrow_studios.obelkisk.core.db.interfaces.TicketDB;
 import org.burrow_studios.obelkisk.core.entity.DiscordAccount;
 import org.burrow_studios.obelkisk.core.entity.Ticket;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteConfig;
@@ -22,10 +26,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
+public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseImpl.class);
 
     private final SQLDB database;
+    private final TurtleGenerator userIds = TurtleGenerator.get("users");
     private final AtomicInteger ticketIncrement = new AtomicInteger(0);
 
     public DatabaseImpl(@NotNull File file) {
@@ -68,6 +73,111 @@ public class DatabaseImpl implements TicketDB, DiscordAccountDB, Closeable {
     }
 
     /* - - - */
+
+    @Override
+    public @NotNull User createUser(@NotNull String name, @Nullable String pronouns) throws DatabaseException {
+        final long id = this.userIds.newId();
+
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_create")) {
+            stmt.setLong(1, id);
+            stmt.setString(2, name);
+            stmt.setString(3, pronouns);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return new User(id, this);
+    }
+
+    @Override
+    public @NotNull List<User> listUsers() throws DatabaseException {
+        List<User> users = new ArrayList<>();
+
+        try (PreparedStatement stmt = this.database.preparedStatement("user/users_list")) {
+            ResultSet res = stmt.executeQuery();
+
+            while (res.next()) {
+                long id = res.getLong("id");
+
+                users.add(new User(id, this));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return Collections.unmodifiableList(users);
+    }
+
+    @Override
+    public @NotNull String getUserName(long id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_name_get")) {
+            stmt.setLong(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                throw new DatabaseException("User " + id + " does not exist");
+
+            return res.getString("name");
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public @Nullable String getUserPronouns(long id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_pronouns_get")) {
+            stmt.setLong(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                throw new DatabaseException("User " + id + " does not exist");
+
+            return res.getString("name");
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public void setUserName(long id, @NotNull String name) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_name_set")) {
+            stmt.setString(1, name);
+            stmt.setLong(2, id);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            // TODO: check for error and maybe throw a NoSuchEntryException
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public void setUserPronouns(long id, @Nullable String pronouns) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_pronouns_set")) {
+            stmt.setString(1, pronouns);
+            stmt.setLong(2, id);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            // TODO: check for error and maybe throw a NoSuchEntryException
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public void deleteUser(long id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_delete")) {
+            stmt.setLong(1, id);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
 
     @Override
     public @NotNull Ticket createTicket(long channel, @NotNull String title) throws DatabaseException {

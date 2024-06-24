@@ -9,10 +9,12 @@ import org.burrow_studios.obelisk.util.ResourceTools;
 import org.burrow_studios.obelkisk.core.db.sql.DatabaseImpl;
 import org.burrow_studios.obelkisk.core.entity.DiscordAccount;
 import org.burrow_studios.obelkisk.core.entity.Ticket;
+import org.burrow_studios.obelkisk.core.entity.User;
+import org.burrow_studios.obelkisk.core.listeners.TicketCreateListener;
 import org.burrow_studios.obelkisk.core.persistence.PersistentConfig;
 import org.burrow_studios.obelkisk.core.text.TextProvider;
-import org.burrow_studios.obelkisk.core.listeners.TicketCreateListener;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +111,10 @@ public class Obelisk {
 
     public @NotNull TextProvider getTextProvider() {
         return this.textProvider;
+    }
+
+    public @NotNull User createUser(@NotNull String name, @Nullable String pronouns) {
+        return this.database.createUser(name, pronouns);
     }
 
     public @NotNull Ticket createTicket(long channel, @NotNull String name) {
