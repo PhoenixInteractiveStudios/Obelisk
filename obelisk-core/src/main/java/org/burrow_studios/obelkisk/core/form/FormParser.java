@@ -13,10 +13,33 @@ public class FormParser {
     private FormParser() { }
 
     public static FormElement fromJson(@NotNull JsonObject json) {
+        String type = json.get("type").getAsString();
+
+        String id    = json.get("id").getAsString();
+        String title = json.get("title").getAsString();
+
+        if (type.equals(TextElement.IDENTIFIER)) {
+            String content = json.get("content").getAsString();
+
+            return new TextElement(id, title, content);
+        }
+
         throw new Error("Not implemented");
     }
 
     public static JsonObject toJson(@NotNull FormElement element) {
+        JsonObject json = new JsonObject();
+
+        json.addProperty("id", element.getId());
+        json.addProperty("title", element.getTitle());
+
+        if (element instanceof TextElement textElement) {
+            json.addProperty("type", TextElement.IDENTIFIER);
+            json.addProperty("content", textElement.getContent());
+
+            return json;
+        }
+
         throw new Error("Not implemented");
     }
 
