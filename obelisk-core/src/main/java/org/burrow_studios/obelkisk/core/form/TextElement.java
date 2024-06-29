@@ -5,14 +5,13 @@ import org.jetbrains.annotations.NotNull;
 public class TextElement extends FormElement {
     public static final String IDENTIFIER = "text";
 
-    private final String content;
-
     public TextElement(@NotNull String id, @NotNull String title, @NotNull String content) {
-        super(id, title);
-        this.content = content;
+        super(id, title, content);
     }
 
-    public @NotNull String getContent() {
-        return this.content;
+    @SuppressWarnings("DataFlowIssue")
+    @Override
+    public @NotNull String getDescription() {
+        return super.getDescription();
     }
 }

@@ -1,6 +1,7 @@
 package org.burrow_studios.obelkisk.core.form;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -10,13 +11,13 @@ public class MinecraftAccountQuery extends QueryElement<UUID> {
 
     private final AtomicBoolean verified = new AtomicBoolean();
 
-    public MinecraftAccountQuery(@NotNull String id, @NotNull String title, boolean optional) {
-        super(id, title, optional, null);
+    public MinecraftAccountQuery(@NotNull String id, @NotNull String title, @Nullable String description, boolean optional) {
+        super(id, title, description, optional, null);
         this.verified.set(false);
     }
 
-    public MinecraftAccountQuery(@NotNull String id, @NotNull String title, boolean optional, UUID account, boolean verified) {
-        super(id, title, optional, null, account, account != null && verified);
+    public MinecraftAccountQuery(@NotNull String id, @NotNull String title, @Nullable String description, boolean optional, UUID account, boolean verified) {
+        super(id, title, description, optional, null, account, account != null && verified);
         this.verified.set(account != null && verified);
     }
 

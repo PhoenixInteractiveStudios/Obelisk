@@ -1,6 +1,7 @@
 package org.burrow_studios.obelkisk.core.form;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TextQuery extends QueryElement<String> {
     public static final String IDENTIFIER = "input";
@@ -8,12 +9,12 @@ public class TextQuery extends QueryElement<String> {
     private final int minLength;
     private final int maxLength;
 
-    public TextQuery(@NotNull String id, @NotNull String title, boolean optional, String defaultValue) {
-        this(id, title, 1, 2000, optional, defaultValue);
+    public TextQuery(@NotNull String id, @NotNull String title, @Nullable String description, boolean optional, String defaultValue) {
+        this(id, title, description, 1, 2000, optional, defaultValue);
     }
 
-    public TextQuery(@NotNull String id, @NotNull String title, int minLength, int maxLength, boolean optional, String defaultValue) {
-        super(id, title, optional, defaultValue);
+    public TextQuery(@NotNull String id, @NotNull String title, @Nullable String description, int minLength, int maxLength, boolean optional, String defaultValue) {
+        super(id, title, description, optional, defaultValue);
 
         if (minLength <= 0)
             throw new IllegalArgumentException("minLength must be greater than 0");
@@ -25,12 +26,12 @@ public class TextQuery extends QueryElement<String> {
         this.maxLength = maxLength;
     }
 
-    public TextQuery(@NotNull String id, @NotNull String title, boolean optional, String defaultValue, String input, boolean done) {
-        this(id, title, 1, 2000, optional, defaultValue, input, done);
+    public TextQuery(@NotNull String id, @NotNull String title, @Nullable String description, boolean optional, String defaultValue, String input, boolean done) {
+        this(id, title, description, 1, 2000, optional, defaultValue, input, done);
     }
 
-    public TextQuery(@NotNull String id, @NotNull String title, int minLength, int maxLength, boolean optional, String defaultValue, String input, boolean done) {
-        super(id, title, optional, defaultValue, input, done);
+    public TextQuery(@NotNull String id, @NotNull String title, @Nullable String description, int minLength, int maxLength, boolean optional, String defaultValue, String input, boolean done) {
+        super(id, title, description, optional, defaultValue, input, done);
 
         this.minLength = minLength;
         this.maxLength = maxLength;

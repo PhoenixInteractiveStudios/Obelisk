@@ -1,6 +1,7 @@
 package org.burrow_studios.obelkisk.core.form;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class IntQuery extends QueryElement<Integer> {
     public static final String IDENTIFIER = "int";
@@ -8,12 +9,12 @@ public class IntQuery extends QueryElement<Integer> {
     private final int min;
     private final int max;
 
-    public IntQuery(@NotNull String id, @NotNull String title, boolean optional, Integer defaultValue) {
-        this(id, title, Integer.MIN_VALUE, Integer.MAX_VALUE, optional, defaultValue);
+    public IntQuery(@NotNull String id, @NotNull String title, @Nullable String description, boolean optional, Integer defaultValue) {
+        this(id, title, description, Integer.MIN_VALUE, Integer.MAX_VALUE, optional, defaultValue);
     }
 
-    public IntQuery(@NotNull String id, @NotNull String title, int min, int max, boolean optional, Integer defaultValue) {
-        super(id, title, optional, defaultValue);
+    public IntQuery(@NotNull String id, @NotNull String title, @Nullable String description, int min, int max, boolean optional, Integer defaultValue) {
+        super(id, title, description, optional, defaultValue);
 
         if (min > max)
             throw new IllegalArgumentException("min must not be greater than max");
@@ -22,8 +23,8 @@ public class IntQuery extends QueryElement<Integer> {
         this.max = max;
     }
 
-    public IntQuery(@NotNull String id, @NotNull String title, int min, int max, boolean optional, Integer defaultValue, Integer val, boolean done) {
-        super(id, title, optional, defaultValue, val, done);
+    public IntQuery(@NotNull String id, @NotNull String title, @Nullable String description, int min, int max, boolean optional, Integer defaultValue, Integer val, boolean done) {
+        super(id, title, description, optional, defaultValue, val, done);
         this.min = min;
         this.max = max;
     }

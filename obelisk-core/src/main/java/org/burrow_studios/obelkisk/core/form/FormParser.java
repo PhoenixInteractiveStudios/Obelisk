@@ -16,10 +16,14 @@ public class FormParser {
         String id    = json.get("id").getAsString();
         String title = json.get("title").getAsString();
 
-        if (type.equals(TextElement.IDENTIFIER)) {
-            String content = json.get("content").getAsString();
+        String description = Optional.ofNullable(json.get("description"))
+                .filter(e -> !e.isJsonNull())
+                .map(JsonElement::getAsString)
+                .orElse(null);
 
-            return new TextElement(id, title, content);
+        if (type.equals(TextElement.IDENTIFIER)) {
+            // noinspection DataFlowIssue
+            return new TextElement(id, title, description);
         }
 
         if (type.equals(ChoiceQuery.IDENTIFIER)) {
@@ -48,7 +52,7 @@ public class FormParser {
 
             boolean done = json.get("selected") != null;
 
-            return new ChoiceQuery(id, title, options, optional, defaultValue, selected, done);
+            return new ChoiceQuery(id, title, description, options, optional, defaultValue, selected, done);
         }
 
         if (type.equals(IntQuery.IDENTIFIER)) {
@@ -76,7 +80,7 @@ public class FormParser {
 
             boolean done = json.get("value") != null;
 
-            return new IntQuery(id, title, min, max, optional, defaultValue, val, done);
+            return new IntQuery(id, title, description, min, max, optional, defaultValue, val, done);
         }
 
         if (type.equals(MinecraftAccountQuery.IDENTIFIER)) {
@@ -93,7 +97,7 @@ public class FormParser {
                     .map(JsonElement::getAsBoolean)
                     .orElse(false);
 
-            return new MinecraftAccountQuery(id, title, optional, account, verified);
+            return new MinecraftAccountQuery(id, title, description, optional, account, verified);
         }
 
         if (type.equals(PronounQuery.IDENTIFIER)) {
@@ -122,7 +126,7 @@ public class FormParser {
 
             boolean done = json.get("selected") != null;
 
-            return new PronounQuery(id, title, optional, defaultValue, suggestions, selected, done);
+            return new PronounQuery(id, title, description, optional, defaultValue, suggestions, selected, done);
         }
 
         if (type.equals(TextQuery.IDENTIFIER)) {
@@ -150,7 +154,7 @@ public class FormParser {
 
             boolean done = json.get("input") != null;
 
-            return new TextQuery(id, title, min, max, optional, defaultValue, input, done);
+            return new TextQuery(id, title, description, min, max, optional, defaultValue, input, done);
         }
 
         throw new Error("Not implemented");
@@ -162,10 +166,12 @@ public class FormParser {
         json.addProperty("id", element.getId());
         json.addProperty("title", element.getTitle());
 
-        if (element instanceof TextElement textElement) {
-            json.addProperty("type", TextElement.IDENTIFIER);
-            json.addProperty("content", textElement.getContent());
+        if (element.getDescription() != null)
+            json.addProperty("description", element.getDescription());
 
+
+        if (element instanceof TextElement) {
+            json.addProperty("type", TextElement.IDENTIFIER);
             return json;
         }
 

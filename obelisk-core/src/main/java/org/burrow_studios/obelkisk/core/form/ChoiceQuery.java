@@ -1,6 +1,7 @@
 package org.burrow_studios.obelkisk.core.form;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -9,13 +10,13 @@ public class ChoiceQuery extends QueryElement<String> {
 
     private final List<String> options;
 
-    public ChoiceQuery(@NotNull String id, @NotNull String title, @NotNull List<String> options, boolean optional, String defaultValue) {
-        super(id, title, optional, defaultValue);
+    public ChoiceQuery(@NotNull String id, @NotNull String title, @Nullable String description, @NotNull List<String> options, boolean optional, String defaultValue) {
+        super(id, title, description, optional, defaultValue);
         this.options = List.copyOf(options);
     }
 
-    public ChoiceQuery(@NotNull String id, @NotNull String title, @NotNull List<String> options, boolean optional, String defaultValue, String selected, boolean done) {
-        super(id, title, optional, defaultValue, selected, done);
+    public ChoiceQuery(@NotNull String id, @NotNull String title, @Nullable String description, @NotNull List<String> options, boolean optional, String defaultValue, String selected, boolean done) {
+        super(id, title, description, optional, defaultValue, selected, done);
         this.options = List.copyOf(options);
     }
 
