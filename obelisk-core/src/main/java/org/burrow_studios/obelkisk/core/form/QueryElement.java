@@ -54,6 +54,10 @@ public abstract class QueryElement<T> extends FormElement {
         return this.value;
     }
 
+    public T getDefaultValue() {
+        return this.defaultValue;
+    }
+
     public void setValue(T val) {
         this.value = val;
     }
