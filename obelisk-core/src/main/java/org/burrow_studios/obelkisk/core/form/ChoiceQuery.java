@@ -27,7 +27,7 @@ public class ChoiceQuery extends QueryElement<String> {
 
     @Override
     protected void checks(String value) throws IllegalArgumentException {
-        if (value != null && !options.contains(value))
+        if (value != null && !this.options.contains(value))
             throw new IllegalArgumentException("Not an option");
     }
 }

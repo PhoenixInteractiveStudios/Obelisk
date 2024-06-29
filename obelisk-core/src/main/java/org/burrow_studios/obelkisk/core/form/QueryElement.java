@@ -2,9 +2,12 @@ package org.burrow_studios.obelkisk.core.form;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
 public abstract class QueryElement<T> extends FormElement {
-    private T value;
-    private boolean done;
+    private final AtomicReference<T> value = new AtomicReference<>();
+    private final AtomicBoolean      done  = new AtomicBoolean();
 
     private final boolean optional;
     private final T defaultValue;
@@ -15,8 +18,8 @@ public abstract class QueryElement<T> extends FormElement {
 
     protected QueryElement(@NotNull String id, @NotNull String title, boolean optional, T defaultValue, T value, boolean done) {
         super(id, title);
-        this.value = value;
-        this.done = done;
+        this.value.set(value);
+        this.done.set(done);
 
         this.optional = optional;
         this.defaultValue = defaultValue;
@@ -30,18 +33,18 @@ public abstract class QueryElement<T> extends FormElement {
 
         this.checks(val);
 
-        this.done = true;
+        this.done.set(true);
     }
 
     protected void checks(T value) throws IllegalArgumentException { }
 
     public final boolean isDone() {
-        return this.done;
+        return this.done.get();
     }
 
     public void clear() {
-        this.value = null;
-        this.done = false;
+        this.value.set(null);
+        this.done.set(false);
     }
 
     public final boolean isOptional() {
@@ -49,9 +52,9 @@ public abstract class QueryElement<T> extends FormElement {
     }
 
     public final T getValue() {
-        if (this.value == null)
+        if (this.value.get() == null)
             return this.defaultValue;
-        return this.value;
+        return this.value.get();
     }
 
     public T getDefaultValue() {
@@ -59,6 +62,6 @@ public abstract class QueryElement<T> extends FormElement {
     }
 
     public void setValue(T val) {
-        this.value = val;
+        this.value.set(val);
     }
 }

@@ -3,49 +3,50 @@ package org.burrow_studios.obelkisk.core.form;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MinecraftAccountQuery extends QueryElement<UUID> {
     public static final String IDENTIFIER = "minecraft";
 
-    private boolean verified;
+    private final AtomicBoolean verified = new AtomicBoolean();
 
     public MinecraftAccountQuery(@NotNull String id, @NotNull String title, boolean optional) {
         super(id, title, optional, null);
-        this.verified = false;
+        this.verified.set(false);
     }
 
     public MinecraftAccountQuery(@NotNull String id, @NotNull String title, boolean optional, UUID account, boolean verified) {
         super(id, title, optional, null, account, account != null && verified);
-        this.verified = account != null && verified;
+        this.verified.set(account != null && verified);
     }
 
     /* - - - - - */
 
     @Override
     public void setValue(UUID account) {
-        this.verified = false;
+        this.verified.set(false);
         super.setValue(account);
     }
 
     public boolean isVerified() {
-        return this.verified;
+        return this.verified.get();
     }
 
     public void setVerified(boolean verified) {
         if (this.getValue() == null) return;
 
-        this.verified = verified;
+        this.verified.set(verified);
     }
 
     @Override
     public void clear() {
         super.clear();
-        this.verified = false;
+        this.verified.set(false);
     }
 
     @Override
     protected void checks(UUID value) throws IllegalArgumentException {
-        if (!this.verified)
+        if (!this.verified.get())
             throw new IllegalArgumentException("Not verified");
     }
 }
