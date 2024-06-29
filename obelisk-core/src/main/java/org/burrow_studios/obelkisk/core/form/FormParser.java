@@ -25,6 +25,34 @@ public class FormParser {
             return new TextElement(id, title, content);
         }
 
+        if (type.equals(IntQuery.IDENTIFIER)) {
+            Integer min = Optional.ofNullable(json.get("min"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsInt)
+                    .orElse(Integer.MIN_VALUE);
+
+            Integer max = Optional.ofNullable(json.get("max"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsInt)
+                    .orElse(Integer.MAX_VALUE);
+
+            boolean optional = json.get("optional").getAsBoolean();
+
+            Integer defaultValue = Optional.ofNullable(json.get("default"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsInt)
+                    .orElse(null);
+
+            Integer val = Optional.ofNullable(json.get("value"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsInt)
+                    .orElse(null);
+
+            boolean done = json.get("input") != null;
+
+            return new IntQuery(id, title, min, max, optional, defaultValue, val, done);
+        }
+
         if (type.equals(TextQuery.IDENTIFIER)) {
             Integer min = Optional.ofNullable(json.get("min"))
                     .filter(e -> !e.isJsonNull())
@@ -71,6 +99,16 @@ public class FormParser {
 
         if (element instanceof QueryElement<?> queryElement) {
             json.addProperty("optional", queryElement.isOptional());
+        }
+
+        if (element instanceof IntQuery intQuery) {
+            json.addProperty("type", TextQuery.IDENTIFIER);
+            json.addProperty("min", intQuery.getMin());
+            json.addProperty("max", intQuery.getMax());
+            json.addProperty("default", intQuery.getDefaultValue());
+            json.addProperty("input", intQuery.getValue());
+
+            return json;
         }
 
         if (element instanceof TextQuery textQuery) {
