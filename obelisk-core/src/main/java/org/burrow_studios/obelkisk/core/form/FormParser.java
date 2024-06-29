@@ -25,6 +25,35 @@ public class FormParser {
             return new TextElement(id, title, content);
         }
 
+        if (type.equals(ChoiceQuery.IDENTIFIER)) {
+            List<String> options = new ArrayList<>();
+
+            Optional.ofNullable(json.get("options"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsJsonArray)
+                    .ifPresent(arr -> {
+                        arr.forEach(element -> {
+                            options.add(element.getAsString());
+                        });
+                    });
+
+            boolean optional = json.get("optional").getAsBoolean();
+
+            String defaultValue = Optional.ofNullable(json.get("default"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsString)
+                    .orElse(null);
+
+            String selected = Optional.ofNullable(json.get("selected"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsString)
+                    .orElse(null);
+
+            boolean done = json.get("selected") != null;
+
+            return new ChoiceQuery(id, title, options, optional, defaultValue, selected, done);
+        }
+
         if (type.equals(IntQuery.IDENTIFIER)) {
             Integer min = Optional.ofNullable(json.get("min"))
                     .filter(e -> !e.isJsonNull())
@@ -48,7 +77,7 @@ public class FormParser {
                     .map(JsonElement::getAsInt)
                     .orElse(null);
 
-            boolean done = json.get("input") != null;
+            boolean done = json.get("value") != null;
 
             return new IntQuery(id, title, min, max, optional, defaultValue, val, done);
         }
@@ -101,12 +130,25 @@ public class FormParser {
             json.addProperty("optional", queryElement.isOptional());
         }
 
+        if (element instanceof ChoiceQuery choiceQuery) {
+            json.addProperty("type", ChoiceQuery.IDENTIFIER);
+            json.addProperty("default", choiceQuery.getDefaultValue());
+            json.addProperty("selected", choiceQuery.getValue());
+
+            JsonArray arr = new JsonArray();
+            for (String option : choiceQuery.getOptions())
+                arr.add(option);
+            json.add("options", arr);
+
+            return json;
+        }
+
         if (element instanceof IntQuery intQuery) {
             json.addProperty("type", TextQuery.IDENTIFIER);
             json.addProperty("min", intQuery.getMin());
             json.addProperty("max", intQuery.getMax());
             json.addProperty("default", intQuery.getDefaultValue());
-            json.addProperty("input", intQuery.getValue());
+            json.addProperty("value", intQuery.getValue());
 
             return json;
         }
