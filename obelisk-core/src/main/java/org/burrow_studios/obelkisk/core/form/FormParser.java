@@ -96,6 +96,35 @@ public class FormParser {
             return new MinecraftAccountQuery(id, title, optional, account, verified);
         }
 
+        if (type.equals(PronounQuery.IDENTIFIER)) {
+            List<String> suggestions = new ArrayList<>();
+
+            Optional.ofNullable(json.get("suggestions"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsJsonArray)
+                    .ifPresent(arr -> {
+                        arr.forEach(element -> {
+                            suggestions.add(element.getAsString());
+                        });
+                    });
+
+            boolean optional = json.get("optional").getAsBoolean();
+
+            String defaultValue = Optional.ofNullable(json.get("default"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsString)
+                    .orElse(null);
+
+            String selected = Optional.ofNullable(json.get("selected"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsString)
+                    .orElse(null);
+
+            boolean done = json.get("selected") != null;
+
+            return new PronounQuery(id, title, optional, defaultValue, suggestions, selected, done);
+        }
+
         if (type.equals(TextQuery.IDENTIFIER)) {
             Integer min = Optional.ofNullable(json.get("min"))
                     .filter(e -> !e.isJsonNull())
@@ -149,16 +178,16 @@ public class FormParser {
             json.addProperty("default", choiceQuery.getDefaultValue());
             json.addProperty("selected", choiceQuery.getValue());
 
-            JsonArray arr = new JsonArray();
+            JsonArray options = new JsonArray();
             for (String option : choiceQuery.getOptions())
-                arr.add(option);
-            json.add("options", arr);
+                options.add(option);
+            json.add("options", options);
 
             return json;
         }
 
         if (element instanceof IntQuery intQuery) {
-            json.addProperty("type", TextQuery.IDENTIFIER);
+            json.addProperty("type", IntQuery.IDENTIFIER);
             json.addProperty("min", intQuery.getMin());
             json.addProperty("max", intQuery.getMax());
             json.addProperty("default", intQuery.getDefaultValue());
@@ -171,6 +200,19 @@ public class FormParser {
             json.addProperty("type", MinecraftAccountQuery.IDENTIFIER);
             json.addProperty("account", minecraftAccountQuery.getValue().toString());
             json.addProperty("verified", minecraftAccountQuery.isVerified());
+
+            return json;
+        }
+
+        if (element instanceof PronounQuery pronounQuery) {
+            json.addProperty("type", PronounQuery.IDENTIFIER);
+            json.addProperty("default", pronounQuery.getDefaultValue());
+            json.addProperty("selected", pronounQuery.getValue());
+
+            JsonArray suggestions = new JsonArray();
+            for (String option : pronounQuery.getSuggestions())
+                suggestions.add(option);
+            json.add("suggestions", suggestions);
 
             return json;
         }
