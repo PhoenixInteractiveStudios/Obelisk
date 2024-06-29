@@ -5,10 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class FormParser {
     private FormParser() { }
@@ -82,6 +79,23 @@ public class FormParser {
             return new IntQuery(id, title, min, max, optional, defaultValue, val, done);
         }
 
+        if (type.equals(MinecraftAccountQuery.IDENTIFIER)) {
+            boolean optional = json.get("optional").getAsBoolean();
+
+            UUID account = Optional.ofNullable(json.get("account"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsString)
+                    .map(UUID::fromString)
+                    .orElse(null);
+
+            boolean verified = Optional.ofNullable(json.get("verified"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsBoolean)
+                    .orElse(false);
+
+            return new MinecraftAccountQuery(id, title, optional, account, verified);
+        }
+
         if (type.equals(TextQuery.IDENTIFIER)) {
             Integer min = Optional.ofNullable(json.get("min"))
                     .filter(e -> !e.isJsonNull())
@@ -149,6 +163,14 @@ public class FormParser {
             json.addProperty("max", intQuery.getMax());
             json.addProperty("default", intQuery.getDefaultValue());
             json.addProperty("value", intQuery.getValue());
+
+            return json;
+        }
+
+        if (element instanceof MinecraftAccountQuery minecraftAccountQuery) {
+            json.addProperty("type", MinecraftAccountQuery.IDENTIFIER);
+            json.addProperty("account", minecraftAccountQuery.getValue().toString());
+            json.addProperty("verified", minecraftAccountQuery.isVerified());
 
             return json;
         }
