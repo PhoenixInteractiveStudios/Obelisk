@@ -26,6 +26,17 @@ public class FormParser {
             return new TextElement(id, title, description);
         }
 
+        if (type.equals(CheckQuery.IDENTIFIER)) {
+            boolean optional = json.get("optional").getAsBoolean();
+
+            boolean done = Optional.ofNullable(json.get("done"))
+                    .filter(e -> !e.isJsonNull())
+                    .map(JsonElement::getAsBoolean)
+                    .orElse(false);
+
+            return new CheckQuery(id, title, description, optional, done);
+        }
+
         if (type.equals(ChoiceQuery.IDENTIFIER)) {
             List<String> options = new ArrayList<>();
 
@@ -177,6 +188,13 @@ public class FormParser {
 
         if (element instanceof QueryElement<?> queryElement) {
             json.addProperty("optional", queryElement.isOptional());
+        }
+
+        if (element instanceof CheckQuery checkQuery) {
+            json.addProperty("type", CheckQuery.IDENTIFIER);
+            json.addProperty("done", checkQuery.isDone());
+
+            return json;
         }
 
         if (element instanceof ChoiceQuery choiceQuery) {
