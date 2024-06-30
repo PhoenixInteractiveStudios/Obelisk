@@ -54,8 +54,8 @@ public class Obelisk {
         this.persistentConfig = new PersistentConfig(new File(Main.DIR, "persistence.json"));
 
         LOG.info("Initializing database");
-        this.database = new DatabaseImpl(new File(Main.DIR, "obelisk.db"));
-        this.formDB = new FSFormDB(this, new File(Main.DIR, "forms"));
+        this.database = new DatabaseImpl(this, new File(Main.DIR, "obelisk.db"));
+        this.formDB   = new     FSFormDB(this, new File(Main.DIR, "forms"));
 
         LOG.info("Initializing JDA");
         this.jda = JDABuilder.create(config.token(),

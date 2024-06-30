@@ -2,6 +2,7 @@ package org.burrow_studios.obelkisk.core.db.sql;
 
 import org.burrow_studios.obelisk.util.turtle.TurtleGenerator;
 import org.burrow_studios.obelkisk.core.Main;
+import org.burrow_studios.obelkisk.core.Obelisk;
 import org.burrow_studios.obelkisk.core.db.interfaces.UserDB;
 import org.burrow_studios.obelkisk.core.entity.User;
 import org.burrow_studios.obelkisk.core.exceptions.DatabaseException;
@@ -30,11 +31,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseImpl.class);
 
+    private final Obelisk obelisk;
     private final SQLDB database;
     private final TurtleGenerator userIds = TurtleGenerator.get("users");
     private final AtomicInteger ticketIncrement = new AtomicInteger(0);
 
-    public DatabaseImpl(@NotNull File file) {
+    public DatabaseImpl(@NotNull Obelisk obelisk, @NotNull File file) {
+        this.obelisk = obelisk;
+
         String url = String.format("jdbc:sqlite:%s", file.getAbsolutePath());
 
         SQLiteConfig config = new SQLiteConfig();
@@ -49,7 +53,10 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Closeab
 
         LOG.info("Creating tables");
         try {
+            this.database.execute("user/table");
+
             this.database.execute("ticket/table");
+            this.database.execute("ticket/table_users");
 
             this.database.execute("discord/table");
 
@@ -278,6 +285,30 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Closeab
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
+    }
+
+    @Override
+    public @NotNull List<User> getTicketUsers(int id) throws DatabaseException {
+        List<User> users = new ArrayList<>();
+
+        UserDB userDB = this.obelisk.getUserDB();
+
+        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_users_get")) {
+            stmt.setInt(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            while (res.next()) {
+                long userId = res.getLong("user");
+
+                User user = userDB.getUser(userId);
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return Collections.unmodifiableList(users);
     }
 
     @Override
