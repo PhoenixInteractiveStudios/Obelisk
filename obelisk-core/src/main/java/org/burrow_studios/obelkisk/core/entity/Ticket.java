@@ -18,20 +18,12 @@ public final class Ticket {
         return this.id;
     }
 
-    public @NotNull String getTitle() {
-        return this.database.getTicketTitle(this.id);
-    }
-
     public long getChannelId() {
         return this.database.getTicketChannel(this.id);
     }
 
     public @NotNull List<User> getUsers() {
         return this.database.getTicketUsers(this.id);
-    }
-
-    public void setTitle(@NotNull String title) {
-        this.database.setTicketTitle(this.id, title);
     }
 
     public void delete() {

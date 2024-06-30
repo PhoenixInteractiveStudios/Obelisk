@@ -204,13 +204,12 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Closeab
     }
 
     @Override
-    public @NotNull Ticket createTicket(long channel, @NotNull String title) throws DatabaseException {
+    public @NotNull Ticket createTicket(long channel) throws DatabaseException {
         final int id = this.ticketIncrement.getAndIncrement();
 
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_create")) {
             stmt.setInt(1, id);
             stmt.setLong(2, channel);
-            stmt.setString(3, title);
 
             stmt.execute();
         } catch (SQLException e) {
@@ -256,22 +255,6 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Closeab
     }
 
     @Override
-    public @NotNull String getTicketTitle(int id) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_title_get")) {
-            stmt.setInt(1, id);
-
-            ResultSet res = stmt.executeQuery();
-
-            if (!res.next())
-                throw new DatabaseException("Ticket " + id + " does not exist");
-
-            return res.getString("title");
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
     public long getTicketChannel(int id) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_channel_get")) {
             stmt.setInt(1, id);
@@ -309,19 +292,6 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Closeab
         }
 
         return Collections.unmodifiableList(users);
-    }
-
-    @Override
-    public void setTicketTitle(int id, @NotNull String title) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_title_set")) {
-            stmt.setString(1, title);
-            stmt.setInt(2, id);
-
-            stmt.execute();
-        } catch (SQLException e) {
-            // TODO: check for error and maybe throw a NoSuchEntryException
-            throw new DatabaseException(e);
-        }
     }
 
     @Override

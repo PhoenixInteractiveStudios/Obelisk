@@ -1,5 +1,4 @@
 INSERT INTO `tickets` (
     `id`,
-    `channel`,
-    `title`
-) VALUES (?, ?, ?);
+    `channel`
+) VALUES (?, ?);
