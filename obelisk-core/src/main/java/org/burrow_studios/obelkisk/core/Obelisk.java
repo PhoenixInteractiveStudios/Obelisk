@@ -6,15 +6,14 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.burrow_studios.obelisk.util.ResourceTools;
+import org.burrow_studios.obelkisk.core.db.interfaces.DiscordAccountDB;
+import org.burrow_studios.obelkisk.core.db.interfaces.TicketDB;
+import org.burrow_studios.obelkisk.core.db.interfaces.UserDB;
 import org.burrow_studios.obelkisk.core.db.sql.DatabaseImpl;
-import org.burrow_studios.obelkisk.core.entity.DiscordAccount;
-import org.burrow_studios.obelkisk.core.entity.Ticket;
-import org.burrow_studios.obelkisk.core.entity.User;
 import org.burrow_studios.obelkisk.core.listeners.TicketCreateListener;
 import org.burrow_studios.obelkisk.core.persistence.PersistentConfig;
 import org.burrow_studios.obelkisk.core.text.TextProvider;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,15 +112,15 @@ public class Obelisk {
         return this.textProvider;
     }
 
-    public @NotNull User createUser(@NotNull String name, @Nullable String pronouns) {
-        return this.database.createUser(name, pronouns);
+    public @NotNull UserDB getUserDB() {
+        return this.database;
     }
 
-    public @NotNull Ticket createTicket(long channel, @NotNull String name) {
-        return this.database.createTicket(channel, name);
+    public @NotNull TicketDB getTicketDB() {
+        return this.database;
     }
 
-    public @NotNull DiscordAccount createDiscordAccount(long snowflake, @NotNull String name) {
-        return this.database.createDiscordAccount(snowflake, name);
+    public @NotNull DiscordAccountDB getDiscordAccount() {
+        return this.database;
     }
 }

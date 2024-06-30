@@ -13,6 +13,8 @@ public interface UserDB {
 
     @NotNull List<User> listUsers() throws DatabaseException;
 
+    @NotNull User getUser(long id) throws DatabaseException;
+
     @NotNull String getUserName(long id) throws DatabaseException;
 
     @Nullable String getUserPronouns(long id) throws DatabaseException;

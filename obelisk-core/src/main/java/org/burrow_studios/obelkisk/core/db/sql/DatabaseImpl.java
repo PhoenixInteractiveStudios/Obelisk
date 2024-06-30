@@ -9,6 +9,7 @@ import org.burrow_studios.obelkisk.core.db.interfaces.DiscordAccountDB;
 import org.burrow_studios.obelkisk.core.db.interfaces.TicketDB;
 import org.burrow_studios.obelkisk.core.entity.DiscordAccount;
 import org.burrow_studios.obelkisk.core.entity.Ticket;
+import org.burrow_studios.obelkisk.core.exceptions.NoSuchEntryException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -108,6 +109,22 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Closeab
         }
 
         return Collections.unmodifiableList(users);
+    }
+
+    @Override
+    public @NotNull User getUser(long id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_get")) {
+            stmt.setLong(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                throw new NoSuchEntryException();
+
+            return new User(id, this);
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override
@@ -216,6 +233,22 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Closeab
     }
 
     @Override
+    public @NotNull Ticket getTicket(int id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_get")) {
+            stmt.setInt(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                throw new NoSuchEntryException();
+
+            return new Ticket(id, this);
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
     public @NotNull String getTicketTitle(int id) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_title_get")) {
             stmt.setInt(1, id);
@@ -302,6 +335,22 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Closeab
         }
 
         return Collections.unmodifiableList(discordAccounts);
+    }
+
+    @Override
+    public @NotNull DiscordAccount getDiscordAccount(long snowflake) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_get")) {
+            stmt.setLong(1, snowflake);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                throw new NoSuchEntryException();
+
+            return new DiscordAccount(snowflake, this);
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
     }
 
     @Override

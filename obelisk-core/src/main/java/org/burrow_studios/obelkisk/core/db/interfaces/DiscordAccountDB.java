@@ -12,6 +12,8 @@ public interface DiscordAccountDB {
 
     @NotNull List<DiscordAccount> listDiscordAccounts() throws DatabaseException;
 
+    @NotNull DiscordAccount getDiscordAccount(long snowflake) throws DatabaseException;
+
     @NotNull String getDiscordAccountName(long snowflake) throws DatabaseException;
 
 

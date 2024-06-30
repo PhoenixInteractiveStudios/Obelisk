@@ -12,6 +12,8 @@ public interface TicketDB {
 
     @NotNull List<Ticket> listTickets() throws DatabaseException;
 
+    @NotNull Ticket getTicket(int id) throws DatabaseException;
+
     @NotNull String getTicketTitle(int id) throws DatabaseException;
 
     long getTicketChannel(int id) throws DatabaseException;
