@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -355,8 +356,25 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Closeab
     }
 
     @Override
+    public @Nullable User getDiscordAccountUser(long snowflake) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_user_get")) {
+            stmt.setLong(1, snowflake);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                return null;
+
+            long userId = res.getLong("user");
+            return this.obelisk.getUserDB().getUser(userId);
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
     public @NotNull String getDiscordAccountName(long snowflake) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_get_name")) {
+        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_name_get")) {
             stmt.setLong(1, snowflake);
 
             ResultSet res = stmt.executeQuery();
@@ -365,6 +383,22 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Closeab
                 throw new DatabaseException("DiscordAccount " + snowflake + " does not exist");
 
             return res.getString("name");
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public void setDiscordAccountUser(long snowflake, @Nullable User user) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_user_set")) {
+            if (user == null)
+                stmt.setNull(1, Types.BIGINT);
+            else
+                stmt.setLong(1, user.getId());
+
+            stmt.setLong(2, snowflake);
+
+            stmt.execute();
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
