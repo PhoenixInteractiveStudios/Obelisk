@@ -6,7 +6,9 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.burrow_studios.obelisk.util.ResourceTools;
+import org.burrow_studios.obelkisk.core.db.file.FSFormDB;
 import org.burrow_studios.obelkisk.core.db.interfaces.DiscordAccountDB;
+import org.burrow_studios.obelkisk.core.db.interfaces.FormDB;
 import org.burrow_studios.obelkisk.core.db.interfaces.TicketDB;
 import org.burrow_studios.obelkisk.core.db.interfaces.UserDB;
 import org.burrow_studios.obelkisk.core.db.sql.DatabaseImpl;
@@ -25,6 +27,7 @@ public class Obelisk {
 
     private TextProvider textProvider;
     private DatabaseImpl database;
+    private FormDB formDB;
     private JDA jda;
 
     private PersistentConfig persistentConfig;
@@ -52,6 +55,7 @@ public class Obelisk {
 
         LOG.info("Initializing database");
         this.database = new DatabaseImpl(new File(Main.DIR, "obelisk.db"));
+        this.formDB = new FSFormDB(this, new File(Main.DIR, "forms"));
 
         LOG.info("Initializing JDA");
         this.jda = JDABuilder.create(config.token(),
@@ -97,6 +101,8 @@ public class Obelisk {
             this.database = null;
         }
 
+        this.formDB = null;
+
         LOG.info("OK bye");
     }
 
@@ -120,7 +126,11 @@ public class Obelisk {
         return this.database;
     }
 
-    public @NotNull DiscordAccountDB getDiscordAccount() {
+    public @NotNull DiscordAccountDB getDiscordAccountDB() {
         return this.database;
+    }
+
+    public @NotNull FormDB getFormDB() {
+        return this.formDB;
     }
 }
