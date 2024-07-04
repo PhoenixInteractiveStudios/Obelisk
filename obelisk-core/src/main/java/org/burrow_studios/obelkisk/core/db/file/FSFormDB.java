@@ -1,6 +1,8 @@
 package org.burrow_studios.obelkisk.core.db.file;
 
 import com.google.gson.*;
+import org.burrow_studios.obelisk.util.concurrent.locks.CloseableLock;
+import org.burrow_studios.obelisk.util.concurrent.locks.ReadWriteCloseableLock;
 import org.burrow_studios.obelkisk.core.Obelisk;
 import org.burrow_studios.obelkisk.core.db.interfaces.FormDB;
 import org.burrow_studios.obelkisk.core.entity.Form;
@@ -24,6 +26,7 @@ public class FSFormDB implements FormDB {
     private final File directory;
 
     private final Map<Integer, Form> cache = Collections.synchronizedMap(new WeakHashMap<>());
+    private final ReadWriteCloseableLock lock = new ReadWriteCloseableLock();
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public FSFormDB(@NotNull Obelisk obelisk, @NotNull File directory) {
@@ -35,15 +38,22 @@ public class FSFormDB implements FormDB {
 
     @Override
     public @NotNull Form createForm(@NotNull User author, @NotNull String template, @NotNull List<FormElement> elements) throws DatabaseException {
-        final int id = this.listForms().stream().mapToInt(v -> v).max().orElse(0);
-        Form form = new Form(id, this, author, template, elements);
-        this.updateForm(form);
-        return form;
+        try (CloseableLock ignored = this.lock.write()) {
+            final int id = this.listForms().stream().mapToInt(v -> v).max().orElse(0);
+            Form form = new Form(id, this, author, template, elements);
+            this.updateForm(form);
+            return form;
+        }
     }
 
     @Override
     public @NotNull List<Integer> listForms() throws DatabaseException {
-        String[] filenames = this.directory.list();
+        String[] filenames;
+
+        try (CloseableLock ignored = this.lock.read()) {
+            filenames = this.directory.list();
+        }
+
         if (filenames == null)
             filenames = new String[]{};
 
@@ -62,7 +72,10 @@ public class FSFormDB implements FormDB {
 
         File file = new File(this.directory, id + ".json");
 
-        try (FileReader reader = new FileReader(file)) {
+        try (
+                CloseableLock ignored = this.lock.read();
+                FileReader reader = new FileReader(file)
+        ) {
             JsonObject json = GSON.fromJson(reader, JsonObject.class);
 
             long authorId = json.get("author").getAsLong();
@@ -95,7 +108,10 @@ public class FSFormDB implements FormDB {
 
         File file = new File(this.directory, form.getId() + ".json");
 
-        try (FileWriter writer = new FileWriter(file, false)) {
+        try (
+                CloseableLock ignored = this.lock.write();
+                FileWriter writer = new FileWriter(file, false)
+        ) {
             GSON.toJson(json, writer);
         } catch (IOException e) {
             throw new DatabaseException(e);
@@ -105,8 +121,10 @@ public class FSFormDB implements FormDB {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void deleteForm(int id) throws DatabaseException {
-        File file = new File(this.directory, id + ".json");
-        file.delete();
+        try (CloseableLock ignored = this.lock.write()) {
+            File file = new File(this.directory, id + ".json");
+            file.delete();
+        }
 
         // just to be sure
         this.cache.remove(id);
