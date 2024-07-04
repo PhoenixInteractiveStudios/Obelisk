@@ -1,4 +1,4 @@
-package org.burrow_studios.obelisk.util;
+package org.burrow_studios.obelisk.util.concurrent.locks;
 
 import org.jetbrains.annotations.NotNull;
 
