@@ -68,7 +68,7 @@ public class TicketCreateListener extends ListenerAdapter {
 
         category.createTextChannel("ticket")
                 .queue(channel -> {
-                    Ticket ticket = this.obelisk.createTicket(channel.getIdLong(), "ticket");
+                    Ticket ticket = this.obelisk.getTicketDB().createTicket(channel.getIdLong());
 
                     event.getHook().deleteOriginal().queue();
 
