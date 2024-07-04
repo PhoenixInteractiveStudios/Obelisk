@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public final class CloseableIdLogRegistry<T> {
+public final class CloseableIdLockRegistry<T> {
     private final Map<T, ReadWriteCloseableLock> locks;
 
-    public CloseableIdLogRegistry() {
+    public CloseableIdLockRegistry() {
         this.locks = Collections.synchronizedMap(new WeakHashMap<>());
     }
 
