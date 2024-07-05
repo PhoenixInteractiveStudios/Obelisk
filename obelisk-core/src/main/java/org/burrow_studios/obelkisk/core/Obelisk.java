@@ -7,10 +7,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.burrow_studios.obelisk.util.ResourceTools;
 import org.burrow_studios.obelkisk.core.db.file.FSFormDB;
-import org.burrow_studios.obelkisk.core.db.interfaces.DiscordAccountDB;
-import org.burrow_studios.obelkisk.core.db.interfaces.FormDB;
-import org.burrow_studios.obelkisk.core.db.interfaces.TicketDB;
-import org.burrow_studios.obelkisk.core.db.interfaces.UserDB;
+import org.burrow_studios.obelkisk.core.db.interfaces.*;
 import org.burrow_studios.obelkisk.core.db.sql.DatabaseImpl;
 import org.burrow_studios.obelkisk.core.listeners.TicketCreateListener;
 import org.burrow_studios.obelkisk.core.persistence.PersistentConfig;
@@ -127,6 +124,10 @@ public class Obelisk {
     }
 
     public @NotNull DiscordAccountDB getDiscordAccountDB() {
+        return this.database;
+    }
+
+    public @NotNull MinecraftAccountDB getMinecraftDB() {
         return this.database;
     }
 
