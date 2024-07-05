@@ -2,7 +2,9 @@ package org.burrow_studios.obelkisk.server.ticket;
 
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
+import org.burrow_studios.obelisk.api.entity.DiscordAccount;
 import org.burrow_studios.obelisk.api.entity.Ticket;
+import org.burrow_studios.obelisk.api.entity.User;
 import org.burrow_studios.obelkisk.server.Obelisk;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -36,6 +38,13 @@ public class TicketManager {
 
         interaction.deferReply(true).queue();
 
+        // create user
+        DiscordAccount discordAccount = this.obelisk.getDiscordAccountDAO().getDiscordAccount(interaction.getUser().getIdLong());
+        User user = discordAccount.getUser();
+        if (user == null)
+            user = this.obelisk.getUserDAO().createUser(discordAccount.getName(), null);
+
+        // create ticket channel
         category.createTextChannel("ticket")
                 .queue(channel -> {
                     Ticket ticket = this.obelisk.getTicketDAO().createTicket(channel.getIdLong());
