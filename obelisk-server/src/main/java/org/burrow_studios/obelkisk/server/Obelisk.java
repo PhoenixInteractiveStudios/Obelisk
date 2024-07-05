@@ -5,9 +5,9 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import org.burrow_studios.obelisk.api.entity.dao.*;
 import org.burrow_studios.obelisk.util.ResourceTools;
 import org.burrow_studios.obelkisk.server.db.file.FSFormDB;
-import org.burrow_studios.obelkisk.server.db.interfaces.*;
 import org.burrow_studios.obelkisk.server.db.sql.DatabaseImpl;
 import org.burrow_studios.obelkisk.server.listeners.DiscordAccountListener;
 import org.burrow_studios.obelkisk.server.listeners.TicketCreateListener;
@@ -25,7 +25,7 @@ public class Obelisk {
 
     private TextProvider textProvider;
     private DatabaseImpl database;
-    private FormDB formDB;
+    private FSFormDB formDB;
     private JDA jda;
 
     private PersistentConfig persistentConfig;
@@ -117,23 +117,23 @@ public class Obelisk {
         return this.textProvider;
     }
 
-    public @NotNull UserDB getUserDB() {
+    public @NotNull UserDAO getUserDAO() {
         return this.database;
     }
 
-    public @NotNull TicketDB getTicketDB() {
+    public @NotNull TicketDAO getTicketDAO() {
         return this.database;
     }
 
-    public @NotNull DiscordAccountDB getDiscordAccountDB() {
+    public @NotNull DiscordAccountDAO getDiscordAccountDAO() {
         return this.database;
     }
 
-    public @NotNull MinecraftAccountDB getMinecraftDB() {
+    public @NotNull MinecraftAccountDAO getMinecraftDAO() {
         return this.database;
     }
 
-    public @NotNull FormDB getFormDB() {
+    public @NotNull FormDAO getFormDAO() {
         return this.formDB;
     }
 }

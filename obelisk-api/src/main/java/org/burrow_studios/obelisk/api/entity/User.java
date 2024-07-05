@@ -1,15 +1,39 @@
 package org.burrow_studios.obelisk.api.entity;
 
+import org.burrow_studios.obelisk.api.entity.dao.UserDAO;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface User {
-    long getId();
-    @NotNull String getName();
-    @Nullable String getPronouns();
+public final class User {
+    private final long id;
+    private final UserDAO dao;
 
-    void setName(@NotNull String name);
-    void setPronouns(@Nullable String pronouns);
+    public User(long id, @NotNull UserDAO dao) {
+        this.id = id;
+        this.dao = dao;
+    }
 
-    void delete();
+    public long getId() {
+        return this.id;
+    }
+
+    public @NotNull String getName() {
+        return this.dao.getUserName(this.id);
+    }
+
+    public @Nullable String getPronouns() {
+        return this.dao.getUserPronouns(this.id);
+    }
+
+    public void setName(@NotNull String name) {
+        this.dao.setUserName(this.id, name);
+    }
+
+    public void setPronouns(@NotNull String pronouns) {
+        this.dao.setUserPronouns(this.id, pronouns);
+    }
+
+    public void delete() {
+        this.dao.deleteUser(this.id);
+    }
 }

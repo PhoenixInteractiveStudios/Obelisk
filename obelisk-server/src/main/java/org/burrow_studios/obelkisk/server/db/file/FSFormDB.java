@@ -1,22 +1,22 @@
 package org.burrow_studios.obelkisk.server.db.file;
 
 import com.google.gson.*;
+import org.burrow_studios.obelisk.api.entity.Form;
+import org.burrow_studios.obelisk.api.entity.User;
+import org.burrow_studios.obelisk.api.entity.dao.FormDAO;
+import org.burrow_studios.obelisk.api.form.FormElement;
 import org.burrow_studios.obelisk.util.concurrent.locks.CloseableLock;
 import org.burrow_studios.obelisk.util.concurrent.locks.ReadWriteCloseableLock;
 import org.burrow_studios.obelkisk.server.Obelisk;
-import org.burrow_studios.obelkisk.server.db.interfaces.FormDB;
-import org.burrow_studios.obelkisk.server.entity.DatabaseForm;
-import org.burrow_studios.obelkisk.server.entity.DatabaseUser;
 import org.burrow_studios.obelkisk.server.exceptions.DatabaseException;
 import org.burrow_studios.obelkisk.server.exceptions.NoSuchEntryException;
-import org.burrow_studios.obelisk.api.form.FormElement;
 import org.burrow_studios.obelkisk.server.form.FormParser;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.util.*;
 
-public class FSFormDB implements FormDB {
+public class FSFormDB implements FormDAO {
     private static final Gson GSON = new GsonBuilder()
             .setPrettyPrinting()
             .serializeNulls()
@@ -27,7 +27,7 @@ public class FSFormDB implements FormDB {
     private final File templatesDirectory;
     private final File submissionsDirectory;
 
-    private final Map<Integer, DatabaseForm> cache = Collections.synchronizedMap(new WeakHashMap<>());
+    private final Map<Integer, Form> cache = Collections.synchronizedMap(new WeakHashMap<>());
     private final ReadWriteCloseableLock lock = new ReadWriteCloseableLock();
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -44,7 +44,7 @@ public class FSFormDB implements FormDB {
     }
 
     @Override
-    public @NotNull DatabaseForm createForm(@NotNull DatabaseUser author, @NotNull String template) throws DatabaseException {
+    public @NotNull Form createForm(@NotNull User author, @NotNull String template) throws DatabaseException {
         File file = new File(this.templatesDirectory, template + ".json");
 
         List<FormElement> elements;
@@ -65,7 +65,7 @@ public class FSFormDB implements FormDB {
 
         try (CloseableLock ignored = this.lock.write()) {
             final int id = this.listForms().stream().mapToInt(v -> v).max().orElse(0);
-            DatabaseForm form = new DatabaseForm(id, this, author, template, elements);
+            Form form = new Form(id, this, author, template, elements);
             this.updateForm(form);
             return form;
         }
@@ -90,8 +90,8 @@ public class FSFormDB implements FormDB {
     }
 
     @Override
-    public @NotNull DatabaseForm getForm(int id) throws DatabaseException {
-        DatabaseForm cachedForm = this.cache.get(id);
+    public @NotNull Form getForm(int id) throws DatabaseException {
+        Form cachedForm = this.cache.get(id);
         if (cachedForm != null)
             return cachedForm;
 
@@ -104,14 +104,14 @@ public class FSFormDB implements FormDB {
             JsonObject json = GSON.fromJson(reader, JsonObject.class);
 
             long authorId = json.get("author").getAsLong();
-            DatabaseUser author = this.obelisk.getUserDB().getUser(authorId);
+            User author = this.obelisk.getUserDAO().getUser(authorId);
 
             String template = json.get("template").getAsString();
 
             JsonArray elementJson = json.getAsJsonArray("elements");
             List<FormElement> elements = FormParser.fromJson(elementJson);
 
-            DatabaseForm form = new DatabaseForm(id, this, author, template, elements);
+            Form form = new Form(id, this, author, template, elements);
             this.cache.put(id, form);
             return form;
         } catch (FileNotFoundException e) {
@@ -122,7 +122,7 @@ public class FSFormDB implements FormDB {
     }
 
     @Override
-    public void updateForm(@NotNull DatabaseForm form) throws DatabaseException {
+    public void updateForm(@NotNull Form form) throws DatabaseException {
         JsonObject json = new JsonObject();
 
         json.addProperty("author", form.getAuthor().getId());
