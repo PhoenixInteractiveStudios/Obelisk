@@ -301,6 +301,30 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Mine
     }
 
     @Override
+    public void addTicketUser(int id, @NotNull User user) {
+        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_user_add")) {
+            stmt.setInt(1, id);
+            stmt.setLong(2, user.getId());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public void removeTicketUser(int id, @NotNull User user) {
+        try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_user_remove")) {
+            stmt.setInt(1, id);
+            stmt.setLong(2, user.getId());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
     public void deleteTicket(int id) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_delete")) {
             stmt.setInt(1, id);

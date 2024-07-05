@@ -14,5 +14,8 @@ public interface TicketDAO {
     long getTicketChannel(int id);
     @NotNull List<? extends User> getTicketUsers(int id);
 
+    void addTicketUser(int id, @NotNull User user);
+    void removeTicketUser(int id, @NotNull User user);
+
     void deleteTicket(int id);
 }
