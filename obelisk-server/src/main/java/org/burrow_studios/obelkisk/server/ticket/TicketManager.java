@@ -40,14 +40,16 @@ public class TicketManager {
 
         // create user
         DiscordAccount discordAccount = this.obelisk.getDiscordAccountDAO().getDiscordAccount(interaction.getUser().getIdLong());
-        User user = discordAccount.getUser();
-        if (user == null)
-            user = this.obelisk.getUserDAO().createUser(discordAccount.getName(), null);
+        User u = discordAccount.getUser();
+        if (u == null)
+            u = this.obelisk.getUserDAO().createUser(discordAccount.getName(), null);
+        final User user = u;
 
         // create ticket channel
         category.createTextChannel("ticket")
                 .queue(channel -> {
                     Ticket ticket = this.obelisk.getTicketDAO().createTicket(channel.getIdLong());
+                    ticket.addUser(user);
 
                     interaction.getHook().deleteOriginal().queue();
 
