@@ -1,6 +1,6 @@
 package org.burrow_studios.obelkisk.core.db.interfaces;
 
-import org.burrow_studios.obelkisk.core.entity.User;
+import org.burrow_studios.obelkisk.core.entity.DatabaseUser;
 import org.burrow_studios.obelkisk.core.exceptions.DatabaseException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -8,12 +8,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public interface UserDB {
-    @NotNull User createUser(@NotNull String name, @Nullable String pronouns) throws DatabaseException;
+    @NotNull DatabaseUser createUser(@NotNull String name, @Nullable String pronouns) throws DatabaseException;
 
 
-    @NotNull List<User> listUsers() throws DatabaseException;
+    @NotNull List<DatabaseUser> listUsers() throws DatabaseException;
 
-    @NotNull User getUser(long id) throws DatabaseException;
+    @NotNull DatabaseUser getUser(long id) throws DatabaseException;
 
     @NotNull String getUserName(long id) throws DatabaseException;
 

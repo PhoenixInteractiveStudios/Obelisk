@@ -1,17 +1,18 @@
 package org.burrow_studios.obelkisk.core.db.sql;
 
+import org.burrow_studios.obelisk.api.entity.User;
 import org.burrow_studios.obelisk.util.turtle.TurtleGenerator;
 import org.burrow_studios.obelkisk.core.Main;
 import org.burrow_studios.obelkisk.core.Obelisk;
 import org.burrow_studios.obelkisk.core.db.interfaces.MinecraftAccountDB;
 import org.burrow_studios.obelkisk.core.db.interfaces.UserDB;
-import org.burrow_studios.obelkisk.core.entity.MinecraftAccount;
-import org.burrow_studios.obelkisk.core.entity.User;
+import org.burrow_studios.obelkisk.core.entity.DatabaseMinecraftAccount;
+import org.burrow_studios.obelkisk.core.entity.DatabaseUser;
 import org.burrow_studios.obelkisk.core.exceptions.DatabaseException;
 import org.burrow_studios.obelkisk.core.db.interfaces.DiscordAccountDB;
 import org.burrow_studios.obelkisk.core.db.interfaces.TicketDB;
-import org.burrow_studios.obelkisk.core.entity.DiscordAccount;
-import org.burrow_studios.obelkisk.core.entity.Ticket;
+import org.burrow_studios.obelkisk.core.entity.DatabaseDiscordAccount;
+import org.burrow_studios.obelkisk.core.entity.DatabaseTicket;
 import org.burrow_studios.obelkisk.core.exceptions.NoSuchEntryException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +90,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
     /* - - - */
 
     @Override
-    public @NotNull User createUser(@NotNull String name, @Nullable String pronouns) throws DatabaseException {
+    public @NotNull DatabaseUser createUser(@NotNull String name, @Nullable String pronouns) throws DatabaseException {
         final long id = this.userIds.newId();
 
         try (PreparedStatement stmt = this.database.preparedStatement("user/user_create")) {
@@ -102,12 +103,12 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
             throw new DatabaseException(e);
         }
 
-        return new User(id, this);
+        return new DatabaseUser(id, this);
     }
 
     @Override
-    public @NotNull List<User> listUsers() throws DatabaseException {
-        List<User> users = new ArrayList<>();
+    public @NotNull List<DatabaseUser> listUsers() throws DatabaseException {
+        List<DatabaseUser> users = new ArrayList<>();
 
         try (PreparedStatement stmt = this.database.preparedStatement("user/users_list")) {
             ResultSet res = stmt.executeQuery();
@@ -115,7 +116,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
             while (res.next()) {
                 long id = res.getLong("id");
 
-                users.add(new User(id, this));
+                users.add(new DatabaseUser(id, this));
             }
         } catch (SQLException e) {
             throw new DatabaseException(e);
@@ -125,7 +126,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
     }
 
     @Override
-    public @NotNull User getUser(long id) throws DatabaseException {
+    public @NotNull DatabaseUser getUser(long id) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("user/user_get")) {
             stmt.setLong(1, id);
 
@@ -134,7 +135,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
             if (!res.next())
                 throw new NoSuchEntryException();
 
-            return new User(id, this);
+            return new DatabaseUser(id, this);
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
@@ -210,7 +211,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
     }
 
     @Override
-    public @NotNull Ticket createTicket(long channel) throws DatabaseException {
+    public @NotNull DatabaseTicket createTicket(long channel) throws DatabaseException {
         final int id = this.ticketIncrement.getAndIncrement();
 
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_create")) {
@@ -222,12 +223,12 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
             throw new DatabaseException(e);
         }
 
-        return new Ticket(id, this);
+        return new DatabaseTicket(id, this);
     }
 
     @Override
-    public @NotNull List<Ticket> listTickets() throws DatabaseException {
-        List<Ticket> tickets = new ArrayList<>();
+    public @NotNull List<DatabaseTicket> listTickets() throws DatabaseException {
+        List<DatabaseTicket> tickets = new ArrayList<>();
 
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/tickets_list")) {
             ResultSet res = stmt.executeQuery();
@@ -235,7 +236,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
             while (res.next()) {
                 int id = res.getInt("id");
 
-                tickets.add(new Ticket(id, this));
+                tickets.add(new DatabaseTicket(id, this));
             }
         } catch (SQLException e) {
             throw new DatabaseException(e);
@@ -245,7 +246,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
     }
 
     @Override
-    public @NotNull Ticket getTicket(int id) throws DatabaseException {
+    public @NotNull DatabaseTicket getTicket(int id) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_get")) {
             stmt.setInt(1, id);
 
@@ -254,7 +255,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
             if (!res.next())
                 throw new NoSuchEntryException();
 
-            return new Ticket(id, this);
+            return new DatabaseTicket(id, this);
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
@@ -277,8 +278,8 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
     }
 
     @Override
-    public @NotNull List<User> getTicketUsers(int id) throws DatabaseException {
-        List<User> users = new ArrayList<>();
+    public @NotNull List<DatabaseUser> getTicketUsers(int id) throws DatabaseException {
+        List<DatabaseUser> users = new ArrayList<>();
 
         UserDB userDB = this.obelisk.getUserDB();
 
@@ -290,7 +291,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
             while (res.next()) {
                 long userId = res.getLong("user");
 
-                User user = userDB.getUser(userId);
+                DatabaseUser user = userDB.getUser(userId);
                 users.add(user);
             }
         } catch (SQLException e) {
@@ -312,7 +313,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
     }
 
     @Override
-    public @NotNull DiscordAccount createDiscordAccount(long snowflake, @NotNull String name) throws DatabaseException {
+    public @NotNull DatabaseDiscordAccount createDiscordAccount(long snowflake, @NotNull String name) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_create")) {
             stmt.setLong(1, snowflake);
             stmt.setString(2, name);
@@ -322,12 +323,12 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
             throw new DatabaseException(e);
         }
 
-        return new DiscordAccount(snowflake, this);
+        return new DatabaseDiscordAccount(snowflake, this);
     }
 
     @Override
-    public @NotNull List<DiscordAccount> listDiscordAccounts() throws DatabaseException {
-        List<DiscordAccount> discordAccounts = new ArrayList<>();
+    public @NotNull List<DatabaseDiscordAccount> listDiscordAccounts() throws DatabaseException {
+        List<DatabaseDiscordAccount> discordAccounts = new ArrayList<>();
 
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_list")) {
             ResultSet res = stmt.executeQuery();
@@ -335,7 +336,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
             while (res.next()) {
                 long snowflake = res.getLong("snowflake");
 
-                discordAccounts.add(new DiscordAccount(snowflake, this));
+                discordAccounts.add(new DatabaseDiscordAccount(snowflake, this));
             }
         } catch (SQLException e) {
             throw new DatabaseException(e);
@@ -345,7 +346,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
     }
 
     @Override
-    public @NotNull DiscordAccount getDiscordAccount(long snowflake) throws DatabaseException {
+    public @NotNull DatabaseDiscordAccount getDiscordAccount(long snowflake) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_get")) {
             stmt.setLong(1, snowflake);
 
@@ -354,14 +355,14 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
             if (!res.next())
                 throw new NoSuchEntryException();
 
-            return new DiscordAccount(snowflake, this);
+            return new DatabaseDiscordAccount(snowflake, this);
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
     }
 
     @Override
-    public @Nullable User getDiscordAccountUser(long snowflake) throws DatabaseException {
+    public @Nullable DatabaseUser getDiscordAccountUser(long snowflake) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_user_get")) {
             stmt.setLong(1, snowflake);
 
@@ -434,7 +435,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
     }
 
     @Override
-    public @NotNull MinecraftAccount createMinecraftAccount(@NotNull UUID uuid, @NotNull String name) throws DatabaseException {
+    public @NotNull DatabaseMinecraftAccount createMinecraftAccount(@NotNull UUID uuid, @NotNull String name) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_create")) {
             stmt.setString(1, uuid.toString());
             stmt.setString(2, name);
@@ -444,12 +445,12 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
             throw new DatabaseException(e);
         }
 
-        return new MinecraftAccount(uuid, this);
+        return new DatabaseMinecraftAccount(uuid, this);
     }
 
     @Override
-    public @NotNull List<MinecraftAccount> listMinecraftAccounts() throws DatabaseException {
-        List<MinecraftAccount> minecraftAccounts = new ArrayList<>();
+    public @NotNull List<DatabaseMinecraftAccount> listMinecraftAccounts() throws DatabaseException {
+        List<DatabaseMinecraftAccount> minecraftAccounts = new ArrayList<>();
 
         try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_list")) {
             ResultSet res = stmt.executeQuery();
@@ -458,7 +459,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
                 String uuidStr = res.getString("uuid");
                 UUID uuid = UUID.fromString(uuidStr);
 
-                minecraftAccounts.add(new MinecraftAccount(uuid, this));
+                minecraftAccounts.add(new DatabaseMinecraftAccount(uuid, this));
             }
         } catch (SQLException e) {
             throw new DatabaseException(e);
@@ -468,7 +469,7 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
     }
 
     @Override
-    public @NotNull MinecraftAccount getMinecraftAccount(@NotNull UUID uuid) throws DatabaseException {
+    public @NotNull DatabaseMinecraftAccount getMinecraftAccount(@NotNull UUID uuid) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_get")) {
             stmt.setString(1, uuid.toString());
 
@@ -477,14 +478,14 @@ public class DatabaseImpl implements UserDB, TicketDB, DiscordAccountDB, Minecra
             if (!res.next())
                 throw new NoSuchEntryException();
 
-            return new MinecraftAccount(uuid, this);
+            return new DatabaseMinecraftAccount(uuid, this);
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
     }
 
     @Override
-    public @Nullable User getMinecraftAccountUser(@NotNull UUID uuid) throws DatabaseException {
+    public @Nullable DatabaseUser getMinecraftAccountUser(@NotNull UUID uuid) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_user_get")) {
             stmt.setString(1, uuid.toString());
 

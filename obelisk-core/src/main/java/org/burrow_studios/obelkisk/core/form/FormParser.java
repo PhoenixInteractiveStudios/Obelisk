@@ -3,6 +3,7 @@ package org.burrow_studios.obelkisk.core.form;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.burrow_studios.obelisk.api.form.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
