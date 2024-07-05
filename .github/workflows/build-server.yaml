@@ -35,4 +35,4 @@ jobs:
       - name: Build API Module
         run: mvn -B clean install --file obelisk-api/pom.xml
       - name: Build Server Module
-        run: mvn -B package --file obelisk-core/pom.xml
+        run: mvn -B package --file obelisk-server/pom.xml
