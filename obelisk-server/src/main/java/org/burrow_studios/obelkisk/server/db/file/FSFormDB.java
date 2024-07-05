@@ -90,10 +90,10 @@ public class FSFormDB implements FormDAO {
     }
 
     @Override
-    public @NotNull Form getForm(int id) throws DatabaseException {
+    public @NotNull Optional<Form> getForm(int id) throws DatabaseException {
         Form cachedForm = this.cache.get(id);
         if (cachedForm != null)
-            return cachedForm;
+            return Optional.of(cachedForm);
 
         File file = new File(this.submissionsDirectory, id + ".json");
 
@@ -104,7 +104,7 @@ public class FSFormDB implements FormDAO {
             JsonObject json = GSON.fromJson(reader, JsonObject.class);
 
             long authorId = json.get("author").getAsLong();
-            User author = this.obelisk.getUserDAO().getUser(authorId);
+            User author = this.obelisk.getUserDAO().getUser(authorId).orElseThrow(() -> new NoSuchEntryException("Author does not exist"));
 
             String template = json.get("template").getAsString();
 
@@ -113,9 +113,9 @@ public class FSFormDB implements FormDAO {
 
             Form form = new Form(id, this, author, template, elements);
             this.cache.put(id, form);
-            return form;
+            return Optional.of(form);
         } catch (FileNotFoundException e) {
-            throw new NoSuchEntryException();
+            return Optional.empty();
         } catch (IOException | JsonIOException | JsonSyntaxException e) {
             throw new DatabaseException(e);
         }

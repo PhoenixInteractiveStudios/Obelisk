@@ -5,12 +5,13 @@ import org.burrow_studios.obelisk.api.entity.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FormDAO {
     @NotNull Form createForm(@NotNull User author, @NotNull String template);
 
     @NotNull List<Integer> listForms();
-    @NotNull Form getForm(int id);
+    @NotNull Optional<Form> getForm(int id);
 
     void updateForm(@NotNull Form form);
 

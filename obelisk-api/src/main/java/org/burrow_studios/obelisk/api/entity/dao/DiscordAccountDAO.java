@@ -6,12 +6,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DiscordAccountDAO {
     @NotNull DiscordAccount createDiscordAccount(long snowflake, @NotNull String name);
 
     @NotNull List<? extends DiscordAccount> listDiscordAccounts();
-    @NotNull DiscordAccount getDiscordAccount(long snowflake);
+    @NotNull Optional<DiscordAccount> getDiscordAccount(long snowflake);
     @Nullable User getDiscordAccountUser(long snowflake);
     @NotNull String getDiscordAccountName(long snowflake);
 

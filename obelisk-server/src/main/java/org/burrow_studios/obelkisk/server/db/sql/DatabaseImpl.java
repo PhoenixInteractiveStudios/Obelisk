@@ -26,10 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, MinecraftAccountDAO, Closeable {
@@ -125,16 +122,16 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Mine
     }
 
     @Override
-    public @NotNull User getUser(long id) throws DatabaseException {
+    public @NotNull Optional<User> getUser(long id) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("user/user_get")) {
             stmt.setLong(1, id);
 
             ResultSet res = stmt.executeQuery();
 
             if (!res.next())
-                throw new NoSuchEntryException();
+                return Optional.empty();
 
-            return new User(id, this);
+            return Optional.of(new User(id, this));
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
@@ -245,16 +242,16 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Mine
     }
 
     @Override
-    public @NotNull Ticket getTicket(int id) throws DatabaseException {
+    public @NotNull Optional<Ticket> getTicket(int id) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_get")) {
             stmt.setInt(1, id);
 
             ResultSet res = stmt.executeQuery();
 
             if (!res.next())
-                throw new NoSuchEntryException();
+                return Optional.empty();
 
-            return new Ticket(id, this);
+            return Optional.of(new Ticket(id, this));
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
@@ -290,8 +287,8 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Mine
             while (res.next()) {
                 long userId = res.getLong("user");
 
-                User user = userDB.getUser(userId);
-                users.add(user);
+                userDB.getUser(userId)
+                        .ifPresent(users::add);
             }
         } catch (SQLException e) {
             throw new DatabaseException(e);
@@ -369,16 +366,16 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Mine
     }
 
     @Override
-    public @NotNull DiscordAccount getDiscordAccount(long snowflake) throws DatabaseException {
+    public @NotNull Optional<DiscordAccount> getDiscordAccount(long snowflake) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_get")) {
             stmt.setLong(1, snowflake);
 
             ResultSet res = stmt.executeQuery();
 
             if (!res.next())
-                throw new NoSuchEntryException();
+                return Optional.empty();
 
-            return new DiscordAccount(snowflake, this);
+            return Optional.of(new DiscordAccount(snowflake, this));
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
@@ -395,7 +392,8 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Mine
                 return null;
 
             long userId = res.getLong("user");
-            return this.obelisk.getUserDAO().getUser(userId);
+            return this.obelisk.getUserDAO().getUser(userId)
+                    .orElseThrow(NoSuchEntryException::new);
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
@@ -492,16 +490,16 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Mine
     }
 
     @Override
-    public @NotNull MinecraftAccount getMinecraftAccount(@NotNull UUID uuid) throws DatabaseException {
+    public @NotNull Optional<MinecraftAccount> getMinecraftAccount(@NotNull UUID uuid) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_get")) {
             stmt.setString(1, uuid.toString());
 
             ResultSet res = stmt.executeQuery();
 
             if (!res.next())
-                throw new NoSuchEntryException();
+                return Optional.empty();
 
-            return new MinecraftAccount(uuid, this);
+            return Optional.of(new MinecraftAccount(uuid, this));
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
@@ -518,7 +516,8 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Mine
                 return null;
 
             long userId = res.getLong("user");
-            return this.obelisk.getUserDAO().getUser(userId);
+            return this.obelisk.getUserDAO().getUser(userId)
+                    .orElseThrow(NoSuchEntryException::new);
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }

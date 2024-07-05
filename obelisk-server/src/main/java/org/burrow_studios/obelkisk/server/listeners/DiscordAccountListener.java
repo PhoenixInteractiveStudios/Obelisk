@@ -10,7 +10,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.burrow_studios.obelisk.api.entity.DiscordAccount;
 import org.burrow_studios.obelisk.api.entity.dao.DiscordAccountDAO;
 import org.burrow_studios.obelkisk.server.Obelisk;
-import org.burrow_studios.obelkisk.server.exceptions.NoSuchEntryException;
 import org.jetbrains.annotations.NotNull;
 
 public class DiscordAccountListener extends ListenerAdapter {
@@ -23,11 +22,8 @@ public class DiscordAccountListener extends ListenerAdapter {
     private @NotNull DiscordAccount provideDiscordAccount(long snowflake, @NotNull String name) {
         DiscordAccountDAO dao = this.obelisk.getDiscordAccountDAO();
 
-        try {
-            return dao.getDiscordAccount(snowflake);
-        } catch (NoSuchEntryException e) {
-            return dao.createDiscordAccount(snowflake, name);
-        }
+        return dao.getDiscordAccount(snowflake)
+                .orElseGet(() -> dao.createDiscordAccount(snowflake, name));
     }
 
     private void iterateAll(@NotNull JDA jda) {

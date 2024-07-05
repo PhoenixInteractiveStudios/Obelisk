@@ -39,7 +39,8 @@ public class TicketManager {
         interaction.deferReply(true).queue();
 
         // create user
-        DiscordAccount discordAccount = this.obelisk.getDiscordAccountDAO().getDiscordAccount(interaction.getUser().getIdLong());
+        DiscordAccount discordAccount = this.obelisk.getDiscordAccountDAO().getDiscordAccount(interaction.getUser().getIdLong())
+                .orElseGet(() -> this.obelisk.getDiscordAccountDAO().createDiscordAccount(interaction.getUser().getIdLong(), interaction.getUser().getName()));
         User u = discordAccount.getUser();
         if (u == null)
             u = this.obelisk.getUserDAO().createUser(discordAccount.getName(), null);
