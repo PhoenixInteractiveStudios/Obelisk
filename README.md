@@ -3,7 +3,8 @@
 [release]: https://github.com/BurrowStudios/Obelisk/releases
 [release-shield]: https://img.shields.io/github/release/BurrowStudios/Obelisk.svg
 
-[build-shield-app]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-app.yaml?label=Application
+[build-shield-api]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-api.yaml?label=API
+[build-shield-server]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-server.yaml?label=Server
 [build-shield-util]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-util.yaml?label=Utils
 
 <!--suppress CheckImageSize, HtmlRequiredAltAttribute -->
@@ -14,7 +15,8 @@
 
 #### Build status
 
-![build-shield-app]
+![build-shield-api]
+![build-shield-server]
 ![build-shield-util]
 
 # Obelisk
