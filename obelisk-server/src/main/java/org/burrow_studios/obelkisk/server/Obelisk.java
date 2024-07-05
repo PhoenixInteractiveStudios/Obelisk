@@ -13,6 +13,7 @@ import org.burrow_studios.obelkisk.server.listeners.DiscordAccountListener;
 import org.burrow_studios.obelkisk.server.listeners.TicketCreateListener;
 import org.burrow_studios.obelkisk.server.persistence.PersistentConfig;
 import org.burrow_studios.obelkisk.server.text.TextProvider;
+import org.burrow_studios.obelkisk.server.ticket.TicketManager;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import java.io.IOException;
 public class Obelisk {
     private static final Logger LOG = LoggerFactory.getLogger(Obelisk.class);
 
+    private TicketManager ticketManager;
     private TextProvider textProvider;
     private DatabaseImpl database;
     private FSFormDB formDB;
@@ -54,6 +56,9 @@ public class Obelisk {
         LOG.info("Initializing database");
         this.database = new DatabaseImpl(this, new File(Main.DIR, "obelisk.db"));
         this.formDB   = new     FSFormDB(this, new File(Main.DIR, "forms"));
+
+        LOG.info("Initializing TicketManager");
+        this.ticketManager = new TicketManager(this);
 
         LOG.info("Initializing JDA");
         this.jda = JDABuilder.create(config.token(),
@@ -101,6 +106,11 @@ public class Obelisk {
         }
 
         this.formDB = null;
+        this.ticketManager = null;
+        this.textProvider = null;
+
+        this.persistentConfig = null;
+        this.config = null;
 
         LOG.info("OK bye");
     }
@@ -115,6 +125,10 @@ public class Obelisk {
 
     public @NotNull TextProvider getTextProvider() {
         return this.textProvider;
+    }
+
+    public @NotNull TicketManager getTicketManager() {
+        return this.ticketManager;
     }
 
     public @NotNull UserDAO getUserDAO() {

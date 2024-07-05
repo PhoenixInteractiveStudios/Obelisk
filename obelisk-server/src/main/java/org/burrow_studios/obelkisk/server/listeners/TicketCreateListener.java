@@ -1,7 +1,6 @@
 package org.burrow_studios.obelkisk.server.listeners;
 
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -12,7 +11,6 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.requests.ErrorResponse;
-import org.burrow_studios.obelisk.api.entity.Ticket;
 import org.burrow_studios.obelkisk.server.Obelisk;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -20,7 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public class TicketCreateListener extends ListenerAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(TicketCreateListener.class);
@@ -51,38 +48,7 @@ public class TicketCreateListener extends ListenerAdapter {
         final String id = event.getButton().getId();
         if (!Objects.equals(id, BUTTON_ID)) return;
 
-        final long     categoryId = this.obelisk.getConfig().ticketCategory();
-        final Category category   = event.getJDA().getCategoryById(categoryId);
-
-        if (category == null) {
-            String errorMsg = this.obelisk.getTextProvider().get("ticket.create.error");
-
-            event.getHook()
-                    .setEphemeral(true)
-                    .sendMessage(errorMsg)
-                    .queue();
-            return;
-        }
-
-        event.deferReply(true).queue();
-
-        category.createTextChannel("ticket")
-                .queue(channel -> {
-                    Ticket ticket = this.obelisk.getTicketDAO().createTicket(channel.getIdLong());
-
-                    event.getHook().deleteOriginal().queue();
-
-                    String welcomeMsg = this.obelisk.getTextProvider().get("ticket.create.welcome", "user", event.getUser().getAsMention());
-
-                    channel.getManager().setName("ticket-" + ticket.getId()).queue();
-                    channel.sendMessage(welcomeMsg).queueAfter(1, TimeUnit.SECONDS);
-                }, throwable -> {
-                    String errorMsg = this.obelisk.getTextProvider().get("ticket.create.error");
-
-                    event.getHook().sendMessage(errorMsg).queue();
-
-                    LOG.warn("Failed to create channel for new ticket", throwable);
-                });
+        this.obelisk.getTicketManager().createTicket(event);
     }
 
     @Override
