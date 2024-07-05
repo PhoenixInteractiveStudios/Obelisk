@@ -111,6 +111,13 @@
     </build>
 
     <dependencies>
+        <!-- Shared API layer -->
+        <dependency>
+            <groupId>org.burrow_studios.obelisk</groupId>
+            <artifactId>obelisk-api</artifactId>
+            <version>1.0-alpha.1</version>
+        </dependency>
+
         <dependency>
             <groupId>org.burrow_studios.obelisk</groupId>
             <artifactId>obelisk-util</artifactId>
