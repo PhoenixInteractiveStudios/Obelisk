@@ -23,7 +23,9 @@ public class FSFormDB implements FormDB {
             .create();
 
     private final Obelisk obelisk;
-    private final File directory;
+
+    private final File templatesDirectory;
+    private final File submissionsDirectory;
 
     private final Map<Integer, Form> cache = Collections.synchronizedMap(new WeakHashMap<>());
     private final ReadWriteCloseableLock lock = new ReadWriteCloseableLock();
@@ -31,13 +33,36 @@ public class FSFormDB implements FormDB {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public FSFormDB(@NotNull Obelisk obelisk, @NotNull File directory) {
         this.obelisk = obelisk;
-        this.directory = directory;
 
         directory.mkdir();
+
+        this.templatesDirectory = new File(directory, "templates");
+        this.templatesDirectory.mkdir();
+
+        this.submissionsDirectory = new File(directory, "submissions");
+        this.submissionsDirectory.mkdir();
     }
 
     @Override
-    public @NotNull Form createForm(@NotNull User author, @NotNull String template, @NotNull List<FormElement> elements) throws DatabaseException {
+    public @NotNull Form createForm(@NotNull User author, @NotNull String template) throws DatabaseException {
+        File file = new File(this.templatesDirectory, template + ".json");
+
+        List<FormElement> elements;
+
+        try (
+                CloseableLock ignored = this.lock.read();
+                FileReader reader = new FileReader(file)
+        ) {
+            JsonObject json = GSON.fromJson(reader, JsonObject.class);
+
+            JsonArray elementJson = json.getAsJsonArray("elements");
+            elements = FormParser.fromJson(elementJson);
+        } catch (FileNotFoundException e) {
+            throw new NoSuchEntryException();
+        } catch (IOException | JsonIOException | JsonSyntaxException e) {
+            throw new DatabaseException(e);
+        }
+
         try (CloseableLock ignored = this.lock.write()) {
             final int id = this.listForms().stream().mapToInt(v -> v).max().orElse(0);
             Form form = new Form(id, this, author, template, elements);
@@ -51,7 +76,7 @@ public class FSFormDB implements FormDB {
         String[] filenames;
 
         try (CloseableLock ignored = this.lock.read()) {
-            filenames = this.directory.list();
+            filenames = this.submissionsDirectory.list();
         }
 
         if (filenames == null)
@@ -70,7 +95,7 @@ public class FSFormDB implements FormDB {
         if (cachedForm != null)
             return cachedForm;
 
-        File file = new File(this.directory, id + ".json");
+        File file = new File(this.submissionsDirectory, id + ".json");
 
         try (
                 CloseableLock ignored = this.lock.read();
@@ -106,7 +131,7 @@ public class FSFormDB implements FormDB {
         JsonArray elements = FormParser.toJson(form.getElements());
         json.add("elements", elements);
 
-        File file = new File(this.directory, form.getId() + ".json");
+        File file = new File(this.submissionsDirectory, form.getId() + ".json");
 
         try (
                 CloseableLock ignored = this.lock.write();
@@ -122,7 +147,7 @@ public class FSFormDB implements FormDB {
     @Override
     public void deleteForm(int id) throws DatabaseException {
         try (CloseableLock ignored = this.lock.write()) {
-            File file = new File(this.directory, id + ".json");
+            File file = new File(this.submissionsDirectory, id + ".json");
             file.delete();
         }
 
