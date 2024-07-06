@@ -2,6 +2,7 @@ package org.burrow_studios.obelisk.api.entity;
 
 import org.burrow_studios.obelisk.api.entity.dao.ProjectDAO;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
@@ -20,6 +21,14 @@ public final class Project {
 
     public @NotNull String getProjectTitle() {
         return this.dao.getProjectTitle(this.id);
+    }
+
+    public @Nullable String getApplicationTemplate() {
+        return this.dao.getProjectApplicationTemplate(this.id);
+    }
+
+    public boolean isInviteOnly() {
+        return this.dao.isProjectInviteOnly(this.id);
     }
 
     public @NotNull Collection<? extends User> getMembers() {

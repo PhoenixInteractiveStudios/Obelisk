@@ -398,6 +398,38 @@ public class DatabaseImpl implements UserDAO, TicketDAO, ProjectDAO, DiscordAcco
     }
 
     @Override
+    public @Nullable String getProjectApplicationTemplate(int id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_application_template_get")) {
+            stmt.setInt(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                throw new DatabaseException("Project " + id + " does not exist");
+
+            return res.getString("application_template");
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public boolean isProjectInviteOnly(int id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_invite_only_get")) {
+            stmt.setInt(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                throw new DatabaseException("Project " + id + " does not exist");
+
+            return res.getBoolean("invite_only");
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
     public void setProjectTitle(int id, @NotNull String title) {
         try (PreparedStatement stmt = this.database.preparedStatement("project/project_title_set")) {
             stmt.setString(1, title);

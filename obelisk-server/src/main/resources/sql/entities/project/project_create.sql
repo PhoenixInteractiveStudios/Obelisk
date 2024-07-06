@@ -1,4 +1,6 @@
 INSERT INTO `projects` (
     `id`,
-    `title`
-) VALUES (?, ?);
+    `title`,
+    `application_template`,
+    `invite_only`
+) VALUES (?, ?, ?, ?);
