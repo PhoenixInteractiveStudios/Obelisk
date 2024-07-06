@@ -139,6 +139,10 @@ public class Obelisk {
         return this.database;
     }
 
+    public @NotNull ProjectDAO getProjectDAO() {
+        return this.database;
+    }
+
     public @NotNull DiscordAccountDAO getDiscordAccountDAO() {
         return this.database;
     }

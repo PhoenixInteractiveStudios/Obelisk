@@ -1,13 +1,7 @@
 package org.burrow_studios.obelkisk.server.db.sql;
 
-import org.burrow_studios.obelisk.api.entity.DiscordAccount;
-import org.burrow_studios.obelisk.api.entity.MinecraftAccount;
-import org.burrow_studios.obelisk.api.entity.Ticket;
-import org.burrow_studios.obelisk.api.entity.User;
-import org.burrow_studios.obelisk.api.entity.dao.DiscordAccountDAO;
-import org.burrow_studios.obelisk.api.entity.dao.MinecraftAccountDAO;
-import org.burrow_studios.obelisk.api.entity.dao.TicketDAO;
-import org.burrow_studios.obelisk.api.entity.dao.UserDAO;
+import org.burrow_studios.obelisk.api.entity.*;
+import org.burrow_studios.obelisk.api.entity.dao.*;
 import org.burrow_studios.obelisk.util.turtle.TurtleGenerator;
 import org.burrow_studios.obelkisk.server.Main;
 import org.burrow_studios.obelkisk.server.Obelisk;
@@ -29,13 +23,14 @@ import java.sql.Types;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, MinecraftAccountDAO, Closeable {
+public class DatabaseImpl implements UserDAO, TicketDAO, ProjectDAO, DiscordAccountDAO, MinecraftAccountDAO, Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseImpl.class);
 
     private final Obelisk obelisk;
     private final SQLDB database;
     private final TurtleGenerator userIds = TurtleGenerator.get("users");
-    private final AtomicInteger ticketIncrement = new AtomicInteger(0);
+    private final AtomicInteger  ticketIncrement = new AtomicInteger(0);
+    private final AtomicInteger projectIncrement = new AtomicInteger(0);
 
     public DatabaseImpl(@NotNull Obelisk obelisk, @NotNull File file) {
         this.obelisk = obelisk;
@@ -58,6 +53,9 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Mine
 
             this.database.execute("ticket/table");
             this.database.execute("ticket/table_users");
+
+            this.database.execute("project/table");
+            this.database.execute("project/table_members");
 
             this.database.execute("discord/table");
 
@@ -324,6 +322,144 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Mine
     @Override
     public void deleteTicket(int id) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_delete")) {
+            stmt.setInt(1, id);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public @NotNull Project createProject(@NotNull String title) throws DatabaseException {
+        final int id = this.projectIncrement.getAndIncrement();
+
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_create")) {
+            stmt.setInt(1, id);
+            stmt.setString(2, title);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return new Project(id, this);
+    }
+
+    @Override
+    public @NotNull List<Project> listProjects() throws DatabaseException {
+        List<Project> projects = new ArrayList<>();
+
+        try (PreparedStatement stmt = this.database.preparedStatement("project/projects_list")) {
+            ResultSet res = stmt.executeQuery();
+
+            while (res.next()) {
+                int id = res.getInt("id");
+
+                projects.add(new Project(id, this));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return Collections.unmodifiableList(projects);
+    }
+
+    @Override
+    public @NotNull Optional<Project> getProject(int id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_get")) {
+            stmt.setInt(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                return Optional.empty();
+
+            return Optional.of(new Project(id, this));
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public @NotNull String getProjectTitle(int id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_title_get")) {
+            stmt.setInt(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            if (!res.next())
+                throw new DatabaseException("Project " + id + " does not exist");
+
+            return res.getString("title");
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public void setProjectTitle(int id, @NotNull String title) {
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_title_set")) {
+            stmt.setString(1, title);
+            stmt.setInt(2, id);
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public @NotNull List<User> getProjectMembers(int id) throws DatabaseException {
+        List<User> users = new ArrayList<>();
+
+        UserDAO userDB = this.obelisk.getUserDAO();
+
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_members_get")) {
+            stmt.setInt(1, id);
+
+            ResultSet res = stmt.executeQuery();
+
+            while (res.next()) {
+                long userId = res.getLong("user");
+
+                userDB.getUser(userId)
+                        .ifPresent(users::add);
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+
+        return Collections.unmodifiableList(users);
+    }
+
+    @Override
+    public void addProjectMember(int id, @NotNull User user) {
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_member_add")) {
+            stmt.setInt(1, id);
+            stmt.setLong(2, user.getId());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public void removeProjectMember(int id, @NotNull User user) {
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_member_remove")) {
+            stmt.setInt(1, id);
+            stmt.setLong(2, user.getId());
+
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public void deleteProject(int id) throws DatabaseException {
+        try (PreparedStatement stmt = this.database.preparedStatement("project/project_delete")) {
             stmt.setInt(1, id);
 
             stmt.execute();
