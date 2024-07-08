@@ -560,6 +560,10 @@ public class DatabaseImpl implements UserDAO, TicketDAO, ProjectDAO, DiscordAcco
                 return null;
 
             long userId = res.getLong("user");
+
+            if (res.wasNull())
+                return null;
+
             return this.obelisk.getUserDAO().getUser(userId)
                     .orElseThrow(NoSuchEntryException::new);
         } catch (SQLException e) {
