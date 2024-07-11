@@ -10,7 +10,9 @@ import java.util.Properties;
 public record Config(
         String token,
         long ticketCreateChannel,
-        long ticketCategory
+        long ticketCategory,
+        long superuserRole,
+        long moderationRole
 ) {
     public static @NotNull Config fromFile(@NotNull File file) throws IOException {
         Properties properties = new Properties();
@@ -44,6 +46,26 @@ public record Config(
             throw new IllegalArgumentException("ticket.category must be a valid id", e);
         }
 
-        return new Config(token, ticketCreateChannel, ticketCategory);
+        String superuserRoleStr = properties.getProperty("role.superuser");
+        if (superuserRoleStr == null)
+            throw new IllegalArgumentException("role.superuser may not be null");
+        long superuserRole;
+        try {
+            superuserRole = Long.parseLong(superuserRoleStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("role.superuser must be a valid id", e);
+        }
+
+        String moderationRoleStr = properties.getProperty("role.moderation");
+        if (moderationRoleStr == null)
+            throw new IllegalArgumentException("role.moderation may not be null");
+        long moderationRole;
+        try {
+            moderationRole = Long.parseLong(moderationRoleStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("role.moderation must be a valid id", e);
+        }
+
+        return new Config(token, ticketCreateChannel, ticketCategory, superuserRole, moderationRole);
     }
 }
