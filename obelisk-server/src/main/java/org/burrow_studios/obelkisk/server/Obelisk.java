@@ -3,10 +3,12 @@ package org.burrow_studios.obelkisk.server;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.burrow_studios.obelisk.api.entity.dao.*;
 import org.burrow_studios.obelisk.util.ResourceTools;
+import org.burrow_studios.obelkisk.server.commands.ProjectCommand;
 import org.burrow_studios.obelkisk.server.db.file.FSFormDB;
 import org.burrow_studios.obelkisk.server.db.sql.DatabaseImpl;
 import org.burrow_studios.obelkisk.server.event.EventManager;
@@ -66,6 +68,7 @@ public class Obelisk {
         this.ticketManager = new TicketManager(this);
 
         LOG.info("Initializing JDA");
+        ProjectCommand projectCommand = new ProjectCommand(this);
         this.jda = JDABuilder.create(config.token(),
                     GatewayIntent.GUILD_MESSAGES,
                     GatewayIntent.GUILD_MESSAGE_REACTIONS,
@@ -77,8 +80,11 @@ public class Obelisk {
                 .disableCache(CacheFlag.ONLINE_STATUS)
                 .disableCache(CacheFlag.SCHEDULED_EVENTS)
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
+                // LISTENERS
                 .addEventListeners(new DiscordAccountListener(this))
                 .addEventListeners(new TicketCreateListener(this))
+                // COMMANDS
+                .addEventListeners(projectCommand)
                 .build();
 
         this.jda.awaitReady();
@@ -86,7 +92,10 @@ public class Obelisk {
         this.jda.getPresence().setStatus(OnlineStatus.ONLINE);
 
         LOG.info("Validating config");
-        this.config.validate(this.jda);
+        Guild guild = this.config.validate(this.jda);
+
+        LOG.info("Upserting commands");
+        guild.upsertCommand(projectCommand.getData()).queue();
 
         LOG.info("All done.");
     }

@@ -1,6 +1,7 @@
 package org.burrow_studios.obelkisk.server;
 
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -73,30 +74,32 @@ public record Config(
         return new Config(token, ticketCreateChannel, ticketCategory, superuserRole, moderationRole);
     }
 
-    public void validate(@NotNull JDA jda) {
-        long guildId = -1;
+    public @NotNull Guild validate(@NotNull JDA jda) {
+        Guild guild;
 
         TextChannel ticketCreateChannel = jda.getTextChannelById(this.ticketCreateChannel);
         if (ticketCreateChannel == null)
             throw new IllegalArgumentException("ticket.createChannel");
-        guildId = ticketCreateChannel.getGuild().getIdLong();
+        guild = ticketCreateChannel.getGuild();
 
         Category ticketCategory = jda.getCategoryById(this.ticketCategory);
         if (ticketCategory == null)
             throw new IllegalArgumentException("ticket.category does not exist");
-        if (guildId != ticketCategory.getGuild().getIdLong())
+        if (!guild.equals(ticketCategory.getGuild()))
             throw new IllegalArgumentException("ticket.category does not match the expected guild");
 
         Role superuserRole = jda.getRoleById(this.superuserRole);
         if (superuserRole == null)
             throw new IllegalArgumentException("role.superuser does not exist");
-        if (guildId != superuserRole.getGuild().getIdLong())
+        if (!guild.equals(superuserRole.getGuild()))
             throw new IllegalArgumentException("role.superuser does not match the expected guild");
 
         Role moderationRole = jda.getRoleById(this.moderationRole);
         if (moderationRole == null)
             throw new IllegalArgumentException("role.moderation does not exist");
-        if (guildId != moderationRole.getGuild().getIdLong())
+        if (!guild.equals(moderationRole.getGuild()))
             throw new IllegalArgumentException("role.moderation does not match the expected guild");
+
+        return guild;
     }
 }
