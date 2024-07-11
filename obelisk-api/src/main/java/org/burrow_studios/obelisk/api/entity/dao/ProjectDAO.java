@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProjectDAO {
-    @NotNull Project createProject(@NotNull String title);
+    @NotNull Project createProject(@NotNull String title, @Nullable String applicationTemplate, boolean inviteOnly);
 
     @NotNull List<? extends Project> listProjects();
     @NotNull Optional<Project> getProject(int id);

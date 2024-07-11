@@ -16,10 +16,7 @@ import org.sqlite.SQLiteConfig;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -331,12 +328,17 @@ public class DatabaseImpl implements UserDAO, TicketDAO, ProjectDAO, DiscordAcco
     }
 
     @Override
-    public @NotNull Project createProject(@NotNull String title) throws DatabaseException {
+    public @NotNull Project createProject(@NotNull String title, @Nullable String applicationTemplate, boolean inviteOnly) throws DatabaseException {
         final int id = this.projectIncrement.getAndIncrement();
 
         try (PreparedStatement stmt = this.database.preparedStatement("project/project_create")) {
             stmt.setInt(1, id);
             stmt.setString(2, title);
+            if (applicationTemplate == null)
+                stmt.setNull(3, Types.OTHER);
+            else
+                stmt.setString(3, applicationTemplate);
+            stmt.setBoolean(4, inviteOnly);
 
             stmt.execute();
         } catch (SQLException e) {

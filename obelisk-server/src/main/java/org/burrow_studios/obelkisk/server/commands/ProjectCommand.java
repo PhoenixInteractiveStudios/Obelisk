@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -58,7 +59,14 @@ public class ProjectCommand extends ListenerAdapter {
             @SuppressWarnings("DataFlowIssue") // required option
             String title = event.getOption("title").getAsString();
 
-            Project project = this.obelisk.getProjectDAO().createProject(title);
+            @SuppressWarnings("DataFlowIssue") // required option
+            boolean inviteOnly = event.getOption("invite_only").getAsBoolean();
+
+            String applicationTemplate = Optional.ofNullable(event.getOption("application_template"))
+                    .map(OptionMapping::getAsString)
+                    .orElse(null);
+
+            Project project = this.obelisk.getProjectDAO().createProject(title, applicationTemplate, inviteOnly);
 
             event.getHook().sendMessage("Created project \"" + project.getProjectTitle() + "\"").queue();
             return;
@@ -79,8 +87,8 @@ public class ProjectCommand extends ListenerAdapter {
 
             Project project = optProject.get();
 
-            WebhookMessageCreateAction<Message> response = event.getHook().sendMessage("# ");
-            response.addContent(project.getProjectTitle());
+            WebhookMessageCreateAction<Message> response = event.getHook().sendMessage("#");
+            response.addContent(" " + project.getProjectTitle());
             response.addContent("\n");
             response.addContent("**" + project.getMembers().size() + "** member(s)\n\n");
             response.addContent("Invite-only: **" + project.isInviteOnly() + "**\n\n");
@@ -98,6 +106,8 @@ public class ProjectCommand extends ListenerAdapter {
         data.addSubcommands(new SubcommandData("list", "List all existing projects"));
         data.addSubcommands(new SubcommandData("create", "Create a new project")
                 .addOption(OptionType.STRING, "title", "Title of the project", true)
+                .addOption(OptionType.BOOLEAN, "invite_only", "Whether or not the project is invite-only", true)
+                .addOption(OptionType.STRING, "application_template", "Identifier of the project application template")
         );
         data.addSubcommands(new SubcommandData("info", "Display information on a single project")
                 .addOption(OptionType.INTEGER, "id", "Project id", true)
