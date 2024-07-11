@@ -85,6 +85,9 @@ public class Obelisk {
 
         this.jda.getPresence().setStatus(OnlineStatus.ONLINE);
 
+        LOG.info("Validating config");
+        this.config.validate(this.jda);
+
         LOG.info("All done.");
     }
 

@@ -1,5 +1,9 @@
 package org.burrow_studios.obelkisk.server;
 
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -67,5 +71,32 @@ public record Config(
         }
 
         return new Config(token, ticketCreateChannel, ticketCategory, superuserRole, moderationRole);
+    }
+
+    public void validate(@NotNull JDA jda) {
+        long guildId = -1;
+
+        TextChannel ticketCreateChannel = jda.getTextChannelById(this.ticketCreateChannel);
+        if (ticketCreateChannel == null)
+            throw new IllegalArgumentException("ticket.createChannel");
+        guildId = ticketCreateChannel.getGuild().getIdLong();
+
+        Category ticketCategory = jda.getCategoryById(this.ticketCategory);
+        if (ticketCategory == null)
+            throw new IllegalArgumentException("ticket.category does not exist");
+        if (guildId != ticketCategory.getGuild().getIdLong())
+            throw new IllegalArgumentException("ticket.category does not match the expected guild");
+
+        Role superuserRole = jda.getRoleById(this.superuserRole);
+        if (superuserRole == null)
+            throw new IllegalArgumentException("role.superuser does not exist");
+        if (guildId != superuserRole.getGuild().getIdLong())
+            throw new IllegalArgumentException("role.superuser does not match the expected guild");
+
+        Role moderationRole = jda.getRoleById(this.moderationRole);
+        if (moderationRole == null)
+            throw new IllegalArgumentException("role.moderation does not exist");
+        if (guildId != moderationRole.getGuild().getIdLong())
+            throw new IllegalArgumentException("role.moderation does not match the expected guild");
     }
 }
