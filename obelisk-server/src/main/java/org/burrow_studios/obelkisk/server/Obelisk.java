@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.burrow_studios.obelisk.api.entity.dao.*;
 import org.burrow_studios.obelisk.util.ResourceTools;
 import org.burrow_studios.obelkisk.server.commands.ProjectCommand;
+import org.burrow_studios.obelkisk.server.commands.TicketCommand;
 import org.burrow_studios.obelkisk.server.db.file.FSFormDB;
 import org.burrow_studios.obelkisk.server.db.sql.DatabaseImpl;
 import org.burrow_studios.obelkisk.server.event.EventManager;
@@ -69,6 +70,7 @@ public class Obelisk {
 
         LOG.info("Initializing JDA");
         ProjectCommand projectCommand = new ProjectCommand(this);
+        TicketCommand ticketCommand = new TicketCommand(this);
         this.jda = JDABuilder.create(config.token(),
                     GatewayIntent.GUILD_MESSAGES,
                     GatewayIntent.GUILD_MESSAGE_REACTIONS,
@@ -85,6 +87,7 @@ public class Obelisk {
                 .addEventListeners(new TicketCreateListener(this))
                 // COMMANDS
                 .addEventListeners(projectCommand)
+                .addEventListeners(ticketCommand)
                 .build();
 
         this.jda.awaitReady();
@@ -96,6 +99,7 @@ public class Obelisk {
 
         LOG.info("Upserting commands");
         guild.upsertCommand(projectCommand.getData()).queue();
+        guild.upsertCommand(ticketCommand.getData()).queue();
 
         LOG.info("All done.");
     }
