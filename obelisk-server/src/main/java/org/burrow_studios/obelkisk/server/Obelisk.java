@@ -13,6 +13,7 @@ import org.burrow_studios.obelkisk.server.commands.TicketCommand;
 import org.burrow_studios.obelkisk.server.db.file.FSFormDB;
 import org.burrow_studios.obelkisk.server.db.sql.DatabaseImpl;
 import org.burrow_studios.obelkisk.server.event.EventManager;
+import org.burrow_studios.obelkisk.server.form.FormManager;
 import org.burrow_studios.obelkisk.server.listeners.DiscordAccountListener;
 import org.burrow_studios.obelkisk.server.listeners.TicketCreateListener;
 import org.burrow_studios.obelkisk.server.persistence.PersistentConfig;
@@ -30,6 +31,7 @@ public class Obelisk {
 
     private EventManager eventManager;
     private TicketManager ticketManager;
+    private FormManager formManager;
     private TextProvider textProvider;
     private DatabaseImpl database;
     private FSFormDB formDB;
@@ -68,6 +70,9 @@ public class Obelisk {
         LOG.info("Initializing TicketManager");
         this.ticketManager = new TicketManager(this);
 
+        LOG.info("Initializing FormManager");
+        this.formManager = new FormManager(this);
+
         LOG.info("Initializing JDA");
         ProjectCommand projectCommand = new ProjectCommand(this);
         TicketCommand ticketCommand = new TicketCommand(this);
@@ -96,6 +101,9 @@ public class Obelisk {
 
         LOG.info("Validating config");
         Guild guild = this.config.validate(this.jda);
+
+        LOG.info("Indexing form templates");
+        this.formManager.onLoad(this.jda);
 
         LOG.info("Upserting commands");
         guild.upsertCommand(projectCommand.getData()).queue();
@@ -127,6 +135,7 @@ public class Obelisk {
         }
 
         this.formDB = null;
+        this.formManager = null;
         this.ticketManager = null;
         this.textProvider = null;
 
@@ -154,6 +163,10 @@ public class Obelisk {
 
     public @NotNull TicketManager getTicketManager() {
         return this.ticketManager;
+    }
+
+    public @NotNull FormManager getFormManager() {
+        return this.formManager;
     }
 
     public @NotNull UserDAO getUserDAO() {

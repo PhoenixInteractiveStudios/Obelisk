@@ -1,6 +1,7 @@
 package org.burrow_studios.obelkisk.server.db.file;
 
 import com.google.gson.*;
+import org.burrow_studios.obelisk.api.FormTemplateMeta;
 import org.burrow_studios.obelisk.api.entity.Form;
 import org.burrow_studios.obelisk.api.entity.User;
 import org.burrow_studios.obelisk.api.entity.dao.FormDAO;
@@ -68,6 +69,43 @@ public class FSFormDB implements FormDAO {
             Form form = new Form(id, this, author, template, elements);
             this.updateForm(form);
             return form;
+        }
+    }
+
+    @Override
+    public @NotNull List<FormTemplateMeta> listTemplates() {
+        try (CloseableLock ignored = this.lock.read()) {
+            File[] files = this.templatesDirectory.listFiles();
+
+            if (files == null)
+                files = new File[]{};
+
+            List<FormTemplateMeta> meta = new ArrayList<>(files.length);
+
+            for (File file : files) {
+                if (!file.getName().endsWith(".json")) continue;
+
+                String identifier = file.getName().substring(0, file.getName().length() - ".json".length());
+                long accessChannel;
+
+                try (FileReader reader = new FileReader(file)) {
+                    JsonObject json = GSON.fromJson(reader, JsonObject.class);
+
+                    boolean active = Optional.ofNullable(json.get("active"))
+                            .map(JsonElement::getAsBoolean)
+                            .orElse(true);
+                    if (!active) continue;
+
+                    accessChannel = json.get("channel").getAsLong();
+                } catch (IOException | JsonIOException | JsonSyntaxException | NullPointerException | UnsupportedOperationException | NumberFormatException | IllegalStateException e) {
+                    // ignore this file
+                    continue;
+                }
+
+                meta.add(new FormTemplateMeta(identifier, accessChannel));
+            }
+
+            return Collections.unmodifiableList(meta);
         }
     }
 

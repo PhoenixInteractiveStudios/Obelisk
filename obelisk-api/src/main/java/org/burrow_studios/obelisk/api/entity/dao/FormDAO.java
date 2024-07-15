@@ -1,5 +1,6 @@
 package org.burrow_studios.obelisk.api.entity.dao;
 
+import org.burrow_studios.obelisk.api.FormTemplateMeta;
 import org.burrow_studios.obelisk.api.entity.Form;
 import org.burrow_studios.obelisk.api.entity.User;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +11,7 @@ import java.util.Optional;
 public interface FormDAO {
     @NotNull Form createForm(@NotNull User author, @NotNull String template);
 
+    @NotNull List<FormTemplateMeta> listTemplates();
     @NotNull List<Integer> listForms();
     @NotNull Optional<Form> getForm(int id);
 
