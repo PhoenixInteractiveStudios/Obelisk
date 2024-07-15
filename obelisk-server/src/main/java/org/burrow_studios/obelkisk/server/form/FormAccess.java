@@ -102,6 +102,10 @@ public class FormAccess extends ListenerAdapter {
                 // existing message: check content
                 String actualContent = message.getContentRaw();
 
+                if (this.content == null) {
+                    this.content = actualContent;
+                }
+
                 if (this.content.equals(actualContent)) {
                     LOG.debug("Existing message checks out.");
                     return;
@@ -129,6 +133,12 @@ public class FormAccess extends ListenerAdapter {
 
     private void sendMessage() {
         this.active = true;
+
+        if (this.content == null) {
+            LOG.warn("sendMessage() has been called but no expected message content is cached.");
+            return;
+        }
+
         this.channel.sendMessage(this.content)
                 .addActionRow(this.getButton())
                 .queue();
@@ -146,7 +156,7 @@ public class FormAccess extends ListenerAdapter {
         final String id = event.getButton().getId();
         if (!Objects.equals(id, BUTTON_ID)) return;
 
-        this.manager.submit(this.template, event);
+        this.manager.openForm(this.template, event);
     }
 
     @Override

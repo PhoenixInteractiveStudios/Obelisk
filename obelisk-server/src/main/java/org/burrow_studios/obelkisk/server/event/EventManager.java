@@ -93,7 +93,7 @@ public final class EventManager {
             try {
                 execution.call();
             } catch (Exception e) {
-                LOG.warn("An EventListener EXECUTION failed due to an exception");
+                LOG.warn("An EventListener EXECUTION failed due to an exception", e);
                 failed = true;
             }
         }
@@ -104,7 +104,7 @@ public final class EventManager {
             try {
                 monitor.call();
             } catch (Exception e) {
-                LOG.warn("An EventListener MONITOR failed due to an exception");
+                LOG.warn("An EventListener MONITOR failed due to an exception", e);
             }
         }
     }
