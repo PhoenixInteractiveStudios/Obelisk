@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FormDAO {
-    @NotNull Form createForm(@NotNull User author, @NotNull String template);
+    @NotNull Form createForm(@NotNull User author, long channelId, @NotNull String template);
 
     @NotNull List<FormTemplateMeta> listTemplates();
     @NotNull List<Integer> listForms();

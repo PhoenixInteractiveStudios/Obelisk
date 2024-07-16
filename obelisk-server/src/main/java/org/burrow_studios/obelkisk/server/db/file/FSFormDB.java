@@ -45,7 +45,7 @@ public class FSFormDB implements FormDAO {
     }
 
     @Override
-    public @NotNull Form createForm(@NotNull User author, @NotNull String template) throws DatabaseException {
+    public @NotNull Form createForm(@NotNull User author, long channelId, @NotNull String template) throws DatabaseException {
         File file = new File(this.templatesDirectory, template + ".json");
 
         List<FormElement> elements;
@@ -66,7 +66,7 @@ public class FSFormDB implements FormDAO {
 
         try (CloseableLock ignored = this.lock.write()) {
             final int id = this.listForms().stream().mapToInt(v -> v).max().orElse(-1) + 1;
-            Form form = new Form(id, this, author, template, elements);
+            Form form = new Form(id, this, author, channelId, template, elements);
             this.updateForm(form);
             return form;
         }
@@ -144,12 +144,14 @@ public class FSFormDB implements FormDAO {
             long authorId = json.get("author").getAsLong();
             User author = this.obelisk.getUserDAO().getUser(authorId).orElseThrow(() -> new NoSuchEntryException("Author does not exist"));
 
+            long channelId = json.get("channel").getAsLong();
+
             String template = json.get("template").getAsString();
 
             JsonArray elementJson = json.getAsJsonArray("elements");
             List<FormElement> elements = FormParser.fromJson(elementJson);
 
-            Form form = new Form(id, this, author, template, elements);
+            Form form = new Form(id, this, author, channelId, template, elements);
             this.cache.put(id, form);
             return Optional.of(form);
         } catch (FileNotFoundException e) {

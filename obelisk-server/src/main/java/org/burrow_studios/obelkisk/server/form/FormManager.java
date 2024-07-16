@@ -102,7 +102,7 @@ public class FormManager implements EventListener {
         }
         event.setChannel(channel);
 
-        Form form = this.obelisk.getFormDAO().createForm(event.getUser(), event.getTemplate());
+        Form form = this.obelisk.getFormDAO().createForm(event.getUser(), channel.getIdLong(), event.getTemplate());
         event.setForm(form);
 
         event.getInteraction().getHook().deleteOriginal().queue();

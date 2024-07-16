@@ -10,13 +10,15 @@ public final class Form {
     private final int id;
     private final FormDAO dao;
     private final User author;
+    private final long channelId;
     private final String template;
     private final List<FormElement> elements;
 
-    public Form(int id, @NotNull FormDAO dao, @NotNull User author, @NotNull String template, @NotNull List<FormElement> elements) {
+    public Form(int id, @NotNull FormDAO dao, @NotNull User author, long channelId, @NotNull String template, @NotNull List<FormElement> elements) {
         this.id = id;
         this.dao = dao;
         this.author = author;
+        this.channelId = channelId;
         this.template = template;
         this.elements = List.copyOf(elements);
     }
@@ -27,6 +29,10 @@ public final class Form {
 
     public @NotNull User getAuthor() {
         return this.author;
+    }
+
+    public long getChannelId() {
+        return this.channelId;
     }
 
     public @NotNull String getTemplate() {
