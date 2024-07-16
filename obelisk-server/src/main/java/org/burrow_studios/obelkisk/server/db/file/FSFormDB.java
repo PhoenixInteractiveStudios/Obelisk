@@ -65,7 +65,7 @@ public class FSFormDB implements FormDAO {
         }
 
         try (CloseableLock ignored = this.lock.write()) {
-            final int id = this.listForms().stream().mapToInt(v -> v).max().orElse(0);
+            final int id = this.listForms().stream().mapToInt(v -> v).max().orElse(-1) + 1;
             Form form = new Form(id, this, author, template, elements);
             this.updateForm(form);
             return form;
