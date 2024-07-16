@@ -2,6 +2,7 @@ package org.burrow_studios.obelkisk.server.form;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import org.burrow_studios.obelisk.api.form.*;
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +16,11 @@ public class FormParser {
         String type = json.get("type").getAsString();
 
         String id    = json.get("id").getAsString();
-        String title = json.get("title").getAsString();
+
+        String title = Optional.ofNullable(json.get("title"))
+                .filter(e -> !e.isJsonNull())
+                .map(JsonElement::getAsString)
+                .orElse(null);
 
         String description = Optional.ofNullable(json.get("description"))
                 .filter(e -> !e.isJsonNull())
@@ -176,10 +181,16 @@ public class FormParser {
         JsonObject json = new JsonObject();
 
         json.addProperty("id", element.getId());
-        json.addProperty("title", element.getTitle());
+
+        if (element.getTitle() != null)
+            json.addProperty("title", element.getTitle());
+        else
+            json.add("title", JsonNull.INSTANCE);
 
         if (element.getDescription() != null)
             json.addProperty("description", element.getDescription());
+        else
+            json.add("description", JsonNull.INSTANCE);
 
 
         if (element instanceof TextElement) {

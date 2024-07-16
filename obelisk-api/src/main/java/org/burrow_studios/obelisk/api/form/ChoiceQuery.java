@@ -10,12 +10,12 @@ public class ChoiceQuery extends QueryElement<String> {
 
     private final List<String> options;
 
-    public ChoiceQuery(@NotNull String id, @NotNull String title, @Nullable String description, @NotNull List<String> options, boolean optional, String defaultValue) {
+    public ChoiceQuery(@NotNull String id, @Nullable String title, @Nullable String description, @NotNull List<String> options, boolean optional, String defaultValue) {
         super(id, title, description, optional, defaultValue);
         this.options = List.copyOf(options);
     }
 
-    public ChoiceQuery(@NotNull String id, @NotNull String title, @Nullable String description, @NotNull List<String> options, boolean optional, String defaultValue, String selected, boolean done) {
+    public ChoiceQuery(@NotNull String id, @Nullable String title, @Nullable String description, @NotNull List<String> options, boolean optional, String defaultValue, String selected, boolean done) {
         super(id, title, description, optional, defaultValue, selected, done);
         this.options = List.copyOf(options);
     }

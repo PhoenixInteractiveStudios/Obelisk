@@ -9,11 +9,11 @@ public class TextQuery extends QueryElement<String> {
     private final int minLength;
     private final int maxLength;
 
-    public TextQuery(@NotNull String id, @NotNull String title, @Nullable String description, boolean optional, String defaultValue) {
+    public TextQuery(@NotNull String id, @Nullable String title, @Nullable String description, boolean optional, String defaultValue) {
         this(id, title, description, 1, 2000, optional, defaultValue);
     }
 
-    public TextQuery(@NotNull String id, @NotNull String title, @Nullable String description, int minLength, int maxLength, boolean optional, String defaultValue) {
+    public TextQuery(@NotNull String id, @Nullable String title, @Nullable String description, int minLength, int maxLength, boolean optional, String defaultValue) {
         super(id, title, description, optional, defaultValue);
 
         if (minLength <= 0)
@@ -26,11 +26,11 @@ public class TextQuery extends QueryElement<String> {
         this.maxLength = maxLength;
     }
 
-    public TextQuery(@NotNull String id, @NotNull String title, @Nullable String description, boolean optional, String defaultValue, String input, boolean done) {
+    public TextQuery(@NotNull String id, @Nullable String title, @Nullable String description, boolean optional, String defaultValue, String input, boolean done) {
         this(id, title, description, 1, 2000, optional, defaultValue, input, done);
     }
 
-    public TextQuery(@NotNull String id, @NotNull String title, @Nullable String description, int minLength, int maxLength, boolean optional, String defaultValue, String input, boolean done) {
+    public TextQuery(@NotNull String id, @Nullable String title, @Nullable String description, int minLength, int maxLength, boolean optional, String defaultValue, String input, boolean done) {
         super(id, title, description, optional, defaultValue, input, done);
 
         this.minLength = minLength;

@@ -8,7 +8,7 @@ public abstract class FormElement {
     private final String title;
     private final String description;
 
-    protected FormElement(@NotNull String id, @NotNull String title, @Nullable String description) {
+    protected FormElement(@NotNull String id, @Nullable String title, @Nullable String description) {
         if (id.isBlank())
             throw new IllegalArgumentException("id must not be blank");
 
@@ -21,7 +21,7 @@ public abstract class FormElement {
         return this.id;
     }
 
-    public @NotNull String getTitle() {
+    public @Nullable String getTitle() {
         return this.title;
     }
 

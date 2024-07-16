@@ -13,11 +13,11 @@ public abstract class QueryElement<T> extends FormElement {
     private final boolean optional;
     private final T defaultValue;
 
-    protected QueryElement(@NotNull String id, @NotNull String title, @Nullable String description, boolean optional, T defaultValue) {
+    protected QueryElement(@NotNull String id, @Nullable String title, @Nullable String description, boolean optional, T defaultValue) {
         this(id, title, description, optional, defaultValue, null, false);
     }
 
-    protected QueryElement(@NotNull String id, @NotNull String title, @Nullable String description, boolean optional, T defaultValue, T value, boolean done) {
+    protected QueryElement(@NotNull String id, @Nullable String title, @Nullable String description, boolean optional, T defaultValue, T value, boolean done) {
         super(id, title, description);
         this.value.set(value);
         this.done.set(done);

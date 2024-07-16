@@ -9,11 +9,11 @@ public class IntQuery extends QueryElement<Integer> {
     private final int min;
     private final int max;
 
-    public IntQuery(@NotNull String id, @NotNull String title, @Nullable String description, boolean optional, Integer defaultValue) {
+    public IntQuery(@NotNull String id, @Nullable String title, @Nullable String description, boolean optional, Integer defaultValue) {
         this(id, title, description, Integer.MIN_VALUE, Integer.MAX_VALUE, optional, defaultValue);
     }
 
-    public IntQuery(@NotNull String id, @NotNull String title, @Nullable String description, int min, int max, boolean optional, Integer defaultValue) {
+    public IntQuery(@NotNull String id, @Nullable String title, @Nullable String description, int min, int max, boolean optional, Integer defaultValue) {
         super(id, title, description, optional, defaultValue);
 
         if (min > max)
@@ -23,7 +23,7 @@ public class IntQuery extends QueryElement<Integer> {
         this.max = max;
     }
 
-    public IntQuery(@NotNull String id, @NotNull String title, @Nullable String description, int min, int max, boolean optional, Integer defaultValue, Integer val, boolean done) {
+    public IntQuery(@NotNull String id, @Nullable String title, @Nullable String description, int min, int max, boolean optional, Integer defaultValue, Integer val, boolean done) {
         super(id, title, description, optional, defaultValue, val, done);
         this.min = min;
         this.max = max;
