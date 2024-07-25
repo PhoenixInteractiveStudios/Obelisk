@@ -1,10 +1,12 @@
 package org.burrow_studios.obelkisk.server.ticket;
 
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
-import org.burrow_studios.obelisk.api.entity.User;
 import org.burrow_studios.obelisk.api.entity.Ticket;
+import org.burrow_studios.obelisk.api.entity.User;
 import org.burrow_studios.obelkisk.server.Obelisk;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,9 +42,18 @@ public class TicketManager {
 
         interaction.deferReply(true).queue();
 
+        Role publicRole = category.getGuild().getPublicRole();
+
         TextChannel channel;
         try {
-            channel = category.createTextChannel("ticket").complete();
+            channel = category.createTextChannel("ticket")
+                    // prevent @everyone from seeing the channel
+                    .addPermissionOverride(publicRole, 0, Permission.VIEW_CHANNEL.getRawValue())
+                    // allow author to see the channel
+                    .addMemberPermissionOverride(author.getSnowflake(), Permission.VIEW_CHANNEL.getRawValue(), 0)
+                    // allow moderators to see the channel
+                    .addRolePermissionOverride(this.obelisk.getConfig().moderationRole(), Permission.VIEW_CHANNEL.getRawValue(), 0)
+                    .complete();
         } catch (RuntimeException e) {
             String errorMsg = this.obelisk.getTextProvider().get("ticket.create.error");
             interaction.getHook().sendMessage(errorMsg).queue();
