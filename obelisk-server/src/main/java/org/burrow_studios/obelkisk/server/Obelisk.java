@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.burrow_studios.obelisk.api.entity.dao.*;
 import org.burrow_studios.obelisk.util.ResourceTools;
-import org.burrow_studios.obelkisk.server.commands.ProjectCommand;
 import org.burrow_studios.obelkisk.server.commands.TicketCommand;
 import org.burrow_studios.obelkisk.server.db.file.FSFormDB;
 import org.burrow_studios.obelkisk.server.db.sql.DatabaseImpl;
@@ -69,7 +68,6 @@ public class Obelisk {
         this.formManager = new FormManager(this);
 
         LOG.info("Initializing JDA");
-        ProjectCommand projectCommand = new ProjectCommand(this);
         TicketCommand ticketCommand = new TicketCommand(this);
         this.jda = JDABuilder.create(config.token(),
                     GatewayIntent.GUILD_MESSAGES,
@@ -86,7 +84,6 @@ public class Obelisk {
                 .addEventListeners(new DiscordAccountListener(this))
                 .addEventListeners(new TicketCreateListener(this))
                 // COMMANDS
-                .addEventListeners(projectCommand)
                 .addEventListeners(ticketCommand)
                 .build();
 
@@ -101,7 +98,6 @@ public class Obelisk {
         this.formManager.onLoad(this.jda);
 
         LOG.info("Upserting commands");
-        guild.upsertCommand(projectCommand.getData()).queue();
         guild.upsertCommand(ticketCommand.getData()).queue();
 
         LOG.info("All done.");
@@ -165,10 +161,6 @@ public class Obelisk {
     }
 
     public @NotNull TicketDAO getTicketDAO() {
-        return this.database;
-    }
-
-    public @NotNull ProjectDAO getProjectDAO() {
         return this.database;
     }
 
