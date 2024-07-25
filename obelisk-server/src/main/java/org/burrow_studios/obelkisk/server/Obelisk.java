@@ -10,7 +10,7 @@ import org.burrow_studios.obelisk.api.entity.dao.*;
 import org.burrow_studios.obelisk.util.ResourceTools;
 import org.burrow_studios.obelkisk.server.commands.TicketCommand;
 import org.burrow_studios.obelkisk.server.db.sql.DatabaseImpl;
-import org.burrow_studios.obelkisk.server.listeners.DiscordAccountListener;
+import org.burrow_studios.obelkisk.server.listeners.UserListener;
 import org.burrow_studios.obelkisk.server.listeners.TicketCreateListener;
 import org.burrow_studios.obelkisk.server.persistence.PersistentConfig;
 import org.burrow_studios.obelkisk.server.text.TextProvider;
@@ -73,7 +73,7 @@ public class Obelisk {
                 .disableCache(CacheFlag.SCHEDULED_EVENTS)
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
                 // LISTENERS
-                .addEventListeners(new DiscordAccountListener(this))
+                .addEventListeners(new UserListener(this))
                 .addEventListeners(new TicketCreateListener(this))
                 // COMMANDS
                 .addEventListeners(ticketCommand)

@@ -1,4 +1,4 @@
 INSERT INTO `users` (
     `snowflake`,
     `name`
-) VALUES (?, NULL, ?);
+) VALUES (?, ?);

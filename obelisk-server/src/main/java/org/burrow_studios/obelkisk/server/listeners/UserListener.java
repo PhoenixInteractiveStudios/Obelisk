@@ -12,14 +12,14 @@ import org.burrow_studios.obelisk.api.entity.dao.UserDAO;
 import org.burrow_studios.obelkisk.server.Obelisk;
 import org.jetbrains.annotations.NotNull;
 
-public class DiscordAccountListener extends ListenerAdapter {
+public class UserListener extends ListenerAdapter {
     private final Obelisk obelisk;
 
-    public DiscordAccountListener(@NotNull Obelisk obelisk) {
+    public UserListener(@NotNull Obelisk obelisk) {
         this.obelisk = obelisk;
     }
 
-    private @NotNull User provideDiscordAccount(long snowflake, @NotNull String name) {
+    private @NotNull User provideUser(long snowflake, @NotNull String name) {
         UserDAO dao = this.obelisk.getUserDAO();
 
         return dao.getUser(snowflake)
@@ -28,7 +28,7 @@ public class DiscordAccountListener extends ListenerAdapter {
 
     private void iterateAll(@NotNull JDA jda) {
         jda.getUsers().forEach(user -> {
-            this.provideDiscordAccount(user.getIdLong(), user.getName());
+            this.provideUser(user.getIdLong(), user.getName());
         });
     }
 
@@ -49,13 +49,13 @@ public class DiscordAccountListener extends ListenerAdapter {
 
     @Override
     public void onUserUpdateName(@NotNull UserUpdateNameEvent event) {
-        User user = this.provideDiscordAccount(event.getUser().getIdLong(), event.getNewName());
+        User user = this.provideUser(event.getUser().getIdLong(), event.getNewName());
 
         user.setName(event.getNewName());
     }
 
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-        this.provideDiscordAccount(event.getUser().getIdLong(), event.getUser().getName());
+        this.provideUser(event.getUser().getIdLong(), event.getUser().getName());
     }
 }

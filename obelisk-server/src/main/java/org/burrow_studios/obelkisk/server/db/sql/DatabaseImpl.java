@@ -56,13 +56,6 @@ public class DatabaseImpl implements TicketDAO, UserDAO, Closeable {
             this.database.execute("ticket/table");
             this.database.execute("ticket/table_users");
 
-            this.database.execute("project/table");
-            this.database.execute("project/table_members");
-
-            this.database.execute("discord/table");
-
-            this.database.execute("minecraft/table");
-
             this.resetTicketIncrement();
         } catch (SQLException e) {
             throw new RuntimeException("Could not create tables", e);
@@ -213,7 +206,7 @@ public class DatabaseImpl implements TicketDAO, UserDAO, Closeable {
 
     @Override
     public @NotNull User createUser(long snowflake, @NotNull String name) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_create")) {
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_create")) {
             stmt.setLong(1, snowflake);
             stmt.setString(2, name);
 
@@ -229,7 +222,7 @@ public class DatabaseImpl implements TicketDAO, UserDAO, Closeable {
     public @NotNull List<User> listUsers() throws DatabaseException {
         List<User> users = new ArrayList<>();
 
-        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_list")) {
+        try (PreparedStatement stmt = this.database.preparedStatement("user/users_list")) {
             ResultSet res = stmt.executeQuery();
 
             while (res.next()) {
@@ -246,7 +239,7 @@ public class DatabaseImpl implements TicketDAO, UserDAO, Closeable {
 
     @Override
     public @NotNull Optional<User> getUser(long snowflake) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_get")) {
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_get")) {
             stmt.setLong(1, snowflake);
 
             ResultSet res = stmt.executeQuery();
@@ -262,7 +255,7 @@ public class DatabaseImpl implements TicketDAO, UserDAO, Closeable {
 
     @Override
     public @NotNull String getUserName(long snowflake) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_name_get")) {
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_name_get")) {
             stmt.setLong(1, snowflake);
 
             ResultSet res = stmt.executeQuery();
@@ -278,7 +271,7 @@ public class DatabaseImpl implements TicketDAO, UserDAO, Closeable {
 
     @Override
     public void setUserName(long snowflake, @NotNull String name) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_name_set")) {
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_name_set")) {
             stmt.setString(1, name);
             stmt.setLong(2, snowflake);
 
@@ -291,7 +284,7 @@ public class DatabaseImpl implements TicketDAO, UserDAO, Closeable {
 
     @Override
     public void deleteUser(long snowflake) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_delete")) {
+        try (PreparedStatement stmt = this.database.preparedStatement("user/user_delete")) {
             stmt.setLong(1, snowflake);
 
             stmt.execute();
