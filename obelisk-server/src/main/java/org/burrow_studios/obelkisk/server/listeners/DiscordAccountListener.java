@@ -7,8 +7,8 @@ import net.dv8tion.jda.api.events.session.SessionRecreateEvent;
 import net.dv8tion.jda.api.events.session.SessionResumeEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.burrow_studios.obelisk.api.entity.DiscordAccount;
-import org.burrow_studios.obelisk.api.entity.dao.DiscordAccountDAO;
+import org.burrow_studios.obelisk.api.entity.User;
+import org.burrow_studios.obelisk.api.entity.dao.UserDAO;
 import org.burrow_studios.obelkisk.server.Obelisk;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,11 +19,11 @@ public class DiscordAccountListener extends ListenerAdapter {
         this.obelisk = obelisk;
     }
 
-    private @NotNull DiscordAccount provideDiscordAccount(long snowflake, @NotNull String name) {
-        DiscordAccountDAO dao = this.obelisk.getDiscordAccountDAO();
+    private @NotNull User provideDiscordAccount(long snowflake, @NotNull String name) {
+        UserDAO dao = this.obelisk.getUserDAO();
 
-        return dao.getDiscordAccount(snowflake)
-                .orElseGet(() -> dao.createDiscordAccount(snowflake, name));
+        return dao.getUser(snowflake)
+                .orElseGet(() -> dao.createUser(snowflake, name));
     }
 
     private void iterateAll(@NotNull JDA jda) {
@@ -49,9 +49,9 @@ public class DiscordAccountListener extends ListenerAdapter {
 
     @Override
     public void onUserUpdateName(@NotNull UserUpdateNameEvent event) {
-        DiscordAccount discordAccount = this.provideDiscordAccount(event.getUser().getIdLong(), event.getNewName());
+        User user = this.provideDiscordAccount(event.getUser().getIdLong(), event.getNewName());
 
-        discordAccount.setName(event.getNewName());
+        user.setName(event.getNewName());
     }
 
     @Override

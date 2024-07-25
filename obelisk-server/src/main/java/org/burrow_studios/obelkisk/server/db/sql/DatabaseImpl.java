@@ -1,8 +1,8 @@
 package org.burrow_studios.obelkisk.server.db.sql;
 
-import org.burrow_studios.obelisk.api.entity.DiscordAccount;
+import org.burrow_studios.obelisk.api.entity.User;
 import org.burrow_studios.obelisk.api.entity.Ticket;
-import org.burrow_studios.obelisk.api.entity.dao.DiscordAccountDAO;
+import org.burrow_studios.obelisk.api.entity.dao.UserDAO;
 import org.burrow_studios.obelisk.api.entity.dao.TicketDAO;
 import org.burrow_studios.obelisk.util.turtle.TurtleGenerator;
 import org.burrow_studios.obelkisk.server.Main;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DatabaseImpl implements TicketDAO, DiscordAccountDAO, Closeable {
+public class DatabaseImpl implements TicketDAO, UserDAO, Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseImpl.class);
 
     private final Obelisk obelisk;
@@ -153,10 +153,10 @@ public class DatabaseImpl implements TicketDAO, DiscordAccountDAO, Closeable {
     }
 
     @Override
-    public @NotNull List<DiscordAccount> getTicketUsers(int id) throws DatabaseException {
-        List<DiscordAccount> users = new ArrayList<>();
+    public @NotNull List<User> getTicketUsers(int id) throws DatabaseException {
+        List<User> users = new ArrayList<>();
 
-        DiscordAccountDAO userDB = this.obelisk.getDiscordAccountDAO();
+        UserDAO userDB = this.obelisk.getUserDAO();
 
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_users_get")) {
             stmt.setInt(1, id);
@@ -166,7 +166,7 @@ public class DatabaseImpl implements TicketDAO, DiscordAccountDAO, Closeable {
             while (res.next()) {
                 long userId = res.getLong("user");
 
-                userDB.getDiscordAccount(userId)
+                userDB.getUser(userId)
                         .ifPresent(users::add);
             }
         } catch (SQLException e) {
@@ -177,7 +177,7 @@ public class DatabaseImpl implements TicketDAO, DiscordAccountDAO, Closeable {
     }
 
     @Override
-    public void addTicketUser(int id, @NotNull DiscordAccount user) {
+    public void addTicketUser(int id, @NotNull User user) {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_user_add")) {
             stmt.setInt(1, id);
             stmt.setLong(2, user.getSnowflake());
@@ -189,7 +189,7 @@ public class DatabaseImpl implements TicketDAO, DiscordAccountDAO, Closeable {
     }
 
     @Override
-    public void removeTicketUser(int id, @NotNull DiscordAccount user) {
+    public void removeTicketUser(int id, @NotNull User user) {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_user_remove")) {
             stmt.setInt(1, id);
             stmt.setLong(2, user.getSnowflake());
@@ -212,7 +212,7 @@ public class DatabaseImpl implements TicketDAO, DiscordAccountDAO, Closeable {
     }
 
     @Override
-    public @NotNull DiscordAccount createDiscordAccount(long snowflake, @NotNull String name) throws DatabaseException {
+    public @NotNull User createUser(long snowflake, @NotNull String name) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_create")) {
             stmt.setLong(1, snowflake);
             stmt.setString(2, name);
@@ -222,12 +222,12 @@ public class DatabaseImpl implements TicketDAO, DiscordAccountDAO, Closeable {
             throw new DatabaseException(e);
         }
 
-        return new DiscordAccount(snowflake, this);
+        return new User(snowflake, this);
     }
 
     @Override
-    public @NotNull List<DiscordAccount> listDiscordAccounts() throws DatabaseException {
-        List<DiscordAccount> discordAccounts = new ArrayList<>();
+    public @NotNull List<User> listUsers() throws DatabaseException {
+        List<User> users = new ArrayList<>();
 
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_list")) {
             ResultSet res = stmt.executeQuery();
@@ -235,17 +235,17 @@ public class DatabaseImpl implements TicketDAO, DiscordAccountDAO, Closeable {
             while (res.next()) {
                 long snowflake = res.getLong("snowflake");
 
-                discordAccounts.add(new DiscordAccount(snowflake, this));
+                users.add(new User(snowflake, this));
             }
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
 
-        return Collections.unmodifiableList(discordAccounts);
+        return Collections.unmodifiableList(users);
     }
 
     @Override
-    public @NotNull Optional<DiscordAccount> getDiscordAccount(long snowflake) throws DatabaseException {
+    public @NotNull Optional<User> getUser(long snowflake) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_get")) {
             stmt.setLong(1, snowflake);
 
@@ -254,14 +254,14 @@ public class DatabaseImpl implements TicketDAO, DiscordAccountDAO, Closeable {
             if (!res.next())
                 return Optional.empty();
 
-            return Optional.of(new DiscordAccount(snowflake, this));
+            return Optional.of(new User(snowflake, this));
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
     }
 
     @Override
-    public @NotNull String getDiscordAccountName(long snowflake) throws DatabaseException {
+    public @NotNull String getUserName(long snowflake) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_name_get")) {
             stmt.setLong(1, snowflake);
 
@@ -277,7 +277,7 @@ public class DatabaseImpl implements TicketDAO, DiscordAccountDAO, Closeable {
     }
 
     @Override
-    public void setDiscordAccountName(long snowflake, @NotNull String name) throws DatabaseException {
+    public void setUserName(long snowflake, @NotNull String name) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_name_set")) {
             stmt.setString(1, name);
             stmt.setLong(2, snowflake);
@@ -290,7 +290,7 @@ public class DatabaseImpl implements TicketDAO, DiscordAccountDAO, Closeable {
     }
 
     @Override
-    public void deleteDiscordAccount(long snowflake) throws DatabaseException {
+    public void deleteUser(long snowflake) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_delete")) {
             stmt.setLong(1, snowflake);
 
