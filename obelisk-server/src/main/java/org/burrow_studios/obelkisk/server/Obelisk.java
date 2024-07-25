@@ -12,7 +12,6 @@ import org.burrow_studios.obelkisk.server.commands.ProjectCommand;
 import org.burrow_studios.obelkisk.server.commands.TicketCommand;
 import org.burrow_studios.obelkisk.server.db.file.FSFormDB;
 import org.burrow_studios.obelkisk.server.db.sql.DatabaseImpl;
-import org.burrow_studios.obelkisk.server.event.EventManager;
 import org.burrow_studios.obelkisk.server.form.FormManager;
 import org.burrow_studios.obelkisk.server.listeners.DiscordAccountListener;
 import org.burrow_studios.obelkisk.server.listeners.TicketCreateListener;
@@ -29,7 +28,6 @@ import java.io.IOException;
 public class Obelisk {
     private static final Logger LOG = LoggerFactory.getLogger(Obelisk.class);
 
-    private EventManager eventManager;
     private TicketManager ticketManager;
     private FormManager formManager;
     private TextProvider textProvider;
@@ -53,9 +51,6 @@ public class Obelisk {
 
         LOG.debug("Reading config");
         this.config = Config.fromFile(new File(Main.DIR, "config.properties"));
-
-        LOG.info("Initializing EventManager");
-        this.eventManager = new EventManager();
 
         LOG.info("Parsing text.json");
         this.textProvider = new TextProvider(new File(Main.DIR, "text.json"));
@@ -151,10 +146,6 @@ public class Obelisk {
 
     public @NotNull PersistentConfig getPersistentConfig() {
         return this.persistentConfig;
-    }
-
-    public @NotNull EventManager getEventManager() {
-        return this.eventManager;
     }
 
     public @NotNull TextProvider getTextProvider() {
