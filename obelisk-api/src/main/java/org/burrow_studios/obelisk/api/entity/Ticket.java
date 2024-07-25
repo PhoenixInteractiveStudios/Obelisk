@@ -22,15 +22,15 @@ public final class Ticket {
         return this.dao.getTicketChannel(this.id);
     }
 
-    public @NotNull List<? extends User> getUsers() {
+    public @NotNull List<? extends DiscordAccount> getUsers() {
         return this.dao.getTicketUsers(this.id);
     }
 
-    public void addUser(@NotNull User user) {
+    public void addUser(@NotNull DiscordAccount user) {
         this.dao.addTicketUser(this.id, user);
     }
 
-    public void removeUser(@NotNull User user) {
+    public void removeUser(@NotNull DiscordAccount user) {
         this.dao.removeTicketUser(this.id, user);
     }
 

@@ -2,7 +2,6 @@ package org.burrow_studios.obelisk.api.entity;
 
 import org.burrow_studios.obelisk.api.entity.dao.DiscordAccountDAO;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class DiscordAccount {
     private final long snowflake;
@@ -17,16 +16,8 @@ public final class DiscordAccount {
         return this.snowflake;
     }
 
-    public @Nullable User getUser() {
-        return this.dao.getDiscordAccountUser(this.snowflake);
-    }
-
     public @NotNull String getName() {
         return this.dao.getDiscordAccountName(this.snowflake);
-    }
-
-    public void setUser(@Nullable User user) {
-        this.dao.setDiscordAccountUser(this.snowflake, user);
     }
 
     public void setName(@NotNull String name) {

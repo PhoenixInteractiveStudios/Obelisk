@@ -139,10 +139,6 @@ public class Obelisk {
         return this.ticketManager;
     }
 
-    public @NotNull UserDAO getUserDAO() {
-        return this.database;
-    }
-
     public @NotNull TicketDAO getTicketDAO() {
         return this.database;
     }

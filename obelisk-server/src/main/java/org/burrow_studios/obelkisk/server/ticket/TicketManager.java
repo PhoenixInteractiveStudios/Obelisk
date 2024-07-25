@@ -5,7 +5,6 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import org.burrow_studios.obelisk.api.entity.DiscordAccount;
 import org.burrow_studios.obelisk.api.entity.Ticket;
-import org.burrow_studios.obelisk.api.entity.User;
 import org.burrow_studios.obelkisk.server.Obelisk;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,11 +20,8 @@ public class TicketManager {
     // interaction should already be filtered (this has to be an actual ticket create interaction)
     public void createTicket(@NotNull IReplyCallback interaction) {
         // create user
-        DiscordAccount discordAccount = this.obelisk.getDiscordAccountDAO().getDiscordAccount(interaction.getUser().getIdLong())
+        DiscordAccount author = this.obelisk.getDiscordAccountDAO().getDiscordAccount(interaction.getUser().getIdLong())
                 .orElseGet(() -> this.obelisk.getDiscordAccountDAO().createDiscordAccount(interaction.getUser().getIdLong(), interaction.getUser().getName()));
-        User author = discordAccount.getUser();
-        if (author == null)
-            author = this.obelisk.getUserDAO().createUser(discordAccount.getName(), null);
 
 
 

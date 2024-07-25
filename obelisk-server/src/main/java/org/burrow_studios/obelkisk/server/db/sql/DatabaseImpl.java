@@ -1,14 +1,14 @@
 package org.burrow_studios.obelkisk.server.db.sql;
 
-import org.burrow_studios.obelisk.api.entity.*;
-import org.burrow_studios.obelisk.api.entity.dao.*;
+import org.burrow_studios.obelisk.api.entity.DiscordAccount;
+import org.burrow_studios.obelisk.api.entity.Ticket;
+import org.burrow_studios.obelisk.api.entity.dao.DiscordAccountDAO;
+import org.burrow_studios.obelisk.api.entity.dao.TicketDAO;
 import org.burrow_studios.obelisk.util.turtle.TurtleGenerator;
 import org.burrow_studios.obelkisk.server.Main;
 import org.burrow_studios.obelkisk.server.Obelisk;
 import org.burrow_studios.obelkisk.server.exceptions.DatabaseException;
-import org.burrow_studios.obelkisk.server.exceptions.NoSuchEntryException;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteConfig;
@@ -16,11 +16,16 @@ import org.sqlite.SQLiteConfig;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
-import java.util.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Closeable {
+public class DatabaseImpl implements TicketDAO, DiscordAccountDAO, Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseImpl.class);
 
     private final Obelisk obelisk;
@@ -79,127 +84,6 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Clos
     }
 
     /* - - - */
-
-    @Override
-    public @NotNull User createUser(@NotNull String name, @Nullable String pronouns) throws DatabaseException {
-        final long id = this.userIds.newId();
-
-        try (PreparedStatement stmt = this.database.preparedStatement("user/user_create")) {
-            stmt.setLong(1, id);
-            stmt.setString(2, name);
-            stmt.setString(3, pronouns);
-
-            stmt.execute();
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-
-        return new User(id, this);
-    }
-
-    @Override
-    public @NotNull List<User> listUsers() throws DatabaseException {
-        List<User> users = new ArrayList<>();
-
-        try (PreparedStatement stmt = this.database.preparedStatement("user/users_list")) {
-            ResultSet res = stmt.executeQuery();
-
-            while (res.next()) {
-                long id = res.getLong("id");
-
-                users.add(new User(id, this));
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-
-        return Collections.unmodifiableList(users);
-    }
-
-    @Override
-    public @NotNull Optional<User> getUser(long id) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("user/user_get")) {
-            stmt.setLong(1, id);
-
-            ResultSet res = stmt.executeQuery();
-
-            if (!res.next())
-                return Optional.empty();
-
-            return Optional.of(new User(id, this));
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
-    public @NotNull String getUserName(long id) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("user/user_name_get")) {
-            stmt.setLong(1, id);
-
-            ResultSet res = stmt.executeQuery();
-
-            if (!res.next())
-                throw new DatabaseException("User " + id + " does not exist");
-
-            return res.getString("name");
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
-    public @Nullable String getUserPronouns(long id) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("user/user_pronouns_get")) {
-            stmt.setLong(1, id);
-
-            ResultSet res = stmt.executeQuery();
-
-            if (!res.next())
-                throw new DatabaseException("User " + id + " does not exist");
-
-            return res.getString("name");
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
-    public void setUserName(long id, @NotNull String name) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("user/user_name_set")) {
-            stmt.setString(1, name);
-            stmt.setLong(2, id);
-
-            stmt.execute();
-        } catch (SQLException e) {
-            // TODO: check for error and maybe throw a NoSuchEntryException
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
-    public void setUserPronouns(long id, @Nullable String pronouns) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("user/user_pronouns_set")) {
-            stmt.setString(1, pronouns);
-            stmt.setLong(2, id);
-
-            stmt.execute();
-        } catch (SQLException e) {
-            // TODO: check for error and maybe throw a NoSuchEntryException
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
-    public void deleteUser(long id) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("user/user_delete")) {
-            stmt.setLong(1, id);
-
-            stmt.execute();
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-    }
 
     @Override
     public @NotNull Ticket createTicket(long channel) throws DatabaseException {
@@ -269,10 +153,10 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Clos
     }
 
     @Override
-    public @NotNull List<User> getTicketUsers(int id) throws DatabaseException {
-        List<User> users = new ArrayList<>();
+    public @NotNull List<DiscordAccount> getTicketUsers(int id) throws DatabaseException {
+        List<DiscordAccount> users = new ArrayList<>();
 
-        UserDAO userDB = this.obelisk.getUserDAO();
+        DiscordAccountDAO userDB = this.obelisk.getDiscordAccountDAO();
 
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_users_get")) {
             stmt.setInt(1, id);
@@ -282,7 +166,7 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Clos
             while (res.next()) {
                 long userId = res.getLong("user");
 
-                userDB.getUser(userId)
+                userDB.getDiscordAccount(userId)
                         .ifPresent(users::add);
             }
         } catch (SQLException e) {
@@ -293,10 +177,10 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Clos
     }
 
     @Override
-    public void addTicketUser(int id, @NotNull User user) {
+    public void addTicketUser(int id, @NotNull DiscordAccount user) {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_user_add")) {
             stmt.setInt(1, id);
-            stmt.setLong(2, user.getId());
+            stmt.setLong(2, user.getSnowflake());
 
             stmt.execute();
         } catch (SQLException e) {
@@ -305,10 +189,10 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Clos
     }
 
     @Override
-    public void removeTicketUser(int id, @NotNull User user) {
+    public void removeTicketUser(int id, @NotNull DiscordAccount user) {
         try (PreparedStatement stmt = this.database.preparedStatement("ticket/ticket_user_remove")) {
             stmt.setInt(1, id);
-            stmt.setLong(2, user.getId());
+            stmt.setLong(2, user.getSnowflake());
 
             stmt.execute();
         } catch (SQLException e) {
@@ -377,28 +261,6 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Clos
     }
 
     @Override
-    public @Nullable User getDiscordAccountUser(long snowflake) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_user_get")) {
-            stmt.setLong(1, snowflake);
-
-            ResultSet res = stmt.executeQuery();
-
-            if (!res.next())
-                return null;
-
-            long userId = res.getLong("user");
-
-            if (res.wasNull())
-                return null;
-
-            return this.obelisk.getUserDAO().getUser(userId)
-                    .orElseThrow(NoSuchEntryException::new);
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
     public @NotNull String getDiscordAccountName(long snowflake) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_name_get")) {
             stmt.setLong(1, snowflake);
@@ -409,22 +271,6 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Clos
                 throw new DatabaseException("DiscordAccount " + snowflake + " does not exist");
 
             return res.getString("name");
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
-    public void setDiscordAccountUser(long snowflake, @Nullable User user) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_user_set")) {
-            if (user == null)
-                stmt.setNull(1, Types.BIGINT);
-            else
-                stmt.setLong(1, user.getId());
-
-            stmt.setLong(2, snowflake);
-
-            stmt.execute();
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
