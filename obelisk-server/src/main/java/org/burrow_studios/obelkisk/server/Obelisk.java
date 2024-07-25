@@ -9,9 +9,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.burrow_studios.obelisk.api.entity.dao.*;
 import org.burrow_studios.obelisk.util.ResourceTools;
 import org.burrow_studios.obelkisk.server.commands.TicketCommand;
-import org.burrow_studios.obelkisk.server.db.file.FSFormDB;
 import org.burrow_studios.obelkisk.server.db.sql.DatabaseImpl;
-import org.burrow_studios.obelkisk.server.form.FormManager;
 import org.burrow_studios.obelkisk.server.listeners.DiscordAccountListener;
 import org.burrow_studios.obelkisk.server.listeners.TicketCreateListener;
 import org.burrow_studios.obelkisk.server.persistence.PersistentConfig;
@@ -28,10 +26,8 @@ public class Obelisk {
     private static final Logger LOG = LoggerFactory.getLogger(Obelisk.class);
 
     private TicketManager ticketManager;
-    private FormManager formManager;
     private TextProvider textProvider;
     private DatabaseImpl database;
-    private FSFormDB formDB;
     private JDA jda;
 
     private PersistentConfig persistentConfig;
@@ -59,13 +55,9 @@ public class Obelisk {
 
         LOG.info("Initializing database");
         this.database = new DatabaseImpl(this, new File(Main.DIR, "obelisk.db"));
-        this.formDB   = new     FSFormDB(this, new File(Main.DIR, "forms"));
 
         LOG.info("Initializing TicketManager");
         this.ticketManager = new TicketManager(this);
-
-        LOG.info("Initializing FormManager");
-        this.formManager = new FormManager(this);
 
         LOG.info("Initializing JDA");
         TicketCommand ticketCommand = new TicketCommand(this);
@@ -93,9 +85,6 @@ public class Obelisk {
 
         LOG.info("Validating config");
         Guild guild = this.config.validate(this.jda);
-
-        LOG.info("Indexing form templates");
-        this.formManager.onLoad(this.jda);
 
         LOG.info("Upserting commands");
         guild.upsertCommand(ticketCommand.getData()).queue();
@@ -125,8 +114,6 @@ public class Obelisk {
             this.database = null;
         }
 
-        this.formDB = null;
-        this.formManager = null;
         this.ticketManager = null;
         this.textProvider = null;
 
@@ -152,10 +139,6 @@ public class Obelisk {
         return this.ticketManager;
     }
 
-    public @NotNull FormManager getFormManager() {
-        return this.formManager;
-    }
-
     public @NotNull UserDAO getUserDAO() {
         return this.database;
     }
@@ -166,9 +149,5 @@ public class Obelisk {
 
     public @NotNull DiscordAccountDAO getDiscordAccountDAO() {
         return this.database;
-    }
-
-    public @NotNull FormDAO getFormDAO() {
-        return this.formDB;
     }
 }
