@@ -168,10 +168,6 @@ public class Obelisk {
         return this.database;
     }
 
-    public @NotNull MinecraftAccountDAO getMinecraftDAO() {
-        return this.database;
-    }
-
     public @NotNull FormDAO getFormDAO() {
         return this.formDB;
     }

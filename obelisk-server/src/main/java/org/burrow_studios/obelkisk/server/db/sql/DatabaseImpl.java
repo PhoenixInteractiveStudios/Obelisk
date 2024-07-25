@@ -20,7 +20,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, MinecraftAccountDAO, Closeable {
+public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Closeable {
     private static final Logger LOG = LoggerFactory.getLogger(DatabaseImpl.class);
 
     private final Obelisk obelisk;
@@ -447,130 +447,6 @@ public class DatabaseImpl implements UserDAO, TicketDAO, DiscordAccountDAO, Mine
     public void deleteDiscordAccount(long snowflake) throws DatabaseException {
         try (PreparedStatement stmt = this.database.preparedStatement("discord/discord_delete")) {
             stmt.setLong(1, snowflake);
-
-            stmt.execute();
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
-    public @NotNull MinecraftAccount createMinecraftAccount(@NotNull UUID uuid, @NotNull String name) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_create")) {
-            stmt.setString(1, uuid.toString());
-            stmt.setString(2, name);
-
-            stmt.execute();
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-
-        return new MinecraftAccount(uuid, this);
-    }
-
-    @Override
-    public @NotNull List<MinecraftAccount> listMinecraftAccounts() throws DatabaseException {
-        List<MinecraftAccount> minecraftAccounts = new ArrayList<>();
-
-        try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_list")) {
-            ResultSet res = stmt.executeQuery();
-
-            while (res.next()) {
-                String uuidStr = res.getString("uuid");
-                UUID uuid = UUID.fromString(uuidStr);
-
-                minecraftAccounts.add(new MinecraftAccount(uuid, this));
-            }
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-
-        return Collections.unmodifiableList(minecraftAccounts);
-    }
-
-    @Override
-    public @NotNull Optional<MinecraftAccount> getMinecraftAccount(@NotNull UUID uuid) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_get")) {
-            stmt.setString(1, uuid.toString());
-
-            ResultSet res = stmt.executeQuery();
-
-            if (!res.next())
-                return Optional.empty();
-
-            return Optional.of(new MinecraftAccount(uuid, this));
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
-    public @Nullable User getMinecraftAccountUser(@NotNull UUID uuid) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_user_get")) {
-            stmt.setString(1, uuid.toString());
-
-            ResultSet res = stmt.executeQuery();
-
-            if (!res.next())
-                return null;
-
-            long userId = res.getLong("user");
-            return this.obelisk.getUserDAO().getUser(userId)
-                    .orElseThrow(NoSuchEntryException::new);
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
-    public @NotNull String getMinecraftAccountName(@NotNull UUID uuid) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_name_get")) {
-            stmt.setString(1, uuid.toString());
-
-            ResultSet res = stmt.executeQuery();
-
-            if (!res.next())
-                throw new DatabaseException("MinecraftAccount " + uuid + " does not exist");
-
-            return res.getString("name");
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
-    public void setMinecraftAccountUser(@NotNull UUID uuid, @Nullable User user) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_user_set")) {
-            if (user == null)
-                stmt.setNull(1, Types.BIGINT);
-            else
-                stmt.setLong(1, user.getId());
-
-            stmt.setString(2, uuid.toString());
-
-            stmt.execute();
-        } catch (SQLException e) {
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
-    public void setMinecraftAccountName(@NotNull UUID uuid, @NotNull String name) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_name_set")) {
-            stmt.setString(1, name);
-            stmt.setString(2, uuid.toString());
-
-            stmt.execute();
-        } catch (SQLException e) {
-            // TODO: check for error and maybe throw a NoSuchEntryException
-            throw new DatabaseException(e);
-        }
-    }
-
-    @Override
-    public void deleteMinecraftAccount(@NotNull UUID uuid) throws DatabaseException {
-        try (PreparedStatement stmt = this.database.preparedStatement("minecraft/minecraft_delete")) {
-            stmt.setString(1, uuid.toString());
 
             stmt.execute();
         } catch (SQLException e) {
