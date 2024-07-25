@@ -1,5 +1,4 @@
-INSERT INTO `discord` (
+INSERT INTO `users` (
     `snowflake`,
-    `user`,
     `name`
 ) VALUES (?, NULL, ?);

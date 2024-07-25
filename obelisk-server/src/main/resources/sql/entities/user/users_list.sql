@@ -1,0 +1,1 @@
+SELECT `snowflake` FROM `users`;
