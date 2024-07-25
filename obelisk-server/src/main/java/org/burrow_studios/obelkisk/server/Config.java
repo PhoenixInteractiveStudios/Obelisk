@@ -16,7 +16,6 @@ public record Config(
         String token,
         long ticketCreateChannel,
         long ticketCategory,
-        long superuserRole,
         long moderationRole
 ) {
     public static @NotNull Config fromFile(@NotNull File file) throws IOException {
@@ -51,16 +50,6 @@ public record Config(
             throw new IllegalArgumentException("ticket.category must be a valid id", e);
         }
 
-        String superuserRoleStr = properties.getProperty("role.superuser");
-        if (superuserRoleStr == null)
-            throw new IllegalArgumentException("role.superuser may not be null");
-        long superuserRole;
-        try {
-            superuserRole = Long.parseLong(superuserRoleStr);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("role.superuser must be a valid id", e);
-        }
-
         String moderationRoleStr = properties.getProperty("role.moderation");
         if (moderationRoleStr == null)
             throw new IllegalArgumentException("role.moderation may not be null");
@@ -71,7 +60,7 @@ public record Config(
             throw new IllegalArgumentException("role.moderation must be a valid id", e);
         }
 
-        return new Config(token, ticketCreateChannel, ticketCategory, superuserRole, moderationRole);
+        return new Config(token, ticketCreateChannel, ticketCategory, moderationRole);
     }
 
     public @NotNull Guild validate(@NotNull JDA jda) {
@@ -87,12 +76,6 @@ public record Config(
             throw new IllegalArgumentException("ticket.category does not exist");
         if (!guild.equals(ticketCategory.getGuild()))
             throw new IllegalArgumentException("ticket.category does not match the expected guild");
-
-        Role superuserRole = jda.getRoleById(this.superuserRole);
-        if (superuserRole == null)
-            throw new IllegalArgumentException("role.superuser does not exist");
-        if (!guild.equals(superuserRole.getGuild()))
-            throw new IllegalArgumentException("role.superuser does not match the expected guild");
 
         Role moderationRole = jda.getRoleById(this.moderationRole);
         if (moderationRole == null)
