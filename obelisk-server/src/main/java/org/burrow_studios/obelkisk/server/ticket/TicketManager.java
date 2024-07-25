@@ -53,7 +53,8 @@ public class TicketManager {
         Ticket ticket = this.obelisk.getTicketDAO().createTicket(channel.getIdLong());
         ticket.addUser(author);
 
-        interaction.getHook().deleteOriginal().queue();
+        String successMsg = this.obelisk.getTextProvider().get("ticket.create.success", "channel", channel.getAsMention());
+        interaction.getHook().editOriginal(successMsg).queue();
 
 
 
