@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public final class Ticket {
     private final int id;
     private final TicketDAO dao;

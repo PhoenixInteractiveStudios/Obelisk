@@ -3,6 +3,7 @@ package org.burrow_studios.obelisk.api.entity;
 import org.burrow_studios.obelisk.api.entity.dao.UserDAO;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("unused")
 public final class User {
     private final long snowflake;
     private final UserDAO dao;

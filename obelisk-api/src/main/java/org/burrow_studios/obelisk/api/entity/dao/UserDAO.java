@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Optional;
 
+@SuppressWarnings("unused")
 public interface UserDAO {
     @NotNull User createUser(long snowflake, @NotNull String name);
 

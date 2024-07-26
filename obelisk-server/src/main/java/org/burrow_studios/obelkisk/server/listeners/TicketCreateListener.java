@@ -137,6 +137,7 @@ public class TicketCreateListener extends ListenerAdapter {
 
         String messageContent = this.obelisk.getTextProvider().get("ticket.create.header");
 
+        // noinspection CodeBlock2Expr
         channel.sendMessage(messageContent)
                 .addActionRow(getButton())
                 .queue(message -> {

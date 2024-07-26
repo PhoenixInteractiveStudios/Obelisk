@@ -1,10 +1,9 @@
 package org.burrow_studios.obelkisk.server.db.sql;
 
-import org.burrow_studios.obelisk.api.entity.User;
 import org.burrow_studios.obelisk.api.entity.Ticket;
-import org.burrow_studios.obelisk.api.entity.dao.UserDAO;
+import org.burrow_studios.obelisk.api.entity.User;
 import org.burrow_studios.obelisk.api.entity.dao.TicketDAO;
-import org.burrow_studios.obelisk.util.turtle.TurtleGenerator;
+import org.burrow_studios.obelisk.api.entity.dao.UserDAO;
 import org.burrow_studios.obelkisk.server.Main;
 import org.burrow_studios.obelkisk.server.Obelisk;
 import org.burrow_studios.obelkisk.server.exceptions.DatabaseException;
@@ -30,9 +29,7 @@ public class DatabaseImpl implements TicketDAO, UserDAO, Closeable {
 
     private final Obelisk obelisk;
     private final SQLDB database;
-    private final TurtleGenerator userIds = TurtleGenerator.get("users");
     private final AtomicInteger  ticketIncrement = new AtomicInteger(0);
-    private final AtomicInteger projectIncrement = new AtomicInteger(0);
 
     public DatabaseImpl(@NotNull Obelisk obelisk, @NotNull File file) {
         this.obelisk = obelisk;

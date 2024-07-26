@@ -27,9 +27,7 @@ public class UserListener extends ListenerAdapter {
     }
 
     private void iterateAll(@NotNull JDA jda) {
-        jda.getUsers().forEach(user -> {
-            this.provideUser(user.getIdLong(), user.getName());
-        });
+        jda.getUsers().forEach(user -> this.provideUser(user.getIdLong(), user.getName()));
     }
 
     @Override
