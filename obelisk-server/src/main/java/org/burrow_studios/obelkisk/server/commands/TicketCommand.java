@@ -17,8 +17,7 @@ import org.burrow_studios.obelisk.api.entity.Ticket;
 import org.burrow_studios.obelkisk.server.Obelisk;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class TicketCommand extends ListenerAdapter {
     private final Obelisk obelisk;
@@ -34,9 +33,21 @@ public class TicketCommand extends ListenerAdapter {
         if ("list".equals(event.getSubcommandName())) {
             event.deferReply(true).queue();
 
-            List<? extends Ticket> tickets = this.obelisk.getTicketDAO().listTickets();
+            Map<Ticket, TextChannel> openTickets = new LinkedHashMap<>();
+            List<? extends Ticket>    allTickets = this.obelisk.getTicketDAO().listTickets();
 
-            if (tickets.isEmpty()) {
+            for (Ticket ticket : allTickets) {
+                // ignore if ticket has no channel
+                TextChannel channel = event.getJDA().getTextChannelById(ticket.getChannelId());
+                if (channel == null) continue;
+
+                // ignore if ticket is archived
+                if (channel.getParentCategoryIdLong() == this.obelisk.getConfig().ticketArchive()) continue;
+
+                openTickets.put(ticket, channel);
+            }
+
+            if (openTickets.isEmpty()) {
                 event.getHook().sendMessage("There are no open tickets").queue();
                 return;
             }
@@ -46,18 +57,10 @@ public class TicketCommand extends ListenerAdapter {
             Guild guild = event.getGuild();
             assert guild != null;
 
-            for (Ticket ticket : tickets) {
+            openTickets.forEach((ticket, channel) -> {
                 response.addContent("`" + ticket.getId() + "`");
-                response.addContent("  ");
-
-                TextChannel channel = guild.getTextChannelById(ticket.getChannelId());
-
-                if (channel != null) {
-                    response.addContent(channel.getAsMention());
-                } else {
-                    response.addContent("_Unknown channel_");
-                }
-            }
+                response.addContent("  " + channel.getAsMention());
+            });
 
             response.queue();
             return;
