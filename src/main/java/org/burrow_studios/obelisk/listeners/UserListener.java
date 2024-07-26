@@ -1,4 +1,4 @@
-package org.burrow_studios.obelkisk.listeners;
+package org.burrow_studios.obelisk.listeners;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
@@ -7,9 +7,9 @@ import net.dv8tion.jda.api.events.session.SessionRecreateEvent;
 import net.dv8tion.jda.api.events.session.SessionResumeEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.burrow_studios.obelkisk.Obelisk;
-import org.burrow_studios.obelkisk.entity.dao.UserDAO;
-import org.burrow_studios.obelkisk.entity.User;
+import org.burrow_studios.obelisk.Obelisk;
+import org.burrow_studios.obelisk.entity.dao.UserDAO;
+import org.burrow_studios.obelisk.entity.User;
 import org.jetbrains.annotations.NotNull;
 
 public class UserListener extends ListenerAdapter {

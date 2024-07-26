@@ -1,4 +1,4 @@
-package org.burrow_studios.obelkisk.ticket;
+package org.burrow_studios.obelisk.ticket;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
@@ -7,9 +7,9 @@ import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
 import net.dv8tion.jda.api.managers.channel.concrete.TextChannelManager;
-import org.burrow_studios.obelkisk.entity.Ticket;
-import org.burrow_studios.obelkisk.entity.User;
-import org.burrow_studios.obelkisk.Obelisk;
+import org.burrow_studios.obelisk.entity.Ticket;
+import org.burrow_studios.obelisk.entity.User;
+import org.burrow_studios.obelisk.Obelisk;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;

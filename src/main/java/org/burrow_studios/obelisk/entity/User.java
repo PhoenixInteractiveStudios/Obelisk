@@ -1,6 +1,6 @@
-package org.burrow_studios.obelkisk.entity;
+package org.burrow_studios.obelisk.entity;
 
-import org.burrow_studios.obelkisk.entity.dao.UserDAO;
+import org.burrow_studios.obelisk.entity.dao.UserDAO;
 import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")

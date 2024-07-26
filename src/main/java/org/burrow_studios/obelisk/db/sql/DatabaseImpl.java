@@ -1,12 +1,12 @@
-package org.burrow_studios.obelkisk.db.sql;
+package org.burrow_studios.obelisk.db.sql;
 
-import org.burrow_studios.obelkisk.exceptions.DatabaseException;
-import org.burrow_studios.obelkisk.entity.Ticket;
-import org.burrow_studios.obelkisk.entity.User;
-import org.burrow_studios.obelkisk.entity.dao.TicketDAO;
-import org.burrow_studios.obelkisk.entity.dao.UserDAO;
-import org.burrow_studios.obelkisk.Main;
-import org.burrow_studios.obelkisk.Obelisk;
+import org.burrow_studios.obelisk.exceptions.DatabaseException;
+import org.burrow_studios.obelisk.entity.Ticket;
+import org.burrow_studios.obelisk.entity.User;
+import org.burrow_studios.obelisk.entity.dao.TicketDAO;
+import org.burrow_studios.obelisk.entity.dao.UserDAO;
+import org.burrow_studios.obelisk.Main;
+import org.burrow_studios.obelisk.Obelisk;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

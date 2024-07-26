@@ -1,4 +1,4 @@
-package org.burrow_studios.obelkisk;
+package org.burrow_studios.obelisk;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;

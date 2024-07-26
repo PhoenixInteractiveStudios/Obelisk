@@ -1,4 +1,4 @@
-package org.burrow_studios.obelkisk.commands;
+package org.burrow_studios.obelisk.commands;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,8 +16,8 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.requests.restaction.WebhookMessageCreateAction;
 import net.dv8tion.jda.internal.interactions.CommandDataImpl;
-import org.burrow_studios.obelkisk.entity.Ticket;
-import org.burrow_studios.obelkisk.Obelisk;
+import org.burrow_studios.obelisk.entity.Ticket;
+import org.burrow_studios.obelisk.Obelisk;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedHashMap;

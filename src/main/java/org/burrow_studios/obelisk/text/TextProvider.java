@@ -1,4 +1,4 @@
-package org.burrow_studios.obelkisk.text;
+package org.burrow_studios.obelisk.text;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;

@@ -1,4 +1,4 @@
-package org.burrow_studios.obelkisk.exceptions;
+package org.burrow_studios.obelisk.exceptions;
 
 public class DatabaseException extends RuntimeException {
     public DatabaseException() {

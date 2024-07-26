@@ -1,7 +1,7 @@
-package org.burrow_studios.obelkisk.entity.dao;
+package org.burrow_studios.obelisk.entity.dao;
 
-import org.burrow_studios.obelkisk.entity.Ticket;
-import org.burrow_studios.obelkisk.entity.User;
+import org.burrow_studios.obelisk.entity.Ticket;
+import org.burrow_studios.obelisk.entity.User;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
