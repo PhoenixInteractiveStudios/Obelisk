@@ -8,7 +8,7 @@
 [build-shield-util]: https://img.shields.io/github/actions/workflow/status/BurrowStudios/Obelisk/build-util.yaml?label=Utils
 
 <!--suppress CheckImageSize, HtmlRequiredAltAttribute -->
-<img align="right" src=".github/BurrowStudios.png" height="200" width="200">
+<img align="right" src=".github/Obelisk.png" height="200" width="200">
 
 [![license-shield][]][license]
 [![release-shield][]][release]
