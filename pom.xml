@@ -6,7 +6,7 @@
 
     <groupId>org.burrow_studios.obelisk</groupId>
     <artifactId>obelisk</artifactId>
-    <version>1.0-alpha.1</version>
+    <version>1.0.0</version>
 
     <name>Obelisk</name>
     <description>Burrow Studios Support System</description>
