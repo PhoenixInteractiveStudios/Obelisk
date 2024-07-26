@@ -1,7 +1,10 @@
 package org.burrow_studios.obelkisk.server.commands;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -17,7 +20,10 @@ import org.burrow_studios.obelisk.api.entity.Ticket;
 import org.burrow_studios.obelkisk.server.Obelisk;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class TicketCommand extends ListenerAdapter {
     private final Obelisk obelisk;
@@ -29,6 +35,18 @@ public class TicketCommand extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if (!event.getName().equals("ticket")) return;
+
+        Member member = event.getMember();
+        if (member == null) {
+            event.reply("Error: Not a Guild").queue();
+            return;
+        }
+
+        if (!this.checkPermission(member)) {
+            event.reply("Error: Not permitted").queue();
+            return;
+        }
+
 
         if ("list".equals(event.getSubcommandName())) {
             event.deferReply(true).queue();
@@ -124,5 +142,22 @@ public class TicketCommand extends ListenerAdapter {
         );
 
         return data;
+    }
+
+    private boolean checkPermission(@NotNull Member member) {
+        if (member.isOwner()) return true;
+
+        for (Role role : member.getRoles()) {
+            if (role.getIdLong() == this.obelisk.getConfig().moderationRole())
+                return true;
+
+            if (role.hasPermission(Permission.ADMINISTRATOR))
+                return true;
+
+            if (role.hasPermission(Permission.MANAGE_CHANNEL))
+                return true;
+        }
+
+        return false;
     }
 }
