@@ -16,6 +16,7 @@ public record Config(
         String token,
         long ticketCreateChannel,
         long ticketCategory,
+        long ticketArchive,
         long moderationRole
 ) {
     public static @NotNull Config fromFile(@NotNull File file) throws IOException {
@@ -50,6 +51,16 @@ public record Config(
             throw new IllegalArgumentException("ticket.category must be a valid id", e);
         }
 
+        String ticketArchiveStr = properties.getProperty("ticket.archive");
+        if (ticketArchiveStr == null)
+            throw new IllegalArgumentException("ticket.archive may not be null");
+        long ticketArchive;
+        try {
+            ticketArchive = Long.parseLong(ticketArchiveStr);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("ticket.archive must be a valid id", e);
+        }
+
         String moderationRoleStr = properties.getProperty("role.moderation");
         if (moderationRoleStr == null)
             throw new IllegalArgumentException("role.moderation may not be null");
@@ -60,7 +71,7 @@ public record Config(
             throw new IllegalArgumentException("role.moderation must be a valid id", e);
         }
 
-        return new Config(token, ticketCreateChannel, ticketCategory, moderationRole);
+        return new Config(token, ticketCreateChannel, ticketCategory, ticketArchive, moderationRole);
     }
 
     public @NotNull Guild validate(@NotNull JDA jda) {
@@ -76,6 +87,12 @@ public record Config(
             throw new IllegalArgumentException("ticket.category does not exist");
         if (!guild.equals(ticketCategory.getGuild()))
             throw new IllegalArgumentException("ticket.category does not match the expected guild");
+
+        Category ticketArchive = jda.getCategoryById(this.ticketArchive);
+        if (ticketArchive == null)
+            throw new IllegalArgumentException("ticket.archive does not exist");
+        if (!guild.equals(ticketArchive.getGuild()))
+            throw new IllegalArgumentException("ticket.archive does not match the expected guild");
 
         Role moderationRole = jda.getRoleById(this.moderationRole);
         if (moderationRole == null)

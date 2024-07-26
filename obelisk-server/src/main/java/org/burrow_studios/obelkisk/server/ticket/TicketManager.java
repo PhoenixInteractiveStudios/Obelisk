@@ -1,10 +1,12 @@
 package org.burrow_studios.obelkisk.server.ticket;
 
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.interactions.callbacks.IReplyCallback;
+import net.dv8tion.jda.api.managers.channel.concrete.TextChannelManager;
 import org.burrow_studios.obelisk.api.entity.Ticket;
 import org.burrow_studios.obelisk.api.entity.User;
 import org.burrow_studios.obelkisk.server.Obelisk;
@@ -73,5 +75,32 @@ public class TicketManager {
 
         channel.getManager().setName("ticket-" + ticket.getId()).queue();
         channel.sendMessage(welcomeMsg).queueAfter(1, TimeUnit.SECONDS);
+    }
+
+    public void closeTicket(@NotNull JDA jda, @NotNull Ticket ticket) {
+        TextChannel channel = jda.getTextChannelById(ticket.getChannelId());
+
+        if (channel == null)
+            throw new IllegalStateException("Ticket channel does not exist");
+
+        long archiveId = this.obelisk.getConfig().ticketArchive();
+        Category archive = jda.getCategoryById(archiveId);
+
+        if (archive == null)
+            throw new IllegalStateException("Ticket archive does not exist");
+
+        TextChannelManager manager = channel.getManager();
+
+        // remove user overrides
+        for (User user : ticket.getUsers())
+            manager = manager.removePermissionOverride(user.getSnowflake());
+
+        // remove moderator override
+        manager = manager.removePermissionOverride(this.obelisk.getConfig().moderationRole());
+
+        // move to archive
+        manager = manager.setParent(archive);
+
+        manager.queue();
     }
 }

@@ -2,10 +2,12 @@ package org.burrow_studios.obelkisk.server.commands;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.Channel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -84,6 +86,26 @@ public class TicketCommand extends ListenerAdapter {
             response.queue();
             return;
         }
+
+        if ("close".equals(event.getSubcommandName())) {
+            event.deferReply(true).queue();
+
+            Channel channel = event.getChannel();
+
+            OptionMapping channelOption = event.getOption("channel");
+            if (channelOption != null)
+                channel = channelOption.getAsChannel();
+
+            for (Ticket ticket : this.obelisk.getTicketDAO().listTickets()) {
+                if (ticket.getChannelId() != channel.getIdLong()) continue;
+
+                this.obelisk.getTicketManager().closeTicket(event.getJDA(), ticket);
+                event.getHook().sendMessage("Ticket " + ticket.getId() + " has been closed.").queue();
+                return;
+            }
+
+            event.getHook().sendMessage(channel.getAsMention() + " is not an open ticket channel!").queue();
+        }
     }
 
     public @NotNull CommandData getData() {
@@ -93,6 +115,9 @@ public class TicketCommand extends ListenerAdapter {
         data.addSubcommands(new SubcommandData("list", "List all open tickets"));
         data.addSubcommands(new SubcommandData("info", "Display information on a single ticket")
                 .addOption(OptionType.INTEGER, "id", "Ticket id", true)
+        );
+        data.addSubcommands(new SubcommandData("close", "Close an open ticket")
+                .addOption(OptionType.CHANNEL, "channel", "Ticket channel", false)
         );
 
         return data;
