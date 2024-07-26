@@ -1,6 +1,6 @@
 package org.burrow_studios.obelkisk.server;
 
-import org.burrow_studios.obelisk.util.ResourceTools;
+import org.burrow_studios.obelkisk.server.util.ResourceTools;
 
 import java.io.File;
 import java.net.URISyntaxException;

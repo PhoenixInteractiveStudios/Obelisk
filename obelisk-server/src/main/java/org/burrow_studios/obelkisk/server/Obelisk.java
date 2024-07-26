@@ -8,7 +8,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.burrow_studios.obelisk.api.entity.dao.*;
-import org.burrow_studios.obelisk.util.ResourceTools;
+import org.burrow_studios.obelkisk.server.util.ResourceTools;
 import org.burrow_studios.obelkisk.server.commands.TicketCommand;
 import org.burrow_studios.obelkisk.server.db.sql.DatabaseImpl;
 import org.burrow_studios.obelkisk.server.listeners.UserListener;
