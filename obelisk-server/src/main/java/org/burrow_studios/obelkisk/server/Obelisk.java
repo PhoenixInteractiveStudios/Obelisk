@@ -3,6 +3,7 @@ package org.burrow_studios.obelkisk.server;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -72,6 +73,7 @@ public class Obelisk {
                 .disableCache(CacheFlag.ONLINE_STATUS)
                 .disableCache(CacheFlag.SCHEDULED_EVENTS)
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)
+                .setActivity(Activity.customStatus("v" + Main.VERSION))
                 // LISTENERS
                 .addEventListeners(new UserListener(this))
                 .addEventListeners(new TicketCreateListener(this))
